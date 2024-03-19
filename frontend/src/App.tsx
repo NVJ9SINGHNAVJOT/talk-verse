@@ -1,14 +1,11 @@
-import React from 'react';
-import './App.css';
+import './App.css'
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-          frontend
-      </header>
-    </div>
-  );
+    <>
+     hello
+    </>
+  )
 }
 
-export default App;
+export default App
