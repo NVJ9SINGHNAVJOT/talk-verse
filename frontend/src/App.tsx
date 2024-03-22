@@ -9,6 +9,7 @@ const Groups = lazy(() => import("./pages/Groups"))
 
 function App() {
   return (
+    <div className='appScreen'>
       <Routes>
         <Route path='/' element= {<Home/>}/>
         <Route path='/about' element= {<About/>}/>
@@ -16,6 +17,7 @@ function App() {
         <Route path='/chat/:chatId' element= {<Chat/>}/>
         <Route path='/groups' element= {<Groups/>}/>
       </Routes>
+    </div>
   );
 }
 

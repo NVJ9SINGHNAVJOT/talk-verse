@@ -1,0 +1,9 @@
+.appScreen{
+    width: 100vw;
+    height: 100vh;
+};
+
+.loginForm, .signinForm {
+    width: 100%;
+    margin-top: 1rem;
+};
