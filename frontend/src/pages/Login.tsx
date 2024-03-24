@@ -1,7 +1,9 @@
 import {
+  Avatar,
   Button,
   Container,
   Paper,
+  Stack,
   TextField,
   Typography,
 } from "@mui/material";
@@ -74,6 +76,15 @@ const Login = () => {
           <div>
             <Typography variant="h5" sx={{textAlign:"center"}}>Sign up</Typography>
             <form className="signinForm">
+
+              <Stack position={"relative"} width={"10rem"} margin={"auto"}>
+                <Avatar sx={{
+                  width:"10rem",
+                  height:"10rem",
+                  objectFit:"contain",
+                }}/>
+              </Stack>
+
               <TextField
                 required
                 fullWidth
