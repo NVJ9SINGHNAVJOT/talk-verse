@@ -14,7 +14,8 @@ const LogIn = (props: LogInProps) => {
   const {toggleSignIn} = props;
 
   const onSubmitForm = async (data: Data) => {
-    await console.log(data);
+    console.log("log in form data", data)
+    await console.log(data); 
   };
 
   const { register, handleSubmit } = useForm<Data>();
@@ -22,7 +23,7 @@ const LogIn = (props: LogInProps) => {
   return (
     <div>
             <Typography variant="h5" sx={{textAlign:"center"}}>Log In</Typography>
-            <form className="loginForm" onSubmit={handleSubmit(onSubmitForm)}>
+            <form onSubmit={handleSubmit(onSubmitForm)}>
               <TextField
                 required
                 fullWidth

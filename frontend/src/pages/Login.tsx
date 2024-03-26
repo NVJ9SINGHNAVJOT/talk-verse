@@ -1,35 +1,42 @@
-import {Container,Paper} from "@mui/material";
+import { Container, Paper } from "@mui/material";
 import { useState } from "react";
 import LogIn from "@src/components/auth/LogIn";
 import SignUp from "@src/components/auth/SignUp";
 
+const divStyle = {
+  backgroundImage: "linear-gradient(to top, #fcc5e4 0%, #fda34b 15%, #ff7882 35%, #c8699e 52%, #7046aa 71%, #0c1db8 87%, #020f75 100%)",
+};
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState<boolean>(true);
-  const toggleSignIn = () => {setIsLogin((prev: boolean) => !prev)};
+  const toggleSignIn = () => { setIsLogin((prev: boolean) => !prev) };
 
   return (
-    <Container component={"main"} maxWidth="xs"
-      sx={{
-        width:"100%",
-        height:"100%",
-        display:"flex",
-        justifyContent:"center",
-        alignItems:"center",
-      }}
+    <div className='w-full h-full flex justify-center items-center overflow-y-auto'
+      style={divStyle}
     >
-      <Paper
-        elevation={3}
+      <Container component={"main"} maxWidth="xs"
         sx={{
-          padding: 4,
           display: "flex",
-          flexDirection: "column",
+          justifyContent: "center",
           alignItems: "center",
+          margin: "0rem",
         }}
       >
-        {isLogin ? (<LogIn toggleSignIn = {toggleSignIn}/>) : (<SignUp toggleSignIn = {toggleSignIn}/>)}
-      </Paper>
-    </Container>
+        <Paper
+          elevation={3}
+          sx={{
+            padding: 4,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          {isLogin ? (<LogIn toggleSignIn={toggleSignIn} />) : (<SignUp toggleSignIn={toggleSignIn} />)}
+        </Paper>
+      </Container>
+    </div>
+
   );
 };
 

@@ -1,13 +1,16 @@
 import { CameraAlt } from "@mui/icons-material";
 import { Avatar, Button, IconButton, Stack, TextField, Typography } from "@mui/material";
 import { VisuallyHidden } from "@src/components/style/StyledComponents";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 type Data = {
   userName: string,
   name: string,
   bio: string,
   password: string,
+  imageFile: File,
 };
 
 type SignUpProps = {
@@ -18,18 +21,60 @@ type SignUpProps = {
 const SignUp = (props: SignUpProps) => {
   const {toggleSignIn} = props;
 
-  const onSubmitForm = async (data: Data) => {
-    await console.log(data);
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [previewSource, setPreviewSource] = useState<string | ArrayBuffer | null>(null)
+
+  const previewFile = (file: File): void => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = (): void => {
+      setPreviewSource(reader.result)
+    }
+  }
+
+  const userImageHandler = (e: React.FormEvent<HTMLInputElement>): void => {
+    e.preventDefault()
+    const target = e.target as HTMLInputElement & {
+      files: FileList,
+    }
+    const file = target.files[0]
+    if (file) {
+      setImageFile(file)
+      previewFile(file)
+    }
+    else{
+      toast("Error while selecting image")
+    }
+  }
+
+  const { register, handleSubmit, reset, formState:{isSubmitSuccessful} } = useForm<Data>();
+
+  const onSubmitForm = async (data: Data): Promise<void> => {
+    if(imageFile){
+      data.imageFile = imageFile
+    }
+    console.log("sign up form data", data)
+    await console.log(data); 
   };
 
-  const { register, handleSubmit } = useForm<Data>();
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset({
+        userName: "",
+        name: "",
+        bio: "",
+        password: "",
+      });
+      setPreviewSource(null);
+    }
+  }, [isSubmitSuccessful, reset])
 
   return (
     <div>
       <Typography variant="h5" sx={{ textAlign: "center" }} className="mb-2">
         Sign Up
       </Typography>
-      <form className="signinForm" onSubmit={handleSubmit(onSubmitForm)}>
+      <form onSubmit={handleSubmit(onSubmitForm)}>
         <Stack position={"relative"} width={"10rem"} margin={"auto"}>
           <Avatar
             sx={{
@@ -37,6 +82,7 @@ const SignUp = (props: SignUpProps) => {
               height: "10rem",
               objectFit: "contain",
             }}
+            src = {previewSource}
           />
 
           <IconButton
@@ -54,7 +100,7 @@ const SignUp = (props: SignUpProps) => {
           >
             <>
               <CameraAlt />
-              <VisuallyHidden type="file" />
+              <VisuallyHidden type="file" accept="image/png, image/gif, image/jpeg" onChange={userImageHandler}/>
             </>
           </IconButton>
         </Stack>
