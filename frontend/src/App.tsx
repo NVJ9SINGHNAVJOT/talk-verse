@@ -1,17 +1,16 @@
-import { lazy } from 'react';
 import {Routes, Route } from 'react-router-dom';
+import "@src/App.css";
 import PrivateRoute from '@src/components/auth/PrivateRoute';
 import OpenRoute from '@src/components/auth/OpenRoute';
 import Navbar from '@src/components/common/Navbar';
-import "@src/App.css"
+import Home from './pages/Home';
+import Dashboard from './pages/Dashboard';
+import About from './pages/About';
+import Login from './pages/Login';
+import Chat from './pages/Chat';
+import Group from './pages/Group';
+import Error from './pages/Error';
 
-const Home = lazy(() => import("@src/pages/Home"))
-const Dashboard = lazy(() => import("@src/pages/Dashboard"))
-const About = lazy(() => import("@src/pages/About"))
-const Login = lazy(() => import("@src/pages/Login"))
-const Chat = lazy(() => import("@src/pages/Chat"))
-const Groups = lazy(() => import("@src/pages/Group"))
-const Error = lazy(() => import("@src/pages/Error"))
 
 function App() {
   return (
@@ -33,7 +32,7 @@ function App() {
           {/* private routes */}
           <Route element= {<PrivateRoute><Dashboard/></PrivateRoute>}>
             <Route path='/dashboard/chat/:chatId' element= {<Chat/>}/>
-            <Route path='/dashboard/group/:grouId' element= {<Groups/>}/>
+            <Route path='/dashboard/group/:grouId' element= {<Group/>}/>
           </Route>
           
           {/* error route */}
