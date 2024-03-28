@@ -1,24 +1,23 @@
 import {Routes, Route } from 'react-router-dom';
-import "@src/App.css";
-import PrivateRoute from '@src/components/auth/PrivateRoute';
-import OpenRoute from '@src/components/auth/OpenRoute';
-import Navbar from '@src/components/common/Navbar';
-import Home from './pages/Home';
-import Dashboard from './pages/Dashboard';
-import About from './pages/About';
-import Login from './pages/Login';
-import Chat from './pages/Chat';
-import Group from './pages/Group';
-import Error from './pages/Error';
+import PrivateRoute from '@/components/auth/PrivateRoute';
+import OpenRoute from '@/components/auth/OpenRoute';
+import MainNavbar from '@/components/common/MainNavbar';
+import Home from '@/pages/Home';
+import Dashboard from '@/pages/Dashboard';
+import About from '@/pages/About';
+import Login from '@/pages/Login';
+import Chat from '@/pages/Chat';
+import Group from '@/pages/Group';
+import Error from '@/pages/Error';
 
 
 function App() {
   return (
     <div className='w-screen h-screen overflow-y-auto'>
-      <Navbar/>
+      <MainNavbar/>
 
       {/* all pages will be rendered below navbar */}
-      <div className='w-full h-[calc(100vh-4rem)]'>
+      <div className='w-full'>
         <Routes>
 
           <Route path='/about' element= {<About/>}/>

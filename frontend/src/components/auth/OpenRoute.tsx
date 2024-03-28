@@ -1,4 +1,4 @@
-import { useAppSelector } from '@src/store/store';
+import { useAppSelector } from '@/store/store';
 import { Navigate, Outlet } from 'react-router-dom';
 
 
