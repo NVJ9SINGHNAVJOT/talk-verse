@@ -1,9 +1,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-.appScreen{
-    width: 100vw;
-    height: 100vh;
-    overflow-y: auto;
-};
