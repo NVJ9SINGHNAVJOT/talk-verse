@@ -7,7 +7,7 @@ const {
 } = authEndpoints;
 
 
-export const adminLogin = async (data) => {
+export const loginApi = async (data) => {
     try {
         console.log("1", data)
         const response = await apiConnector("POST", LOGIN_API, { data });
