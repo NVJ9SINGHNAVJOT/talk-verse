@@ -31,7 +31,7 @@ function App() {
           {/* private routes */}
           <Route element= {<PrivateRoute><Dashboard/></PrivateRoute>}>
             <Route path='/dashboard/chat/:chatId' element= {<Chat/>}/>
-            <Route path='/dashboard/group/:grouId' element= {<Group/>}/>
+            <Route path='/dashboard/group/:groupId' element= {<Group/>}/>
           </Route>
           
           {/* error route */}
