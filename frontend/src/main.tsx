@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import store from "@/store/store.ts"
 import { Provider } from 'react-redux'
+import { Toaster } from 'react-hot-toast'
 
 
 
@@ -17,6 +18,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
           <HelmetProvider>
               <App />  
+              <Toaster/>
           </HelmetProvider>
 
         </BrowserRouter>

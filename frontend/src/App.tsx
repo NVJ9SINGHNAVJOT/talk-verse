@@ -13,11 +13,12 @@ import Error from '@/pages/Error';
 
 function App() {
   return (
-    <div className='w-screen h-screen overflow-y-auto'>
+    <div className='w-screen overflow-y-auto overflow-x-hidden'>
       <MainNavbar/>
 
-      {/* all pages will be rendered below navbar */}
-      <div className='w-full'>
+      {/* all pages will be rendered below */}
+      <div className='w-screen h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden'>
+
         <Routes>
 
           <Route path='/about' element= {<About/>}/>
@@ -27,20 +28,22 @@ function App() {
           <Route element = {<OpenRoute/>}>
             <Route path='/login' element= {<Login/>}/>
           </Route>
-          
+
           {/* private routes */}
           <Route element= {<PrivateRoute><Dashboard/></PrivateRoute>}>
             <Route path='/dashboard/chat/:chatId' element= {<Chat/>}/>
             <Route path='/dashboard/group/:groupId' element= {<Group/>}/>
           </Route>
-          
+
           {/* error route */}
           <Route path='*' element= {<Error/>}/>
 
         </Routes>
+
       </div>
-      
-    </div>
+
+      </div>
+
   );
 }
 
