@@ -49,13 +49,13 @@ const SignUp = (props: SignInProps) => {
 
 
 
-  const { register, handleSubmit, reset, formState: { isSubmitSuccessful } } = useForm<SignUpData>();
+  const { register, handleSubmit, reset } = useForm<SignUpData>();
 
   const onSubmitForm = async (data: SignUpData): Promise<void> => {
     if (selectedFile) {
       data.imageFile = selectedFile
     }
-    const respone = await signupApi(data)
+    signupApi(data)
 
     reset(data)
     navigate("/login")

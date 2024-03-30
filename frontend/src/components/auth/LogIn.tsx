@@ -18,7 +18,6 @@ const LogIn = (props: SignInProps) => {
 
   const onSubmitForm = async (data: LogInData) => {
     console.log("log in form data", data)
-    await console.log(data);
 
     navigate("/")
   };
