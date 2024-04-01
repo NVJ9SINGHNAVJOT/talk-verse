@@ -6,5 +6,8 @@ export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   define: {
     "process.env.REACT_APP_BASE_URL" : JSON.stringify(process.env.REACT_APP_BASE_URL)
-  }
+  },
+  server: {
+    open: true,
+  },
 })
