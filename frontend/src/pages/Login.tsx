@@ -28,7 +28,7 @@ const Login = () => {
 
           <strong className="strongForLoginPage">
             <div className=" text-4xl text-white pl-8 pr-8">
-              Welcome to <span className=" blinkingHeading  text-richblack-400">TalkVerse!</span>
+              Welcome to <span className=" blinkingHeading  text-richblack-400">TalkVerse! </span>
               Connect, share, and engage in conversations that matter. Log in to your world of words and wisdom.
             </div>
           </strong>
