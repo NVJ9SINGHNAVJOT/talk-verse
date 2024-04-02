@@ -175,7 +175,7 @@ const SignUp = (props: SignInProps) => {
 
 
 
-        <button type="submit" className=" bg-white text-black p-1 rounded-sm">Submit</button>
+        <button type="submit" className=" bg-white text-black p-1 rounded-sm w-full">Submit</button>
 
       </form>
 

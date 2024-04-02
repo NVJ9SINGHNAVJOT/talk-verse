@@ -28,7 +28,7 @@ const LogIn = (props: SignInProps) => {
     <div className=" w-full flex flex-col justify-evenly items-center">
 
 
-      <form onSubmit={handleSubmit(onSubmitForm)} className="flex w-7/12 flex-col justify-evenly gap-4">
+      <form onSubmit={handleSubmit(onSubmitForm)} className="flex w-7/12 flex-col justify-evenly items-center gap-4">
 
         <h2 className=" text-center text-xl text-white font-sans font-semibold">Log In to TalkVerse</h2>
 
@@ -75,7 +75,7 @@ const LogIn = (props: SignInProps) => {
           </label>
         </div>
 
-        <button type="submit" className=" bg-white text-black p-1 rounded-sm">Submit</button>
+        <button type="submit" className=" bg-white text-black p-1 rounded-sm w-full">Submit</button>
 
       </form>
 

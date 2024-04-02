@@ -9,6 +9,7 @@ export default {
   },
   theme: {
       colors: {
+        grayblack: "#212121",
         white: "#fff",
         black: "#000",
         transparent: "#ffffff00",

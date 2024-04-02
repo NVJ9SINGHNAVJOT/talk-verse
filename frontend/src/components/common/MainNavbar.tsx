@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import mainLogo from "@/assets/mainLogo.png"
+import SignInButton from "../buttons/signinbutton/SignInButton";
 
 const MainNavbar = () => {
 
@@ -7,9 +8,7 @@ const MainNavbar = () => {
   const homeHandler = () => {
     navigate("/")
   }
-  const loginHandler = () => {
-    navigate("/login")
-  }
+
 
   return (
 
@@ -26,8 +25,8 @@ const MainNavbar = () => {
 
       {/* navbar menu */}
       <div className="flex justify-evenly items-center gap-5">
-        
-        <div className=" text-white menuGlow cursor-pointer round rounded-sm">
+
+        <div className=" text-white menuGlow cursor-pointer round rounded-sm" onClick={homeHandler}>
           Home
         </div>
         <div className=" text-white menuGlow cursor-pointer round rounded-sm">
@@ -45,13 +44,11 @@ const MainNavbar = () => {
 
       {/* sign in buttons */}
       <div className="flex justify-evenly items-center gap-5 mr-8">
-        <div className="signButton text-richblack-25 cursor-pointer " onClick={loginHandler}>
-          Log In
-        </div>
 
-        <div className="signButton text-richblack-25 cursor-pointer " onClick={loginHandler}>
-          Sign Up
-        </div>
+        <SignInButton title={"Log In"} />
+
+        <SignInButton title={"Sign In"} />
+
       </div>
 
 

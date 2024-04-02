@@ -2,17 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
-
+/* css configuration for design */
 
 /* navbar */
 .navbarBackground {
   background: radial-gradient(circle at 24.1% 68.8%, rgb(50, 50, 50) 0%, rgb(0, 0, 0) 99.4%);
 }
 
+
+
+
+/* menu button glow */
+.menuGlow:hover {
+  text-shadow: 0 0 5px #59deed;
+}
+
+
+
+
 /* login page */
 .loginPage {
   background: radial-gradient(circle at 24.1% 68.8%, rgb(50, 50, 50) 0%, rgb(0, 0, 0) 99.4%);
 }
+
+
+
 
 /* main button */
 .mainLogoButton {
@@ -84,45 +98,6 @@
 }
 
 
-/* sign in button */
-.signButton {
-
-  padding: 0.5rem;
-  color: white;
-  border: none;
-  cursor: pointer;
-  position: relative;
-  z-index: 1;
-  overflow: hidden;
-}
-
-.signButton:hover {
-  color: black;
-}
-
-.signButton:after {
-  content: "";
-  background: white;
-  position: absolute;
-  z-index: -1;
-  left: -20%;
-  right: -20%;
-  top: 0;
-  bottom: 0;
-  transform: skewX(-45deg) scale(0, 1);
-  transition: all 0.5s;
-}
-
-.signButton:hover:after {
-  transform: skewX(-45deg) scale(1, 1);
-  -webkit-transition: all 0.5s;
-  transition: all 0.5s;
-}
-
-/* menu button glow */
-.menuGlow:hover {
-  text-shadow: 0 0 5px #59deed;
-}
 
 
 /* login page right side design */
@@ -220,7 +195,6 @@
   z-index: 1;
   background-color: #212121;
 }
-
 
 .loginSidePage:active {
   border: double 4px #FE53BB;
@@ -321,3 +295,8 @@
     box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
   }
 }
+
+
+
+
+/*  */
