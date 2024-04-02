@@ -1,13 +1,13 @@
 .containercard {
   position: relative;
-  width: 400px;
-  height: 300px;
+  width: 80%;
+  height: 400px;
   transition: 200ms;
 }
 
 .containercard:active {
-  width: 390px;
-  height: 290px;
+  width: 75%;
+  height: 390pxx;
 }
 
 #card {
@@ -24,13 +24,13 @@
 
 .subtitle {
   transform: translateY(160px);
-  color: rgb(134, 110, 221);
   text-align: center;
   width: 100%;
+  color: white;
 }
 
 .title {
-  opacity: 0;
+  display: none;
   transition-duration: 300ms;
   transition-timing-function: ease-in-out-out;
   transition-delay: 100ms;
@@ -38,10 +38,22 @@
   font-size: x-large;
   font-weight: bold;
   color: white;
+  padding: 2rem;
+}
+
+.titlehidden{
+  font-size: 20px;
+  font-weight: bold;
+  transition: 300ms ease-in-out-out;
+  color: azure;
+}
+
+.tracker:hover~#card .titlehidden {
+  display: none;
 }
 
 .tracker:hover~#card .title {
-  opacity: 1;
+  display: inline-block;
 }
 
 #prompt {

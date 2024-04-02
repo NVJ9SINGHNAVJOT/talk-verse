@@ -4,6 +4,7 @@ export default {
     "./index.html",
     "./src/index.css",
     "./src/**/*.{js,ts,jsx,tsx}",
+    'node_modules/flowbite-react/lib/esm/**/*.js'
   ],
   corePlugins: {
   },
@@ -43,6 +44,6 @@ export default {
         },
     },
   },
-  plugins: [],
+  plugins: [import('flowbite/plugin')],
 };
 

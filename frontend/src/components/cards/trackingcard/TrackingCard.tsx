@@ -2,7 +2,7 @@ import "@/components/cards/trackingcard/TrackingCard.css"
 
 const TrackingCard = () => {
     return (
-        <div className="containercard noselect">
+        <div className="containercard  noselect">
             <div className="canvas">
                 <div className="tracker tr-1"></div>
                 <div className="tracker tr-2"></div>
@@ -30,10 +30,18 @@ const TrackingCard = () => {
                 <div className="tracker tr-24"></div>
                 <div className="tracker tr-25"></div>
                 <div id="card">
-                    <p id="prompt">HOVER OVER :D</p>
-                    <div className="title">look mom,<br />no JS</div>
+                    <p id="prompt">Talks that Matter</p>
+                    <div className="title">
+                    In a world where you can be anything, be the connection that brings joy, understanding, 
+                    and unity. Our app is the bridge between hearts and minds, spanning distances with a single 
+                    tap. Here's to making the unknown familiar, and the faraway close. Let's weave
+                     a web of friendships, one story at a time.
+                    </div>
+                    <div className="titlehidden">
+                        Connecting lives, one click at a time. Because every friend was once a stranger.
+                    </div>
                     <div className="subtitle">
-                        mouse hover tracker
+                        TalkVerse
                     </div>
 
                 </div>
