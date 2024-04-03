@@ -1,12 +1,12 @@
 import TileShadowCard from "@/components/cards/tileshadowcard/TileShadowCard";
 import homePageImage from "@/assets/homePage.png"
 import TrackingCard from "@/components/cards/trackingcard/TrackingCard";
-import Footer from "@/components/common/Footer";
+import MainFooter from "@/components/common/MainFooter";
 
 
 const Home = () => {
   return (
-    <div className="w-full  bg-grayblack">
+    <div className="w-full bg-grayblack">
 
       <section className="w-full flex justify-evenly items-center pt-28 pb-28">
 
@@ -24,7 +24,7 @@ const Home = () => {
       </section>
 
 
-      <Footer/>
+      <MainFooter/>
 
     </div>
   )

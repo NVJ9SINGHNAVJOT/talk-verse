@@ -1,20 +1,21 @@
 .containercard {
   position: relative;
   width: 80%;
-  height: 400px;
+  height: 25rem;
   transition: 200ms;
 }
 
-.containercard:active {
-  width: 75%;
-  height: 390pxx;
-}
+
 
 #card {
+  padding: 0 2rem 0 2rem;
   position: absolute;
   inset: 0;
   z-index: 0;
   display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  color: white;
   justify-content: center;
   align-items: center;
   border-radius: 20px;
@@ -22,50 +23,28 @@
   background: linear-gradient(43deg, rgb(65, 88, 208) 0%, rgb(200, 80, 192) 46%, rgb(255, 204, 112) 100%);
 }
 
-.subtitle {
-  transform: translateY(160px);
-  text-align: center;
-  width: 100%;
-  color: white;
-}
-
-.title {
-  display: none;
-  transition-duration: 300ms;
-  transition-timing-function: ease-in-out-out;
-  transition-delay: 100ms;
-  position: absolute;
-  font-size: x-large;
-  font-weight: bold;
-  color: white;
-  padding: 2rem;
+.title{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: xx-large;
+  font-weight: 700;
 }
 
 .titlehidden{
-  font-size: 20px;
-  font-weight: bold;
-  transition: 300ms ease-in-out-out;
-  color: azure;
+  font-size: x-large;
+  text-align: center;
 }
 
-.tracker:hover~#card .titlehidden {
+.subtitlehidden{
+  text-align: center;
   display: none;
 }
 
-.tracker:hover~#card .title {
-  display: inline-block;
+.canvas:hover .subtitlehidden{
+  display: block;
 }
 
-#prompt {
-  bottom: 8px;
-  left: 12px;
-  z-index: 20;
-  font-size: 20px;
-  font-weight: bold;
-  transition: 300ms ease-in-out-out;
-  position: absolute;
-  max-width: 110px;
-  color: rgb(255, 255, 255);
+.canvas:hover .titlehidden{
+  display: none;
 }
 
 .tracker {
@@ -79,20 +58,11 @@
   cursor: pointer;
 }
 
-.tracker:hover~#card #prompt {
-  opacity: 0;
-}
-
 .tracker:hover~#card {
   transition: 300ms;
   filter: brightness(1.1);
 }
 
-.containercard:hover #card::before {
-  transition: 200ms;
-  content: '';
-  opacity: 80%;
-}
 
 .canvas {
   perspective: 800px;
@@ -110,17 +80,6 @@
     "tr-21 tr-22 tr-23 tr-24 tr-25";
 }
 
-#card::before {
-  content: '';
-  background: linear-gradient(43deg, rgb(65, 88, 208) 0%, rgb(200, 80, 192) 46%, rgb(255, 204, 112) 100%);
-  filter: blur(2rem);
-  opacity: 30%;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  z-index: -1;
-  transition: 200ms;
-}
 
 .tr-1 {
   grid-area: tr-1;
@@ -358,6 +317,5 @@
   -ms-user-select: none;
   /* Internet Explorer/Edge */
   user-select: none;
-  /* Non-prefixed version, currently
-									supported by Chrome, Edge, Opera and Firefox */
+  /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }
