@@ -10,6 +10,7 @@ export default {
   },
   theme: {
       colors: {
+        whitesmoke:"#d3d3d3",
         grayblack: "#212121",
         white: "#fff",
         black: "#000",

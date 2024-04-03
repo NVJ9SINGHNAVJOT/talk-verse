@@ -20,6 +20,14 @@
 
 
 
+/* footer */
+.footerBackground{
+  background: linear-gradient(315deg, rgba(21,0,36,1) 66%, rgba(147,147,147,1) 100%, rgba(0,212,255,1) 100%);
+}
+
+
+
+
 /* login page */
 .loginPage {
   background: radial-gradient(circle at 24.1% 68.8%, rgb(50, 50, 50) 0%, rgb(0, 0, 0) 99.4%);

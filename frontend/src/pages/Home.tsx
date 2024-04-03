@@ -17,7 +17,7 @@ const Home = () => {
       </section>
 
 
-      <section className="w-full flex justify-evenly items-center">
+      <section className="w-full flex justify-evenly items-center pt-8 py-36">
 
         <TrackingCard/>
 
