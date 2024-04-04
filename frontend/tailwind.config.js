@@ -44,6 +44,11 @@ export default {
           900: "#001B22",
         },
     },
+    extend: {
+      maxWidth: {
+        maxContent: "1600px",
+      },
+    },
   },
   plugins: [import('flowbite/plugin')],
 };

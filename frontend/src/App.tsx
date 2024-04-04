@@ -9,6 +9,7 @@ import Login from '@/pages/Login';
 import Chat from '@/pages/Chat';
 import Group from '@/pages/Group';
 import Error from '@/pages/Error';
+import Talk from '@/pages/Talk';
 
 
 function App() {
@@ -30,10 +31,12 @@ function App() {
           </Route>
 
           {/* private routes */}
-          <Route element= {<PrivateRoute><Dashboard/></PrivateRoute>}>
-            <Route path='/dashboard/chat/:chatId' element= {<Chat/>}/>
-            <Route path='/dashboard/group/:groupId' element= {<Group/>}/>
+          <Route element= {<PrivateRoute><Talk/></PrivateRoute>}>
+            <Route path='/talk/chat/:chatId' element= {<Chat/>}/>
+            <Route path='/talk/group/:groupId' element= {<Group/>}/>
           </Route>
+
+          <Route path='/dashboard' element={<PrivateRoute><Dashboard/></PrivateRoute>}/>
 
           {/* error route */}
           <Route path='*' element= {<Error/>}/>

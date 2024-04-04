@@ -38,6 +38,9 @@ const MainNavbar = () => {
         <div className=" text-white menuGlow cursor-pointer round rounded-sm">
           Dashboard
         </div>
+        <div className=" text-white menuGlow cursor-pointer round rounded-sm">
+          Talk
+        </div>
 
       </div>
 
