@@ -9,6 +9,10 @@ const MainNavbar = () => {
     navigate("/")
   }
 
+  const talkHandler = () => {
+    navigate("/talk")
+  }
+
 
   return (
 
@@ -38,7 +42,7 @@ const MainNavbar = () => {
         <div className=" text-white menuGlow cursor-pointer round rounded-sm">
           Dashboard
         </div>
-        <div className=" text-white menuGlow cursor-pointer round rounded-sm">
+        <div className=" text-white menuGlow cursor-pointer round rounded-sm" onClick={talkHandler}>
           Talk
         </div>
 

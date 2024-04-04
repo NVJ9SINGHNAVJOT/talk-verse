@@ -6,10 +6,11 @@ import Home from '@/pages/Home';
 import Dashboard from '@/pages/Dashboard';
 import About from '@/pages/About';
 import Login from '@/pages/Login';
-import Chat from '@/pages/Chat';
-import Group from '@/pages/Group';
+import Chat from '@/components/talk/Chat';
+import Group from '@/components/talk/Group';
 import Error from '@/pages/Error';
 import Talk from '@/pages/Talk';
+import Welcome from "@/components/talk/Welcome";
 
 
 function App() {
@@ -32,8 +33,9 @@ function App() {
 
           {/* private routes */}
           <Route element= {<PrivateRoute><Talk/></PrivateRoute>}>
-            <Route path='/talk/chat/:chatId' element= {<Chat/>}/>
-            <Route path='/talk/group/:groupId' element= {<Group/>}/>
+            <Route path='/talk' element= {<Welcome/>}/>
+            <Route path='/talk/chat/:chatId?' element= {<Chat/>}/>
+            <Route path='/talk/group/:groupId?' element= {<Group/>}/>
           </Route>
 
           <Route path='/dashboard' element={<PrivateRoute><Dashboard/></PrivateRoute>}/>
