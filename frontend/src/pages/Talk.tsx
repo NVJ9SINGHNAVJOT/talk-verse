@@ -1,3 +1,4 @@
+import ChatBar from "@/components/talk/UserChatBar"
 import { Outlet } from "react-router-dom"
 
 const Talk = () => {
@@ -9,7 +10,7 @@ const Talk = () => {
 
       {/* left bar chat list section*/}
       <section className="w-4/12 h-full">
-        hello
+        <ChatBar/>
       </section>
 
 

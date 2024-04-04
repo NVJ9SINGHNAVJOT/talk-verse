@@ -6,7 +6,7 @@ function getRandomNumber(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-const ChatWelcome = () => {
+const ChatWelcomeCard = () => {
 
     const [randomNumber, setRandomNumber] = useState<number>(1);
 
@@ -30,4 +30,4 @@ const ChatWelcome = () => {
     )
 }
 
-export default ChatWelcome
+export default ChatWelcomeCard
