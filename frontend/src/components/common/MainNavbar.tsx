@@ -45,6 +45,9 @@ const MainNavbar = () => {
         <div className=" text-white menuGlow cursor-pointer round rounded-sm" onClick={talkHandler}>
           Talk
         </div>
+        <div className=" text-white menuGlow cursor-pointer round rounded-sm">
+          Blog
+        </div>
 
       </div>
 

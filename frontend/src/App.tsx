@@ -6,7 +6,7 @@ import Home from '@/pages/Home';
 import Dashboard from '@/pages/Dashboard';
 import About from '@/pages/About';
 import Login from '@/pages/Login';
-import Chat from '@/components/talk/Chat';
+import Individual from '@/components/talk/Individual';
 import Group from '@/components/talk/Group';
 import Error from '@/pages/Error';
 import Talk from '@/pages/Talk';
@@ -34,7 +34,7 @@ function App() {
           {/* private routes */}
           <Route element= {<PrivateRoute><Talk/></PrivateRoute>}>
             <Route path='/talk' element= {<Welcome/>}/>
-            <Route path='/talk/chat/:chatId?' element= {<Chat/>}/>
+            <Route path='/talk/chat/:chatId?' element= {<Individual/>}/>
             <Route path='/talk/group/:groupId?' element= {<Group/>}/>
           </Route>
 

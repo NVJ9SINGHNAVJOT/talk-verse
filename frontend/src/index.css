@@ -21,8 +21,8 @@
 
 
 /* footer */
-.footerBackground{
-  background: linear-gradient(315deg, rgba(21,0,36,1) 66%, rgba(147,147,147,1) 100%, rgba(0,212,255,1) 100%);
+.footerBackground {
+  background: linear-gradient(315deg, rgba(21, 0, 36, 1) 66%, rgba(147, 147, 147, 1) 100%, rgba(0, 212, 255, 1) 100%);
 }
 
 
@@ -307,4 +307,34 @@
 
 
 
-/*  */
+/* ===== Scrollbar CSS ===== */
+/* Firefox */
+* {
+  scrollbar-width: auto;
+  scrollbar-color: #afb2bf;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 3px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #000814;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #afb2bf;
+  border-radius: 10px;
+  visibility: hidden;
+}
+
+*:active::-webkit-scrollbar-thumb,
+*:focus::-webkit-scrollbar-thumb,
+*:hover::-webkit-scrollbar-thumb {
+  visibility: visible;
+}
+
+
+
+
