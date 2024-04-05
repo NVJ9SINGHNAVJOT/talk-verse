@@ -1,4 +1,4 @@
-import "@/components/cards/tileshadowcard/TileShadowCard.css"
+import "@/lib/cards/tileshadowcard/TileShadowCard.css"
 import { FcConferenceCall } from "react-icons/fc";
 
 const TileShadowCard = () => {

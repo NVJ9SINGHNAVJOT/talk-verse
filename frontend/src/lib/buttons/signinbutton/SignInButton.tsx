@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import "@/components/buttons/signinbutton/SignInButton.css"
+import "@/lib/buttons/signinbutton/SignInButton.css"
 
 type SignInButtonProps = {
     title: string,

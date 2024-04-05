@@ -1,4 +1,4 @@
-import "@/components/cards/trackingcard/TrackingCard.css"
+import "@/lib/cards/trackingcard/TrackingCard.css"
 
 const TrackingCard = () => {
     return (

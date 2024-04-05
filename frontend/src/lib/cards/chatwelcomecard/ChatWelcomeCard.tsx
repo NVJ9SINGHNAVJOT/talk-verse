@@ -1,4 +1,4 @@
-import "@/components/cards/chatwelcomecard/ChatWelcomeCard.css"
+import "@/lib/cards/chatwelcomecard/ChatWelcomeCard.css"
 import welcomeQuotes from "@/data/welcome-quotes"
 import { useEffect, useState } from "react";
 

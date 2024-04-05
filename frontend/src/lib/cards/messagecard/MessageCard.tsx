@@ -1,4 +1,4 @@
-import "@/components/cards/messagecard/MessageCard.css"
+import "@/lib/cards/messagecard/MessageCard.css"
 
 const MessageCard = () => {
   return (
