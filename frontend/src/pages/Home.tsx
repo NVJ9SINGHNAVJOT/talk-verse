@@ -1,6 +1,6 @@
-import TileShadowCard from "@/components/cards/tileshadowcard/TileShadowCard";
+import TileShadowCard from "@/lib/cards/tileshadowcard/TileShadowCard";
 import homePageImage from "@/assets/homePage.png"
-import TrackingCard from "@/components/cards/trackingcard/TrackingCard";
+import TrackingCard from "@/lib/cards/trackingcard/TrackingCard";
 import MainFooter from "@/components/common/MainFooter";
 
 

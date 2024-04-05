@@ -1,4 +1,4 @@
-import ChatWelcome from "@/components/cards/chatwelcomecard/ChatWelcomeCard"
+import ChatWelcome from "@/lib/cards/chatwelcomecard/ChatWelcomeCard"
 
 const Welcome = () => {
   return (

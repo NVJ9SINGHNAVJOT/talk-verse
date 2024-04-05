@@ -1,4 +1,4 @@
-import MessageCard from "@/components/cards/messagecard/MessageCard"
+import MessageCard from "@/lib/cards/messagecard/MessageCard"
 
 const Chat = () => {
   return (

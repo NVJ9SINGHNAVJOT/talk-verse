@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import mainLogo from "@/assets/mainLogo.png"
-import SignInButton from "../buttons/signinbutton/SignInButton";
+import SignInButton from "@/lib/buttons/signinbutton/SignInButton";
 
 const MainNavbar = () => {
 
