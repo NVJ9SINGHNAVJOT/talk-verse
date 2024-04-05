@@ -5,11 +5,11 @@ import ChatBarItems from "@/components/talk/chatitems/ChatBarItems";
 
 const UserChatBar = () => {
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full bg-[#0D1117]">
 
       {/* chat top bar */}
       <div className="w-full h-[4rem] flex justify-around items-center py-2 border-b-[1px]
-         border-b-whitesmoke border-r-[3px] border-r-black">
+         border-b-whitesmoke border-r-[3px] border-r-black ">
 
         <IoSearchOutline className=" text-white text-2xl cursor-pointer" />
         <FiPlus className=" text-white text-2xl cursor-pointer" />

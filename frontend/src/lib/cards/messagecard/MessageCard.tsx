@@ -2,7 +2,13 @@ import "@/lib/cards/messagecard/MessageCard.css"
 
 const MessageCard = () => {
   return (
-    <div className="message">MessageCard Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum, amet.</div>
+    <div className="message">
+      <p>
+        MessageCard Lorem ipsum do  Lorem ipsum dolor sit amet consectetur adipisicing elit.
+      </p>
+      <p className=" mt-4">16:50</p>
+      
+    </div>
   )
 }
 

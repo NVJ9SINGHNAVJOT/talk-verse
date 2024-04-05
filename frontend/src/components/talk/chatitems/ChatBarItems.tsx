@@ -3,8 +3,8 @@ import { RxAvatar } from "react-icons/rx"
 
 const ChatBarItems = () => {
   return (
-    <div className="w-full h-[3.5rem] flex justify-between items-center py-2 px-4 cursor-pointer  hover:bg-black 
-      transition-all duration-100 ease-in-out delay-0"
+    <div className="w-full h-[3.5rem] flex justify-between items-center py-2 px-4 cursor-pointer
+      transition-all duration-100 ease-in-out delay-0 hover:bg-[#21262C]"
     >
 
         <div className="flex items-center">

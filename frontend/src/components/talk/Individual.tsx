@@ -1,19 +1,31 @@
+import OtherMessageCard from "@/lib/cards/othermessagecard/OtherMessageCard"
 import MessageCard from "@/lib/cards/messagecard/MessageCard"
 
 const Chat = () => {
   return (
-    <div className="w-full h-full flex  flex-col justify-center items-center p-8 overflow-y-scroll">
+    <div className="w-full h-full p-8 overflow-y-scroll">
+      <MessageCard/>
+      <MessageCard/>
+      <OtherMessageCard/>
+      <OtherMessageCard/>
+      <OtherMessageCard/>
+      <OtherMessageCard/>
+      <MessageCard/>
+      <OtherMessageCard/>
       <MessageCard/>
       <MessageCard/>
       <MessageCard/>
+      <OtherMessageCard/>
+      <MessageCard/>
+      <OtherMessageCard/>      
       <MessageCard/>
       <MessageCard/>
+      <OtherMessageCard/>
       <MessageCard/>
+      <OtherMessageCard/>
+      <OtherMessageCard/>
       <MessageCard/>
-      <MessageCard/>
-      <MessageCard/>
-      <MessageCard/>
-      <MessageCard/>
+      <OtherMessageCard/>
       <MessageCard/>
     </div>
   )
