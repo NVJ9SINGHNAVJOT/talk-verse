@@ -9,7 +9,7 @@ const PrivateRoute = (props: PrivateRouteProps) => {
     const children = props.children
     const token = useAppSelector((state) => state.auth.token)
 
-    if(token === null)
+    if(token !== null)
         return children
     else
         return <Navigate to="/" />
