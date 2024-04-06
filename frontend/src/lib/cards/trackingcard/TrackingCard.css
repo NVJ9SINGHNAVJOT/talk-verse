@@ -23,27 +23,27 @@
   background: linear-gradient(43deg, rgb(65, 88, 208) 0%, rgb(200, 80, 192) 46%, rgb(255, 204, 112) 100%);
 }
 
-.title{
+.title {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: xx-large;
   font-weight: 700;
 }
 
-.titlehidden{
+.titlehidden {
   font-size: x-large;
   text-align: center;
 }
 
-.subtitlehidden{
+.subtitlehidden {
   text-align: center;
   display: none;
 }
 
-.canvas:hover .subtitlehidden{
+.canvas:hover .subtitlehidden {
   display: block;
 }
 
-.canvas:hover .titlehidden{
+.canvas:hover .titlehidden {
   display: none;
 }
 

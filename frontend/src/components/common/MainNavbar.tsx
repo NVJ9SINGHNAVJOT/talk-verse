@@ -57,7 +57,7 @@ const MainNavbar = () => {
 
         <SignInButton title={"Log In"} />
 
-        <SignInButton title={"Sign In"} />
+        <SignInButton title={"Sign Up"} />
 
       </div>
 
