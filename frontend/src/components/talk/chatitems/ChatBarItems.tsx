@@ -9,7 +9,7 @@ const ChatBarItems = () => {
 
         <div className="flex items-center">
             <RxAvatar className=" w-10 h-10 aspect-square text-white"/>
-            <p className=" pl-4 text-white text-lg">Name</p>
+            <p className=" pl-4 text-white text-lg">lorem</p>
         </div>
 
         <div className=" rounded-full bg-green size-3">

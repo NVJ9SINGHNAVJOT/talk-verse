@@ -3,16 +3,16 @@ import ChatSearchInput from "@/lib/inputs/chatsearchinput/ChatSearchInput";
 import { useRef } from "react";
 
 type SearchModalProps = {
-    toggleModal: () => void,
+    toggleSearchModal: () => void,
 }
 
 const SearchModal = (props: SearchModalProps) => {
 
-    const { toggleModal } = props
+    const { toggleSearchModal } = props
     const refModal = useRef<HTMLDivElement>(null);
 
 
-    useOnClickOutside(refModal, toggleModal);
+    useOnClickOutside(refModal, toggleSearchModal);
 
 
 
@@ -20,9 +20,9 @@ const SearchModal = (props: SearchModalProps) => {
         <div className='fixed inset-0 w-screen h-screen backdrop-blur-[1px] bg-transparent z-[1000] flex justify-center items-center'>
 
             <div ref={refModal}>
-                <ChatSearchInput/>
+                <ChatSearchInput />
             </div>
-            
+
 
         </div>
     );
