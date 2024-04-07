@@ -1,11 +1,9 @@
-import express from 'express';
+import app from './app';
+import { setupSocketIO } from './socket';
 
-console.log("hello world!")
+const PORT: number = parseInt(process.env.PORT as string) || 4000;
 
-
-
-
-
-
-
-
+const httpServer = setupSocketIO(app);
+httpServer.listen(PORT, () => {
+    console.log(`Server running...`);
+});
