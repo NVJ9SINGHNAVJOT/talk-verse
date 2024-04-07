@@ -1,7 +1,7 @@
 import express, { Express } from 'express';
-import userRoutes from './routes/User';
-import { mongodbdatabaseConnect } from './config/mongodb';
-import { cloudinaryConnect } from './config/cloudinary';
+import userRoutes from '@/routes/User';
+import { mongodbdatabaseConnect } from '@/config/mongodb';
+import { cloudinaryConnect } from '@/config/cloudinary';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import fileUpload from 'express-fileupload';

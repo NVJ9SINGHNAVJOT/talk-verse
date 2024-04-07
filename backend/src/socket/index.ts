@@ -1,8 +1,8 @@
 import { Server as SocketIOServer } from 'socket.io';
 import { createServer, Server as HTTPServer } from 'http';
 import { Application } from 'express';
-import { registerMessageEvents } from './events/messageEvents';
-import { registerUserEvents } from './events/userEvents';
+import { registerMessageEvents } from '@/socket/events/messageEvents';
+import { registerUserEvents } from '@/socket/events/userEvents';
 
 export const setupSocketIO = (app: Application): HTTPServer => {
     const httpServer: HTTPServer = createServer(app);

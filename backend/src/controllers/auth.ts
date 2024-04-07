@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { Request, Response } from 'express';
-import User from '../models/User';
+import User from '@/models/User';
 
 
 // Signup Controller for Registering Users
