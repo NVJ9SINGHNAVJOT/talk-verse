@@ -1,33 +1,26 @@
-import { InferSchemaType, model, Schema } from "mongoose";
+import mongoose, { InferSchemaType } from 'mongoose';
 
-const userSchema = new Schema({
-    firstName: {
+// Define the Profile schema
+const profileSchema = new mongoose.Schema({
+    gender: {
         type: String,
-        required: true,
+    },
+    dateOfBirth: {
+        type: String,
+    },
+    about: {
+        type: String,
         trim: true,
     },
-    lastName: {
-        type: String,
-        required: true,
+    contactNumber: {
+        type: Number,
         trim: true,
     },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
-    },
-    password: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    imageUrl: {
-        type: String,
-        trim: true,
-    }
 });
 
-type User = InferSchemaType<typeof userSchema>;
+// Use InferSchemaType to derive the TypeScript type
+type ProfileType = InferSchemaType<typeof profileSchema>;
 
-export default model<User>("User", userSchema);
+// Export the Profile model
+const Profile = mongoose.model<ProfileType>('Profile', profileSchema);
+export default Profile;
