@@ -9,7 +9,6 @@ import fileUpload from 'express-fileupload';
 const app: Express = express();
 
 mongodbdatabaseConnect();
-cloudinaryConnect();
 
 app.use(express.json());
 app.use(cookieParser());
@@ -17,10 +16,13 @@ app.use(cors({
     origin: 'http://localhost:3000',
     credentials: true,
 }));
+
 app.use(fileUpload({
     useTempFiles: true,
     tempFileDir: '/tmp',
 }));
+
+cloudinaryConnect();
 
 app.use('/api/v1/auth', userRoutes);
 
