@@ -11,3 +11,4 @@ export const cloudinaryConnect = (): void => {
         console.error(error);
     }
 };
+
