@@ -1,7 +1,7 @@
 import mongoose, { InferSchemaType } from 'mongoose';
 
 // Define the Profile schema
-const profileSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     gender: {
         type: String,
     },
@@ -19,8 +19,8 @@ const profileSchema = new mongoose.Schema({
 });
 
 // Use InferSchemaType to derive the TypeScript type
-type ProfileType = InferSchemaType<typeof profileSchema>;
+type UserType = InferSchemaType<typeof userSchema>;
 
 // Export the Profile model
-const Profile = mongoose.model<ProfileType>('Profile', profileSchema);
-export default Profile;
+const User = mongoose.model<UserType>('Profile', userSchema);
+export default User;

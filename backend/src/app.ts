@@ -1,10 +1,11 @@
 import express, { Express } from 'express';
-import userRoutes from '@/routes/User';
+import userRoutes from '@/routes/UserRoutes';
 import { mongodbdatabaseConnect } from '@/config/mongodb';
 import { cloudinaryConnect } from '@/config/cloudinary';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import fileUpload from 'express-fileupload';
+import bodyParser from 'body-parser';
 
 const app: Express = express();
 
@@ -12,6 +13,8 @@ mongodbdatabaseConnect();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(cors({
     origin: 'http://localhost:3000',
     credentials: true,
