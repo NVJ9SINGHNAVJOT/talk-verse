@@ -10,6 +10,9 @@
 /backend/dist
 /backend/dist
 
+# postgresql migrations
+/backend/src/db/postgresql/migrations
+
 # environment
 /frontend/.env
 /backend/.env

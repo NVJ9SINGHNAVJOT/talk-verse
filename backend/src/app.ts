@@ -1,6 +1,6 @@
 import express, { Express } from 'express';
-import userRoutes from '@/routes/UserRoutes';
-import { mongodbdatabaseConnect } from '@/config/mongodb';
+import authRoutes from '@/routes/Auth';
+import { mongodbdatabaseConnect } from '@/db/mongodb/mongodb';
 import { cloudinaryConnect } from '@/config/cloudinary';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -9,7 +9,8 @@ import bodyParser from 'body-parser';
 
 const app: Express = express();
 
-mongodbdatabaseConnect();
+mongodbdatabaseConnect().catch(console.dir);
+import '@/db/postgresql/postgresql';
 
 app.use(express.json());
 app.use(cookieParser());
@@ -27,7 +28,7 @@ app.use(fileUpload({
 
 cloudinaryConnect();
 
-app.use('/api/v1/auth', userRoutes);
+app.use('/api/v1/auth', authRoutes);
 
 app.get('/', (_req, res) => {
     res.json({

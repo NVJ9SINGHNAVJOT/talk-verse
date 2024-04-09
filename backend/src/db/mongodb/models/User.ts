@@ -22,5 +22,5 @@ const userSchema = new mongoose.Schema({
 type UserType = InferSchemaType<typeof userSchema>;
 
 // Export the Profile model
-const User = mongoose.model<UserType>('Profile', userSchema);
+const User = mongoose.model<UserType>('User', userSchema);
 export default User;
