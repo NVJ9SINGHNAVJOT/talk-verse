@@ -12,7 +12,7 @@
     "start": "node ./dist/index.js",
     "build": "npx tsc",
     "dev": "nodemon",
-    "client": "cd .. && cd frontend && npm run dev",
+    "client": "cd ../.. && cd frontend && npm run dev",
     "conc": "concurrently -n \"client,server\" -c \"bgBlue,bgYellow\" \"npm run client\" \"npm run dev\""
   },
   "keywords": [],
