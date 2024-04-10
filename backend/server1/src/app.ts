@@ -17,7 +17,7 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:5173',
     credentials: true,
 }));
 
@@ -28,7 +28,7 @@ app.use(fileUpload({
 
 cloudinaryConnect();
 
-app.use('/api/v1/auth', authRoutes);
+app.use('/api/server1/v1/auth', authRoutes);
 
 app.get('/', (_req, res) => {
     res.json({

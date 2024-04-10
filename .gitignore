@@ -15,11 +15,12 @@
 
 # postgresql migrations
 /backend/server1/src/db/postgresql/migrations
-/backend/server2/src/db/postgresql/migrations
+/backend/server2/db/postgresql/migrations
 
 # environment
 /frontend/.env
-/backend/.env
 /backend/server1/.env
 /backend/server2/.env
 
+# development
+/backend/server2/tmp
