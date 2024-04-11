@@ -1,0 +1,18 @@
+{
+  "name": "pro-talk-verse",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "client": "cd frontend && npm run dev",
+    "server1": "cd backend/server1 && npm run dev",
+    "server2": "cd backend/server2 && air",
+    "conc": "concurrently -n \"server1,server2,client\" -c \"bgBlue,bgYellow,bgWhite\" \"npm run server1\" \"npm run server2\" \"npm run client\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

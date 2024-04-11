@@ -11,9 +11,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./dist/index.js",
     "build": "npx tsc",
-    "dev": "nodemon",
-    "client": "cd ../.. && cd frontend && npm run dev",
-    "conc": "concurrently -n \"client,server\" -c \"bgBlue,bgYellow\" \"npm run client\" \"npm run dev\""
+    "dev": "nodemon"
   },
   "keywords": [],
   "author": "",
@@ -48,7 +46,6 @@
     "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^7.4.0",
     "@typescript-eslint/parser": "^7.4.0",
-    "concurrently": "^8.2.2",
     "drizzle-kit": "^0.20.14",
     "eslint": "^8.57.0",
     "eslint-plugin-drizzle": "^0.2.3",

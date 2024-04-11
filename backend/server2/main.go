@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -40,18 +40,18 @@ func main() {
 	}))
 
 	router.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "server2 is Up and running..."})
+		c.JSON(http.StatusOK, gin.H{"message": "server2 is up and running..."})
 	})
 
 	routes.AuthRoutes(router)
 	routes.ProfileRoutes(router)
 
+	fmt.Println("server2 running...")
+
 	err := router.Run()
 
 	if err != nil {
-		log.Println("error while running server2")
+		fmt.Println("error while running server2")
 	}
-
-	log.Println("Server2 running...")
 
 }

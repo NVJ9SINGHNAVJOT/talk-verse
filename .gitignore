@@ -18,9 +18,12 @@
 /backend/server2/db/postgresql/migrations
 
 # environment
+*.env
+!example.env
 /frontend/.env
 /backend/server1/.env
 /backend/server2/.env
 
 # development
 /backend/server2/tmp
+/node_modules

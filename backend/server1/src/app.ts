@@ -1,5 +1,5 @@
 import express, { Express } from 'express';
-import authRoutes from '@/routes/Auth';
+import authRoutes from '@/routes/authRoutes';
 import { mongodbdatabaseConnect } from '@/db/mongodb/mongodb';
 import { cloudinaryConnect } from '@/config/cloudinary';
 import cookieParser from 'cookie-parser';
@@ -33,7 +33,7 @@ app.use('/api/server1/v1/auth', authRoutes);
 app.get('/', (_req, res) => {
     res.json({
         success: true,
-        message: 'Server is up and running.'
+        message: 'server1 is up and running.'
     });
 });
 

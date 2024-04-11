@@ -10,7 +10,7 @@ if (
     !process.env.POSTGRESQL_USER ||
     !process.env.POSTGRESQL_PASSWORD ||
     !process.env.POSTGRESQL_DATABASE_NAME) {
-    console.log("PostgreSQL connection failed");
+    console.log("postgresql connection failed");
 }
 const pool = new Pool({
     host: process.env.POSTGRESQL_HOST,
@@ -20,7 +20,7 @@ const pool = new Pool({
     database: process.env.POSTGRESQL_DATABASE_NAME,
 });
 
-console.log("PostgreSQL Database conneted");
+console.log("postgresql database connected");
 
 export const db = drizzle(pool, { schema });
 
