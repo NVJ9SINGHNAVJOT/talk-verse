@@ -8,6 +8,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
+	"server2/db/postgresql"
 	"server2/routes"
 )
 
@@ -38,6 +39,8 @@ func main() {
 		},
 		MaxAge: 12 * time.Hour,
 	}))
+
+	postgresql.PostgreSQLDatabaseConnect()
 
 	router.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "server2 is up and running..."})

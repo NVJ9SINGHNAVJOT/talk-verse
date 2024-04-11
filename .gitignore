@@ -14,8 +14,8 @@
 /backend/server2/dist
 
 # postgresql migrations
-/backend/server1/src/db/postgresql/migrations
-/backend/server2/db/postgresql/migrations
+# /backend/server1/src/db/postgresql/migrations
+# /backend/server2/db/postgresql/migrations
 
 # environment
 *.env
