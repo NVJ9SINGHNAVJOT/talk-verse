@@ -1,5 +1,5 @@
 {
-  "id": "3170356d-9edc-45a2-8325-865e05500f79",
+  "id": "f4163f36-6ebc-4f2d-b063-61e9b8de39d5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -166,6 +166,12 @@
         "number": {
           "name": "number",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image_url": {
+          "name": "image_url",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },

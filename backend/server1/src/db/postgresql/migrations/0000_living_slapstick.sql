@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS "users" (
 	"name" text NOT NULL,
 	"email" text NOT NULL,
 	"number" integer,
+	"image_url" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );

@@ -1,0 +1,66 @@
+---
+version: "3"
+
+dotenv:
+  POSTGRESQL_HOST: $POSTGRESQL_HOST
+  POSTGRESQL_PORT: $POSTGRESQL_PORT
+  POSTGRESQL_USER: $POSTGRESQL_USER
+  POSTGRESQL_PASSWORD: $POSTGRESQL_PASSWORD
+  POSTGRESQL_DATABASE_NAME: $POSTGRESQL_DATABASE_NAME
+
+interval: 500ms
+
+vars:
+  SERVICE_NAME: server2
+  MIGRATIONS_DIR: ./db/postgresql/migrations
+  DATABASE_URL: postgres://{{.POSTGRESQL_USER}}:{{.POSTGRESQL_PASSWORD}}@{{.POSTGRESQL_HOST}}:{{.POSTGRESQL_PORT}}/{{.POSTGRESQL_DATABASE_NAME}}?sslmode=disable
+
+tasks:
+  tidy:
+    desc: runs go mod tidy
+    cmds:
+      - go mod tidy
+
+  build:
+    desc: builds the project
+    cmds:
+      - task: sqlc
+      - task: migration-build
+      - go build -v -i -o ./dist/main main.go
+
+  run:
+    desc: run main.go file
+    cmds:
+      - go run main.go
+
+  dev:
+    desc: dev
+    cmds:
+      - air
+
+  sqlc:
+    desc: generate sqlc code
+    cmds:
+      - sqlc generate
+      - task: migration-build
+
+  migration-new:
+    desc: Create new migration
+    summary: Use- task new-migration -- "create table users"
+    cmd: migrate create -ext sql -dir {{.MIGRATIONS_DIR}} -seq {{.CLI_ARGS}}
+
+  migration-drop:
+    desc: Drop everything inside database
+    cmd: migrate -source file://{{.MIGRATIONS_DIR}} -database {{.DATABASE_URL}} -verbose drop -f
+
+  migration-up:
+    desc: Run migrations up
+    cmd: migrate -source file://{{.MIGRATIONS_DIR}} -database {{.DATABASE_URL}} -verbose up
+
+  migration-down:
+    desc: Run migrations down
+    cmd: migrate -source file://{{.MIGRATIONS_DIR}} -database {{.DATABASE_URL}} -verbose down -all
+
+  migration-build:
+    desc: Build migration files as binary code
+    cmd: cd {{.MIGRATIONS_DIR}} && go-bindata -pkg migrations .

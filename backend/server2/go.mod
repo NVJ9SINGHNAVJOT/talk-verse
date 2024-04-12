@@ -10,13 +10,6 @@ require (
 )
 
 require (
-	github.com/golang-migrate/migrate/v4 v4.17.0 // indirect
-	github.com/hashicorp/errwrap v1.1.0 // indirect
-	github.com/hashicorp/go-multierror v1.1.1 // indirect
-	go.uber.org/atomic v1.7.0 // indirect
-)
-
-require (
 	github.com/bytedance/sonic v1.11.3 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/chenzhuoyu/iasm v0.9.1 // indirect
