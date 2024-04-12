@@ -1,26 +1,26 @@
 -- name: GetAuthor :one
 SELECT *
-FROM authors
+FROM author
 WHERE id = $1
 LIMIT 1;
 
--- name: ListAuthors :many
+-- name: Listauthor :many
 SELECT *
-FROM authors
+FROM author
 ORDER BY name;
 
 -- name: CreateAuthor :one
-INSERT INTO authors (name, bio)
+INSERT INTO author (name, bio)
 VALUES ($1, $2)
 RETURNING *;
 
 -- name: UpdateAuthor :exec
-UPDATE authors
+UPDATE author
 set name = $2,
     bio = $3
 WHERE id = $1;
 
 -- name: DeleteAuthor :exec
-DELETE FROM authors
+DELETE FROM author
 WHERE id = $1;
 

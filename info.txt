@@ -1,4 +1,8 @@
 version-1 inprogress
 
 pro-talk-verse  
+in server2 terminal 
+- go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+- go install github.com/go-task/task/v3/cmd/task@latest
+- https://github.com/golang-migrate/migrate/releases, download zip file, paste in c drive, then add folder to environment variables
 console info:
