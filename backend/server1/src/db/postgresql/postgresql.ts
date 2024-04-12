@@ -1,7 +1,7 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import { configDotenv } from "dotenv";
-import * as schema from "@/db/postgresql/schema";
+import { schema } from "@/db/postgresql/schema";
 configDotenv();
 
 if (

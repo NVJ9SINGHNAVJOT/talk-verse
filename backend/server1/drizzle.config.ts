@@ -4,7 +4,7 @@ import { configDotenv } from "dotenv";
 configDotenv();
 
 export default {
-    schema: "./src/db/postgresql/schema.ts",
+    schema: "./src/db/postgresql/schema/*",
     out: "./src/db/postgresql/migrations",
     driver: 'pg',
     dbCredentials: {
