@@ -1,16 +1,19 @@
 import express, { Express } from 'express';
 import authRoutes from '@/routes/authRoutes';
 import { mongodbdatabaseConnect } from '@/db/mongodb/mongodb';
+import '@/db/postgresql/postgresql';
 import { cloudinaryConnect } from '@/config/cloudinary';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import fileUpload from 'express-fileupload';
 import bodyParser from 'body-parser';
+import { configDotenv } from 'dotenv';
+
+configDotenv();
 
 const app: Express = express();
 
 mongodbdatabaseConnect().catch(console.dir);
-import '@/db/postgresql/postgresql';
 
 app.use(express.json());
 app.use(cookieParser());
@@ -28,7 +31,9 @@ app.use(fileUpload({
 
 cloudinaryConnect();
 
-app.use('/api/server1/v1/auth', authRoutes);
+const apiKey = process.env.SERVER1_KEY as string;
+
+app.use(`/api/server1/v1/${apiKey}/auth`, authRoutes);
 
 app.get('/', (_req, res) => {
     res.json({

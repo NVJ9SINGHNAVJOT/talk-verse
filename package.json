@@ -7,7 +7,9 @@
     "client": "cd frontend && npm run dev",
     "server1": "cd backend/server1 && npm run dev",
     "server2": "cd backend/server2 && air",
-    "conc": "concurrently -n \"server1,server2,client\" -c \"bgBlue,bgYellow,bgWhite\" \"npm run server1\" \"npm run server2\" \"npm run client\""
+    "conc": "concurrently -n \"server1,server2,client\" -c \"bgBlue,bgYellow,bgWhite\" \"npm run server1\" \"npm run server2\" \"npm run client\"",
+    "s1": "concurrently -n \"server1,client\" -c \"bgBlue,bgWhite\" \"npm run server1\" \"npm run client\"",
+    "s2": "concurrently -n \"server2,client\" -c \"bgYellow,bgWhite\" \"npm run server2\" \"npm run client\""
   },
   "keywords": [],
   "author": "",

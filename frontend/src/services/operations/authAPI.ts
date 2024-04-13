@@ -1,13 +1,13 @@
 import { LogInData } from "@/components/auth/LogIn";
 import { SignUpData } from "@/components/auth/SignUp";
 import { apiConnector } from "@/services/apiconnector"
-import { authEndpoints } from "@/services/apis"
+import { authEndPoints } from "@/services/apis"
 
 
 const {
     SIGNUP_API,
     LOGIN_API,
-} = authEndpoints;
+} = authEndPoints;
 
 
 export const loginApi = async (data: LogInData) => {
@@ -17,14 +17,16 @@ export const loginApi = async (data: LogInData) => {
 
         console.log("2", response)
         if (!response?.data?.success) {
-            console.log("error in adminlogin", response?.data);
+            console.log("error in loginapi", response?.data);
             return;
         }
 
+        return response?.data?.success
+
     } catch (error) {
-        console.log(error)
+        console.log("error in loginapi", error)
+        return null
     }
-    return;
 }
 
 export const signupApi = async (data: SignUpData) => {
