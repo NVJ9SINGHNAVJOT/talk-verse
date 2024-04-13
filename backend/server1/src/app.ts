@@ -1,13 +1,15 @@
+import { Request, Response } from "express"
 import express, { Express } from 'express';
 import authRoutes from '@/routes/authRoutes';
-import { mongodbdatabaseConnect } from '@/db/mongodb/mongodb';
-import '@/db/postgresql/postgresql';
+import { mongodbdatabaseConnect } from '@/db/mongodb/connection';
+import '@/db/postgresql/connection';
 import { cloudinaryConnect } from '@/config/cloudinary';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import fileUpload from 'express-fileupload';
 import bodyParser from 'body-parser';
 import { configDotenv } from 'dotenv';
+import { authKey } from '@/middlewares/auth';
 
 configDotenv();
 
@@ -31,11 +33,9 @@ app.use(fileUpload({
 
 cloudinaryConnect();
 
-const apiKey = process.env.SERVER1_KEY as string;
+app.use('/server1/api/v1/auth', authKey, authRoutes);
 
-app.use(`/api/server1/v1/${apiKey}/auth`, authRoutes);
-
-app.get('/', (_req, res) => {
+app.get('/', (_req: Request, res: Response) => {
     res.json({
         success: true,
         message: 'server1 is up and running.'

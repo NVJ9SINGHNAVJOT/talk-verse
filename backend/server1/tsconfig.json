@@ -30,7 +30,7 @@
     "skipLibCheck": true,                                /* Skip type checking all .d.ts files. */
 
     /* linting */
-    "noUnusedLocals": false,
+    "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
