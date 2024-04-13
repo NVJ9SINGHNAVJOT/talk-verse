@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"server2/db/postgresql/pgquerry"
 	"strconv"
 
 	"github.com/joho/godotenv"
@@ -16,7 +17,7 @@ func CheckError(err error) {
 	}
 }
 
-func PostgreSQLDatabaseConnect() {
+func PostgreSQLDatabaseConnect() (*sql.DB, error) {
 
 	err := godotenv.Load()
 	if err != nil {
@@ -32,27 +33,24 @@ func PostgreSQLDatabaseConnect() {
 	port, err := strconv.Atoi(tempPort)
 	if err != nil {
 		fmt.Println("error while fetching postgresql db config", err)
-		return
+		return &sql.DB{}, err
 	}
 
 	// Connection string
-	pgsqlconnection := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
+	pgsqlconnection := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 
 	// Open database connection
 	db, err := sql.Open("postgres", pgsqlconnection)
 	if err != nil {
+		CheckError(err)
 		fmt.Println("error while connecting postgresql", err)
-		return
+		return &sql.DB{}, err
 	}
 
-	CheckError(err)
+	pgquerry.DeclarePGQuerry(db)
 
 	fmt.Println("postgresql database connected!")
 
-	defer db.Close()
-
-	err = db.Ping()
-	CheckError(err)
+	return db, nil
 
 }

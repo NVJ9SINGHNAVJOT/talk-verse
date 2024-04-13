@@ -40,7 +40,13 @@ func main() {
 		MaxAge: 12 * time.Hour,
 	}))
 
-	postgresql.PostgreSQLDatabaseConnect()
+	postgresql, dberr := postgresql.PostgreSQLDatabaseConnect()
+
+	if dberr != nil {
+		fmt.Println("error while connecting postgresql", dberr)
+	}
+
+	defer postgresql.Close()
 
 	router.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "server2 is up and running..."})
@@ -51,7 +57,7 @@ func main() {
 
 	fmt.Println("server2 running...")
 
-	err := router.Run()
+	err := router.Run(":8080")
 
 	if err != nil {
 		fmt.Println("error while running server2")
