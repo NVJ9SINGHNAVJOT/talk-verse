@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-interface AuthState {
+interface UserState {
     loading: boolean;
     token: string | null;
 }
@@ -11,10 +11,10 @@ const initialState = {
     token: localStorage.getItem("token")
         ? JSON.parse(localStorage.getItem("token") || '{}')
         : null,
-} satisfies AuthState as AuthState;
+} satisfies UserState as UserState;
 
-const authSlice = createSlice({
-    name: "auth",
+const userSlice = createSlice({
+    name: "user",
     initialState,
     reducers: {
         setLoading(state, action: PayloadAction<boolean>) {
@@ -26,5 +26,5 @@ const authSlice = createSlice({
     },
 });
 
-export const { setLoading, setToken } = authSlice.actions;
-export default authSlice.reducer;
+export const { setLoading, setToken } = userSlice.actions;
+export default userSlice.reducer;

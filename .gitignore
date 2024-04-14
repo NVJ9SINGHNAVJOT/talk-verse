@@ -2,20 +2,24 @@
 
 # dependencies
 /frontend/node_modules
+
 /backend/server1/node_modules
+
 /backend/server2/node_modules
 
 # production
 /frontend/build
 /frontend/dist
+
 /backend/server1/build
 /backend/server1/dist
+
 /backend/server2/build
 /backend/server2/dist
 
 # postgresql migrations
 # /backend/server1/src/db/postgresql/migrations
-# /backend/server2/db/postgresql/migrations
+# /backend/server2/db/postgresql/dbpostgresql
 
 # environment
 *.env
@@ -25,5 +29,6 @@
 /backend/server2/.env
 
 # development
+/backend/server1/tmp
 /backend/server2/tmp
 /node_modules
