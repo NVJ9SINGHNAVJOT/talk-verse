@@ -53,8 +53,10 @@ tasks:
 
   migration-up:
     desc: Run migrations up
-    cmd: migrate -source file://{{.MIGRATIONS_DIR}} -database {{.DATABASE_URL}} -verbose up
+    summary: Use - task migration-up -- 1
+    cmd: migrate -source file://{{.MIGRATIONS_DIR}} -database {{.DATABASE_URL}} -verbose up {{.CLI_ARGS}}
 
   migration-down:
     desc: Run migrations down
-    cmd: migrate -source file://{{.MIGRATIONS_DIR}} -database {{.DATABASE_URL}} -verbose down -all
+    summary: Use - task migration-down -- 1
+    cmd: migrate -source file://{{.MIGRATIONS_DIR}} -database {{.DATABASE_URL}} -verbose down {{.CLI_ARGS}}
