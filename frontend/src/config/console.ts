@@ -1,4 +1,4 @@
-export default function consoleConfig(environment: string | undefined): void {
+export default function consoleConfig(environment: string): void {
     if (environment !== "development") {
         console.log = function () { };
         console.debug = function () { };

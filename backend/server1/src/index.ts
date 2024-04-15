@@ -4,6 +4,9 @@ dotenv.config();
 import consoleConfig from "@/config/console";
 consoleConfig();
 
+import { loggerConfig } from '@/logger/logger';
+loggerConfig(process.env.ENVIRONMENT as string);
+
 import app from '@/app';
 import { setupSocketIO } from '@/socket/index';
 
