@@ -13,13 +13,13 @@ type SignInProps = {
 }
 
 const LogIn = (props: SignInProps) => {
-  const { toggleSignIn } = props
-  const navigate = useNavigate()
+  const { toggleSignIn } = props;
+  const navigate = useNavigate();
 
   const onSubmitForm = async (data: LogInData) => {
-    console.log("log in form data", data)
+    console.log("log in form data", data);
 
-    navigate("/")
+    navigate("/");
   };
 
   const { register, handleSubmit } = useForm<LogInData>();
@@ -92,7 +92,7 @@ const LogIn = (props: SignInProps) => {
 
 
     </div>
-  )
-}
+  );
+};
 
-export default LogIn
+export default LogIn;

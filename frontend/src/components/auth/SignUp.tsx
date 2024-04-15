@@ -22,7 +22,7 @@ type SignInProps = {
 const SignUp = (props: SignInProps) => {
   const { toggleSignIn } = props;
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -41,7 +41,7 @@ const SignUp = (props: SignInProps) => {
       if (validTypes.includes(fileType)) {
         setSelectedFile(file);
       } else {
-        toast.error("Select .jpg/.jpeg/.png type file")
+        toast.error("Select .jpg/.jpeg/.png type file");
         setSelectedFile(null);
       }
     }
@@ -53,13 +53,13 @@ const SignUp = (props: SignInProps) => {
 
   const onSubmitForm = async (data: SignUpData): Promise<void> => {
     if (selectedFile) {
-      data.imageFile = selectedFile
+      data.imageFile = selectedFile;
     }
-    signupApi(data)
+    signupApi(data);
 
-    reset(data)
-    navigate("/login")
-    console.log("sign up form data", data)
+    reset(data);
+    navigate("/login");
+    console.log("sign up form data", data);
     console.log(data);
   };
 
@@ -192,7 +192,7 @@ const SignUp = (props: SignInProps) => {
 
 
     </div>
-  )
-}
+  );
+};
 
-export default SignUp
+export default SignUp;

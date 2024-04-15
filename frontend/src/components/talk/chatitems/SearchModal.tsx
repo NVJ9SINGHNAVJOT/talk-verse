@@ -8,7 +8,7 @@ type SearchModalProps = {
 
 const SearchModal = (props: SearchModalProps) => {
 
-    const { toggleSearchModal } = props
+    const { toggleSearchModal } = props;
     const refModal = useRef<HTMLDivElement>(null);
 
 

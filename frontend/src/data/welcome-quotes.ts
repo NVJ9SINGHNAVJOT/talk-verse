@@ -124,7 +124,7 @@ const welcomeQuotes: Quote[] = [
     },
     {
         "id": 24,
-        "title": "Life cannot have a random beginning… the trouble is that there are about 2000 enzymes, and the chance of obtaining them all in a random trial is only one part in \(10^{40,000}\), an outrageously small probability that could not be faced even if the whole universe consisted of organic soup.",
+        "title": "Life cannot have a random beginning… the trouble is that there are about 2000 enzymes, and the chance of obtaining them all in a random trial is only one part in 10^{40,000}, an outrageously small probability that could not be faced even if the whole universe consisted of organic soup.",
         "author": "Fred Hoyle"
     },
     {

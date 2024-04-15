@@ -15,11 +15,11 @@ const UserChatBar = () => {
 
   const toggleSearchModal = () => {
     setIsSearchOpen(!isSearchOpen);
-  }
+  };
 
   const toggelCreateGroupModal = () => {
     setIsCreateGroupOpen(!isCreateGroupOpen);
-  }
+  };
 
   return (
     <div className="w-full h-full bg-[#0D1117]">
@@ -45,7 +45,7 @@ const UserChatBar = () => {
       {isCreateGroupOpen && <CreateGroup toggelCreateGroupModal={toggelCreateGroupModal} />}
 
     </div>
-  )
-}
+  );
+};
 
-export default UserChatBar
+export default UserChatBar;

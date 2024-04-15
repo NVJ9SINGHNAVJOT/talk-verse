@@ -1,5 +1,5 @@
 import TileShadowCard from "@/lib/cards/tileshadowcard/TileShadowCard";
-import homePageImage from "@/assets/homePage.png"
+import homePageImage from "@/assets/homePage.png";
 import TrackingCard from "@/lib/cards/trackingcard/TrackingCard";
 import MainFooter from "@/components/common/MainFooter";
 
@@ -27,7 +27,7 @@ const Home = () => {
       <MainFooter/>
 
     </div>
-  )
-}
+  );
+};
 
 export default Home;

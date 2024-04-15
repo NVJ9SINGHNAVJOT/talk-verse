@@ -1,4 +1,4 @@
-import { RxAvatar } from "react-icons/rx"
+import { RxAvatar } from "react-icons/rx";
 
 
 const ChatBarItems = () => {
@@ -17,7 +17,7 @@ const ChatBarItems = () => {
         </div>
         
     </div>
-  )
-}
+  );
+};
 
-export default ChatBarItems
+export default ChatBarItems;

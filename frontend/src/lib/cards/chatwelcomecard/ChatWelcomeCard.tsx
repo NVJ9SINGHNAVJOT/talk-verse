@@ -1,5 +1,5 @@
-import "@/lib/cards/chatwelcomecard/ChatWelcomeCard.css"
-import welcomeQuotes from "@/data/welcome-quotes"
+import "@/lib/cards/chatwelcomecard/ChatWelcomeCard.css";
+import welcomeQuotes from "@/data/welcome-quotes";
 import { useEffect, useState } from "react";
 
 function getRandomNumber(min: number, max: number): number {
@@ -15,7 +15,7 @@ const ChatWelcomeCard = () => {
         setRandomNumber(newRandomNumber);
 
 
-    }, [])
+    }, []);
 
     return (
         <>
@@ -27,7 +27,7 @@ const ChatWelcomeCard = () => {
                 - {welcomeQuotes[randomNumber].author}
             </span>
         </>
-    )
-}
+    );
+};
 
-export default ChatWelcomeCard
+export default ChatWelcomeCard;

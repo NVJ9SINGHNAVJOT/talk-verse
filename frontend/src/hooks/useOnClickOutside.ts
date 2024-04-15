@@ -1,6 +1,7 @@
 import { RefObject, useEffect } from 'react';
 
 // Type for the event handler function
+// eslint-disable-next-line no-unused-vars
 type EventHandler = (event: MouseEvent | TouchEvent) => void;
 
 function useOnClickOutside<T extends HTMLElement>(ref: RefObject<T>, handler: EventHandler): void {

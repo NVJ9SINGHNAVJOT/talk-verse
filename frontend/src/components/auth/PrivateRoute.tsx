@@ -6,14 +6,14 @@ type PrivateRouteProps = {
 }
 
 const PrivateRoute = (props: PrivateRouteProps) => {
-    const children = props.children
-    const token = useAppSelector((state) => state.auth.token)
+    const children = props.children;
+    const token = useAppSelector((state) => state.auth.token);
 
-    if(token !== null)
-        return children
+    if(token === null)
+        return children;
     else
-        return <Navigate to="/" />
+        return <Navigate to="/" />;
 
-}
+};
 
-export default PrivateRoute
+export default PrivateRoute;

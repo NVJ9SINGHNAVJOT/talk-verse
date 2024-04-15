@@ -1,4 +1,4 @@
-import "@/lib/cards/messagecard/MessageCard.css"
+import "@/lib/cards/messagecard/MessageCard.css";
 
 const MessageCard = () => {
   return (
@@ -9,7 +9,7 @@ const MessageCard = () => {
       <p className=" mt-4">16:50</p>
 
     </div>
-  )
-}
+  );
+};
 
-export default MessageCard
+export default MessageCard;

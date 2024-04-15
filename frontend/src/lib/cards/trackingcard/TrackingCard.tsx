@@ -1,4 +1,4 @@
-import "@/lib/cards/trackingcard/TrackingCard.css"
+import "@/lib/cards/trackingcard/TrackingCard.css";
 
 const TrackingCard = () => {
     return (
@@ -50,7 +50,7 @@ const TrackingCard = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default TrackingCard
+export default TrackingCard;

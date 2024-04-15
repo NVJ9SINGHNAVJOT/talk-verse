@@ -1,5 +1,5 @@
-import OtherMessageCard from "@/lib/cards/othermessagecard/OtherMessageCard"
-import MessageCard from "@/lib/cards/messagecard/MessageCard"
+import OtherMessageCard from "@/lib/cards/othermessagecard/OtherMessageCard";
+import MessageCard from "@/lib/cards/messagecard/MessageCard";
 
 const Chat = () => {
   return (
@@ -28,7 +28,7 @@ const Chat = () => {
       <OtherMessageCard/>
       <MessageCard/>
     </div>
-  )
-}
+  );
+};
 
-export default Chat
+export default Chat;

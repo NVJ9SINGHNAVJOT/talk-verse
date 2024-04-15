@@ -1,4 +1,4 @@
-import "@/lib/cards/tileshadowcard/TileShadowCard.css"
+import "@/lib/cards/tileshadowcard/TileShadowCard.css";
 import { FcConferenceCall } from "react-icons/fc";
 
 const TileShadowCard = () => {
@@ -15,7 +15,7 @@ const TileShadowCard = () => {
                 Crafted with simplicity in mind, TalkVerse lets you chat privately
             </p>
         </div>
-    )
-}
+    );
+};
 
-export default TileShadowCard
+export default TileShadowCard;

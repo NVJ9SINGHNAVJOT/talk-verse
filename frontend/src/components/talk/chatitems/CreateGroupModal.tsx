@@ -6,7 +6,7 @@ type CreateGroupModalProps = {
 }
 
 const CreateGroupModal = (props: CreateGroupModalProps) => {
-  const { toggelCreateGroupModal } = props
+  const { toggelCreateGroupModal } = props;
 
   const refModal = useRef<HTMLDivElement>(null);
 
@@ -28,7 +28,7 @@ const CreateGroupModal = (props: CreateGroupModalProps) => {
       </div>
 
     </div>
-  )
-}
+  );
+};
 
-export default CreateGroupModal
+export default CreateGroupModal;

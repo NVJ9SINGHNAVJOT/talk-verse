@@ -6,7 +6,7 @@ import LoginRightSide from "@/components/login/loginrightside/LoginRightSide";
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState<boolean>(true);
-  const toggleSignIn = () => { setIsLogin((prev: boolean) => !prev) };
+  const toggleSignIn = () => { setIsLogin((prev: boolean) => !prev); };
 
   return (
     <div className='w-full min-h-[calc(100vh-4rem)] flex justify-center loginPage'>

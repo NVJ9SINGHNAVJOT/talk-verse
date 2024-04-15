@@ -1,5 +1,5 @@
-import ChatBar from "@/components/talk/UserChatBar"
-import { Outlet } from "react-router-dom"
+import ChatBar from "@/components/talk/UserChatBar";
+import { Outlet } from "react-router-dom";
 
 const Talk = () => {
 
@@ -24,7 +24,7 @@ const Talk = () => {
       {/* starting display for chat */}
 
     </div>
-  )
-}
+  );
+};
 
-export default Talk
+export default Talk;

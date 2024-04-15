@@ -1,13 +1,13 @@
-import "@/lib/inputs/chatsearchinput/ChatSearchInput.css"
+import "@/lib/inputs/chatsearchinput/ChatSearchInput.css";
 
 const ChatSearchInput = () => {
     return (
         <div className="input-container">
             <input type="text" placeholder="Search..." />
-            <button className="button">Add</button>
+            <button className="button">Request</button>
         </div>
 
-    )
-}
+    );
+};
 
-export default ChatSearchInput
+export default ChatSearchInput;

@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /frontend/node_modules
 
@@ -17,7 +15,7 @@
 /backend/server2/build
 /backend/server2/dist
 
-# postgresql migrations
+# database files create by commands
 # /backend/server1/src/db/postgresql/migrations
 # /backend/server2/db/postgresql/dbpostgresql
 
@@ -32,3 +30,8 @@
 /backend/server1/tmp
 /backend/server2/tmp
 /node_modules
+
+# logs
+/frontend/logs
+/backend/server1/logs
+/backend/server2/logs

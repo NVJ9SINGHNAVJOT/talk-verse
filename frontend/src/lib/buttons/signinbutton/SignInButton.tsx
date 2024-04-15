@@ -1,5 +1,5 @@
-import { useNavigate } from "react-router-dom"
-import "@/lib/buttons/signinbutton/SignInButton.css"
+import { useNavigate } from "react-router-dom";
+import "@/lib/buttons/signinbutton/SignInButton.css";
 
 type SignInButtonProps = {
     title: string,
@@ -8,16 +8,16 @@ type SignInButtonProps = {
 const SignInButton = (props: SignInButtonProps) => {
 
     const title = props.title;
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const loginHandler = () => {
-        navigate("/login")
-    }
+        navigate("/login");
+    };
 
     return (
         <div className="signButton text-richblack-25 cursor-pointer " onClick={loginHandler}>
             {title}
         </div>
-    )
-}
+    );
+};
 
-export default SignInButton
+export default SignInButton;

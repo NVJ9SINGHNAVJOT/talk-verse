@@ -1,17 +1,17 @@
 import { useNavigate } from "react-router-dom";
-import mainLogo from "@/assets/mainLogo.png"
+import mainLogo from "@/assets/mainLogo.png";
 import SignInButton from "@/lib/buttons/signinbutton/SignInButton";
 
 const MainNavbar = () => {
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const homeHandler = () => {
-    navigate("/")
-  }
+    navigate("/");
+  };
 
   const talkHandler = () => {
-    navigate("/talk")
-  }
+    navigate("/talk");
+  };
 
 
   return (
@@ -65,7 +65,7 @@ const MainNavbar = () => {
     </div>
 
 
-  )
-}
+  );
+};
 
-export default MainNavbar
+export default MainNavbar;

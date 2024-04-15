@@ -1,4 +1,4 @@
-import "@/components/login/loginrightside/LoginRightSide.css"
+import "@/components/login/loginrightside/LoginRightSide.css";
 
 const LoginRightSide = () => {
     return (
@@ -24,7 +24,7 @@ const LoginRightSide = () => {
             </div>
 
         </div>
-    )
-}
+    );
+};
 
-export default LoginRightSide
+export default LoginRightSide;

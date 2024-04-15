@@ -1,4 +1,4 @@
-import "@/lib/cards/othermessagecard/OtherMessageCard.css"
+import "@/lib/cards/othermessagecard/OtherMessageCard.css";
 
 const OtherMessageCard = () => {
   return (
@@ -9,7 +9,7 @@ const OtherMessageCard = () => {
       <p className=" mt-4">16:50</p>
 
     </div>
-  )
-}
+  );
+};
 
-export default OtherMessageCard
+export default OtherMessageCard;
