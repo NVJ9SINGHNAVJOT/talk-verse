@@ -16,7 +16,9 @@ const MainNavbar = () => {
 
   return (
 
-    <div className="navbarBackground w-screen h-[4rem] flex justify-between items-center">
+    <div className="bg-[radial-gradient(circle_at_24.1%_68.8%,_rgb(50,_50,_50)_0%,_rgb(0,_0,_0)_99.4%)]
+      w-screen h-[4rem] flex justify-between items-center"
+    >
 
       {/* main logo and name */}
       <div className="flex items-center justify-evenly gap-5 ml-8">
@@ -26,41 +28,33 @@ const MainNavbar = () => {
         </div>
       </div>
 
-
       {/* navbar menu */}
       <div className="flex justify-evenly items-center gap-5">
-
-        <div className=" text-white menuGlow cursor-pointer round rounded-sm" onClick={homeHandler}>
+        <div className=" text-white menuGlow cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]" onClick={homeHandler}>
           Home
         </div>
-        <div className=" text-white menuGlow cursor-pointer round rounded-sm">
+        <div className=" text-white menuGlow cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">
           About
         </div>
-        <div className=" text-white menuGlow cursor-pointer round rounded-sm">
+        <div className=" text-white menuGlow cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">
           Contact
         </div>
-        <div className=" text-white menuGlow cursor-pointer round rounded-sm">
+        <div className=" text-white menuGlow cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">
           Dashboard
         </div>
-        <div className=" text-white menuGlow cursor-pointer round rounded-sm" onClick={talkHandler}>
+        <div className=" text-white menuGlow cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]" onClick={talkHandler}>
           Talk
         </div>
-        <div className=" text-white menuGlow cursor-pointer round rounded-sm">
+        <div className=" text-white menuGlow cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">
           Blog
         </div>
-
       </div>
-
 
       {/* sign in buttons */}
       <div className="flex justify-evenly items-center gap-5 mr-8">
-
         <SignInButton title={"Log In"} />
-
         <SignInButton title={"Sign Up"} />
-
       </div>
-
 
     </div>
 

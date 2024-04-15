@@ -2,11 +2,33 @@ import mongoose, { InferSchemaType } from 'mongoose';
 
 // Define the Profile schema
 const userSchema = new mongoose.Schema({
+    firstName: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    lastName: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    email: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    password: {
+        type: String,
+        required: true,
+        trim: true,
+    },
     gender: {
         type: String,
+        trim: true,
     },
     dateOfBirth: {
         type: String,
+        trim: true,
     },
     about: {
         type: String,
@@ -15,6 +37,10 @@ const userSchema = new mongoose.Schema({
     contactNumber: {
         type: Number,
         trim: true,
+    },
+    userToken: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Token",
     },
 });
 

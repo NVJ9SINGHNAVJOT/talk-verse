@@ -8,8 +8,9 @@ export const setupSocketIO = (app: Application): HTTPServer => {
     const httpServer: HTTPServer = createServer(app);
     const io: SocketIOServer = new SocketIOServer(httpServer, {
         cors: {
-            origin: 'http://localhost:3000',
+            origin: 'http://localhost:5173',
             credentials: true,
+            methods: ['']
         },
     });
 

@@ -31,6 +31,10 @@
 /backend/server2/tmp
 /node_modules
 
+# temp storage
+/backend/server1/temp
+/backend/server2/temp
+
 # logs
 /frontend/logs
 /backend/server1/logs

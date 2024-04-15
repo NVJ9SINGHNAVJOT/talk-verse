@@ -15,7 +15,9 @@ configDotenv();
 
 const app: Express = express();
 
-mongodbdatabaseConnect().catch(console.dir);
+mongodbdatabaseConnect().catch(() => {
+    console.log("mongodb connection failed");
+});
 
 app.use(express.json());
 app.use(cookieParser());
@@ -33,7 +35,7 @@ app.use(fileUpload({
 
 cloudinaryConnect();
 
-app.use('/server1/api/v1/auth', authKey, authRoutes);
+app.use('/server1/api/v1/auth', authRoutes);
 
 app.get('/', (_req: Request, res: Response) => {
     res.json({

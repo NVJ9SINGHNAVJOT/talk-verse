@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
-
 /* ===== Scrollbar CSS ===== */
 /* Firefox */
 * {
@@ -32,9 +29,6 @@
 *:hover::-webkit-scrollbar-thumb {
   visibility: visible;
 }
-
-
-
 
 /* shadcn-ui css */
 @layer base {
@@ -116,38 +110,6 @@
 
 /* css configuration for design */
 
-/* navbar */
-.navbarBackground {
-  background: radial-gradient(circle at 24.1% 68.8%, rgb(50, 50, 50) 0%, rgb(0, 0, 0) 99.4%);
-}
-
-
-
-
-/* menu button glow */
-.menuGlow:hover {
-  text-shadow: 0 0 5px #59deed;
-}
-
-
-
-
-/* footer */
-.footerBackground {
-  background: linear-gradient(315deg, rgba(21, 0, 36, 1) 66%, rgba(147, 147, 147, 1) 100%, rgba(0, 212, 255, 1) 100%);
-}
-
-
-
-
-/* login page */
-.loginPage {
-  background: radial-gradient(circle at 24.1% 68.8%, rgb(50, 50, 50) 0%, rgb(0, 0, 0) 99.4%);
-}
-
-
-
-
 /* main button */
 .mainLogoButton {
   -webkit-user-select: none;
@@ -216,21 +178,4 @@
   top: 0;
   border-radius: 10px;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
