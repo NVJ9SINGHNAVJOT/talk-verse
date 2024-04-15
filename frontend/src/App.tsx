@@ -1,4 +1,4 @@
-import {Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import PrivateRoute from '@/components/auth/PrivateRoute';
 import OpenRoute from '@/components/auth/OpenRoute';
 import MainNavbar from '@/components/common/MainNavbar';
@@ -16,38 +16,38 @@ import Welcome from "@/components/talk/Welcome";
 function App() {
   return (
     <div className='w-screen overflow-y-auto overflow-x-hidden'>
-      <MainNavbar/>
+      <MainNavbar />
 
       {/* all pages will be rendered below */}
       <div className='w-screen h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden'>
 
         <Routes>
 
-          <Route path='/about' element= {<About/>}/>
-          <Route path='/' element= {<Home/>}/>
+          <Route path='/about' element={<About />} />
+          <Route path='/' element={<Home />} />
 
           {/* open routes */}
-          <Route element = {<OpenRoute/>}>
-            <Route path='/login' element= {<Login/>}/>
+          <Route element={<OpenRoute />}>
+            <Route path='/login' element={<Login />} />
           </Route>
 
           {/* private routes */}
-          <Route element= {<PrivateRoute><Talk/></PrivateRoute>}>
-            <Route path='/talk' element= {<Welcome/>}/>
-            <Route path='/talk/chat/:chatId?' element= {<Individual/>}/>
-            <Route path='/talk/group/:groupId?' element= {<Group/>}/>
+          <Route element={<PrivateRoute><Talk /></PrivateRoute>}>
+            <Route path='/talk' element={<Welcome />} />
+            <Route path='/talk/chat/:chatId?' element={<Individual />} />
+            <Route path='/talk/group/:groupId?' element={<Group />} />
           </Route>
 
-          <Route path='/dashboard' element={<PrivateRoute><Dashboard/></PrivateRoute>}/>
+          <Route path='/dashboard' element={<PrivateRoute><Dashboard /></PrivateRoute>} />
 
           {/* error route */}
-          <Route path='*' element= {<Error/>}/>
+          <Route path='*' element={<Error />} />
 
         </Routes>
 
       </div>
 
-      </div>
+    </div>
 
   );
 }
