@@ -7,22 +7,24 @@ export const apiConnector = async (
     bodyData: object,
     headers?: object,
     params?: object
-): Promise<AxiosResponse> => {
+): Promise<AxiosResponse<unknown>> => {
     const config: AxiosRequestConfig = {
         method,
         url,
-        data: bodyData,
+        data: bodyData || {},
         headers: headers || {},
         params: params || {},
         timeout: 10000, // Set your desired timeout (in milliseconds)
     };
 
-    try {
-        const response = await axios(config);
-        return response; // Return the Axios response
-    } catch (error) {
-        // Handle any errors (e.g., network issues, invalid response, etc.)
-        console.log('Error fetching data:', error);
-        throw error; // Rethrow the error if needed
-    }
+    const response = await axios(config)
+        .then((respone) => {
+            if (respone.status < 400) {
+                return respone;
+            }
+        })
+        .catch((response) => {
+            return response;
+        });
+    return response
 };

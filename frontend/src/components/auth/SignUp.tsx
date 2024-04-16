@@ -1,18 +1,16 @@
-import { signupApi } from "@/services/operations/authAPI";
+import { signUpApi } from "@/services/operations/authApi";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import { RxAvatar } from "react-icons/rx";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-export type SignUpData = {
-  imageFile?: File,
+type SignUpData = {
   firstName: string,
   lastName: string,
   email: string,
   password: string,
   confirmPassword: string,
-  agree: boolean,
 };
 
 type SignInProps = {
@@ -36,7 +34,6 @@ const SignUp = (props: SignInProps) => {
       const file = e.target.files[0];
       const fileType = file.type;
 
-      // Check if the file type is jpg, jpeg, or png
       const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
       if (validTypes.includes(fileType)) {
         setSelectedFile(file);
@@ -52,15 +49,32 @@ const SignUp = (props: SignInProps) => {
   const { register, handleSubmit, reset } = useForm<SignUpData>();
 
   const onSubmitForm = async (data: SignUpData): Promise<void> => {
-    if (selectedFile) {
-      data.imageFile = selectedFile;
-    }
-    signupApi(data);
+    console.log("signup", data);
+    const newSignUpData = new FormData();
 
-    reset(data);
-    navigate("/login");
-    console.log("sign up form data", data);
-    console.log(data);
+    if (selectedFile) {
+      newSignUpData.append('imageFile', selectedFile);
+    }
+    newSignUpData.append('firstName', data.firstName);
+    newSignUpData.append('lastName', data.lastName);
+    newSignUpData.append('email', data.email);
+    newSignUpData.append('password', data.password);
+    newSignUpData.append('confirmPassword', data.confirmPassword);
+
+    console.log("signup", newSignUpData);
+    const tid = toast.loading('Loading...');
+    await signUpApi(newSignUpData);
+
+    
+    // if (respone === null) {
+    //   toast.dismiss(tid);
+    //   toast.error("Try again");
+    //   navigate('/');
+    // }
+    // setSelectedFile(null);
+    // reset(data);
+    
+    toast.dismiss(tid);
   };
 
 

@@ -4,7 +4,7 @@ const router: Router = express.Router();
 import { signUp } from "@/controllers/auth";
 import { imageUpload } from '@/middlewares/fileUpload';
 
-router.post('/signup', imageUpload.single("userImage"), signUp);
+router.post('/signup', signUp);
 
 
 export default router;
