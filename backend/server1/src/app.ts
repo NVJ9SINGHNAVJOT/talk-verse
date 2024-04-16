@@ -26,6 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({
     origin: 'http://localhost:5173',
     credentials: true,
+    methods: ["PUT", "PATCH", "POST", "GET", "DELETE"]
 }));
 
 app.use(fileUpload({

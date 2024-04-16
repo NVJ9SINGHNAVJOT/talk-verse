@@ -10,7 +10,7 @@ export const setupSocketIO = (app: Application): HTTPServer => {
         cors: {
             origin: 'http://localhost:5173',
             credentials: true,
-            methods: ['']
+            methods: ["PUT", "PATCH", "POST", "GET", "DELETE"]
         },
     });
 
