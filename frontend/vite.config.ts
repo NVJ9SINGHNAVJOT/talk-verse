@@ -12,6 +12,7 @@ export default defineConfig(({ command, mode }) => {
     define: {
       "process.env.REACT_APP_BASE_URL_SERVER1": JSON.stringify(env.REACT_APP_BASE_URL_SERVER1),
       "process.env.REACT_APP_ENVIRONMENT": JSON.stringify(env.REACT_APP_ENVIRONMENT),
+      "process.env.SERVER1_KEY": JSON.stringify(env.SERVER1_KEY),
     },
     server: {
       open: true,

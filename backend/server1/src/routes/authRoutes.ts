@@ -1,10 +1,9 @@
 import express, { Router } from 'express';
 const router: Router = express.Router();
 
+import { imageFile } from '@/middlewares/multer';
 import { signUp } from "@/controllers/auth";
-import { imageUpload } from '@/middlewares/fileUpload';
 
-router.post('/signup', signUp);
-
+router.post('/signup', imageFile, signUp);
 
 export default router;

@@ -1,5 +1,5 @@
-import * as user from "@/db/postgresql/schema/user";
-import * as post from "@/db/postgresql/schema/post";
-import * as comment from "@/db/postgresql/schema/comment";
+import * as user from "@/db/postgresql/schemas/user";
+import * as post from "@/db/postgresql/schemas/post";
+import * as comment from "@/db/postgresql/schemas/comment";
 
 export const schema = { user, post, comment };

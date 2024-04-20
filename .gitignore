@@ -1,8 +1,6 @@
 # dependencies
 /frontend/node_modules
-
 /backend/server1/node_modules
-
 /backend/server2/node_modules
 
 # production

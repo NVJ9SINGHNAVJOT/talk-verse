@@ -1,24 +1,21 @@
 
 import { authEndPoints } from "@/services/apis";
-import { makeApiRequest } from "../fetchConnector";
+import { fetchApi } from "@/services/fetchApi";
+import { Common } from "@/types/apis/common";
 
 
 const {
     SIGNUP_API,
 } = authEndPoints;
 
-export const signUpApi = async (data: FormData) => {
+export const signUpApi = async (data: FormData): Promise<boolean> => {
     try {
-        console.log("1", data);
-
-        const response = await makeApiRequest('post', SIGNUP_API, data, { 'Content-Type': 'multipart/form-data' });
-
-        console.log("respones", response);
-
-
-
-
+        const resData: Common = await fetchApi('POST', SIGNUP_API, data);
+        if (resData && resData.success) {
+            return true;
+        }
+        return false;
     } catch (error) {
-        console.log("error in signupapi");
+        return false;
     }
 }; 

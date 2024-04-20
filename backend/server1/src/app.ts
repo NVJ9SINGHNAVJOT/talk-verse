@@ -6,14 +6,13 @@ import '@/db/postgresql/connection';
 import { cloudinaryConnect } from '@/config/cloudinary';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import fileUpload from 'express-fileupload';
-import bodyParser from 'body-parser';
 import { configDotenv } from 'dotenv';
 import { authKey } from '@/middlewares/auth';
-
 configDotenv();
 
 const app: Express = express();
+
+app.use("/uploads", express.static("uploads"))
 
 mongodbdatabaseConnect().catch(() => {
     console.log("mongodb connection failed");
@@ -21,7 +20,6 @@ mongodbdatabaseConnect().catch(() => {
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(cors({
     origin: 'http://localhost:5173',
@@ -29,14 +27,10 @@ app.use(cors({
     methods: ["PUT", "PATCH", "POST", "GET", "DELETE"]
 }));
 
-app.use(fileUpload({
-    useTempFiles: true,
-    tempFileDir: '../tmp',
-}));
 
 cloudinaryConnect();
 
-app.use('/server1/api/v1/auth', authRoutes);
+app.use('/server1/api/v1/auth', authKey, authRoutes);
 
 app.get('/', (_req: Request, res: Response) => {
     res.json({

@@ -4,6 +4,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 interface UserState {
     loading: boolean;
     token: string | null;
+    isLogin: boolean;
 }
 
 const initialState = {
@@ -11,6 +12,7 @@ const initialState = {
     token: localStorage.getItem("token")
         ? JSON.parse(localStorage.getItem("token") || '{}')
         : null,
+    isLogin: false,
 } satisfies UserState as UserState;
 
 const userSlice = createSlice({
@@ -23,8 +25,11 @@ const userSlice = createSlice({
         setToken(state, action: PayloadAction<string>) {
             state.token = action.payload;
         },
+        setIsLogin(state, action: PayloadAction<boolean>) {
+            state.isLogin = action.payload;
+        }
     },
 });
 
-export const { setLoading, setToken } = userSlice.actions;
+export const { setLoading, setToken, setIsLogin } = userSlice.actions;
 export default userSlice.reducer;

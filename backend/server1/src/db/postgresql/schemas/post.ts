@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { pgTable, integer, serial, timestamp, text } from "drizzle-orm/pg-core";
-import { comment } from "@/db/postgresql/schema/comment";
-import { user } from "@/db/postgresql/schema/user";
+import { comment } from "@/db/postgresql/schemas/comment";
+import { user } from "@/db/postgresql/schemas/user";
 
 export const post = pgTable("post", {
     id: serial("id").primaryKey(),

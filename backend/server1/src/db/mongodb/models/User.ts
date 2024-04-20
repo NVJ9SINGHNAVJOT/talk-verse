@@ -39,6 +39,10 @@ const userSchema = new mongoose.Schema(
             type: Number,
             trim: true,
         },
+        imageUrl: {
+            type: String,
+            trim: true,
+        },
         userToken: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Token",
