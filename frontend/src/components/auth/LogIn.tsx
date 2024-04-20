@@ -1,5 +1,10 @@
+import { logInApi } from "@/services/operations/authApi";
+import { setLoading } from "@/store/slices/authSlice";
+import { useAppSelector } from "@/store/store";
 import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 
 export type LogInData = {
@@ -13,16 +18,32 @@ type SignInProps = {
 }
 
 const LogIn = (props: SignInProps) => {
+
+  const isLogin = useAppSelector((state) => state.auth.loading);
+  const dispatch = useDispatch();
+
+  const { register, handleSubmit, reset } = useForm<LogInData>();
   const { toggleSignIn } = props;
   const navigate = useNavigate();
 
   const onSubmitForm = async (data: LogInData) => {
-    console.log("log in form data", data);
+    reset();
+    dispatch(setLoading(true));
 
-    navigate("/");
+    const tid = toast.loading('Loading...');
+
+    const response = await logInApi(data);
+
+    toast.dismiss(tid);
+    dispatch(setLoading(false));
+
+    if (response === true) {
+      navigate('/');
+    }
+    else {
+      toast.error("Error while logging, try again");
+    }
   };
-
-  const { register, handleSubmit } = useForm<LogInData>();
 
   return (
     <div className=" w-full flex flex-col justify-evenly items-center">
@@ -75,16 +96,16 @@ const LogIn = (props: SignInProps) => {
           </label>
         </div>
 
-        <button type="submit" className=" bg-white text-black p-1 rounded-sm w-full">Submit</button>
+        <button disabled={isLogin} type="submit" className=" bg-white text-black p-1 rounded-sm w-full">Submit</button>
 
       </form>
 
-      
-      
+
+
       <div className="flex flex-col items-center gap-5">
 
         <div className="text-white text-center ">Not a member yet? Join the conversation today!</div>
-        
+
         <button className=" bg-white text-black pl-4 pr-4 p-1 rounded-sm " onClick={toggleSignIn}>Sign Up</button>
 
       </div>

@@ -1,20 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-type User = {
-    firstName : string,
+export type User = {
+    firstName: string,
     lastName: string,
     image: string | null
 }
 
 interface ProfileState {
-    user : User, 
+    user: User | null,
 }
 
 const initialState = {
-    user: localStorage.getItem("user")
-        ? JSON.parse(localStorage.getItem("user") || '{}')
-        : null,
+    user: null,
 } satisfies ProfileState as ProfileState;
 
 const userSlice = createSlice({

@@ -3,18 +3,15 @@ import mongoose, { InferSchemaType } from 'mongoose';
 // Define the Profile schema
 const tokenSchema = new mongoose.Schema(
     {
-        user: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-        },
-        email: {
+        userToken: {
             type: String,
             required: true,
+            unique: true,
         },
         createdAt: {
             type: Date,
             default: Date.now,
-            expires: 60 * 60 * 24 * 7, // The document will be automatically deleted after 5 minutes of its creation time
+            expires: 60 * 60 * 24 * 1, // The document will be automatically deleted after 1 day or 24h
         },
     },
     { timestamps: true }

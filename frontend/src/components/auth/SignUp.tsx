@@ -24,8 +24,6 @@ const SignUp = (props: SignInProps) => {
   const isLogin = useAppSelector((state) => state.auth.loading);
   const dispatch = useDispatch();
 
-
-
   const { toggleSignIn } = props;
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -67,6 +65,9 @@ const SignUp = (props: SignInProps) => {
     newSignUpData.append("email", data.email);
     newSignUpData.append("password", data.password);
     newSignUpData.append("confirmPassword", data.confirmPassword);
+
+    reset();
+    setSelectedFile(null);
 
     const response: boolean = await signUpApi(newSignUpData);
 
@@ -125,6 +126,7 @@ const SignUp = (props: SignInProps) => {
           )}
         </div>
 
+        {/* signup data */}
         <div className="relative z-0 w-full mb-5 group">
           <input
             type="text"

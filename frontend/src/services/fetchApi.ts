@@ -38,15 +38,19 @@ export async function fetchApi
         }
 
         const response = await fetch(url, requestOptions);
+
         console.log("api response", response);
         if (response.ok && response.status === 200) {
-            const data = await response.json();
-            console.log("api data", data);
-            return data;
+            const resData = await response.json();
+            console.log("api data", resData);
+            return resData;
         }
         else {
+            const resData = await response.json();
+            console.log("api data", resData);
             return null;
         }
+
     } catch (error) {
         return null;
     }

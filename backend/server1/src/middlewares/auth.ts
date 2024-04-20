@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { configDotenv } from "dotenv";
-import { errRes } from "@/helpers/error";
+import { errRes } from "@/utils/error";
 import { logger } from "@/logger/logger";
 configDotenv();
 
