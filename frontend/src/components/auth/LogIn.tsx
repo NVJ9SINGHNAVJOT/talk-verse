@@ -1,6 +1,8 @@
 import { logInApi } from "@/services/operations/authApi";
 import { setLoading } from "@/store/slices/authSlice";
+import { setUser, User } from "@/store/slices/userSlice";
 import { useAppSelector } from "@/store/store";
+import { LogInApi } from "@/types/apis/authApiRs";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -32,12 +34,18 @@ const LogIn = (props: SignInProps) => {
 
     const tid = toast.loading('Loading...');
 
-    const response = await logInApi(data);
+    const response: LogInApi = await logInApi(data);
 
     toast.dismiss(tid);
     dispatch(setLoading(false));
 
-    if (response === true) {
+    if (response && response.success === true) {
+      const user: User = {
+        firstName: response.firstName,
+        lastName: response.lastName,
+        imageUrl: response.imageUrl ?? ""
+      };
+      dispatch(setUser(user));
       navigate('/');
     }
     else {

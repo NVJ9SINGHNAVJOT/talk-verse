@@ -3,14 +3,14 @@ import { Navigate, Outlet } from 'react-router-dom';
 
 
 
-const PrivateRoute = () => {
-    const token = useAppSelector((state) => state.auth.token);
+const OpenRoute = () => {
+    const authUser = useAppSelector((state) => state.auth.authUser);
 
-    if(token === null)
-        return <Outlet/>;
+    if (authUser === false)
+        return <Outlet />;
     else
         return <Navigate to="/" />;
 
 };
 
-export default PrivateRoute;
+export default OpenRoute;

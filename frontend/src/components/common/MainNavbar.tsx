@@ -1,9 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import mainLogo from "@/assets/mainLogo.png";
 import SignInButton from "@/lib/buttons/signinbutton/SignInButton";
+import { useAppSelector } from "@/store/store";
+import UserMenu from "@/components/common/UserMenu";
 
 const MainNavbar = () => {
 
+  const user = useAppSelector((state) => state.user.user);
   const navigate = useNavigate();
   const homeHandler = () => {
     navigate("/");
@@ -50,11 +53,16 @@ const MainNavbar = () => {
         </div>
       </div>
 
-      {/* sign in buttons */}
-      <div className="flex justify-evenly items-center gap-5 mr-8">
-        <SignInButton title={"Log In"} />
-        <SignInButton title={"Sign Up"} />
-      </div>
+      {/* sign in buttons or user logo */}
+
+      {user ?
+        <UserMenu />
+        :
+        <div className="flex justify-evenly items-center gap-5 mr-8">
+          <SignInButton title={"Log In"} />
+          <SignInButton title={"Sign Up"} />
+        </div>
+      }
 
     </div>
 

@@ -1,5 +1,5 @@
 
-export type CheckUserApi = {
+export type LogInApi = {
     success: boolean,
     message: string,
     firstName: string,

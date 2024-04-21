@@ -4,16 +4,16 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 export type User = {
     firstName: string,
     lastName: string,
-    image: string | null
+    imageUrl: string | null
 }
 
-interface ProfileState {
+interface UserState {
     user: User | null,
 }
 
 const initialState = {
     user: null,
-} satisfies ProfileState as ProfileState;
+} satisfies UserState as UserState;
 
 const userSlice = createSlice({
     name: "user",

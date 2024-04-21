@@ -73,19 +73,22 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
       return errRes(res, 401, "invalid data");
     }
 
-    const checkUser = await User.find({ email: data.email }).select({ email: true, password: true }).exec();
+    const checkUser = await User.find({ email: data.email }).select({
+      email: true, password: true,
+      firstName: true, lastName: true, imageUrl: true, userToken: true
+    }).exec();
 
-    if (checkUser.length === 0 && checkUser.length > 1) {
+    if (checkUser.length !== 1) {
       return errRes(res, 401, "user in not signed up");
     }
 
     const user = checkUser[0];
 
-    let token: string;
     // check password and generate token
+    let userTalkverseToken: string;
     if (await bcrypt.compare(data.password, user?.password as string)) {
-      token = jwt.sign(
-        { id: user?._id },
+      userTalkverseToken = jwt.sign(
+        { userId: user?._id },
         process.env.JWT_SECRET as string,
         {
           expiresIn: "24h",
@@ -97,21 +100,32 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
     }
 
     // save token in db and set in cookie for response
-    if (token) {
-      const newToken = await Token.create({ userToken: token });
-      const options = {
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 1),
-        httpOnly: true,
-      };
+    if (userTalkverseToken) {
 
+      // delete previous token 
+      if (user?.userToken) {
+        await Token.findByIdAndDelete(user?.userToken).exec();
+      }
+
+      const newToken = await Token.create({ userToken: userTalkverseToken });
+
+      // create token and add in user
       const userToken = await User.findByIdAndUpdate({ _id: user?._id },
         { $set: { userToken: newToken._id } },
         { new: true }).select({ userToken: true }).exec();
 
+      // set token in cookie and select httponly: true
       if (userToken?.userToken) {
-        return res.cookie("user-talkverse-token", token, options).status(200).json({
+        const options = {
+          expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 1),
+          httpOnly: true,
+        };
+        return res.cookie("userTalkverseToken", userTalkverseToken, options).status(200).json({
           success: true,
           message: "user login successfull",
+          firstName: user?.firstName,
+          lastName: user?.lastName,
+          imageUrl: user?.imageUrl
         });
       }
       else {

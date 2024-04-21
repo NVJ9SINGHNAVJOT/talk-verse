@@ -11,29 +11,8 @@ import Group from '@/components/talk/Group';
 import Error from '@/pages/Error';
 import Talk from '@/pages/Talk';
 import Welcome from "@/components/talk/Welcome";
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { setUser, User } from '@/store/slices/userSlice';
-import { checkUserApi } from '@/services/operations/authApi';
-import { CheckUserApi } from '@/types/apis/authApiRs';
-
 
 function App() {
-
-  const dispatch = useDispatch();
-  useEffect(() => {
-    const checkUser = async () => {
-      const response: CheckUserApi | boolean = await checkUserApi();
-      if (response !== false && response as CheckUserApi) {
-  
-        const user:User = {
-          
-        }
-        dispatch(setUser());
-      }
-    };
-    checkUser();
-  }, [dispatch]);
 
   return (
     <div className='w-screen overflow-y-auto overflow-x-hidden'>

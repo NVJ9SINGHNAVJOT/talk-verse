@@ -1,18 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-interface UserState {
+interface AuthState {
     loading: boolean;
     isLogin: boolean;
+    authUser: boolean;
 }
 
 const initialState = {
     loading: false,
     isLogin: false,
-} satisfies UserState as UserState;
+    authUser: false,
+} satisfies AuthState as AuthState;
 
-const userSlice = createSlice({
-    name: "user",
+const authSlice = createSlice({
+    name: "auth",
     initialState,
     reducers: {
         setLoading(state, action: PayloadAction<boolean>) {
@@ -20,9 +22,12 @@ const userSlice = createSlice({
         },
         setIsLogin(state, action: PayloadAction<boolean>) {
             state.isLogin = action.payload;
+        },
+        setAuthUser(state, action: PayloadAction<boolean>) {
+            state.authUser = action.payload;
         }
     },
 });
 
-export const { setLoading, setIsLogin } = userSlice.actions;
-export default userSlice.reducer;
+export const { setLoading, setIsLogin, setAuthUser } = authSlice.actions;
+export default authSlice.reducer;

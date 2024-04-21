@@ -12,7 +12,7 @@ configDotenv();
 
 const app: Express = express();
 
-app.use("/uploads", express.static("uploads"))
+app.use("/uploads", express.static("uploads"));
 
 mongodbdatabaseConnect().catch(() => {
     console.log("mongodb connection failed");
