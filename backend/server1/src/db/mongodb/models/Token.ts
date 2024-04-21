@@ -3,7 +3,7 @@ import mongoose, { InferSchemaType } from 'mongoose';
 // Define the Profile schema
 const tokenSchema = new mongoose.Schema(
     {
-        userToken: {
+        tokenValue: {
             type: String,
             required: true,
             unique: true,

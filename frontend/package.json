@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.0.2",
     "@reduxjs/toolkit": "^2.2.2",
     "axios": "^1.6.8",
     "class-variance-authority": "^0.7.0",

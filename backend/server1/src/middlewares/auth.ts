@@ -5,6 +5,7 @@ import { logger } from "@/logger/logger";
 import { JwtPayload } from "jsonwebtoken";
 import jwt from "jsonwebtoken";
 import User from "@/db/mongodb/models/User";
+import Token from "@/db/mongodb/models/Token";
 
 configDotenv();
 
@@ -47,18 +48,18 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
             return errRes(res, 401, "user no logged in");
         }
 
-        const decoded: CustomPayload = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
-
-        const checkUser = await User.find({ _id: decoded.userId }).select({ email: true }).exec();
-        if (checkUser.length !== 1) {
-            return errRes(res, 400, "authorization failed for user");
+        // check token exist in database or expired or invalid token
+        const checkToken = await Token.find({ tokenValue: token }).exec();
+        if (checkToken.length !== 1) {
+            return errRes(res, 401, "user token is invalid");
         }
 
-        const user = checkUser[0];
+        // decode token
+        const decoded: CustomPayload = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
 
-        const reCheckUser = await User.find({ email: user?.email }).select({ email: true }).exec();
-
-        if (reCheckUser.length !== 1) {
+        // check user again with decode token data (decoded data contain userid)
+        const checkUser = await User.find({ _id: decoded.userId }).select({ email: true }).exec();
+        if (checkUser.length !== 1) {
             return errRes(res, 400, "authorization failed for user");
         }
 

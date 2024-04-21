@@ -107,7 +107,7 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
         await Token.findByIdAndDelete(user?.userToken).exec();
       }
 
-      const newToken = await Token.create({ userToken: userTalkverseToken });
+      const newToken = await Token.create({ tokenValue: userTalkverseToken });
 
       // create token and add in user
       const userToken = await User.findByIdAndUpdate({ _id: user?._id },
