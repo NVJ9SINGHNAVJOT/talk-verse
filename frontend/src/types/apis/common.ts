@@ -1,5 +1,5 @@
 
-export type Common = {
+export type CommonRs = {
     success: boolean,
     message: string
 }

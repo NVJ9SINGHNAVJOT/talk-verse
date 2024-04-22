@@ -13,7 +13,7 @@ import 'react-toastify/dist/ReactToastify.css';
 consoleConfig(process.env.REACT_APP_ENVIRONMENT as string);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <Provider store={store}>
 
       <BrowserRouter>
@@ -26,5 +26,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       </BrowserRouter>
 
     </Provider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );

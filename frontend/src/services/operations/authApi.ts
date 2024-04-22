@@ -1,18 +1,18 @@
-
 import { authEndPoints } from "@/services/apis";
 import { fetchApi } from "@/services/fetchApi";
-import { LogInApi } from "@/types/apis/authApiRs";
-import { Common } from "@/types/apis/common";
+import { LogInApiRs, SocketApiRs } from "@/types/apis/authApiRs";
+import { CommonRs } from "@/types/apis/common";
 
 
 const {
     SIGNUP_API,
     LOGIN_API,
+    SOCKET_API
 } = authEndPoints;
 
 export const signUpApi = async (data: FormData): Promise<boolean> => {
     try {
-        const resData: Common = await fetchApi('POST', SIGNUP_API, data);
+        const resData: CommonRs = await fetchApi('POST', SIGNUP_API, data);
         if (resData && resData.success) {
             return true;
         }
@@ -22,15 +22,27 @@ export const signUpApi = async (data: FormData): Promise<boolean> => {
     }
 };
 
-export const logInApi = async (data: object): Promise<LogInApi> => {
+export const logInApi = async (data: object): Promise<LogInApiRs> => {
     try {
-        const resData: LogInApi = await fetchApi('POST', LOGIN_API, data, { 'Content-Type': 'application/json' });
+        const resData: LogInApiRs = await fetchApi('POST', LOGIN_API, data, { 'Content-Type': 'application/json' });
         if (resData && resData.success) {
             return resData;
         }
-        return {} as LogInApi;
+        return {} as LogInApiRs;
     } catch (error) {
-        return {} as LogInApi;
+        return {} as LogInApiRs;
+    }
+};
+
+export const socketApi = async (): Promise<SocketApiRs> => {
+    try {
+        const resData: SocketApiRs = await fetchApi('GET', SOCKET_API);
+        if (resData && resData.success) {
+            return resData;
+        }
+        return {} as SocketApiRs;
+    } catch (error) {
+        return {} as SocketApiRs;
     }
 };
 

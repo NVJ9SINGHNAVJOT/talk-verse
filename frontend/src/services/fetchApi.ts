@@ -22,6 +22,7 @@ export async function fetchApi
         let requestOptions: RequestInit = {
             method,
             headers: requestHeaders,
+            credentials: "include"
         };
 
         if (headers?.['Content-Type'] === 'application/json') {

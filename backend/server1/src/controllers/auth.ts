@@ -119,6 +119,7 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
         const options = {
           expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 1),
           httpOnly: true,
+          secure: true,
         };
         return res.cookie("userTalkverseToken", userTalkverseToken, options).status(200).json({
           success: true,
@@ -138,5 +139,29 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
 
   } catch (error) {
     return errRes(res, 500, "error while user login");
+  }
+};
+
+// check socket request
+interface CustomRequest extends Request {
+  userId?: string;
+}
+export const socket = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const userId = (req as CustomRequest).userId;
+    const user = await User.findById(userId);
+
+    if (user?.id === userId) {
+      return res.status(200).json({
+        success: true,
+        message: "authorization for socket successfull",
+        userId: userId,
+      });
+    }
+    else {
+      return errRes(res, 401, "authorization for socket failed");
+    }
+  } catch (error) {
+    return errRes(res, 500, "error while checking socket authorization");
   }
 };

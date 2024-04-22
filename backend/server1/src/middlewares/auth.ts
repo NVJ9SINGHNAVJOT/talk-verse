@@ -28,24 +28,24 @@ export const authKey = async (req: Request, res: Response, next: NextFunction) =
     }
 };
 
-// interface for authentication for user
+// user token authorization and checked with database
+// interface for authentication of user
 interface CustomRequest extends Request {
     userId?: string;
 }
 interface CustomPayload extends JwtPayload {
     userId?: string;
 }
-// user token authorization and checked with database
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
     try {
         // Extracting JWT from request cookies or header
         const token =
-            req.cookies.userTalkverseToken ||
+            req.cookies["userTalkverseToken"] ||
             req.header("Authorization")?.replace("Bearer ", "");
 
         // If JWT is missing, return 401 Unauthorized response
         if (!token) {
-            return errRes(res, 401, "user no logged in");
+            return errRes(res, 401, "user not logged in");
         }
 
         // check token exist in database or expired or invalid token
@@ -66,9 +66,6 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
         // user verified and now userid is set in request
         (req as CustomRequest).userId = decoded.userId;
         next();
-
-        return errRes(res, 401, "user authorization failed");
-
     } catch (error) {
         return errRes(res, 500, "user authorization failed");
     }
