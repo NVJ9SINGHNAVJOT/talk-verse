@@ -38,7 +38,7 @@ export const setupSocketIO = (app: Application): HTTPServer => {
         registerUserEvents(socket);
 
         socket.on('disconnect', () => {
-            console.log("a user disconnecte id:", socket.id);
+            console.log("a user disconnected id:", socket.id);
         });
     });
 

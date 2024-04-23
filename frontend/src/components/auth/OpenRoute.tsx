@@ -9,7 +9,7 @@ const OpenRoute = () => {
     if (authUser === false)
         return <Outlet />;
     else
-        return <Navigate to="/" />;
+        return <Navigate to="/error" />;
 
 };
 

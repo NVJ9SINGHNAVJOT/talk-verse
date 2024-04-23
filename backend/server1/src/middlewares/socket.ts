@@ -6,11 +6,11 @@ configDotenv();
 export const checkUserSocket = async (socket: Socket): Promise<boolean> => {
     try {
         const userId = socket.handshake.headers.authorization?.replace("Bearer ", "");
-        const apiKey = socket.handshake.headers.Api_Key;
+        const api_key = socket.handshake.headers.api_key;
 
         const checkUser = await User.findById(userId);
 
-        if (!checkUser && apiKey === process.env.SERVER1_KEY) {
+        if (checkUser && api_key === process.env.SERVER1_KEY) {
             return true;
         }
         else {

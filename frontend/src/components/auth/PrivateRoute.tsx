@@ -12,7 +12,7 @@ const PrivateRoute = (props: PrivateRouteProps) => {
     if (authUser === true)
         return children;
     else
-        return <Navigate to="/" />;
+        return <Navigate to="/error" />;
 
 };
 

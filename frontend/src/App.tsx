@@ -11,15 +11,17 @@ import Group from '@/components/talk/Group';
 import Error from '@/pages/Error';
 import Talk from '@/pages/Talk';
 import Welcome from "@/components/talk/Welcome";
+import SocketProvider from './context/SocketContext';
 
 function App() {
 
   return (
-    <div className='w-screen overflow-y-auto overflow-x-hidden'>
+    <div className='w-screen overflow-y-auto overflow-x-hidden max-w-maxContent'>
+      {/* main nav bar */}
       <MainNavbar />
 
       {/* all pages will be rendered below */}
-      <div className='w-screen h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden'>
+      <div className='w-screen h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden max-w-maxContent'>
 
         <Routes>
 
@@ -32,15 +34,15 @@ function App() {
           </Route>
 
           {/* private routes */}
-          <Route element={<PrivateRoute><Talk /></PrivateRoute>}>
+          <Route element={<PrivateRoute><SocketProvider><Talk /></SocketProvider></PrivateRoute>}>
             <Route path='/talk' element={<Welcome />} />
             <Route path='/talk/chat/:chatId?' element={<Individual />} />
             <Route path='/talk/group/:groupId?' element={<Group />} />
           </Route>
-
           <Route path='/dashboard' element={<PrivateRoute><Dashboard /></PrivateRoute>} />
 
-          {/* error route */}
+          {/* error routes */}
+          <Route path='/error' element={<Error />} />
           <Route path='*' element={<Error />} />
 
         </Routes>
