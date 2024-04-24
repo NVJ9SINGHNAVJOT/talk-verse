@@ -1,12 +1,14 @@
 import { socketApi } from "@/services/operations/authApi";
 import { SocketApiRs } from "@/types/apis/authApiRs";
-import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from "react";
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { io, Socket } from "socket.io-client";
 
 interface SocketContextInterface {
     socket: Socket | null;
     setSocket: Dispatch<SetStateAction<Socket | null>>;
-    setupSocketConnection: () => Promise<Socket>;
+    setupSocketConnection: () => Promise<void>;
     // eslint-disable-next-line no-unused-vars
     disconnectSocket: () => void;
 }
@@ -26,18 +28,20 @@ export const useSocketContext = (): SocketContextInterface => {
     return context;
 };
 
-export let newSocket: Socket;
 
 export default function SocketProvider({ children }: ContextProviderProps) {
+    const navigate = useNavigate();
 
     const [socket, setSocket] = useState<Socket | null>(null);
+    const socketRef = useRef<Socket | null>(null);
 
-    const setupSocketConnection = async (): Promise<Socket> => {
+    const setupSocketConnection = async (): Promise<void> => {
         try {
-            const user: SocketApiRs = await socketApi(); // Define socketApi function
+            const user: SocketApiRs = await socketApi();
 
             if (!user || !user.userId || user.success === false) {
-                throw Error("error while connecting socket");
+                toast.error('Error while connecting');
+                navigate('/error');
             }
 
             const socketInstance = io(process.env.REACT_APP_BASE_URL_SOCKET_IO_SERVER1 as string, {
@@ -49,17 +53,25 @@ export default function SocketProvider({ children }: ContextProviderProps) {
                 },
             });
 
-            socketInstance.connect();
-            newSocket = socketInstance;
-            return socketInstance;
-            
+            socketRef.current = socketInstance.connect();
+
+            socketRef.current.on('connect', () => {
+                setSocket(socketInstance);
+            });
+
+            socketRef.current.on('connect_error', () => {
+                toast.error('Error while connecting');
+                navigate('/error');
+            });
+
         } catch (error) {
-            throw Error("error while connecting socket");
+            toast.error('Error while connecting');
+            navigate('/error');
         }
     };
 
     const disconnectSocket = (): void => {
-        newSocket.disconnect();
+        socketRef.current?.disconnect();
         setSocket(null);
     };
 

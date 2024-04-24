@@ -164,7 +164,7 @@ const welcomeQuotes: Quote[] = [
     },
     {
         "id": 32,
-        "title": "Science is a way of life. It is a perspective. Science is the process that takes us from confusion to understanding in a manner that's precise, predictive, and reliable – a transformation, for those lucky enough to experience it, that is empowering and emotional.",
+        "title": "Science is a way of life. It is a perspective. Science is the process that takes us from confusion to understanding in a manner that's precise, predictive, and reliable - a transformation, for those lucky enough to experience it, that is empowering and emotional.",
         "author": "Brian Greene"
     },
     {
@@ -252,10 +252,7 @@ const welcomeQuotes: Quote[] = [
         "title": "There is no royal road to science, and only those who do not dread the fatiguing climb of its steep paths have a chance of gaining its luminous summits.",
         "author": "Karl Marx"
     }
-
-]
-
-    ;
+];
 
 
 export default welcomeQuotes;

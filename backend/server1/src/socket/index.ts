@@ -17,7 +17,6 @@ export const setupSocketIO = (app: Application): HTTPServer => {
 
     app.set("io", io);
 
-
     io.use(async (socket: Socket, next) => {
         try {
             if (await checkUserSocket(socket) === true) {

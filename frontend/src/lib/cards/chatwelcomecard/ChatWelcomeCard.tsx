@@ -9,7 +9,7 @@ function getRandomNumber(min: number, max: number): number {
 const ChatWelcomeCard = () => {
     const [randomNumber, setRandomNumber] = useState<number>(1);
     useEffect(() => {
-        const newRandomNumber = getRandomNumber(1, 50);
+        const newRandomNumber = getRandomNumber(0, 48);
         setRandomNumber(newRandomNumber);
     }, []);
 
