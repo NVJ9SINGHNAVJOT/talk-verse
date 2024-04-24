@@ -10,7 +10,7 @@ import { configDotenv } from 'dotenv';
 import Token from '@/db/mongodb/models/Token';
 configDotenv();
 
-// create user
+// create user | user signup
 export const signUp = async (req: Request, res: Response): Promise<Response> => {
   try {
     const data: SignUpBody = req.body;
@@ -20,6 +20,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
       !valid.isEmail(data.email) ||
       !valid.isName(data.firstName) ||
       !valid.isName(data.lastName) ||
+      !valid.isName(data.userName) ||
       !valid.isPassword(data.confirmPassword, data.confirmPassword)
     ) {
       return errRes(res, 400, "invalid data");
@@ -29,6 +30,12 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
 
     if (response.length !== 0) {
       return errRes(res, 400, "user already present");
+    }
+
+    const checkUserName = await User.find({ userName: data.userName }).select({ userName: true }).exec();
+
+    if (checkUserName.length !== 0) {
+      return errRes(res, 400, "user name already in use");
     }
 
     let secUrl;
@@ -43,7 +50,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
     const newUser = await User.create({
-      firstName: data.firstName, lastName: data.lastName, password: hashedPassword,
+      firstName: data.firstName, lastName: data.lastName, userName: data.userName, password: hashedPassword,
       email: data.email, imageUrl: secUrl ? secUrl : ""
     });
 

@@ -20,12 +20,12 @@ type SignInProps = {
 }
 
 const LogIn = (props: SignInProps) => {
+  const { toggleSignIn } = props;
 
   const isLogin = useAppSelector((state) => state.auth.loading);
   const dispatch = useDispatch();
 
   const { register, handleSubmit, reset } = useForm<LogInData>();
-  const { toggleSignIn } = props;
   const navigate = useNavigate();
 
   const onSubmitForm = async (data: LogInData) => {
@@ -46,8 +46,11 @@ const LogIn = (props: SignInProps) => {
         imageUrl: response.imageUrl ?? ""
       };
       dispatch(setUser(user));
-      dispatch(setAuthUser(true));
       navigate('/');
+
+      setTimeout(() => {
+        dispatch(setAuthUser(true));
+      }, 1000); // Delay for 1 second
     }
     else {
       toast.error("Error while logging, try again");

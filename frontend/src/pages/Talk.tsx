@@ -32,32 +32,34 @@ const Talk = () => {
   return (
     <div className="w-full flex bg-grayblack h-[calc(100vh-4rem)]">
 
-      {pageLoading ?
+      {
+        pageLoading ?
+          <div className="w-full flex bg-grayblack h-[calc(100vh-4rem)]">
+            {/* left bar chat list section*/}
+            <section className="w-3/12 h-full flex justify-center items-center">
+              <Skeleton className=" w-10/12 h-[90%] bg-[linear-gradient(315deg,_rgba(255,255,255,1)_0%,_rgba(36,106,120,1)_0%,_rgba(8,27,52,1)_100%,_rgba(37,181,16,1)_100%)]" />
+            </section>
 
-        <div className="w-full flex bg-grayblack h-[calc(100vh-4rem)]">
-          {/* left bar chat list section*/}
-          <section className="w-3/12 h-full">
-            <ChatBar />
-          </section>
+            {/* right bar chat main section */}
+            <section className="w-9/12 h-full flex gap-y-8 flex-col justify-evenly items-center">
+              <Skeleton className=" w-10/12 h-[70%] bg-[linear-gradient(315deg,_rgba(255,255,255,1)_0%,_rgba(36,106,120,1)_0%,_rgba(8,27,52,1)_100%,_rgba(37,181,16,1)_100%)]" />
+              <Skeleton className=" w-10/12 h-[10%] bg-[linear-gradient(315deg,_rgba(255,255,255,1)_0%,_rgba(36,106,120,1)_0%,_rgba(8,27,52,1)_100%,_rgba(37,181,16,1)_100%)]" />
+            </section>
+          </div>
 
-          {/* right bar chat main section */}
-          <section className="w-9/12 h-full">
-            <Outlet />
-          </section>
-        </div>
-        :
-        <div className="w-full flex bg-grayblack h-[calc(100vh-4rem)]">
-          {/* left bar chat list section*/}
-          <section className="w-3/12 h-full flex justify-center items-center">
-            <Skeleton className=" w-10/12 h-[90%] bg-black" />
-          </section>
+          :
 
-          {/* right bar chat main section */}
-          <section className="w-9/12 h-full flex gap-y-8 flex-col justify-evenly items-center">
-            <Skeleton className=" w-10/12 h-[70%] bg-black" />
-            <Skeleton className=" w-10/12 h-[10%] bg-black" />
-          </section>
-        </div>
+          <div className="w-full flex bg-grayblack h-[calc(100vh-4rem)]">
+            {/* left bar chat list section*/}
+            <section className="w-3/12 h-full">
+              <ChatBar />
+            </section>
+
+            {/* right bar chat main section */}
+            <section className="w-9/12 h-full">
+              <Outlet />
+            </section>
+          </div>
       }
 
     </div>

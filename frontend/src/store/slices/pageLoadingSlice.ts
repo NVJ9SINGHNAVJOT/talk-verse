@@ -7,7 +7,7 @@ interface PageLoadingState {
 }
 
 const initialState = {
-    pageLoading: false,
+    pageLoading: true,
 } satisfies PageLoadingState as PageLoadingState;
 
 const pageLoadingSlice = createSlice({

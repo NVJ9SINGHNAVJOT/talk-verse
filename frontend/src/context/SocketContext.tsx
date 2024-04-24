@@ -1,6 +1,8 @@
 import { socketApi } from "@/services/operations/authApi";
+import { setPageLoading } from "@/store/slices/pageLoadingSlice";
 import { SocketApiRs } from "@/types/apis/authApiRs";
 import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { io, Socket } from "socket.io-client";
@@ -31,6 +33,7 @@ export const useSocketContext = (): SocketContextInterface => {
 
 export default function SocketProvider({ children }: ContextProviderProps) {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const [socket, setSocket] = useState<Socket | null>(null);
     const socketRef = useRef<Socket | null>(null);
@@ -57,6 +60,7 @@ export default function SocketProvider({ children }: ContextProviderProps) {
 
             socketRef.current.on('connect', () => {
                 setSocket(socketInstance);
+                dispatch(setPageLoading(false));
             });
 
             socketRef.current.on('connect_error', () => {

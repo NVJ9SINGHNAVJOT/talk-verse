@@ -7,20 +7,25 @@ import UserMenu from "@/components/common/UserMenu";
 const MainNavbar = () => {
 
   const user = useAppSelector((state) => state.user.user);
+  const authUser = useAppSelector((state) => state.auth.authUser);
   const navigate = useNavigate();
   const homeHandler = () => {
     navigate("/");
   };
 
   const talkHandler = () => {
-    navigate("/talk");
+    if (authUser) {
+      navigate("/talk");
+    }
+    else {
+      navigate('/login');
+    }
   };
 
 
   return (
-
     <div className="bg-[radial-gradient(circle_at_24.1%_68.8%,_rgb(50,_50,_50)_0%,_rgb(0,_0,_0)_99.4%)]
-      w-screen h-[4rem] flex justify-between items-center"
+      w-screen h-[4rem] flex justify-between items-center max-w-maxContent"
     >
 
       {/* main logo and name */}
@@ -32,7 +37,7 @@ const MainNavbar = () => {
       </div>
 
       {/* navbar menu */}
-      <div className="flex justify-evenly items-center gap-5">
+      <div className="hidden md:flex justify-evenly items-center md:gap-2 lg:gap-5">
         <div className=" text-white menuGlow cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]" onClick={homeHandler}>
           Home
         </div>
@@ -58,15 +63,13 @@ const MainNavbar = () => {
       {user ?
         <UserMenu />
         :
-        <div className="flex justify-evenly items-center gap-5 mr-8">
+        <div className="flex justify-evenly items-center md:gap-2 lg:gap-5 mr-8">
           <SignInButton title={"Log In"} />
           <SignInButton title={"Sign Up"} />
         </div>
       }
 
     </div>
-
-
   );
 };
 
