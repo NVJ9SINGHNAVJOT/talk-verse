@@ -16,12 +16,12 @@ import SocketProvider from './context/SocketContext';
 function App() {
 
   return (
-    <div className='w-screen overflow-y-auto overflow-x-hidden max-w-maxContent'>
+    <div className='w-screen h-screen overflow-y-auto overflow-x-hidden max-w-maxContent min-w-minContent'>
       {/* main nav bar */}
       <MainNavbar />
 
       {/* all pages will be rendered below */}
-      <div className='w-screen h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden max-w-maxContent'>
+      <div className='w-screen h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden max-w-maxContent min-w-minContent'>
 
         <Routes>
 

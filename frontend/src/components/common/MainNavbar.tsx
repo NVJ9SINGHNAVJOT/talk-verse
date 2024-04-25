@@ -3,12 +3,25 @@ import mainLogo from "@/assets/mainLogo.png";
 import SignInButton from "@/lib/buttons/signinbutton/SignInButton";
 import { useAppSelector } from "@/store/store";
 import UserMenu from "@/components/common/UserMenu";
+import { GiHamburgerMenu } from "react-icons/gi";
+import { useRef, useState } from "react";
+import useOnClickOutside from "@/hooks/useOnClickOutside";
 
 const MainNavbar = () => {
+
+  const [menu, setMenu] = useState<boolean>(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuRefExclude = useRef<HTMLDivElement>(null);
+  useOnClickOutside(menuRef, () => setMenu(false), menuRefExclude);
 
   const user = useAppSelector((state) => state.user.user);
   const authUser = useAppSelector((state) => state.auth.authUser);
   const navigate = useNavigate();
+
+  const toogleMenu = () => {
+    setMenu((prev) => !prev);
+  };
+
   const homeHandler = () => {
     navigate("/");
   };
@@ -22,10 +35,9 @@ const MainNavbar = () => {
     }
   };
 
-
   return (
     <div className="bg-[radial-gradient(circle_at_24.1%_68.8%,_rgb(50,_50,_50)_0%,_rgb(0,_0,_0)_99.4%)]
-      w-screen h-[4rem] flex justify-between items-center max-w-maxContent"
+      h-[4rem] flex justify-between items-center w-full"
     >
 
       {/* main logo and name */}
@@ -59,13 +71,49 @@ const MainNavbar = () => {
       </div>
 
       {/* sign in buttons or user logo */}
-
       {user ?
-        <UserMenu />
+        <div className="sm:flex justify-evenly items-center md:gap-2 sm:gap-x-2 mr-8">
+          <UserMenu />
+          <div ref={menuRefExclude} onClick={toogleMenu} className="md:hidden">
+            <GiHamburgerMenu className="cursor-pointer w-6 h-8 ml-2 aspect-auto text-white rounded-sm" />
+          </div>
+        </div>
         :
         <div className="flex justify-evenly items-center md:gap-2 lg:gap-5 mr-8">
           <SignInButton title={"Log In"} />
           <SignInButton title={"Sign Up"} />
+
+          <div ref={menuRefExclude} onClick={toogleMenu} className=" md:hidden">
+            <GiHamburgerMenu className="cursor-pointer w-6 h-8 ml-2 aspect-auto text-white rounded-sm" />
+          </div>
+        </div>
+      }
+
+      {/* menu toggle for small screen */}
+      {menu &&
+        <div ref={menuRef} className="flex flex-col z-[1000] absolute top-[4rem] right-0 backdrop-blur-md
+          justify-start h-[calc(100vh-4rem)] items-center w-4/12 gap-y-4"
+        >
+          <div className=" text-white menuGlow cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed] 
+            mt-4 " onClick={homeHandler}
+          >
+            Home
+          </div>
+          <div className=" text-white menuGlow cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">
+            About
+          </div>
+          <div className=" text-white menuGlow cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">
+            Contact
+          </div>
+          <div className=" text-white menuGlow cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">
+            Dashboard
+          </div>
+          <div className=" text-white menuGlow cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]" onClick={talkHandler}>
+            Talk
+          </div>
+          <div className=" text-white menuGlow cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">
+            Blog
+          </div>
         </div>
       }
 

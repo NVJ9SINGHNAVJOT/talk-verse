@@ -24,10 +24,10 @@ const UserMenu = () => {
         second = user.lastName.charAt(0);
     }
     return (
-        <div ref={userMenuRef} className=" relative flex justify-evenly items-center mr-8">
+        <div ref={userMenuRef} className=" relative flex justify-evenly items-center">
 
             {user.imageUrl ?
-                <img className="w-10 h-10 rounded aspect-auto" src={user?.imageUrl as string} alt="Loading..."></img>
+                <img onClick={toggleMenu} className="w-10 h-10 rounded aspect-auto" src={user?.imageUrl as string} alt="Loading..."></img>
                 :
                 <div onClick={toggleMenu} className=" peer bg-richblue-500 text-white w-10 h-10 rounded flex 
                     cursor-pointer justify-center items-center gap-1 hover:bg-transparent"
