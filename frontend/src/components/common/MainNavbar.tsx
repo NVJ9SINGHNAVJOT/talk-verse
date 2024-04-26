@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import mainLogo from "@/assets/mainLogo.png";
+import mainLogo from "@/assets/images/mainLogo.png";
 import SignInButton from "@/lib/buttons/signinbutton/SignInButton";
 import { useAppSelector } from "@/store/store";
 import UserMenu from "@/components/common/UserMenu";
@@ -24,6 +24,10 @@ const MainNavbar = () => {
 
   const homeHandler = () => {
     navigate("/");
+  };
+
+  const aboutHandler = () => {
+    navigate('/about');
   };
 
   const talkHandler = () => {
@@ -53,7 +57,7 @@ const MainNavbar = () => {
         <div className=" text-white menuGlow cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]" onClick={homeHandler}>
           Home
         </div>
-        <div className=" text-white menuGlow cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">
+        <div className=" text-white menuGlow cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]" onClick={aboutHandler}>
           About
         </div>
         <div className=" text-white menuGlow cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">
