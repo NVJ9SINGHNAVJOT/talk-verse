@@ -2,7 +2,6 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "@/index.css";
 import { BrowserRouter } from "react-router-dom";
-import { HelmetProvider } from "react-helmet-async";
 import store from "@/redux/store.ts";
 import { Provider } from "react-redux";
 import consoleConfig from "./config/console.ts";
@@ -15,10 +14,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   // <React.StrictMode>
   <Provider store={store}>
     <BrowserRouter>
-      <HelmetProvider>
-        <App />
-        <ToastContainer />
-      </HelmetProvider>
+      <App />
+      <ToastContainer />
     </BrowserRouter>
   </Provider>
   // </React.StrictMode>

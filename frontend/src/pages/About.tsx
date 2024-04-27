@@ -4,6 +4,7 @@ import MainFooter from "@/components/common/MainFooter";
 import client1 from "@/assets/images/client1.jpg";
 import client2 from "@/assets/images/client2.jpg";
 import ReadMoreButton from "@/lib/buttons/readmorebutton/ReadMoreButton";
+import MainSliderTes from "@/components/common/MainSliderTes";
 
 const About = () => {
   return (
@@ -16,7 +17,6 @@ const About = () => {
             ABOUT US
           </div>
           <div className="h-[0.1rem] w-full bg-black"></div>
-
           <div className="flex justify-between w-full mt-10 sm:gap-x-12 lm:gap-x-[5rem]">
             <div className=" font-roboto-condensed text-red-500 font-semibold text-nowrap text-xl">
               OUR VALUES
@@ -34,7 +34,6 @@ const About = () => {
               </div>
             </div>
           </div>
-
           <div
             className=" w-full rounded-[10px] p-10 bg-[lightgrey] flex justify-around mt-16
             [box-shadow:rgba(50,_50,_93,_0.25)_0px_30px_50px_-12px_inset,_rgba(0,_0,_0,_0.3)_0px_18px_26px_-18px_inset]
@@ -53,14 +52,12 @@ const About = () => {
             ></img>
           </div>
         </section>
-
         {/* section 2 */}
         <section className="w-full flex flex-col mt-28">
           <div className="flex justify-between w-full sm:gap-x-12 lm:gap-x-[5rem]">
             <div className=" font-roboto-condensed  text-red-500 font-semibold text-nowrap text-xl">
               OUR MISSION
             </div>
-
             <div className=" flex flex-col">
               <div className="uppercase font-roboto-condensed font-bold ">
                 Whether you're a fan seeking to engage with your favorite
@@ -119,7 +116,6 @@ const About = () => {
           </div>
         </section>
       </div>
-
       {/* section 3 */}
       <div className="sm:text-7xl lm:text-9xl font-be-veitnam-pro text-center sm:-mb-2  lm:-mb-4 text-somke">
         Our Clients
@@ -148,7 +144,6 @@ const About = () => {
               <ReadMoreButton />
             </div>
           </div>
-
           {/* client 2 */}
           <div
             style={{ backgroundImage: `url(${client2})` }}
@@ -174,7 +169,13 @@ const About = () => {
           </div>
         </div>
       </section>
-
+      {/* testimonials section */}
+      <section
+        className=" w-full bg-[rgb(9,29,47)] 
+        bg-[linear-gradient(24deg,_rgba(9,29,47,1)_36%,_rgba(38,66,91,1)_49%,_rgba(15,41,62,1)_55%)]"
+      >
+        <MainSliderTes />
+      </section>
       <MainFooter />
     </div>
   );

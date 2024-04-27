@@ -152,9 +152,9 @@ const SignUp = (props: SignInProps) => {
             )}
 
             <label
-              className=" text-white peer-focus:font-medium absolute text-sm text-gray-500  
+              className=" text-white peer-focus:font-medium absolute text-sm   
           duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 
-          rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 
+          rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto 
           peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
             >
               First Name
@@ -180,9 +180,9 @@ const SignUp = (props: SignInProps) => {
             )}
 
             <label
-              className=" text-white peer-focus:font-medium absolute text-sm text-gray-500  
+              className=" text-white peer-focus:font-medium absolute text-sm   
           duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 
-          rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 
+          rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto 
           peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
             >
               Last Name
@@ -210,9 +210,9 @@ const SignUp = (props: SignInProps) => {
           )}
 
           <label
-            className=" text-white peer-focus:font-medium absolute text-sm text-gray-500  
+            className=" text-white peer-focus:font-medium absolute text-sm   
           duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 
-          rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 
+          rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto 
           peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
           >
             User Name
@@ -238,9 +238,9 @@ const SignUp = (props: SignInProps) => {
           )}
 
           <label
-            className=" text-white peer-focus:font-medium absolute text-sm text-gray-500  
+            className=" text-white peer-focus:font-medium absolute text-sm   
           duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 
-          rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 
+          rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto 
           peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
           >
             Email Address
@@ -270,9 +270,9 @@ const SignUp = (props: SignInProps) => {
           )}
 
           <label
-            className=" text-white peer-focus:font-medium absolute text-sm text-gray-500  
+            className=" text-white peer-focus:font-medium absolute text-sm   
           duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 
-          rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 
+          rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto 
           peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
           >
             Password
@@ -302,9 +302,9 @@ const SignUp = (props: SignInProps) => {
           )}
 
           <label
-            className=" text-white peer-focus:font-medium absolute text-sm text-gray-500  
+            className=" text-white peer-focus:font-medium absolute text-sm   
           duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 
-          rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 
+          rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto 
           peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
           >
             Confirm Password
