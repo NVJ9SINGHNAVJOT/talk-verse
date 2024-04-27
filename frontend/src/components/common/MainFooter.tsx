@@ -9,22 +9,28 @@ import { CiLocationOn } from "react-icons/ci";
 
 const MainFooter = () => {
   return (
-
-    <footer className="w-full text-white py-16 px-8 
+    <footer
+      className="w-full text-white py-16 px-8 
       bg-[linear-gradient(315deg,_rgba(21,_0,_36,_1)_66%,_rgba(147,_147,_147,_1)_100%,_rgba(0,_212,_255,_1)_100%)]"
     >
-
       {/* main content */}
       <div className="w-full grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 xl:grid-cols-6 gap-x-4 gap-y-8 text-white">
-
         {/* logo and main description */}
         <div className="flex flex-col col-span-2 ">
           <div className="flex gap-5">
-            <img src={mainLogo} alt="Loading..." className=" w-16 aspect-square"></img>
-            <span className=" text-2xl font-medium cursor-pointer">TalkVerse</span>
+            <img
+              src={mainLogo}
+              alt="Loading..."
+              className=" w-16 aspect-square"
+            ></img>
+            <span className=" text-2xl font-medium cursor-pointer">
+              TalkVerse
+            </span>
           </div>
-          <p className="mt-4 max-w-[300px]">Every blog post is a journey. Start with a single step,
-            a single word, and let the path unfold before you. Embrace the adventure of expression.
+          <p className="mt-4 max-w-[300px]">
+            Every blog post is a journey. Start with a single step, a single
+            word, and let the path unfold before you. Embrace the adventure of
+            expression.
           </p>
           <div className="flex mt-6 gap-6">
             <FaFacebook className=" text-xl cursor-pointer" />
@@ -36,7 +42,9 @@ const MainFooter = () => {
 
         {/* headings and subheadings */}
         <div className="flex flex-col">
-          <div className="text-lg font-medium mb-6 cursor-pointer">About Us</div>
+          <div className="text-lg font-medium mb-6 cursor-pointer">
+            About Us
+          </div>
           <p className="text-sm my-1 cursor-pointer">Company History</p>
           <p className="text-sm my-1 cursor-pointer">Meet The Team</p>
           <p className="text-sm my-1 cursor-pointer">Employee Handbook</p>
@@ -44,7 +52,9 @@ const MainFooter = () => {
         </div>
 
         <div className="flex flex-col">
-          <div className="text-lg font-medium mb-6 cursor-pointer">Resources</div>
+          <div className="text-lg font-medium mb-6 cursor-pointer">
+            Resources
+          </div>
           <p className="text-sm my-1 cursor-pointer">Development</p>
           <p className="text-sm my-1 cursor-pointer">Design</p>
           <p className="text-sm my-1 cursor-pointer">Adverstisment</p>
@@ -61,20 +71,34 @@ const MainFooter = () => {
         </div>
 
         <div className="flex flex-col sm:col-span-2 lg:col-span-1">
-          <div className="text-lg font-medium mb-6  cursor-pointer">Contact Us</div>
-          <p className="text-sm my-1 flex"><CiMail className=" text-xl cursor-pointer" /><span className="pl-2">talkverse@gmail.com</span></p>
-          <p className="text-sm my-1 flex"><MdOutlineLocalPhone className=" text-xl cursor-pointer" /><span className="pl-2">0123456789</span></p>
-          <p className="text-sm my-1 flex"><CiLocationOn className=" text-xl cursor-pointer" /><span className="pl-2">777 Lane, India, Earth</span></p>
+          <div className="text-lg font-medium mb-6  cursor-pointer">
+            Contact Us
+          </div>
+          <p className="text-sm my-1 flex">
+            <CiMail className=" text-xl cursor-pointer" />
+            <span className="pl-2">talkverse@gmail.com</span>
+          </p>
+          <p className="text-sm my-1 flex">
+            <MdOutlineLocalPhone className=" text-xl cursor-pointer" />
+            <span className="pl-2">0123456789</span>
+          </p>
+          <p className="text-sm my-1 flex">
+            <CiLocationOn className=" text-xl cursor-pointer" />
+            <span className="pl-2">777 Lane, India, Earth</span>
+          </p>
         </div>
       </div>
 
       {/* bottom description part */}
       <hr className="h-px my-8 bg-whitesmoke border-0"></hr>
       <div className="flex justify-between">
-        <p className=" text-xs font-medium">Copyright © 2024 TalkVerse · All rights reserved</p>
-        <p className=" text-xs font-medium">Terms & Conditions · Privacy Policy </p>
+        <p className=" text-xs font-medium">
+          Copyright © 2024 TalkVerse · All rights reserved
+        </p>
+        <p className=" text-xs font-medium">
+          Terms & Conditions · Privacy Policy{" "}
+        </p>
       </div>
-
     </footer>
   );
 };

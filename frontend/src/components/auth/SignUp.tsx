@@ -1,6 +1,6 @@
 import { signUpApi } from "@/services/operations/authApi";
-import { setIsLogin, setLoading } from "@/store/slices/authSlice";
-import { useAppSelector } from "@/store/store";
+import { setIsLogin, setLoading } from "@/redux/slices/authSlice";
+import { useAppSelector } from "@/redux/store";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { RxAvatar } from "react-icons/rx";
@@ -21,7 +21,6 @@ type SignInProps = {
 };
 
 const SignUp = (props: SignInProps) => {
-
   const isLogin = useAppSelector((state) => state.auth.loading);
   const dispatch = useDispatch();
 
@@ -49,10 +48,14 @@ const SignUp = (props: SignInProps) => {
     }
   };
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<SignUpData>();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<SignUpData>();
 
   const onSubmitForm = async (data: SignUpData): Promise<void> => {
-
     dispatch(setLoading(true));
     const tid = toast.loading("Loading...");
 
@@ -79,8 +82,7 @@ const SignUp = (props: SignInProps) => {
     if (response === true) {
       toast.success("Sign Up completed");
       dispatch(setIsLogin(true));
-    }
-    else {
+    } else {
       toast.error("Error while Signig Up, Try again");
     }
   };
@@ -138,9 +140,16 @@ const SignUp = (props: SignInProps) => {
             bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=""
               required
-              {...register("firstName", { required: true, pattern: /^[a-zA-Z]{2,}$/ })}
+              {...register("firstName", {
+                required: true,
+                pattern: /^[a-zA-Z]{2,}$/,
+              })}
             />
-            {errors.firstName && <span className=" absolute text-red-600 text-[0.7rem]">Letters, min 2</span>}
+            {errors.firstName && (
+              <span className=" absolute text-red-600 text-[0.7rem]">
+                Letters, min 2
+              </span>
+            )}
 
             <label
               className=" text-white peer-focus:font-medium absolute text-sm text-gray-500  
@@ -159,9 +168,16 @@ const SignUp = (props: SignInProps) => {
             bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=""
               required
-              {...register("lastName", { required: true, pattern: /^[a-zA-Z]{2,}$/ })}
+              {...register("lastName", {
+                required: true,
+                pattern: /^[a-zA-Z]{2,}$/,
+              })}
             />
-            {errors.lastName && <span className=" absolute text-red-600 text-[0.7rem]">Letters, min 2</span>}
+            {errors.lastName && (
+              <span className=" absolute text-red-600 text-[0.7rem]">
+                Letters, min 2
+              </span>
+            )}
 
             <label
               className=" text-white peer-focus:font-medium absolute text-sm text-gray-500  
@@ -181,9 +197,17 @@ const SignUp = (props: SignInProps) => {
             bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             placeholder=""
             required
-            {...register("userName", { required: true, pattern: /^[a-zA-Z][a-zA-Z0-9_-]{2,}$/ })}
+            {...register("userName", {
+              required: true,
+              pattern: /^[a-zA-Z][a-zA-Z0-9_-]{2,}$/,
+            })}
           />
-          {errors.userName && <span className=" absolute text-red-600 text-[0.7rem]"> Characters, min 2</span>}
+          {errors.userName && (
+            <span className=" absolute text-red-600 text-[0.7rem]">
+              {" "}
+              Characters, min 2
+            </span>
+          )}
 
           <label
             className=" text-white peer-focus:font-medium absolute text-sm text-gray-500  
@@ -202,9 +226,16 @@ const SignUp = (props: SignInProps) => {
             bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             placeholder=""
             required
-            {...register("email", { required: true, pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/ })}
+            {...register("email", {
+              required: true,
+              pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+            })}
           />
-          {errors.email && <span className=" absolute text-red-600 text-[0.7rem]">Invalid format</span>}
+          {errors.email && (
+            <span className=" absolute text-red-600 text-[0.7rem]">
+              Invalid format
+            </span>
+          )}
 
           <label
             className=" text-white peer-focus:font-medium absolute text-sm text-gray-500  
@@ -224,13 +255,19 @@ const SignUp = (props: SignInProps) => {
             placeholder=""
             required
             {...register("password", {
-              required: true, pattern: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,20}$/,
-              minLength: 8, maxLength: 20
+              required: true,
+              pattern:
+                /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,20}$/,
+              minLength: 8,
+              maxLength: 20,
             })}
           />
-          {errors.password && <span className=" absolute text-red-600 text-[0.7rem]">
-            lowercase, uppercase, digit, special character and Length: min - 8, max - 20
-          </span>}
+          {errors.password && (
+            <span className=" absolute text-red-600 text-[0.7rem]">
+              lowercase, uppercase, digit, special character and Length: min -
+              8, max - 20
+            </span>
+          )}
 
           <label
             className=" text-white peer-focus:font-medium absolute text-sm text-gray-500  
@@ -250,13 +287,19 @@ const SignUp = (props: SignInProps) => {
             placeholder=""
             required
             {...register("confirmPassword", {
-              required: true, pattern: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,20}$/,
-              minLength: 8, maxLength: 20
+              required: true,
+              pattern:
+                /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,20}$/,
+              minLength: 8,
+              maxLength: 20,
             })}
           />
-          {errors.confirmPassword && <span className=" absolute text-red-600 text-[0.7rem]">
-            lowercase, uppercase, digit, special character and Length: min - 8, max - 20
-          </span>}
+          {errors.confirmPassword && (
+            <span className=" absolute text-red-600 text-[0.7rem]">
+              lowercase, uppercase, digit, special character and Length: min -
+              8, max - 20
+            </span>
+          )}
 
           <label
             className=" text-white peer-focus:font-medium absolute text-sm text-gray-500  
