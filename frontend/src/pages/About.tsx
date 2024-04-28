@@ -126,7 +126,7 @@ const About = () => {
           <div
             style={{ backgroundImage: `url(${client1})` }}
             className=" self-start group relative sm:h-[20rem] lm:h-[25rem] lg:h-[28rem] xl:h-[30rem] w-9/12 flex flex-col justify-center 
-            items-center [background-size:100%_100%] bg-no-repeat shadow-[0px_0px_40px_#1f1f1f]
+            items-center bg-cover bg-no-repeat shadow-[0px_0px_40px_#1f1f1f]
             before:absolute before:top-[0] before:left-[0] before:right-[0] before:bottom-[0] 
             before:bg-[linear-gradient(45deg,_#343d68,_#343d68be,_#343d687c)] before:scale-x-0 before:origin-left
             before:transition-all before:duration-[0.4s] hover:before:scale-100"
@@ -171,11 +171,13 @@ const About = () => {
       </section>
       {/* testimonials section */}
       <section
-        className=" w-full bg-[rgb(9,29,47)] 
-        bg-[linear-gradient(24deg,_rgba(9,29,47,1)_36%,_rgba(38,66,91,1)_49%,_rgba(15,41,62,1)_55%)]"
+        className=" w-full h-[50rem] bg-[rgb(9,29,47)] 
+        bg-[linear-gradient(24deg,_rgba(9,29,47,1)_36%,_rgba(38,66,91,1)_49%,_rgba(15,41,62,1)_55%)]
+        flex flex-col justify-center items-center"
       >
         <MainSliderTes />
       </section>
+      {/* footer */}
       <MainFooter />
     </div>
   );

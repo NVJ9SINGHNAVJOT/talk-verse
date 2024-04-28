@@ -36,6 +36,17 @@ const Home = () => {
         <TrackingCard />
       </section>
 
+      <section className=" ct-rainbow w-full h-[45rem] flex flex-col items-center justify-center">
+        <div className=" w-[110%] h-16 absolute blur-sm bg-grayblack z-50 -top-6 m-0 p-0 "></div>
+        <div
+          className="ct-rainbowHeading font-be-veitnam-pro text-8xl font-extrabold
+          mix-blend-difference text-white brightness-[900]
+          filter"
+        >
+          TalkVerse
+        </div>
+      </section>
+      {/* footer */}
       <MainFooter />
     </div>
   );

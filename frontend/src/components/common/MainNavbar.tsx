@@ -99,7 +99,7 @@ const MainNavbar = () => {
           </div>
         </div>
       ) : (
-        <div className="flex justify-evenly items-center md:gap-2 lg:gap-5 mr-8">
+        <div className="flex justify-evenly items-center sm:gap-3 lg:gap-5 mr-8">
           <SignInButton title={"Log In"} />
           <SignInButton title={"Sign Up"} />
 
@@ -113,7 +113,7 @@ const MainNavbar = () => {
       {menu && (
         <div
           ref={menuRef}
-          className="flex flex-col z-[1000] absolute top-[4rem] right-0 backdrop-blur-md
+          className=" sm:flex flex-col z-[1000] md:hidden absolute top-[4rem] right-0 backdrop-blur-md
           justify-start h-[calc(100vh-4rem)] items-center w-4/12 gap-y-4"
         >
           <div
@@ -123,7 +123,10 @@ const MainNavbar = () => {
           >
             Home
           </div>
-          <div className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">
+          <div
+            className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]"
+            onClick={aboutHandler}
+          >
             About
           </div>
           <div className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">

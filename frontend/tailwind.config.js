@@ -1,14 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: ["class"],
-  content: [
-    "./index.html",
-    "./src/index.css",
-    "./src/**/*.{js,ts,jsx,tsx}",
-    // flowbite-ui
-    "node_modules/flowbite-react/lib/esm/**/*.js",
-    // flowbite-ui
-  ],
+  content: ["./index.html", "./src/index.css", "./src/**/*.{js,ts,jsx,tsx}"],
   corePlugins: {},
   theme: {
     // shadcn-ui
@@ -173,5 +166,5 @@ export default {
       // shadcn-ui
     },
   },
-  plugins: [import("flowbite/plugin"), import("tailwindcss-animate")],
+  plugins: [import("tailwindcss-animate")],
 };
