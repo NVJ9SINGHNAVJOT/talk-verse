@@ -11,7 +11,7 @@ import Group from "@/components/talk/Group";
 import Error from "@/pages/Error";
 import Talk from "@/pages/Talk";
 import Welcome from "@/components/talk/Welcome";
-import SocketProvider from "./context/SocketContext";
+import SocketProvider from "@/context/SocketContext";
 
 function App() {
   return (
