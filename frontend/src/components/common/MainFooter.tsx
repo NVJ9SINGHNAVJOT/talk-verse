@@ -6,8 +6,13 @@ import { FaGithub } from "react-icons/fa";
 import { CiMail } from "react-icons/ci";
 import { MdOutlineLocalPhone } from "react-icons/md";
 import { CiLocationOn } from "react-icons/ci";
+import { useNavigate } from "react-router-dom";
 
 const MainFooter = () => {
+  const navigate = useNavigate();
+  const homeHandler = () => {
+    navigate("/");
+  };
   return (
     <footer
       className="w-full text-white py-16 px-8 
@@ -23,7 +28,10 @@ const MainFooter = () => {
               alt="Loading..."
               className=" w-16 aspect-square"
             ></img>
-            <span className=" text-2xl font-medium cursor-pointer">
+            <span
+              onClick={homeHandler}
+              className=" text-2xl font-medium cursor-pointer"
+            >
               TalkVerse
             </span>
           </div>

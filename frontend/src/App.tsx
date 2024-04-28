@@ -12,15 +12,22 @@ import Error from "@/pages/Error";
 import Talk from "@/pages/Talk";
 import Welcome from "@/components/talk/Welcome";
 import SocketProvider from "@/context/SocketContext";
+import { useRef } from "react";
+import useScrollOnTop from "@/hooks/useScrollOnTop";
 
 function App() {
+  const pageRenderDivRef = useRef<HTMLDivElement>(null);
+  useScrollOnTop(pageRenderDivRef);
   return (
     <div className="w-screen h-screen overflow-y-auto overflow-x-hidden max-w-maxContent min-w-minContent">
       {/* main nav bar */}
       <MainNavbar />
 
       {/* all pages will be rendered below */}
-      <div className="w-screen h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden max-w-maxContent min-w-minContent">
+      <div
+        ref={pageRenderDivRef}
+        className="w-screen h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden max-w-maxContent min-w-minContent"
+      >
         <Routes>
           <Route path="/about" element={<About />} />
           <Route path="/" element={<Home />} />
