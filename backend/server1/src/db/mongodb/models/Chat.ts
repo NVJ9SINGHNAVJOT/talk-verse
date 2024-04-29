@@ -1,24 +1,28 @@
-import mongoose, { InferSchemaType } from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
+import { IUser } from './User';
 
-// Define the Profile schema
-const chatSchema = new mongoose.Schema(
-    {
-        chatUsers: {
-            type: [
-                {
-                    type: mongoose.Schema.Types.ObjectId,
-                    ref: "User",
-                },
-            ],
-            max: [2, 'chatUsers array exceeds the limit of 2'],
-        },
+// Define an interface representing a Chat document
+export interface IChat extends Document {
+    chatUsers: mongoose.Types.ObjectId[] & IUser;
+}
+
+// Define the Chat schema using the interface
+const chatSchema = new Schema<IChat>({
+    chatUsers: {
+        type: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'User',
+            },
+        ],
+        validate: [
+            (array: mongoose.Types.ObjectId[]) => array.length <= 2,
+            'chatUsers array exceeds the limit of 2'
+        ],
     },
-    { timestamps: true }
-);
+}, { timestamps: true });
 
-// Use InferSchemaType to derive the TypeScript type
-type ChatType = InferSchemaType<typeof chatSchema>;
+// Create the Chat model
+const Chat: Model<IChat> = mongoose.model<IChat>('Chat', chatSchema);
 
-// Export the Profile model
-const Chat = mongoose.model<ChatType>('Chat', chatSchema);
 export default Chat;

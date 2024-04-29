@@ -5,7 +5,7 @@ import uploadToCloudinary from '@/utils/cloudinaryUpload';
 import { errRes } from '@/utils/error';
 import valid from '@/validators/validator';
 import bcrypt from "bcrypt";
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { configDotenv } from 'dotenv';
 import Token from '@/db/mongodb/models/Token';
 import Notification from '@/db/mongodb/models/Notification';

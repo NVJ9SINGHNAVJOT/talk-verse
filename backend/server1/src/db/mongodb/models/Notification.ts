@@ -1,38 +1,47 @@
-import mongoose, { InferSchemaType } from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
+import { IUser } from './User';
 
-// Define the Profile schema
-const notificationSchema = new mongoose.Schema(
-    {
-        userId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-        },
-        freindRequests: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "User",
-            },
-        ],
-        unseenMessages: [
-            {
-                userId: {
-                    type: mongoose.Schema.Types.ObjectId,
-                    ref: "User",
-                },
-                unseenCount: {
-                    type: Number,
-                    default: 0,
-                },
-            }
-        ],
+// Define interfaces for the nested objects in the Notification schema
+interface IUnseenMessage {
+    userId: mongoose.Types.ObjectId & IUser;
+    unseenCount: number;
+}
+
+// Define an interface representing a Notification document
+export interface INotification extends Document {
+    userId: mongoose.Types.ObjectId;
+    friendRequests: mongoose.Types.ObjectId[] & IUser[];
+    unseenMessages: IUnseenMessage[];
+}
+
+// Define the Notification schema using the interface
+const notificationSchema = new Schema<INotification>({
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
     },
-    { timestamps: true }
-);
+    friendRequests: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+        },
+    ],
+    unseenMessages: [
+        {
+            userId: {
+                type: Schema.Types.ObjectId,
+                ref: 'User',
+            },
+            unseenCount: {
+                type: Number,
+                default: 0,
+            },
+        },
+    ],
+}, { timestamps: true });
 
-// Use InferSchemaType to derive the TypeScript type
-type NotificationType = InferSchemaType<typeof notificationSchema>;
+// Create the Notification model
+const Notification: Model<INotification> = mongoose.model<INotification>('Notification', notificationSchema);
 
-// Export the Profile model
-const Notification = mongoose.model<NotificationType>('Notification', notificationSchema);
 export default Notification;

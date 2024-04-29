@@ -35,7 +35,7 @@ const MainNavbar = () => {
         setCheckUser(false);
         setTimeout(() => {
           dispatch(setAuthUser(true));
-        }, 500); // Delay for 0.5 second
+        }, 1000); // Delay for 0.5 second
       } else {
         setCheckUser(false);
       }

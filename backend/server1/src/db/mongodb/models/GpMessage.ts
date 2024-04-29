@@ -1,30 +1,33 @@
-import mongoose, { InferSchemaType } from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
+import { IUser } from './User';
 
-// Define the Profile schema
-const gpMessageSchema = new mongoose.Schema(
-    {
-        from: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-        },
-        to: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Group",
-            required: true,
-        },
-        text: {
-            type: String,
-            required: true,
-            trim: true,
-        },
+// Define an interface representing a Group Message document
+export interface IGpMessage extends Document {
+    from: mongoose.Types.ObjectId & IUser;
+    to: mongoose.Types.ObjectId & IUser;
+    text: string;
+}
+
+// Define the Group Message schema using the interface
+const gpMessageSchema = new Schema<IGpMessage>({
+    from: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
     },
-    { timestamps: true }
-);
+    to: {
+        type: Schema.Types.ObjectId,
+        ref: 'Group',
+        required: true,
+    },
+    text: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+}, { timestamps: true });
 
-// Use InferSchemaType to derive the TypeScript type
-type GpMessageType = InferSchemaType<typeof gpMessageSchema>;
+// Create the Group Message model
+const GpMessage: Model<IGpMessage> = mongoose.model<IGpMessage>('GpMessage', gpMessageSchema);
 
-// Export the Profile model
-const GpMessage = mongoose.model<GpMessageType>('GpMessage', gpMessageSchema);
 export default GpMessage;
