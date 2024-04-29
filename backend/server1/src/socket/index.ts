@@ -36,20 +36,20 @@ export const setupSocketIO = (app: Application): HTTPServer => {
     });
 
     io.on('connection', (socket: Socket) => {
-        console.log("a user connected id: ", socket.id, ": ", (socket as CustomSocket).userId);
-
         const userId = (socket as CustomSocket).userId;
         if (!userId) {
             socket.disconnect();
         }
-
+        console.log("a user connected id: ", socket.id, ": ", userId);
         userSocketIDs.set(userId, socket.id);
 
         registerMessageEvents(socket);
         registerUserEvents(socket);
 
         socket.on('disconnect', () => {
-            console.log("a user disconnected id:", socket.id);
+            console.log("a user disconnected id: ", socket.id, ": ", userId);
+            // eslint-disable-next-line drizzle/enforce-delete-with-where
+            userSocketIDs.delete(userId);
         });
     });
 

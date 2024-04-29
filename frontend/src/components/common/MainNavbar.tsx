@@ -4,10 +4,45 @@ import SignInButton from "@/lib/buttons/signinbutton/SignInButton";
 import { useAppSelector } from "@/redux/store";
 import UserMenu from "@/components/common/UserMenu";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
+import { checkUserApi } from "@/services/operations/authApi";
+import { CheckUserApi } from "@/types/apis/authApiRs";
+import { setUser, User } from "@/redux/slices/userSlice";
+import { useDispatch } from "react-redux";
+import { setAuthUser } from "@/redux/slices/authSlice";
 
 const MainNavbar = () => {
+  const [checkUser, setCheckUser] = useState<boolean>(true);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const checkDefaultLogin = async () => {
+      const response: CheckUserApi = await checkUserApi();
+
+      if (
+        response &&
+        response.success === true &&
+        response.firstName &&
+        response.lastName
+      ) {
+        const user: User = {
+          firstName: response.firstName,
+          lastName: response.lastName,
+          imageUrl: response.imageUrl ? response.imageUrl : "",
+        };
+        dispatch(setUser(user));
+        setCheckUser(false);
+        setTimeout(() => {
+          dispatch(setAuthUser(true));
+        }, 500); // Delay for 0.5 second
+      } else {
+        setCheckUser(false);
+      }
+    };
+    checkDefaultLogin();
+  }, []);
+
   const [menu, setMenu] = useState<boolean>(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuRefExclude = useRef<HTMLDivElement>(null);
@@ -91,7 +126,9 @@ const MainNavbar = () => {
       </div>
 
       {/* sign in buttons or user logo */}
-      {user ? (
+      {checkUser ? (
+        <div className="w-20"></div>
+      ) : user ? (
         <div className="sm:flex justify-evenly items-center md:gap-2 sm:gap-x-2 mr-8">
           <UserMenu />
           <div ref={menuRefExclude} onClick={toogleMenu} className="md:hidden">

@@ -2,11 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { configDotenv } from "dotenv";
 import { errRes } from "@/utils/error";
 import { logger } from "@/logger/logger";
-import { JwtPayload } from "jsonwebtoken";
-import jwt from "jsonwebtoken";
-import User from "@/db/mongodb/models/User";
-import Token from "@/db/mongodb/models/Token";
-import { CustomPayload, CustomRequest } from "@/types/custom";
+import { CustomRequest } from "@/types/custom";
+import { jwtVerify } from "@/utils/token";
 
 configDotenv();
 
@@ -42,27 +39,14 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
             return errRes(res, 401, "user not logged in");
         }
 
-        // check token exist in database or expired or invalid token
-        const checkToken = await Token.find({ tokenValue: token }).exec();
-        if (checkToken.length !== 1) {
-            return errRes(res, 401, "user token is invalid");
-        }
+        const userId = await jwtVerify(token);
 
-        // decode token
-        const decoded: CustomPayload = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
-
-        if (!decoded.userId) {
-            return errRes(res, 401, "userid is invalid");
-        }
-
-        // check user again with decode token data (decoded data contain userid)
-        const checkUser = await User.find({ _id: decoded.userId }).exec();
-        if (checkUser.length !== 1) {
-            return errRes(res, 400, "authorization failed for user");
+        if (!userId) {
+            return errRes(res, 400, "user authorization failed");
         }
 
         // user verified and now userid is set in request
-        (req as CustomRequest).userId = decoded.userId;
+        (req as CustomRequest).userId = userId;
         next();
     } catch (error) {
         return errRes(res, 500, "user authorization failed");

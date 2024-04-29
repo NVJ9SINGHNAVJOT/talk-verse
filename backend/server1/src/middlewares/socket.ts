@@ -1,10 +1,7 @@
-import User from "@/db/mongodb/models/User";
 import { Socket } from "socket.io";
 import { configDotenv } from "dotenv";
-import { JwtPayload } from "jsonwebtoken";
-import Token from "@/db/mongodb/models/Token";
-import jwt from "jsonwebtoken";
-import { CustomPayload, CustomSocket } from "@/types/custom";
+import { CustomSocket } from "@/types/custom";
+import { jwtVerify } from "@/utils/token";
 configDotenv();
 
 // check authentication for socket
@@ -38,28 +35,14 @@ export const checkUserSocket = async (socket: Socket): Promise<boolean> => {
             return false;
         }
 
-        // check token exist in database or expired or invalid token
-        const checkToken = await Token.find({ tokenValue: token }).exec();
-        if (checkToken.length !== 1) {
+        const userId = await jwtVerify(token);
+
+        if (!userId) {
             return false;
         }
-
-        // decode token
-        const decoded: CustomPayload = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
-
-        if (!decoded.userId) {
-            return false;
-        }
-
-        // check user again with decode token data (decoded data contain userid)
-        const checkUser = await User.find({ _id: decoded.userId }).exec();
-        if (checkUser.length !== 1) {
-            return false;
-        }
-
 
         // user verified and now userid is set in request
-        (socket as CustomSocket).userId = decoded.userId;
+        (socket as CustomSocket).userId = userId;
 
         return true;
 

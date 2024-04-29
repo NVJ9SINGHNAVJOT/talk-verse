@@ -5,10 +5,11 @@ import uploadToCloudinary from '@/utils/cloudinaryUpload';
 import { errRes } from '@/utils/error';
 import valid from '@/validators/validator';
 import bcrypt from "bcrypt";
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { configDotenv } from 'dotenv';
 import Token from '@/db/mongodb/models/Token';
 import Notification from '@/db/mongodb/models/Notification';
+import { jwtVerify } from '@/utils/token';
 configDotenv();
 
 // create user | user signup
@@ -155,5 +156,48 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
 
   } catch (error) {
     return errRes(res, 500, "error while user login");
+  }
+};
+
+// check user
+export const checkUser = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    // Extracting JWT from request cookies or header
+    const token =
+      req.cookies[process.env.TOKEN_NAME as string] ||
+      req.header("Authorization")?.replace("Bearer ", "");
+
+    // If JWT is missing, return 401 Unauthorized response
+    if (!token) {
+      return res.status(200).json({
+        success: true,
+        message: "token not present"
+      });
+    }
+
+    const userId = await jwtVerify(token);
+
+    if (!userId) {
+      return errRes(res, 401, "user authorization failed");
+    }
+
+    const user = await User.findById({ _id: userId }).select({
+      firstName: true, lastName: true, imageUrl: true
+    }).exec();
+
+    if (!user) {
+      return errRes(res, 401, "user authorization failed");
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "user check successfull",
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      imageUrl: user?.imageUrl
+    });
+  }
+  catch (error) {
+    return errRes(res, 500, "error while user check");
   }
 };

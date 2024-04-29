@@ -25,13 +25,13 @@ export async function fetchApi
             credentials: "include"
         };
 
-        if (headers?.['Content-Type'] === 'application/json') {
+        if (data && headers?.['Content-Type'] === 'application/json') {
             requestOptions = {
                 ...requestOptions,
                 body: JSON.stringify(data),
             };
         }
-        else {
+        else if (data) {
             requestOptions = {
                 ...requestOptions,
                 body: data as FormData,
