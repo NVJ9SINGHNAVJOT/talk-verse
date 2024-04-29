@@ -52,7 +52,7 @@ const UserMenu = () => {
         className={`${
           menuOpen ? "block" : "hidden"
         } gap-1 absolute top-16 -left-[4.4rem] flex flex-col justify-start 
-                        z-50 text-white w-28 bg-black py-2 rounded-sm`}
+          z-[500] text-white w-28 bg-black py-2 rounded-sm`}
       >
         <div className=" cursor-pointer bg-black hover:bg-grayblack py-1 px-2">
           Profile

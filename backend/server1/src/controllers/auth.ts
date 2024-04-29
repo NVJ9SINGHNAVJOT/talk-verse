@@ -8,6 +8,7 @@ import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
 import { configDotenv } from 'dotenv';
 import Token from '@/db/mongodb/models/Token';
+import Notification from '@/db/mongodb/models/Notification';
 configDotenv();
 
 // create user | user signup
@@ -20,7 +21,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
       !valid.isEmail(data.email) ||
       !valid.isName(data.firstName) ||
       !valid.isName(data.lastName) ||
-      !valid.isName(data.userName) ||
+      !valid.isUserName(data.userName) ||
       !valid.isPassword(data.confirmPassword, data.confirmPassword)
     ) {
       return errRes(res, 400, "invalid data");
@@ -53,6 +54,14 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
       firstName: data.firstName, lastName: data.lastName, userName: data.userName, password: hashedPassword,
       email: data.email, imageUrl: secUrl ? secUrl : ""
     });
+
+    // create notification model for user
+    const createNotification = await Notification.create({ userId: newUser?._id });
+
+    if (!createNotification) {
+      await User.deleteOne({ _id: newUser._id }).exec();
+      return errRes(res, 500, "error while creating notification");
+    }
 
     if (newUser) {
       return res.status(200).json({
@@ -92,9 +101,9 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
     const user = checkUser[0];
 
     // check password and generate token
-    let userTalkverseToken: string;
+    let newUserToken: string;
     if (await bcrypt.compare(data.password, user?.password as string)) {
-      userTalkverseToken = jwt.sign(
+      newUserToken = jwt.sign(
         { userId: user?._id },
         process.env.JWT_SECRET as string,
         {
@@ -107,14 +116,14 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
     }
 
     // save token in db and set in cookie for response
-    if (userTalkverseToken) {
+    if (newUserToken) {
 
       // delete previous token 
       if (user?.userToken) {
         await Token.findByIdAndDelete(user?.userToken).exec();
       }
 
-      const newToken = await Token.create({ tokenValue: userTalkverseToken });
+      const newToken = await Token.create({ tokenValue: newUserToken });
 
       // create token and add in user
       const userToken = await User.findByIdAndUpdate({ _id: user?._id },
@@ -128,7 +137,7 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
           httpOnly: true,
           secure: true,
         };
-        return res.cookie("userTalkverseToken", userTalkverseToken, options).status(200).json({
+        return res.cookie(process.env.TOKEN_NAME as string, newUserToken, options).status(200).json({
           success: true,
           message: "user login successfull",
           firstName: user?.firstName,
@@ -146,29 +155,5 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
 
   } catch (error) {
     return errRes(res, 500, "error while user login");
-  }
-};
-
-// check socket request
-interface CustomRequest extends Request {
-  userId?: string;
-}
-export const socket = async (req: Request, res: Response): Promise<Response> => {
-  try {
-    const userId = (req as CustomRequest).userId;
-    const user = await User.findById(userId);
-
-    if (user?.id === userId) {
-      return res.status(200).json({
-        success: true,
-        message: "authorization for socket successfull",
-        userId: userId,
-      });
-    }
-    else {
-      return errRes(res, 401, "authorization for socket failed");
-    }
-  } catch (error) {
-    return errRes(res, 500, "error while checking socket authorization");
   }
 };

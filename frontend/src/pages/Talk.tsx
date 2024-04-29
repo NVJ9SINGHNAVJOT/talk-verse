@@ -5,17 +5,21 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useAppSelector } from "@/redux/store";
 import { Skeleton } from "@/lib/shadcn-ui/components/ui/skeleton";
+import { setPageLoading } from "@/redux/slices/pageLoadingSlice";
+import { useDispatch } from "react-redux";
 
 const Talk = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const pageLoading = useAppSelector((state) => state.pageLoading.pageLoading);
 
   const { setupSocketConnection, disconnectSocket } = useSocketContext();
 
   useEffect(() => {
-    const getSocket = async () => {
+    const getSocket = () => {
       try {
-        await setupSocketConnection();
+        setupSocketConnection();
       } catch (error) {
         toast.error("Error while connecting");
         navigate("/error");
@@ -25,6 +29,7 @@ const Talk = () => {
 
     return () => {
       disconnectSocket();
+      dispatch(setPageLoading(true));
     };
   }, []);
 

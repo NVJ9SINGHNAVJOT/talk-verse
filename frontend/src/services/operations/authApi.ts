@@ -34,15 +34,4 @@ export const logInApi = async (data: object): Promise<LogInApiRs> => {
     }
 };
 
-export const socketApi = async (): Promise<SocketApiRs> => {
-    try {
-        const resData: SocketApiRs = await fetchApi('GET', SOCKET_API);
-        if (resData && resData.success) {
-            return resData;
-        }
-        return {} as SocketApiRs;
-    } catch (error) {
-        return {} as SocketApiRs;
-    }
-};
 

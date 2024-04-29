@@ -4,6 +4,11 @@ import { Application } from 'express';
 import { registerMessageEvents } from '@/socket/events/messageEvents';
 import { registerUserEvents } from '@/socket/events/userEvents';
 import { checkUserSocket } from '@/middlewares/socket';
+import { CustomSocket } from '@/types/custom';
+
+const userSocketIDs = new Map();
+const onlineChats = new Set();
+const onlineGroups = new Set();
 
 export const setupSocketIO = (app: Application): HTTPServer => {
     const httpServer: HTTPServer = createServer(app);
@@ -30,8 +35,15 @@ export const setupSocketIO = (app: Application): HTTPServer => {
         }
     });
 
-    io.on('connection', (socket) => {
-        console.log('a user connected id:', socket.id);
+    io.on('connection', (socket: Socket) => {
+        console.log("a user connected id: ", socket.id, ": ", (socket as CustomSocket).userId);
+
+        const userId = (socket as CustomSocket).userId;
+        if (!userId) {
+            socket.disconnect();
+        }
+
+        userSocketIDs.set(userId, socket.id);
 
         registerMessageEvents(socket);
         registerUserEvents(socket);

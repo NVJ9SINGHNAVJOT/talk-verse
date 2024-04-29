@@ -6,6 +6,7 @@ import { JwtPayload } from "jsonwebtoken";
 import jwt from "jsonwebtoken";
 import User from "@/db/mongodb/models/User";
 import Token from "@/db/mongodb/models/Token";
+import { CustomPayload, CustomRequest } from "@/types/custom";
 
 configDotenv();
 
@@ -29,18 +30,11 @@ export const authKey = async (req: Request, res: Response, next: NextFunction) =
 };
 
 // user token authorization and checked with database
-// interface for authentication of user
-interface CustomRequest extends Request {
-    userId?: string;
-}
-interface CustomPayload extends JwtPayload {
-    userId?: string;
-}
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
     try {
         // Extracting JWT from request cookies or header
         const token =
-            req.cookies["userTalkverseToken"] ||
+            req.cookies[process.env.TOKEN_NAME as string] ||
             req.header("Authorization")?.replace("Bearer ", "");
 
         // If JWT is missing, return 401 Unauthorized response
@@ -57,8 +51,12 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
         // decode token
         const decoded: CustomPayload = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
 
+        if (!decoded.userId) {
+            return errRes(res, 401, "userid is invalid");
+        }
+
         // check user again with decode token data (decoded data contain userid)
-        const checkUser = await User.find({ _id: decoded.userId }).select({ email: true }).exec();
+        const checkUser = await User.find({ _id: decoded.userId }).exec();
         if (checkUser.length !== 1) {
             return errRes(res, 400, "authorization failed for user");
         }

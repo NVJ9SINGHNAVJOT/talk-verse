@@ -3,6 +3,11 @@ import mongoose, { InferSchemaType } from 'mongoose';
 // Define the Profile schema
 const messageSchema = new mongoose.Schema(
     {
+        chatId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Chat",
+            required: true,
+        },
         from: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",

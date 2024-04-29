@@ -1,6 +1,4 @@
-import { socketApi } from "@/services/operations/authApi";
 import { setPageLoading } from "@/redux/slices/pageLoadingSlice";
-import { SocketApiRs } from "@/types/apis/authApiRs";
 import {
   createContext,
   Dispatch,
@@ -18,8 +16,7 @@ import { io, Socket } from "socket.io-client";
 interface SocketContextInterface {
   socket: Socket | null;
   setSocket: Dispatch<SetStateAction<Socket | null>>;
-  setupSocketConnection: () => Promise<void>;
-  // eslint-disable-next-line no-unused-vars
+  setupSocketConnection: () => void;
   disconnectSocket: () => void;
 }
 
@@ -45,23 +42,15 @@ export default function SocketProvider({ children }: ContextProviderProps) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const socketRef = useRef<Socket | null>(null);
 
-  const setupSocketConnection = async (): Promise<void> => {
+  const setupSocketConnection = () => {
     try {
-      const user: SocketApiRs = await socketApi();
-
-      if (!user || !user.userId || user.success === false) {
-        toast.error("Error while connecting");
-        navigate("/error");
-      }
-
       const socketInstance = io(
         process.env.REACT_APP_BASE_URL_SOCKET_IO_SERVER1 as string,
         {
           withCredentials: true,
           autoConnect: false,
           extraHeaders: {
-            Authorization: user.userId,
-            Api_Key: process.env.SERVER1_KEY as string,
+            Authorization: process.env.SERVER1_KEY as string,
           },
         }
       );
@@ -74,6 +63,7 @@ export default function SocketProvider({ children }: ContextProviderProps) {
       });
 
       socketRef.current.on("connect_error", () => {
+        setSocket(null);
         toast.error("Error while connecting");
         navigate("/error");
       });
