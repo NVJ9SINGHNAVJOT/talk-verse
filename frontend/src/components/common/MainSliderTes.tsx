@@ -7,6 +7,9 @@ import { RxAvatar } from "react-icons/rx";
 
 type TesData = {
   review: string;
+  firstName: string;
+  lastName: string;
+  imageUrl?: string;
 };
 
 const MainSliderTes = () => {
@@ -14,42 +17,26 @@ const MainSliderTes = () => {
     {
       review:
         "A Digital Tapestry of Voices. Where connections bloom, effortlessly. Genuine interactions nurture lasting relationships.",
+      firstName: "Navjot",
+      lastName: "Singh",
     },
     {
       review:
         "Authentic Bonds Flourish. Diverse minds unite. From tech enthusiasts to poets, sparks of creativity ignite.",
+      firstName: "Navjot",
+      lastName: "Singh",
     },
     {
       review:
         "Intuitive Navigation. Seamless interface. Focus on meaningful conversations within Talkverse.",
+      firstName: "Navjot",
+      lastName: "Singh",
     },
     {
       review:
         "Amplifying Voices. Insights resonate. Empowering users to share and be heard.",
-    },
-    {
-      review:
-        "A Sanctuary for Positivity. Encouragement flows freely, uplifting spirits. A safe haven in the digital realm.",
-    },
-    {
-      review:
-        "Where Creativity Blossoms. Artists, writers, and dreamers unite. Talkverse fuels inspiration and expression.",
-    },
-    {
-      review:
-        "Daily Debates and Insights. Thought-provoking discussions ignite. Minds collide, shaping new perspectives.",
-    },
-    {
-      review:
-        "Privacy with No Compromises. Top-notch features safeguard data. Trust Talkverse for secure connections.",
-    },
-    {
-      review:
-        "A Sense of Belonging. Talkverse becomes your digital home. Heartfelt connections thrive here.",
-    },
-    {
-      review:
-        "Empowering Conversations. Where words matter, where voices amplify. Join Talkverse and be part of the narrative.",
+      firstName: "Navjot",
+      lastName: "Singh",
     },
   ];
 
@@ -79,10 +66,21 @@ const MainSliderTes = () => {
         <SwiperSlide key={index}>
           <div className="w-full h-full flex flex-col justify-evenly items-center p-2">
             {/* only edit content in this div */}
-            <div className=" text-white">{value.review}</div>
+            <div className=" text-white sm:text-xs md:text-[1rem] ">
+              {value.review}
+            </div>
             <div className=" self-start flex items-center text-white gap-4">
-              <RxAvatar className=" w-16 h-16 " />
-              <div>Navjot Singh</div>
+              {value.imageUrl ? (
+                <img
+                  className="sm:w-10 sm:h-10 lm:w-16 lm:h-16 aspect-auto rounded-full"
+                  alt="Loading..."
+                />
+              ) : (
+                <RxAvatar className="sm:w-10 sm:h-10 lm:w-16 lm:h-16" />
+              )}
+              <div>
+                <span>{value.firstName}</span> <span>{value.lastName}</span>
+              </div>
             </div>
           </div>
         </SwiperSlide>

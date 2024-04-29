@@ -5,8 +5,15 @@ import client1 from "@/assets/images/client1.jpg";
 import client2 from "@/assets/images/client2.jpg";
 import ReadMoreButton from "@/lib/buttons/readmorebutton/ReadMoreButton";
 import MainSliderTes from "@/components/common/MainSliderTes";
+import useCountOnView from "@/hooks/useCountOnView";
+import { useState, useRef } from "react";
 
 const About = () => {
+  const [userCount, setUserCount] = useState<number>(0);
+  const countRef = useRef<HTMLDivElement>(null);
+
+  // Use the custom hook
+  useCountOnView(countRef, setUserCount);
   return (
     <div className=" w-full">
       <div className=" w-10/12 mx-auto mb-20">
@@ -172,9 +179,28 @@ const About = () => {
       {/* testimonials section */}
       <section
         className=" w-full h-[50rem] bg-[rgb(9,29,47)] 
-        bg-[linear-gradient(24deg,_rgba(9,29,47,1)_36%,_rgba(38,66,91,1)_49%,_rgba(15,41,62,1)_55%)]
-        flex flex-col justify-center items-center"
+        bg-[linear-gradient(207deg,_rgba(7,18,25,1)_35%,_rgba(16,54,91,1)_59%,_rgba(7,21,34,1)_80%)]
+        flex flex-col justify-center gap-y-16 items-center"
       >
+        <div className=" flex flex-col items-center text-white [&>*:not(:last-child)]:font-bold font-be-veitnam-pro text-3xl">
+          <div>Don't take our word for it.</div>
+          <div className=" flex gap-x-2 mt-4 justify-end items-baseline">
+            <div>Over</div>
+            <div
+              className="w-[6rem] text-center text-5xl [text-shadow:0_0_5px_#59deed]"
+              ref={countRef}
+            >
+              {userCount}+
+            </div>
+            <div>Million people trust us.</div>
+          </div>
+          <div
+            className=" py-2 px-4 mt-8 rounded-2xl w-fit text-xs border-[1px]
+            border-snow-500 bg-[linear-gradient(0deg,_rgba(7,18,25,1)_99%,_rgba(19,70,119,1)_100%)] text-white"
+          >
+            Testimonials
+          </div>
+        </div>
         <MainSliderTes />
       </section>
       {/* footer */}
