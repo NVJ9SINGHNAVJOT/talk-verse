@@ -7,7 +7,8 @@ import { cloudinaryConnect } from '@/config/cloudinary';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { configDotenv } from 'dotenv';
-import { authKey } from '@/middlewares/auth';
+import apiKey from "@/middlewares/apiKey";
+
 configDotenv();
 
 const app: Express = express();
@@ -27,10 +28,12 @@ app.use(cors({
     methods: ["PUT", "PATCH", "POST", "GET", "DELETE"]
 }));
 
+// server only accessible with key
+app.use(apiKey);
 
 cloudinaryConnect();
 
-app.use('/server1/api/v1/auth', authKey, authRoutes);
+app.use('/server1/api/v1/auth', authRoutes);
 
 app.get('/', (_req: Request, res: Response) => {
     res.json({
