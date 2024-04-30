@@ -11,6 +11,7 @@ import { CheckUserApi } from "@/types/apis/authApiRs";
 import { setUser, User } from "@/redux/slices/userSlice";
 import { useDispatch } from "react-redux";
 import { setAuthUser } from "@/redux/slices/authSlice";
+import SiteLoadingModal from "./SiteLoadingModal";
 
 const MainNavbar = () => {
   const [checkUser, setCheckUser] = useState<boolean>(true);
@@ -74,7 +75,7 @@ const MainNavbar = () => {
 
   return (
     <div
-      className="bg-[radial-gradient(circle_at_24.1%_68.8%,_rgb(50,_50,_50)_0%,_rgb(0,_0,_0)_99.4%)]
+      className="relative bg-[radial-gradient(circle_at_24.1%_68.8%,_rgb(50,_50,_50)_0%,_rgb(0,_0,_0)_99.4%)]
       h-[4rem] flex justify-between items-center w-full"
     >
       {/* main logo and name */}
@@ -126,17 +127,23 @@ const MainNavbar = () => {
       </div>
 
       {/* sign in buttons or user logo */}
-      {checkUser ? (
-        <div className="w-20"></div>
-      ) : user ? (
-        <div className="sm:flex justify-evenly items-center md:gap-2 sm:gap-x-2 mr-8">
+      {user ? (
+        <div
+          className={`${
+            checkUser ? "opacity-0" : "opacity-100"
+          } sm:flex justify-evenly items-center md:gap-2 sm:gap-x-2 mr-8 `}
+        >
           <UserMenu />
           <div ref={menuRefExclude} onClick={toogleMenu} className="md:hidden">
             <GiHamburgerMenu className="cursor-pointer w-6 h-8 ml-2 aspect-auto text-white rounded-sm" />
           </div>
         </div>
       ) : (
-        <div className="flex justify-evenly items-center sm:gap-3 lg:gap-5 mr-8">
+        <div
+          className={`${
+            checkUser ? "opacity-0" : "opacity-100"
+          } flex justify-evenly items-center sm:gap-3 lg:gap-5 mr-8`}
+        >
           <SignInButton title={"Log In"} />
           <SignInButton title={"Sign Up"} />
 
@@ -183,6 +190,8 @@ const MainNavbar = () => {
           </div>
         </div>
       )}
+
+      {checkUser && <SiteLoadingModal />}
     </div>
   );
 };
