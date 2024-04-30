@@ -14,23 +14,68 @@ export interface IUser extends Document {
     contactNumber?: number;
     imageUrl?: string;
     userToken?: mongoose.Types.ObjectId & IToken;
-    friends: mongoose.Types.ObjectId[];
+    friends: mongoose.Types.ObjectId[] & IUser[];
 }
 
 // Define the User schema
 const userSchema = new Schema<IUser>({
-    firstName: { type: String, required: true, trim: true },
-    lastName: { type: String, required: true, trim: true },
-    userName: { type: String, required: true, trim: true, unique: true },
-    email: { type: String, required: true, trim: true, unique: true },
-    password: { type: String, required: true, trim: true },
-    gender: { type: String, trim: true },
-    dateOfBirth: { type: String, trim: true },
-    about: { type: String, trim: true },
-    contactNumber: { type: Number, trim: true },
-    imageUrl: { type: String, trim: true },
-    userToken: { type: Schema.Types.ObjectId, ref: 'Token' },
-    friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    firstName: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    lastName: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    userName: {
+        type: String,
+        required: true,
+        trim: true,
+        unique: true
+    },
+    email: {
+        type: String,
+        required: true,
+        trim: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    gender: {
+        type: String,
+        trim: true
+    },
+    dateOfBirth: {
+        type: String,
+        trim: true
+    },
+    about: {
+        type: String,
+        trim: true
+    },
+    contactNumber: {
+        type: Number,
+        trim: true
+    },
+    imageUrl: {
+        type: String,
+        trim: true
+    },
+    userToken: {
+        type: Schema.Types.ObjectId,
+        ref: 'Token'
+    },
+    friends: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        }
+    ],
 }, { timestamps: true });
 
 // Create the User model

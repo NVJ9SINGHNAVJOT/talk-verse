@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 import { IUser } from './User';
 
 // Define interfaces for the nested objects in the Notification schema
-interface IUnseenMessage {
+interface UnseenMessage {
     userId: mongoose.Types.ObjectId & IUser;
     unseenCount: number;
 }
@@ -11,7 +11,7 @@ interface IUnseenMessage {
 export interface INotification extends Document {
     userId: mongoose.Types.ObjectId;
     friendRequests: mongoose.Types.ObjectId[] & IUser[];
-    unseenMessages: IUnseenMessage[];
+    unseenMessages: UnseenMessage[];
 }
 
 // Define the Notification schema using the interface
