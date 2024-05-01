@@ -3,8 +3,9 @@ export async function fetchApi
     (
         method: "GET" | "POST" | "PATCH" | "PUT" | "DELETE" | "HEAD",
         url: string,
-        data?: object | FormData,
-        headers?: { [key: string]: string }
+        data?: object | FormData | null,
+        headers?: { [key: string]: string } | null,
+        params?: { [key: string]: string }
     )
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     : Promise<any> {
@@ -19,23 +20,30 @@ export async function fetchApi
         // Backend servers can be accessed with apikey only
         requestHeaders.append("Api_Key", process.env.SERVER1_KEY as string);
 
+        // parameters added to url
+        if (params) {
+            const searchParams = new URLSearchParams(params);
+            url += `?${searchParams.toString()}`;
+        }
+
         let requestOptions: RequestInit = {
             method,
             headers: requestHeaders,
-            credentials: "include"
+            credentials: "include",
         };
 
-        if (data && headers?.['Content-Type'] === 'application/json') {
-            requestOptions = {
-                ...requestOptions,
-                body: JSON.stringify(data),
-            };
-        }
-        else if (data) {
-            requestOptions = {
-                ...requestOptions,
-                body: data as FormData,
-            };
+        if (data) {
+            if (headers?.["Content-Type"] === "application/json") {
+                requestOptions = {
+                    ...requestOptions,
+                    body: JSON.stringify(data),
+                };
+            } else {
+                requestOptions = {
+                    ...requestOptions,
+                    body: data as FormData,
+                };
+            }
         }
 
         const response = await fetch(url, requestOptions);

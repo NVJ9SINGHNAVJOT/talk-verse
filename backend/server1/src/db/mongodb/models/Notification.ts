@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
-import { IUser } from './User';
+import { IUser } from '@/db/mongodb/models/User';
 
 // Define interfaces for the nested objects in the Notification schema
 interface UnseenMessage {

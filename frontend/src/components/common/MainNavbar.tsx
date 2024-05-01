@@ -7,7 +7,7 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { useEffect, useRef, useState } from "react";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import { checkUserApi } from "@/services/operations/authApi";
-import { CheckUserApi } from "@/types/apis/authApiRs";
+import { CheckUserRs } from "@/types/apis/authApiRs";
 import { setUser, User } from "@/redux/slices/userSlice";
 import { useDispatch } from "react-redux";
 import { setAuthUser } from "@/redux/slices/authSlice";
@@ -49,7 +49,7 @@ const MainNavbar = () => {
 
   useEffect(() => {
     const checkDefaultLogin = async () => {
-      const response: CheckUserApi = await checkUserApi();
+      const response: CheckUserRs = await checkUserApi();
 
       if (
         response &&

@@ -2,7 +2,7 @@ import { logInApi } from "@/services/operations/authApi";
 import { setAuthUser, setLoading } from "@/redux/slices/authSlice";
 import { setUser, User } from "@/redux/slices/userSlice";
 import { useAppSelector } from "@/redux/store";
-import { LogInApiRs } from "@/types/apis/authApiRs";
+import { CheckUserRs } from "@/types/apis/authApiRs";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -38,7 +38,7 @@ const LogIn = (props: SignInProps) => {
 
     const tid = toast.loading("Loading...");
 
-    const response: LogInApiRs = await logInApi(data);
+    const response: CheckUserRs = await logInApi(data);
 
     toast.dismiss(tid);
     dispatch(setLoading(false));

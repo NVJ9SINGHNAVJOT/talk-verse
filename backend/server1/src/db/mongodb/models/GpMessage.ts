@@ -1,10 +1,11 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
-import { IUser } from './User';
+import { IUser } from '@/db/mongodb/models/User';
+import { IGroup } from '@/db/mongodb/models/Group';
 
 // Define an interface representing a Group Message document
 export interface IGpMessage extends Document {
     from: mongoose.Types.ObjectId & IUser;
-    to: mongoose.Types.ObjectId & IUser;
+    to: mongoose.Types.ObjectId & IGroup;
     text: string;
 }
 

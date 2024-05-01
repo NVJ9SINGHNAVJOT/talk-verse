@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
-import { IUser } from './User';
+import { IUser } from '@/db/mongodb/models/User';
 
 // Define an interface representing a Chat document
 export interface IChat extends Document {

@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
-import { IChat } from './Chat';
-import { IUser } from './User';
+import { IChat } from '@/db/mongodb/models/Chat';
+import { IUser } from '@/db/mongodb/models/User';
 
 // Define an interface representing a Message document
 export interface IMessage extends Document {

@@ -1,3 +1,3 @@
-export type GetUsersBody = {
-    userName: string,
+export type SendRequestBody = {
+    reqUserId: string,
 };

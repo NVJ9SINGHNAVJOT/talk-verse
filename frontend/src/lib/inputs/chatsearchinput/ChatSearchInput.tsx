@@ -1,6 +1,6 @@
 import "@/lib/inputs/chatsearchinput/ChatSearchInput.css";
 import { getUsersApi } from "@/services/operations/notificationApi";
-import { GetUsersApi } from "@/types/apis/notificationApiRs";
+import { UsersRs } from "@/types/apis/notificationApiRs";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { RxAvatar } from "react-icons/rx";
@@ -22,7 +22,7 @@ const ChatSearchInput = () => {
   useEffect(() => {
     const timeOutId = setTimeout(async () => {
       if (query) {
-        const response: GetUsersApi = await getUsersApi(query);
+        const response: UsersRs = await getUsersApi(query);
 
         if (response && response.success == true) {
           if (response.users) {
@@ -31,7 +31,7 @@ const ChatSearchInput = () => {
             toast.error("No user exist for such name");
           }
         } else if (response && response.success === false) {
-          toast.error(response.message);
+          toast.info("No user exist for such name");
         } else {
           toast.error("error while checking user name");
         }

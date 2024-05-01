@@ -1,18 +1,17 @@
 import { authEndPoints } from "@/services/apis";
 import { fetchApi } from "@/services/fetchApi";
-import { CheckUserApi, LogInApiRs } from "@/types/apis/authApiRs";
+import { CheckUserRs, CheckUserRs } from "@/types/apis/authApiRs";
 import { CommonRs } from "@/types/apis/common";
 
-
 const {
-    SIGNUP_API,
-    LOGIN_API,
-    CHECK_USER_API,
+    SIGNUP,
+    LOGIN,
+    CHECK_USER,
 } = authEndPoints;
 
 export const signUpApi = async (data: FormData): Promise<boolean> => {
     try {
-        const resData: CommonRs = await fetchApi('POST', SIGNUP_API, data);
+        const resData: CommonRs = await fetchApi('POST', SIGNUP, data);
         if (resData && resData.success === true) {
             return true;
         }
@@ -22,30 +21,27 @@ export const signUpApi = async (data: FormData): Promise<boolean> => {
     }
 };
 
-export const logInApi = async (data: object): Promise<LogInApiRs> => {
+export const logInApi = async (data: object): Promise<CheckUserRs> => {
     try {
-        const resData: LogInApiRs = await fetchApi('POST', LOGIN_API, data, { 'Content-Type': 'application/json' });
+        const resData: CheckUserRs = await fetchApi('POST', LOGIN, data, { 'Content-Type': 'application/json' });
         if (resData && resData.success === true) {
             return resData;
         }
-        return {} as LogInApiRs;
+        return {} as CheckUserRs;
     } catch (error) {
-        return {} as LogInApiRs;
+        return {} as CheckUserRs;
     }
 };
 
-export const checkUserApi = async (): Promise<CheckUserApi> => {
+export const checkUserApi = async (): Promise<CheckUserRs> => {
     try {
-        const resData: CheckUserApi = await fetchApi('GET', CHECK_USER_API);
+        const resData: CheckUserRs = await fetchApi('GET', CHECK_USER);
         if (resData && resData.success === true) {
             return resData;
         }
-        else {
-            return {} as CheckUserApi;
-        }
-
+        return {} as CheckUserRs;
     } catch (error) {
-        return {} as CheckUserApi;
+        return {} as CheckUserRs;
     }
 };
 
