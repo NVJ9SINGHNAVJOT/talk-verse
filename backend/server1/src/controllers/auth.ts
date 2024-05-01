@@ -170,7 +170,7 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
     // If JWT is missing, return 401 Unauthorized response
     if (!token) {
       return res.status(200).json({
-        success: true,
+        success: false,
         message: "token not present"
       });
     }

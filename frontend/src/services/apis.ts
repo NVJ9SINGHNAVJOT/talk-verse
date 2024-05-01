@@ -6,3 +6,7 @@ export const authEndPoints = {
   LOGIN_API: BASE_URL_SERVER1 + "/auth/login",
   CHECK_USER_API: BASE_URL_SERVER1 + "/auth/checkUser"
 };
+
+export const notificationEndPoints = {
+  GET_USERS_API: BASE_URL_SERVER1 + "/notification/getUsers",
+};

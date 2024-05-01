@@ -16,8 +16,10 @@ import { useRef } from "react";
 import useScrollOnTop from "@/hooks/useScrollOnTop";
 
 function App() {
+
   const pageRenderDivRef = useRef<HTMLDivElement>(null);
   useScrollOnTop(pageRenderDivRef);
+  
   return (
     <div className="w-screen h-screen overflow-y-auto overflow-x-hidden max-w-maxContent min-w-minContent">
       {/* main nav bar */}

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import mainLogo from "@/assets/images/mainLogo.png";
 import SignInButton from "@/lib/buttons/signinbutton/SignInButton";
 import { useAppSelector } from "@/redux/store";
@@ -14,44 +14,18 @@ import { setAuthUser } from "@/redux/slices/authSlice";
 import SiteLoadingModal from "./SiteLoadingModal";
 
 const MainNavbar = () => {
-  const [checkUser, setCheckUser] = useState<boolean>(true);
+  const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    const checkDefaultLogin = async () => {
-      const response: CheckUserApi = await checkUserApi();
-
-      if (
-        response &&
-        response.success === true &&
-        response.firstName &&
-        response.lastName
-      ) {
-        const user: User = {
-          firstName: response.firstName,
-          lastName: response.lastName,
-          imageUrl: response.imageUrl ? response.imageUrl : "",
-        };
-        dispatch(setUser(user));
-        setCheckUser(false);
-        setTimeout(() => {
-          dispatch(setAuthUser(true));
-        }, 1000); // Delay for 0.5 second
-      } else {
-        setCheckUser(false);
-      }
-    };
-    checkDefaultLogin();
-  }, []);
-
-  const [menu, setMenu] = useState<boolean>(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const menuRefExclude = useRef<HTMLDivElement>(null);
-  useOnClickOutside(menuRef, () => setMenu(false), menuRefExclude);
 
   const user = useAppSelector((state) => state.user.user);
   const authUser = useAppSelector((state) => state.auth.authUser);
-  const navigate = useNavigate();
+  const [checkUser, setCheckUser] = useState<boolean>(true);
+  const [menu, setMenu] = useState<boolean>(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuRefExclude = useRef<HTMLDivElement>(null);
+
+  useOnClickOutside(menuRef, () => setMenu(false), menuRefExclude);
 
   const toogleMenu = () => {
     setMenu((prev) => !prev);
@@ -72,6 +46,32 @@ const MainNavbar = () => {
       navigate("/login");
     }
   };
+
+  useEffect(() => {
+    const checkDefaultLogin = async () => {
+      const response: CheckUserApi = await checkUserApi();
+
+      if (
+        response &&
+        response.success === true &&
+        response.firstName &&
+        response.lastName
+      ) {
+        const user: User = {
+          firstName: response.firstName,
+          lastName: response.lastName,
+          imageUrl: response.imageUrl ? response.imageUrl : "",
+        };
+        dispatch(setUser(user));
+        dispatch(setAuthUser(true));
+        navigate(location.pathname);
+        setCheckUser(false);
+      } else {
+        setCheckUser(false);
+      }
+    };
+    checkDefaultLogin();
+  }, []);
 
   return (
     <div

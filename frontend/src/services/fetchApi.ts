@@ -53,6 +53,7 @@ export async function fetchApi
         }
 
     } catch (error) {
+        console.log('error in fetchapi', error);
         return null;
     }
 }

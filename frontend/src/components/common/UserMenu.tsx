@@ -32,7 +32,7 @@ const UserMenu = () => {
       {user.imageUrl ? (
         <img
           onClick={toggleMenu}
-          className="w-10 h-10 rounded aspect-auto"
+          className="w-10 h-10 rounded aspect-auto cursor-pointer"
           src={user?.imageUrl as string}
           alt="Loading..."
         ></img>

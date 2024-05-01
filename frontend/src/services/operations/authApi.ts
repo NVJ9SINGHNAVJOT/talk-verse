@@ -37,12 +37,13 @@ export const logInApi = async (data: object): Promise<LogInApiRs> => {
 export const checkUserApi = async (): Promise<CheckUserApi> => {
     try {
         const resData: CheckUserApi = await fetchApi('GET', CHECK_USER_API);
-        if (resData && resData.success === true &&
-            resData.firstName &&
-            resData.lastName) {
+        if (resData && resData.success === true) {
             return resData;
         }
-        return {} as CheckUserApi;
+        else {
+            return {} as CheckUserApi;
+        }
+
     } catch (error) {
         return {} as CheckUserApi;
     }
