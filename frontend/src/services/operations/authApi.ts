@@ -1,6 +1,6 @@
 import { authEndPoints } from "@/services/apis";
 import { fetchApi } from "@/services/fetchApi";
-import { CheckUserRs, CheckUserRs } from "@/types/apis/authApiRs";
+import { CheckUserRs } from "@/types/apis/authApiRs";
 import { CommonRs } from "@/types/apis/common";
 
 const {

@@ -10,5 +10,13 @@ export const authEndPoints = {
 export const notificationEndPoints = {
   GET_USERS: BASE_URL_SERVER + "/notification/getUsers",
   SEND_REQUEST: BASE_URL_SERVER + "/notification/sendRequest",
-  GET_ALL_NOTIFICATIONS: BASE_URL_SERVER + "/notification/getAllNotifications"
+  GET_ALL_NOTIFICATIONS: BASE_URL_SERVER + "/notification/getAllNotifications",
+  ACCEPT_REQUEST: BASE_URL_SERVER + "/notification/acceptRequest",
+};
+
+export const chatEndPoints = {
+  CHAT_BAR_DATA: BASE_URL_SERVER + "/chat/chatBarData",
+  CHAT_MESSAGES: BASE_URL_SERVER + "/chat/chatMessages",
+  GROUP_MESSAGES: BASE_URL_SERVER + "/chat/groupMessages",
+  MESSAGE_FILE: BASE_URL_SERVER + "/chat/messageFile",
 };

@@ -7,6 +7,7 @@ const {
     GET_USERS,
     SEND_REQUEST,
     GET_ALL_NOTIFICATIONS,
+    ACCEPT_REQUEST
 } = notificationEndPoints;
 
 export const getUsersApi = async (userName: string): Promise<UsersRs> => {
@@ -46,3 +47,15 @@ export const getAllNotificationsApi = async (): Promise<UsersRs> => {
     }
 };
 
+
+export const acceptRequestApi = async (userId: string): Promise<boolean> => {
+    try {
+        const resData: CommonRs = await fetchApi('GET', ACCEPT_REQUEST, { userId });
+        if (resData && resData.success === true) {
+            return true;
+        }
+        return false;
+    } catch (error) {
+        return false;
+    }
+};

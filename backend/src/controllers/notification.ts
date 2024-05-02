@@ -1,6 +1,6 @@
 import Notification from '@/db/mongodb/models/Notification';
 import User from '@/db/mongodb/models/User';
-import { SendRequestBody } from '@/types/controller/notificationReq';
+import { AcceptRequestBody, SendRequestBody } from '@/types/controller/notificationReq';
 import { CustomRequest } from '@/types/custom';
 import { errRes } from '@/utils/error';
 import { Request, Response } from 'express';
@@ -109,5 +109,43 @@ export const getAllNotifications = async (req: Request, res: Response): Promise<
 
     } catch (error) {
         return errRes(res, 500, 'error while getting notifications');
+    }
+};
+
+export const acceptRequest = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const userId = (req as CustomRequest).userId;
+        const data: AcceptRequestBody = req.body;
+
+        if (!userId) {
+            return errRes(res, 400, 'user id not present');
+        }
+
+        if (!data.acceptUserId) {
+            return errRes(res, 400, 'invalid data');
+        }
+
+        // check user exist or not for req id
+        const user = User.exists({ _id: data.acceptUserId }).exec();
+
+        if (!user) {
+            return errRes(res, 400, 'user not present for given id');
+        }
+
+        // remove from notifications
+        await Notification.updateOne({ userId: userId },
+            { $pull: { friendRequests: data.acceptUserId } }).exec();
+
+        // now add acceptUserId in friend list of user
+        await User.updateOne({ _id: userId }, { $push: { friends: data.acceptUserId } }).exec();
+        // now add userId in friend list of acceptUserId
+        await User.updateOne({ _id: data.acceptUserId }, { $push: { friends: userId } }).exec();
+
+        return res.status(200).json({
+            success: true,
+            message: 'request accepted successfully'
+        });
+    } catch (error) {
+        return errRes(res, 500, "error while sending request");
     }
 };
