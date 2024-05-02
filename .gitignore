@@ -1,39 +1,30 @@
 # dependencies
 /frontend/node_modules
-/backend/server1/node_modules
-/backend/server2/node_modules
+/backend/node_modules
 
 # production
 /frontend/build
 /frontend/dist
 
-/backend/server1/build
-/backend/server1/dist
-
-/backend/server2/build
-/backend/server2/dist
+/backend/build
+/backend/dist
 
 # database files create by commands
-# /backend/server1/src/db/postgresql/migrations
-# /backend/server2/db/postgresql/dbpostgresql
+# /backend/src/db/postgresql/migrations
 
 # environment
 *.env
 !example.env
 /frontend/.env
-/backend/server1/.env
-/backend/server2/.env
+/backend/.env
 
 # development
-/backend/server1/tmp
-/backend/server2/tmp
+/backend/tmp
 /node_modules
 
 # temp storage
-/backend/server1/temp
-/backend/server2/temp
+/backend/temp
 
 # logs
 /frontend/logs
-/backend/server1/logs
-/backend/server2/logs
+/backend/logs
