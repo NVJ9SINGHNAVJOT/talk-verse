@@ -5,6 +5,7 @@ import { registerMessageEvents } from '@/socket/events/messageEvents';
 import { registerUserEvents } from '@/socket/events/userEvents';
 import { checkUserSocket } from '@/middlewares/socket';
 import { CustomSocket } from '@/types/custom';
+import corsOptions from '@/config/corsOptions';
 
 const userSocketIDs = new Map();
 const onlineChats = new Set();
@@ -13,11 +14,7 @@ const onlineGroups = new Set();
 export const setupSocketIO = (app: Application): HTTPServer => {
     const httpServer: HTTPServer = createServer(app);
     const io: Server = new Server(httpServer, {
-        cors: {
-            origin: 'http://localhost:5173',
-            credentials: true,
-            methods: ["PUT", "PATCH", "POST", "GET", "DELETE"]
-        },
+        cors: corsOptions
     });
 
     app.set("io", io);

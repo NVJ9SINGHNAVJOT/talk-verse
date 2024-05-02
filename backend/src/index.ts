@@ -14,5 +14,5 @@ const PORT: number = parseInt(process.env.PORT as string) || 5000;
 
 const httpServer = setupSocketIO(app);
 httpServer.listen(PORT, () => {
-    console.log(`server1 running...`);
+    console.log(`server running...`);
 });

@@ -10,6 +10,7 @@ import apiKey from "@/middlewares/apiKey";
 import authRoutes from '@/routes/authRoutes';
 import notificationRoutes from '@/routes/notificationRoutes';
 import chatRoutes from '@/routes/chatRoutes';
+import corsOptions from "@/config/corsOptions";
 
 configDotenv();
 
@@ -24,11 +25,7 @@ mongodbdatabaseConnect().catch(() => {
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(cors({
-    origin: 'http://localhost:5173',
-    credentials: true,
-    methods: ["PUT", "PATCH", "POST", "GET", "DELETE"]
-}));
+app.use(cors(corsOptions));
 
 // server only accessible with key
 app.use(apiKey);
@@ -44,7 +41,7 @@ app.use('/api/v1/chat', chatRoutes);
 app.get('/', (_req: Request, res: Response) => {
     res.json({
         success: true,
-        message: 'server1 is up and running.'
+        message: 'server is up and running.'
     });
 });
 
