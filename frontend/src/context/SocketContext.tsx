@@ -45,12 +45,12 @@ export default function SocketProvider({ children }: ContextProviderProps) {
   const setupSocketConnection = () => {
     try {
       const socketInstance = io(
-        process.env.REACT_APP_BASE_URL_SOCKET_IO_SERVER1 as string,
+        process.env.REACT_APP_BASE_URL_SOCKET_IO_SERVER as string,
         {
           withCredentials: true,
           autoConnect: false,
           extraHeaders: {
-            Authorization: process.env.SERVER1_KEY as string,
+            Authorization: process.env.SERVER_KEY as string,
           },
         }
       );

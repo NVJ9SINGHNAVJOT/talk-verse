@@ -9,7 +9,7 @@ export const checkUserSocket = async (socket: Socket): Promise<boolean> => {
     try {
         const api_key = socket.handshake.headers.authorization?.replace("Bearer ", "");
 
-        if (!api_key || api_key !== process.env.SERVER1_KEY) {
+        if (!api_key || api_key !== process.env.SERVER_KEY) {
             return false;
         }
 

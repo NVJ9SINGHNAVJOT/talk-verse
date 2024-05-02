@@ -167,7 +167,6 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
       req.cookies[process.env.TOKEN_NAME as string] ||
       req.header("Authorization")?.replace("Bearer ", "");
 
-    // If JWT is missing, return 401 Unauthorized response
     if (!token) {
       return res.status(200).json({
         success: false,
@@ -177,6 +176,7 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
 
     const userId = await jwtVerify(token);
 
+    // If JWT token present and userId invalid or null
     if (!userId) {
       return errRes(res, 401, "user authorization failed");
     }

@@ -5,7 +5,7 @@ import { NextFunction, Request, Response } from "express";
 function apiKey(req: Request, res: Response, next: NextFunction) {
     try {
         const apiKey = req.header("Api_Key");
-        if (apiKey === process.env.SERVER1_KEY as string) {
+        if (apiKey === process.env.SERVER_KEY as string) {
             next();
         }
         else {

@@ -10,10 +10,10 @@ export default defineConfig(({ command, mode }) => {
     // vite config
     plugins: [react(), tsconfigPaths()],
     define: {
-      "process.env.REACT_APP_BASE_URL_SERVER1": JSON.stringify(env.REACT_APP_BASE_URL_SERVER1),
+      "process.env.REACT_APP_BASE_URL_SERVER": JSON.stringify(env.REACT_APP_BASE_URL_SERVER),
       "process.env.REACT_APP_ENVIRONMENT": JSON.stringify(env.REACT_APP_ENVIRONMENT),
-      "process.env.SERVER1_KEY": JSON.stringify(env.SERVER1_KEY),
-      "process.env.REACT_APP_BASE_URL_SOCKET_IO_SERVER1": JSON.stringify(env.REACT_APP_BASE_URL_SOCKET_IO_SERVER1),
+      "process.env.SERVER_KEY": JSON.stringify(env.SERVER_KEY),
+      "process.env.REACT_APP_BASE_URL_SOCKET_IO_SERVER": JSON.stringify(env.REACT_APP_BASE_URL_SOCKET_IO_SERVER),
     },
     server: {
       open: true,
