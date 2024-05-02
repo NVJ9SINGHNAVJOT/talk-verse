@@ -36,8 +36,8 @@ app.use(apiKey);
 cloudinaryConnect();
 
 // routes
-app.use('/server1/api/v1/auth', authRoutes);
-app.use('/server1/api/v1/notification', notificationRoutes);
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/notification', notificationRoutes);
 
 app.get('/', (_req: Request, res: Response) => {
     res.json({
