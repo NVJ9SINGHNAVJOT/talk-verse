@@ -205,7 +205,7 @@ const SignUp = (props: SignInProps) => {
           {errors.userName && (
             <span className=" absolute text-red-600 text-[0.7rem]">
               {" "}
-              Characters, min 2
+              Characters, min 3
             </span>
           )}
 

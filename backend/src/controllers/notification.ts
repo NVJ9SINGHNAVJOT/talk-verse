@@ -1,7 +1,10 @@
+import Chat from '@/db/mongodb/models/Chat';
 import Notification from '@/db/mongodb/models/Notification';
 import User from '@/db/mongodb/models/User';
+import { chatLocks } from '@/socket/index';
 import { AcceptRequestBody, SendRequestBody } from '@/types/controller/notificationReq';
 import { CustomRequest } from '@/types/custom';
+import Mutex from '@/types/mutex';
 import { errRes } from '@/utils/error';
 import { Request, Response } from 'express';
 
@@ -136,15 +139,25 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
         await Notification.updateOne({ userId: userId },
             { $pull: { friendRequests: data.acceptUserId } }).exec();
 
+        // create chatId for both users
+        // user 1 is who initially sent request and user 2 is who accepted that request
+        const chat = await Chat.create({ user1: data.acceptUserId, user2: userId });
+
         // now add acceptUserId in friend list of user
-        await User.updateOne({ _id: userId }, { $push: { friends: data.acceptUserId } }).exec();
+        await User.updateOne({ _id: userId }, { $push: { friends: { friendId: data.acceptUserId, chatId: chat?._id } } }).exec();
         // now add userId in friend list of acceptUserId
-        await User.updateOne({ _id: data.acceptUserId }, { $push: { friends: userId } }).exec();
+        await User.updateOne({ _id: data.acceptUserId }, { $push: { friends: { friendId: userId, chatId: chat?._id } } }).exec();
+
+        // Create a new mutex instance
+        const newMutex = new Mutex();
+        // set newmutex for new chatid
+        chatLocks.set(chat._id, newMutex);
 
         return res.status(200).json({
             success: true,
             message: 'request accepted successfully'
         });
+
     } catch (error) {
         return errRes(res, 500, "error while sending request");
     }

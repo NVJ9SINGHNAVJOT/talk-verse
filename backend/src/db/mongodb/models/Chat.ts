@@ -3,23 +3,21 @@ import { IUser } from '@/db/mongodb/models/User';
 
 // Define an interface representing a Chat document
 export interface IChat extends Document {
-    chatUsers: mongoose.Types.ObjectId[] & IUser;
+    user1: mongoose.Types.ObjectId & IUser;
+    user2: mongoose.Types.ObjectId & IUser;
 }
 
+// user 1 is who initially sent request and user 2 is who accepted that request
 // Define the Chat schema using the interface
 const chatSchema = new Schema<IChat>({
-    chatUsers: {
-        type: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: 'User',
-            },
-        ],
-        validate: [
-            (array: mongoose.Types.ObjectId[]) => array.length <= 2,
-            'chatUsers array exceeds the limit of 2'
-        ],
+    user1: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
+    user2: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }
 }, { timestamps: true });
 
 // Create the Chat model

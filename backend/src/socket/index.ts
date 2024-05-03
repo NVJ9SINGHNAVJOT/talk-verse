@@ -2,14 +2,24 @@ import { Socket, Server } from 'socket.io';
 import { createServer, Server as HTTPServer } from 'http';
 import { Application } from 'express';
 import { registerMessageEvents } from '@/socket/events/messageEvents';
-import { registerUserEvents } from '@/socket/events/userEvents';
+import { registerNotificationEvents } from '@/socket/events/notificationEvents';
 import { checkUserSocket } from '@/middlewares/socket';
 import { CustomSocket } from '@/types/custom';
 import corsOptions from '@/config/corsOptions';
+import Mutex from '@/types/mutex';
 
-const userSocketIDs = new Map();
-const onlineChats = new Set();
-const onlineGroups = new Set();
+// store userIds with their current socketIds
+export const userSocketIDs = new Map();
+
+// set which chat is online
+export const onlineChats = new Set();
+
+// set which group is online
+export const onlineGroups = new Set();
+
+// create a map to store mutexes
+export const chatLocks: Map<string, Mutex> = new Map();
+
 
 export const setupSocketIO = (app: Application): HTTPServer => {
     const httpServer: HTTPServer = createServer(app);
@@ -41,7 +51,7 @@ export const setupSocketIO = (app: Application): HTTPServer => {
         userSocketIDs.set(userId, socket.id);
 
         registerMessageEvents(socket);
-        registerUserEvents(socket);
+        registerNotificationEvents(socket);
 
         socket.on('disconnect', () => {
             console.log("a user disconnected id: ", socket.id, ": ", userId);

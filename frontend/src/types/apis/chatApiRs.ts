@@ -1,10 +1,16 @@
-export type ChatBarData = {
+
+export type ChatBarDataRs = {
     success: boolean,
     message: string,
-    data: {
+    friends: {
         _id: string,
         firstName: string,
         lastName: string,
         imageUrl?: string
+    }[],
+    groups: {
+        _id: string,
+        groupName: string,
+        gpImageUrl?: string
     }[]
 }

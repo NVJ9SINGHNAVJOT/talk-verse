@@ -4,6 +4,7 @@ import { IGroup } from '@/db/mongodb/models/Group';
 
 // Define an interface representing a Group Message document
 export interface IGpMessage extends Document {
+    orderId: number;
     from: mongoose.Types.ObjectId & IUser;
     to: mongoose.Types.ObjectId & IGroup;
     text: string;
@@ -11,6 +12,10 @@ export interface IGpMessage extends Document {
 
 // Define the Group Message schema using the interface
 const gpMessageSchema = new Schema<IGpMessage>({
+    orderId: {
+        type: Number,
+        required: true,
+    },
     from: {
         type: Schema.Types.ObjectId,
         ref: 'User',

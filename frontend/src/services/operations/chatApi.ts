@@ -1,6 +1,6 @@
 import { chatEndPoints } from "@/services/apis";
 import { fetchApi } from "@/services/fetchApi";
-import { ChatBarData } from "@/types/apis/chatApiRs";
+import { ChatBarDataRs } from "@/types/apis/chatApiRs";
 const {
     CHAT_BAR_DATA,
     CHAT_MESSAGES,
@@ -8,15 +8,15 @@ const {
     MESSAGE_FILE
 } = chatEndPoints;
 
-export const getUsersApi = async (): Promise<ChatBarData> => {
+export const chatBarDataApi = async (): Promise<ChatBarDataRs> => {
     try {
-        const resData: ChatBarData = await fetchApi('GET', CHAT_BAR_DATA);
+        const resData: ChatBarDataRs = await fetchApi('GET', CHAT_BAR_DATA);
         // success false is used in response
         if (resData) {
             return resData;
         }
-        return {} as ChatBarData;
+        return {} as ChatBarDataRs;
     } catch (error) {
-        return {} as ChatBarData;
+        return {} as ChatBarDataRs;
     }
 };

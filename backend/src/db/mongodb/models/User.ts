@@ -1,5 +1,11 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { IToken } from "@/db/mongodb/models/Token";
+import { IChat } from '@/db/mongodb/models/Chat';
+
+interface CombineChatId {
+    friendId: mongoose.Types.ObjectId & IUser;
+    chatId: mongoose.Types.ObjectId & IChat;
+}
 
 // Define interfaces for each model to represent the document structure
 export interface IUser extends Document {
@@ -14,7 +20,7 @@ export interface IUser extends Document {
     contactNumber?: number;
     imageUrl?: string;
     userToken?: mongoose.Types.ObjectId & IToken;
-    friends: mongoose.Types.ObjectId[] & IUser[];
+    friends: CombineChatId[];
 }
 
 // Define the User schema
@@ -72,9 +78,15 @@ const userSchema = new Schema<IUser>({
     },
     friends: [
         {
-            type: Schema.Types.ObjectId,
-            ref: 'User'
-        }
+            friendId: {
+                type: Schema.Types.ObjectId,
+                ref: 'User',
+            },
+            chatId: {
+                type: Schema.Types.ObjectId,
+                ref: 'Chat',
+            },
+        },
     ],
 }, { timestamps: true });
 
