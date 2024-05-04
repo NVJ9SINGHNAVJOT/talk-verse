@@ -18,5 +18,6 @@ export const chatEndPoints = {
   CHAT_BAR_DATA: BASE_URL_SERVER + "/chat/chatBarData",
   CHAT_MESSAGES: BASE_URL_SERVER + "/chat/chatMessages",
   GROUP_MESSAGES: BASE_URL_SERVER + "/chat/groupMessages",
-  MESSAGE_FILE: BASE_URL_SERVER + "/chat/messageFile",
+  FILE_MESSAGE: BASE_URL_SERVER + "/chat/fileMessage",
+  CREATE_GROUP: BASE_URL_SERVER + "/chat/createGroup"
 };
