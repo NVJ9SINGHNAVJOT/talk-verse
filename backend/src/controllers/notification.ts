@@ -96,7 +96,7 @@ export const getAllNotifications = async (req: Request, res: Response): Promise<
             }).exec();
 
         if (!notifications) {
-            return errRes(res, 500, 'error while getting notifications')
+            return errRes(res, 500, 'error while getting notifications');
         }
 
         if (notifications?.friendRequests.length === 0) {

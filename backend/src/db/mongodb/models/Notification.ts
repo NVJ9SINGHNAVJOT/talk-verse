@@ -3,7 +3,7 @@ import { IUser } from '@/db/mongodb/models/User';
 
 // Define interfaces for the nested objects in the Notification schema
 interface UnseenMessage {
-    userId: mongoose.Types.ObjectId & IUser;
+    mainId: mongoose.Types.ObjectId;
     unseenCount: number;
 }
 
@@ -29,9 +29,9 @@ const notificationSchema = new Schema<INotification>({
     ],
     unseenMessages: [
         {
-            userId: {
-                type: Schema.Types.ObjectId,
-                ref: 'User',
+            mainId: {
+                type: mongoose.Types.ObjectId,
+                required: true
             },
             unseenCount: {
                 type: Number,

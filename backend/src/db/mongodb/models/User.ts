@@ -21,6 +21,7 @@ export interface IUser extends Document {
     imageUrl?: string;
     userToken?: mongoose.Types.ObjectId & IToken;
     friends: CombineChatId[];
+    chatBarOrder: string;
 }
 
 // Define the User schema
@@ -88,6 +89,7 @@ const userSchema = new Schema<IUser>({
             },
         },
     ],
+    chatBarOrder: [String]
 }, { timestamps: true });
 
 // Create the User model

@@ -64,7 +64,7 @@ export default function SocketProvider({ children }: ContextProviderProps) {
 
       socketRef.current.on("connect_error", () => {
         setSocket(null);
-        toast.error("Error while connecting");
+        toast.error("Error in connection");
         navigate("/error");
       });
     } catch (error) {
