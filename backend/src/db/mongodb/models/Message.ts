@@ -5,7 +5,6 @@ import { IUser } from '@/db/mongodb/models/User';
 // Define an interface representing a Message document
 export interface IMessage extends Document {
     chatId: mongoose.Types.ObjectId & IChat;
-    orderId: number;
     from: mongoose.Types.ObjectId & IUser;
     to: mongoose.Types.ObjectId & IUser;
     text: string;
@@ -16,10 +15,6 @@ const messageSchema = new Schema<IMessage>({
     chatId: {
         type: Schema.Types.ObjectId,
         ref: 'Chat',
-        required: true,
-    },
-    orderId: {
-        type: Number,
         required: true,
     },
     from: {

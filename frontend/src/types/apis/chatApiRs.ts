@@ -14,3 +14,26 @@ export type ChatBarDataRs = {
         gpImageUrl?: string
     }[]
 }
+
+export type GetChatMessagesRs = {
+    success: boolean,
+    message: string,
+    messages: {
+        _id: string,
+        from: string,
+        to: string,
+        text: string,
+        createdAt: Date
+    }[]
+}
+
+export type GetGroupMessagesRs = {
+    success: boolean,
+    message: string,
+    messages: {
+        _id: string,
+        from: string,
+        text: string,
+        createdAt: Date
+    }[]
+}

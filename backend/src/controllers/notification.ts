@@ -70,6 +70,8 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
         await Notification.updateOne({ userId: data.reqUserId },
             { $push: { friendRequests: userId } }).exec();
 
+        // TODO: socket event
+
         return res.status(200).json({
             success: true,
             message: 'request send successfully'
@@ -152,6 +154,8 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
         const newMutex = new Mutex();
         // set newmutex for new chatid
         chatLocks.set(chat._id, newMutex);
+
+        // TODO: socket event
 
         return res.status(200).json({
             success: true,
