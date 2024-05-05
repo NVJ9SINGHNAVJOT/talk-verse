@@ -64,19 +64,29 @@ const MainNavbar = () => {
         };
         dispatch(setUser(user));
         dispatch(setAuthUser(true));
-        navigate(location.pathname);
-        setCheckUser(false);
-      } else {
-        setCheckUser(false);
       }
+
+      navigate(location.pathname);
+
+      setTimeout(() => {
+        setCheckUser(false);
+      }, 1000);
     };
+    
     checkDefaultLogin();
   }, []);
 
-  return (
+  return checkUser ? (
     <div
       className="relative bg-[radial-gradient(circle_at_24.1%_68.8%,_rgb(50,_50,_50)_0%,_rgb(0,_0,_0)_99.4%)]
-      h-[4rem] flex justify-between items-center w-full"
+    h-[4rem] flex justify-between items-center w-full"
+    >
+      <SiteLoadingModal />
+    </div>
+  ) : (
+    <div
+      className="relative bg-[radial-gradient(circle_at_24.1%_68.8%,_rgb(50,_50,_50)_0%,_rgb(0,_0,_0)_99.4%)]
+        h-[4rem] flex justify-between items-center w-full"
     >
       {/* main logo and name */}
       <div className="flex items-center justify-evenly gap-5 ml-8">
@@ -158,11 +168,11 @@ const MainNavbar = () => {
         <div
           ref={menuRef}
           className=" sm:flex flex-col z-[1000] md:hidden absolute top-[4rem] right-0 backdrop-blur-md
-          justify-start h-[calc(100vh-4rem)] items-center w-4/12 gap-y-4"
+            justify-start h-[calc(100vh-4rem)] items-center w-4/12 gap-y-4"
         >
           <div
             className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed] 
-            mt-4 "
+              mt-4 "
             onClick={homeHandler}
           >
             Home
@@ -190,8 +200,6 @@ const MainNavbar = () => {
           </div>
         </div>
       )}
-
-      {checkUser && <SiteLoadingModal />}
     </div>
   );
 };

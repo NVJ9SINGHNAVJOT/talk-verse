@@ -10,16 +10,16 @@ const {
     CREATE_GROUP
 } = chatEndPoints;
 
-export const chatBarDataApi = async (): Promise<ChatBarDataRs> => {
+export const chatBarDataApi = async (): Promise<boolean> => {
     try {
         const resData: ChatBarDataRs = await fetchApi('GET', CHAT_BAR_DATA);
         // success false is used in response
         if (resData) {
-            return resData;
+            return true;
         }
-        return {} as ChatBarDataRs;
+        return false;
     } catch (error) {
-        return {} as ChatBarDataRs;
+        return false;
     }
 };
 

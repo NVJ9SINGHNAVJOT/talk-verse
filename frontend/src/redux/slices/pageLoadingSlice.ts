@@ -3,22 +3,22 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 
 interface PageLoadingState {
-    pageLoading: boolean,
+    talkPageLoading: boolean,
 }
 
 const initialState = {
-    pageLoading: true,
+    talkPageLoading: true,
 } satisfies PageLoadingState as PageLoadingState;
 
 const pageLoadingSlice = createSlice({
     name: "pageLoading",
     initialState,
     reducers: {
-        setPageLoading(state, action: PayloadAction<boolean>) {
-            state.pageLoading = action.payload;
+        setTalkPageLoading(state, action: PayloadAction<boolean>) {
+            state.talkPageLoading = action.payload;
         },
     },
 });
 
-export const { setPageLoading } = pageLoadingSlice.actions;
+export const { setTalkPageLoading } = pageLoadingSlice.actions;
 export default pageLoadingSlice.reducer;

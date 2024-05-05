@@ -1,7 +1,8 @@
+import { UnseenMessages } from "@/redux/slices/chatSlice";
 import { notificationEndPoints } from "@/services/apis";
 import { fetchApi } from "@/services/fetchApi";
 import { CommonRs } from "@/types/apis/common";
-import { UsersRs } from "@/types/apis/notificationApiRs";
+import { GetAllNotificationsRs, GetUsersRs } from "@/types/apis/notificationApiRs";
 
 const {
     GET_USERS,
@@ -10,16 +11,16 @@ const {
     ACCEPT_REQUEST
 } = notificationEndPoints;
 
-export const getUsersApi = async (userName: string): Promise<UsersRs> => {
+export const getUsersApi = async (userName: string): Promise<GetUsersRs> => {
     try {
-        const resData: UsersRs = await fetchApi('GET', GET_USERS, null, null, { 'userName': userName });
+        const resData: GetUsersRs = await fetchApi('GET', GET_USERS, null, null, { 'userName': userName });
         // success false is used in response
         if (resData) {
             return resData;
         }
-        return {} as UsersRs;
+        return {} as GetUsersRs;
     } catch (error) {
-        return {} as UsersRs;
+        return {} as GetUsersRs;
     }
 };
 
@@ -35,15 +36,19 @@ export const sendRequestApi = async (userId: string): Promise<boolean> => {
     }
 };
 
-export const getAllNotificationsApi = async (): Promise<UsersRs> => {
+export const getAllNotificationsApi = async (): Promise<boolean> => {
     try {
-        const resData: UsersRs = await fetchApi('GET', GET_ALL_NOTIFICATIONS);
+        const resData: GetAllNotificationsRs = await fetchApi('GET', GET_ALL_NOTIFICATIONS);
         if (resData && resData.success === true) {
-            return resData;
+            const newUnseenMessages: UnseenMessages = {};
+            resData.unseenMessages.forEach((message) => {
+                newUnseenMessages[message.mainId] = message.unseenCount;
+            });
+            return true;
         }
-        return {} as UsersRs;
+        return false;
     } catch (error) {
-        return {} as UsersRs;
+        return false;
     }
 };
 

@@ -90,6 +90,7 @@ export const getAllNotifications = async (req: Request, res: Response): Promise<
         }
 
         const notifications = await Notification.findOne({ userId: userId })
+            .select({ friendRequest: true, unseenMessages: true })
             .populate({
                 path: 'friendRequests',
                 select: 'userName imageUrl'
@@ -109,7 +110,8 @@ export const getAllNotifications = async (req: Request, res: Response): Promise<
         return res.status(200).json({
             success: true,
             message: 'notifications for user',
-            users: notifications.friendRequests
+            users: notifications.friendRequests,
+            unseenMessages: notifications.unseenMessages
         });
 
     } catch (error) {

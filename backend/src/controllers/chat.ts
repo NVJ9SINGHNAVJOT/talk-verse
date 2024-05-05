@@ -1,7 +1,7 @@
 import GpMessage from "@/db/mongodb/models/GpMessage";
-import Group from "@/db/mongodb/models/Group";
+import Group, { IGroup } from "@/db/mongodb/models/Group";
 import Message from "@/db/mongodb/models/Message";
-import User from "@/db/mongodb/models/User";
+import User, { IUser } from "@/db/mongodb/models/User";
 import { CreateGroupBody, FileMessageBody } from "@/types/controller/chatReq";
 import { CustomRequest } from "@/types/custom";
 import uploadToCloudinary from "@/utils/cloudinaryUpload";
@@ -17,7 +17,7 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
         }
 
         const userFriends = await User.findById({ userId })
-            .select({ friends: true })
+            .select({ friends: true, chatBar: true })
             .populate({
                 path: 'friends.friendId',
                 select: 'firstName lastName imageUrl',
@@ -37,11 +37,59 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
             });
         }
 
+        // sort as per chatBar
+        type BarData = {
+            // common
+            _id: string,
+
+            // friend
+            chatId?: string
+            firstName?: string,
+            lastName?: string,
+            imageUrl?: string
+
+            // group
+            groupName?: string,
+            gpImageUrl?: string
+        }
+
+        const chatBar: (BarData)[] = [];
+
+        // combine user friends and their chatId in array and push in chatbar 
+        const friends = userFriends?.friends?.map((item) => {
+            const newValue: BarData = {
+                _id: item.friendId._id,
+                firstName: item.friendId.firstName,
+                lastName: item.friendId.lastName,
+                imageUrl: item.friendId.imageUrl,
+                chatId: item.chatId as unknown as string,
+            };
+            chatBar.push(newValue);
+            return newValue;
+        }
+        );
+
+        // push groups in chatbar
+        groups.forEach((group) => {
+            chatBar.push(group);
+        });
+
+        // sort chatbar as per user chatbarorder
+        const sortedBarData = chatBar.sort((a, b) => {
+            const indexA = userFriends?.chatBarOrder.indexOf(a._id);
+            const indexB = userFriends?.chatBarOrder.indexOf(b._id);
+            if (indexA === undefined || indexB === undefined) {
+                return 0;
+            }
+            return indexA - indexB;
+        });
+
         return res.status(200).json({
             success: true,
             message: 'chat bar data send successfully',
-            friends: userFriends?.friends,
-            groups: groups
+            friends: friends,
+            groups: groups,
+            chatBarData: sortedBarData
         });
 
     } catch (error) {

@@ -1,28 +1,53 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-export type Friend = {
+export type ChatBarData = {
+    // common
     _id: string,
-    firstName: string,
-    lastName: string,
-    imageUrl: string | null,
+
+    // friend
+    chatId?: string
+    firstName?: string,
+    lastName?: string,
+    imageUrl?: string
+
+    // group
+    groupName?: string,
+    gpImageUrl?: string
 }
 
-export type UnseenMessages = {
+export type Friend = {
     _id: string,
-    count: number,
+    chatId: string
+    firstName: string,
+    lastName: string,
+    imageUrl?: string
 }
+
+export type Group = {
+    _id: string,
+    groupName: string,
+    gpImageUrl?: string
+}
+
+export type UnseenMessages = Record<string, number>;
 
 interface ChatState {
     friends: Friend[] | null,
-    onlineFriends: string[] | null
-    unseenMessages: UnseenMessages[] | null
+    groups: Group[] | null,
+    chatBarData: ChatBarData[] | null,
+    onlineFriends: string[] | null,
+    unseenMessages: UnseenMessages | null,
+    userTyping: string[] | null
 }
 
 const initialState = {
     friends: null,
+    groups: null,
+    chatBarData: null,
     onlineFriends: null,
     unseenMessages: null,
+    userTyping: null
 } satisfies ChatState as ChatState;
 
 const chatSlice = createSlice({
@@ -41,7 +66,7 @@ const chatSlice = createSlice({
         setFriendOffline(state, action: PayloadAction<string>) {
             state.onlineFriends?.filter((userId) => userId !== (action.payload));
         },
-        setUserToFirst: (state, action: PayloadAction<string>) => {
+        setUserToFirst(state, action: PayloadAction<string>) {
             const userIdToMove = action.payload;
             const userIndex = state.friends?.findIndex(user => user._id === userIdToMove);
 
@@ -50,6 +75,21 @@ const chatSlice = createSlice({
                 if (user !== undefined) {
                     state.friends?.unshift(user[0]);
                 }
+            }
+        },
+        setUnseenMessages(state, action: PayloadAction<UnseenMessages>) {
+            state.unseenMessages = action.payload;
+        },
+        addNewUnseen: (state, action: PayloadAction<{ key: string; value: number }>) => {
+            const { key, value } = action.payload;
+            if (state.unseenMessages) {
+                state.unseenMessages[key] = value;
+            }
+        },
+        updateUnseenMessages: (state, action: PayloadAction<{ key: string; newValue: number }>) => {
+            const { key, newValue } = action.payload;
+            if (state.unseenMessages && key in state.unseenMessages) {
+                state.unseenMessages[key] = newValue;
             }
         },
     },

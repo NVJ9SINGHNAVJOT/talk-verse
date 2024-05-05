@@ -5,21 +5,23 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useAppSelector } from "@/redux/store";
 import { Skeleton } from "@/lib/shadcn-ui/components/ui/skeleton";
-import { setPageLoading } from "@/redux/slices/pageLoadingSlice";
+import { setTalkPageLoading } from "@/redux/slices/pageLoadingSlice";
 import { useDispatch } from "react-redux";
 
 const Talk = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const pageLoading = useAppSelector((state) => state.pageLoading.pageLoading);
+  const talkPageLoading = useAppSelector(
+    (state) => state.pageLoading.talkPageLoading
+  );
 
   const { setupSocketConnection, disconnectSocket } = useSocketContext();
 
   useEffect(() => {
-    const getSocket = () => {
+    const getSocket = async () => {
       try {
-        setupSocketConnection();
+        await setupSocketConnection();
       } catch (error) {
         toast.error("Error while connecting");
         navigate("/error");
@@ -29,13 +31,13 @@ const Talk = () => {
 
     return () => {
       disconnectSocket();
-      dispatch(setPageLoading(true));
+      dispatch(setTalkPageLoading(true));
     };
   }, []);
 
   return (
     <div className="w-full flex bg-grayblack h-[calc(100vh-4rem)]">
-      {pageLoading ? (
+      {talkPageLoading ? (
         <div className="w-full flex bg-grayblack h-[calc(100vh-4rem)]">
           {/* left bar chat list section*/}
           <section className="w-3/12 h-full flex justify-center items-center">

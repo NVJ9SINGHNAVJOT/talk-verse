@@ -1,4 +1,6 @@
-import { setPageLoading } from "@/redux/slices/pageLoadingSlice";
+import { setTalkPageLoading } from "@/redux/slices/pageLoadingSlice";
+import { chatBarDataApi } from "@/services/operations/chatApi";
+import { getAllNotificationsApi } from "@/services/operations/notificationApi";
 import {
   createContext,
   Dispatch,
@@ -16,7 +18,7 @@ import { io, Socket } from "socket.io-client";
 interface SocketContextInterface {
   socket: Socket | null;
   setSocket: Dispatch<SetStateAction<Socket | null>>;
-  setupSocketConnection: () => void;
+  setupSocketConnection: () => Promise<void>;
   disconnectSocket: () => void;
 }
 
@@ -42,7 +44,7 @@ export default function SocketProvider({ children }: ContextProviderProps) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const socketRef = useRef<Socket | null>(null);
 
-  const setupSocketConnection = () => {
+  const setupSocketConnection = async () => {
     try {
       const socketInstance = io(
         process.env.REACT_APP_BASE_URL_SOCKET_IO_SERVER as string,
@@ -59,14 +61,25 @@ export default function SocketProvider({ children }: ContextProviderProps) {
 
       socketRef.current.on("connect", () => {
         setSocket(socketInstance);
-        dispatch(setPageLoading(false));
       });
 
       socketRef.current.on("connect_error", () => {
         setSocket(null);
+        socketRef.current = null;
         toast.error("Error in connection");
         navigate("/error");
       });
+
+      if (socketRef.current) {
+        const [res1, res2] = await Promise.all([
+          getAllNotificationsApi(),
+          chatBarDataApi(),
+        ]);
+
+        if (res1 && res2) {
+          dispatch(setTalkPageLoading(false));
+        }
+      }
     } catch (error) {
       toast.error("Error while connecting");
       navigate("/error");
@@ -76,6 +89,7 @@ export default function SocketProvider({ children }: ContextProviderProps) {
   const disconnectSocket = (): void => {
     socketRef.current?.disconnect();
     setSocket(null);
+    socketRef.current = null;
   };
 
   return (

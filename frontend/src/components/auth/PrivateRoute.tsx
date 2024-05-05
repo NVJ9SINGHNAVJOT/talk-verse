@@ -10,7 +10,7 @@ const PrivateRoute = (props: PrivateRouteProps) => {
   const authUser = useAppSelector((state) => state.auth.authUser);
 
   if (authUser === true) return children;
-  else return <Navigate to="/error" />;
+  else return <Navigate to="/login" />;
 };
 
 export default PrivateRoute;

@@ -31,8 +31,8 @@ function App() {
         className="w-screen h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden max-w-maxContent min-w-minContent"
       >
         <Routes>
-          <Route path="/about" element={<About />} />
           <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
 
           {/* open routes */}
           <Route element={<OpenRoute />}>
