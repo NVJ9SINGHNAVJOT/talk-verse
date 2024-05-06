@@ -1,11 +1,11 @@
 import { Request } from 'express';
 
-const emitSocketEvent = (req: Request, event: string, payload: string, roomId?: string, roomIds?: string[]) => {
+const emitSocketEvent = (req: Request, event: string, roomId?: string, roomIds?: string[]) => {
     if (roomId) {
-        req.app.get("io").to(roomIds).emit(event, payload);
+        req.app.get("io").to(roomIds).emit(event);
     }
     else {
-        req.app.get("io").to(roomIds).emit(event, payload);
+        req.app.get("io").to(roomIds).emit(event);
     }
 };
 

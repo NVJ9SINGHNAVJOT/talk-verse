@@ -8,7 +8,7 @@ export const showOnline = async (userId: string, status: boolean, socket: Socket
     const userData = await User.findById({ _id: userId }).select({ friends: true }).exec();
     const onlineFriend: string[] = [];
     userData?.friends.forEach((friend) => {
-        if (userSocketIDs.has(friend.friendId)) {
+        if (userSocketIDs.has(friend.friendId as unknown as string)) {
             onlineFriend.push(friend.friendId as unknown as string);
         }
     });

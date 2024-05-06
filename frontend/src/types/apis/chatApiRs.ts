@@ -3,9 +3,9 @@ import { ChatBarData, Friend, Group } from "@/redux/slices/chatSlice";
 export type ChatBarDataRs = {
     success: boolean,
     message: string,
-    friends: Friend[],
-    groups: Group[],
-    chatBarData: ChatBarData[]
+    friends?: Friend[],
+    groups?: Group[],
+    chatBarData?: ChatBarData[]
 }
 
 export type GetChatMessagesRs = {

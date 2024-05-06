@@ -30,7 +30,7 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
             return errRes(res, 400, 'user id not present');
         }
 
-        const userFriends = await User.findById({ userId })
+        const userFriends = await User.findById({ _id: userId })
             .select({ friends: true, chatBar: true })
             .populate({
                 path: 'friends.friendId',
@@ -38,7 +38,7 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
             })
             .exec();
 
-        const groups = await Group.find({ members: { $inc: userId } })
+        const groups = await Group.find({ members: { $in: [userId] } })
             .select({ groupName: true, gpImageUrl: true }).exec();
 
         if (userFriends?.friends?.length !== undefined &&

@@ -4,6 +4,7 @@ import {
   setGroups,
   setOnlineFriend,
   setUnseenMessages,
+  setUserRequests,
   UnseenMessages,
 } from "@/redux/slices/chatSlice";
 import { setTalkPageLoading } from "@/redux/slices/pageLoadingSlice";
@@ -89,16 +90,28 @@ export default function SocketProvider({ children }: ContextProviderProps) {
         ]);
 
         if (res1 && res2 && res3) {
-          const newUnseenMessages: UnseenMessages = {};
-          res1.unseenMessages.forEach((message) => {
-            newUnseenMessages[message.mainId] = message.unseenCount;
-          });
+          if (res1.success === true) {
+            if (res1.unseenMessages) {
+              const newUnseenMessages: UnseenMessages = {};
+              res1.unseenMessages.forEach((message) => {
+                newUnseenMessages[message.mainId] = message.unseenCount;
+              });
+              dispatch(setUnseenMessages(newUnseenMessages));
+            }
+            if (res1.userReqs) {
+              dispatch(setUserRequests(res1.userReqs));
+            }
+          }
 
-          dispatch(setUnseenMessages(newUnseenMessages));
-          dispatch(setFriends(res2.friends));
-          dispatch(setGroups(res2.groups));
-          dispatch(setChatBarData(res2.chatBarData));
-          dispatch(setOnlineFriend(res3.onlineFriends));
+          if (res2.success === true) {
+            if (res2.friends) dispatch(setFriends(res2.friends));
+            if (res2.groups) dispatch(setGroups(res2.groups));
+            if (res2.chatBarData) dispatch(setChatBarData(res2.chatBarData));
+          }
+
+          if (res3.success === true && res3.onlineFriends) {
+            dispatch(setOnlineFriend(res3.onlineFriends));
+          }
 
           setTimeout(() => {
             dispatch(setTalkPageLoading(false));

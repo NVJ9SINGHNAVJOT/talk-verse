@@ -14,6 +14,7 @@ import {
     removeUserTyping,
     UserRequest,
 } from "@/redux/slices/chatSlice";
+import { toast } from "react-toastify";
 
 // Custom hook to manage socket event listeners
 const useSocketEvents = (socket: Socket): void => {
@@ -30,6 +31,7 @@ const useSocketEvents = (socket: Socket): void => {
                         imageUrl: imageUrl ? imageUrl : "",
                     } as UserRequest)
                 );
+                toast.info('New user request');
             }
         );
 
@@ -61,6 +63,7 @@ const useSocketEvents = (socket: Socket): void => {
                         chatId: chatId,
                     } as ChatBarData)
                 );
+                toast.success('New friend added');
             }
         );
 

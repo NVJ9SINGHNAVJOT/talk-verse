@@ -1,11 +1,13 @@
 import Chat from '@/db/mongodb/models/Chat';
 import Notification from '@/db/mongodb/models/Notification';
 import User from '@/db/mongodb/models/User';
+import { clientE } from '@/socket/events';
 import { chatLocks, userSocketIDs } from '@/socket/index';
 import { AcceptRequestBody, SendRequestBody, SetUnseenCountBody } from '@/types/controller/notificationReq';
 import { CustomRequest } from '@/types/custom';
 import Mutex from '@/types/mutex';
 import { errRes } from '@/utils/error';
+import { getSingleSocket } from '@/utils/getSocketIds';
 import { Request, Response } from 'express';
 
 export const getUsers = async (req: Request, res: Response): Promise<Response> => {
@@ -60,9 +62,9 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
         }
 
         // check user exist or not for req id
-        const user = User.exists({ _id: data.reqUserId }).exec();
+        const checkUser = await User.findById({ _id: data.reqUserId }).select({ userName: true, imageUrl: true }).exec();
 
-        if (!user) {
+        if (!checkUser) {
             return errRes(res, 400, 'user not present for given id');
         }
 
@@ -70,7 +72,10 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
         await Notification.updateOne({ userId: data.reqUserId },
             { $push: { friendRequests: userId } }).exec();
 
-        // TODO: socket event
+        const socketId = getSingleSocket(data.reqUserId);
+        if (socketId) {
+            req.app.get("io").to(socketId).emit(clientE.USER_REQUEST, checkUser._id, checkUser.userName, checkUser.imageUrl);
+        }
 
         return res.status(200).json({
             success: true,
@@ -110,7 +115,7 @@ export const getAllNotifications = async (req: Request, res: Response): Promise<
         return res.status(200).json({
             success: true,
             message: 'notifications for user',
-            users: notifications.friendRequests,
+            userReqs: notifications.friendRequests,
             unseenMessages: notifications.unseenMessages
         });
 
@@ -133,15 +138,18 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
         }
 
         // check user exist or not for req id
-        const user = User.findById({ _id: data.acceptUserId }).select({ firstName: true, lastName: true, imageUrl: true }).exec();
+        const checkUser = await User.findById({ _id: data.acceptUserId }).select({ firstName: true, lastName: true, imageUrl: true }).exec();
 
-        if (!user) {
+        if (!checkUser) {
             return errRes(res, 400, 'user not present for given id');
         }
 
         // remove from notifications
         await Notification.updateOne({ userId: userId },
             { $pull: { friendRequests: data.acceptUserId } }).exec();
+
+        await Notification.updateOne({ userId: data.acceptUserId },
+            { $pull: { friendRequests: userId } }).exec();
 
         // create chatId for both users
         // user 1 is who initially sent request and user 2 is who accepted that request
@@ -157,17 +165,26 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
         // set newmutex for new chatid
         chatLocks.set(chat._id, newMutex);
 
-        // TODO: socket event
+        const socketId = getSingleSocket(data.acceptUserId);
+        if (socketId) {
+            console.log('emit req accenpted', data.acceptUserId, socketId)
+            req.app.get("io").to(socketId).emit(clientE.REQUEST_ACCEPTED,
+                data.acceptUserId,
+                chat._id,
+                checkUser.firstName,
+                checkUser.lastName,
+                checkUser.imageUrl);
+        }
 
         return res.status(200).json({
             success: true,
             message: 'request accepted successfully',
-            newFriend: user,
+            newFriend: checkUser,
             newChatId: chat._id
         });
 
     } catch (error) {
-        return errRes(res, 500, "error while sending request");
+        return errRes(res, 500, "error while accept request");
     }
 };
 
@@ -181,10 +198,17 @@ export const checkOnlineFriends = async (req: Request, res: Response): Promise<R
 
         const userData = await User.findById({ _id: userId }).select({ friends: true }).exec();
         const onlineFriends = userData?.friends.map((friend) => {
-            if (userSocketIDs.has(friend.friendId)) {
+            if (userSocketIDs.has(friend.friendId as unknown as string)) {
                 return friend.friendId;
             }
         });
+
+        if (onlineFriends?.length === undefined || onlineFriends?.length > 0) {
+            return res.status(200).json({
+                success: false,
+                message: 'no online friends',
+            });
+        }
 
         return res.status(200).json({
             success: true,

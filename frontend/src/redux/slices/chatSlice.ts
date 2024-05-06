@@ -40,23 +40,23 @@ export type UserRequest = {
 export type UnseenMessages = Record<string, number>;
 
 interface ChatState {
-    friends: Friend[] | null,
-    groups: Group[] | null,
-    chatBarData: ChatBarData[] | null,
-    onlineFriends: string[] | null,
-    unseenMessages: UnseenMessages | null,
-    userRequests: UserRequest[] | null,
-    userTyping: string[] | null
+    friends: Friend[],
+    groups: Group[],
+    chatBarData: ChatBarData[],
+    onlineFriends: string[],
+    unseenMessages: UnseenMessages,
+    userRequests: UserRequest[],
+    userTyping: string[],
 }
 
 const initialState = {
-    friends: null,
-    groups: null,
-    chatBarData: null,
-    onlineFriends: null,
-    unseenMessages: null,
-    userRequests: null,
-    userTyping: null
+    friends: [],
+    groups: [],
+    chatBarData: [],
+    onlineFriends: [],
+    unseenMessages: {},
+    userRequests: [],
+    userTyping: [],
 } satisfies ChatState as ChatState;
 
 const chatSlice = createSlice({
@@ -69,7 +69,7 @@ const chatSlice = createSlice({
             state.friends = action.payload;
         },
         addFriend(state, action: PayloadAction<Friend>) {
-            state.friends?.push(action.payload);
+            state.friends.push(action.payload);
         },
 
         // groups
@@ -77,7 +77,7 @@ const chatSlice = createSlice({
             state.groups = action.payload;
         },
         addGroup(state, action: PayloadAction<Group>) {
-            state.groups?.push(action.payload);
+            state.groups.push(action.payload);
         },
 
         // chatBarData
@@ -85,14 +85,14 @@ const chatSlice = createSlice({
             state.chatBarData = action.payload;
         },
         addChatBarData(state, action: PayloadAction<ChatBarData>) {
-            state.chatBarData?.unshift(action.payload);
+            state.chatBarData.unshift(action.payload);
         },
         setChatBarDataToFirst(state, action: PayloadAction<string>) {
             const dataIdToMove = action.payload;
-            const dataIndex = state.chatBarData?.findIndex(data => data._id === dataIdToMove);
+            const dataIndex = state.chatBarData.findIndex(data => data._id === dataIdToMove);
 
             if (dataIndex !== undefined && dataIndex !== -1) {
-                const data = state.friends?.splice(dataIndex, 1);
+                const data = state.friends.splice(dataIndex, 1);
                 if (data !== undefined) {
                     state.friends?.unshift(data[0]);
                 }
@@ -104,10 +104,10 @@ const chatSlice = createSlice({
             state.onlineFriends = action.payload;
         },
         addOnlineFriend(state, aciton: PayloadAction<string>) {
-            state.onlineFriends?.filter((user) => user !== aciton.payload);
+            state.onlineFriends = state.onlineFriends.filter((user) => user !== aciton.payload);
         },
         removeOnlineFriend(state, action: PayloadAction<string>) {
-            state.onlineFriends?.push(action.payload);
+            state.onlineFriends.push(action.payload);
         },
 
         // unseenMessages
@@ -128,22 +128,22 @@ const chatSlice = createSlice({
         },
 
         // userRequests
-        addUserRequest(state, action: PayloadAction<UserRequest>) {
-            state.userRequests?.push(action.payload);
-        },
         setUserRequests(state, action: PayloadAction<UserRequest[]>) {
             state.userRequests = action.payload;
         },
+        addUserRequest(state, action: PayloadAction<UserRequest>) {
+            state.userRequests.push(action.payload);
+        },
         deleteUserRequest(state, action: PayloadAction<string>) {
-            state.userRequests?.filter((user) => user._id !== action.payload);
+            state.userRequests = state.userRequests.filter((user) => user._id !== action.payload);
         },
 
         // userTyping
         addUserTyping(state, action: PayloadAction<string>) {
-            state.userTyping?.push(action.payload);
+            state.userTyping.push(action.payload);
         },
         removeUserTyping(state, action: PayloadAction<string>) {
-            state.userTyping?.filter((userId) => userId !== action.payload);
+            state.userTyping = state.userTyping.filter((userId) => userId !== action.payload);
         }
     },
 });

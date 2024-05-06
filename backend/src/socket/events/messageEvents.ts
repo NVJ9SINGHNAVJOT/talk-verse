@@ -1,12 +1,13 @@
 import { Socket } from 'socket.io';
 import { clientE, serverE } from '@/socket/events';
-import { userSocketIDs } from '..';
+import { getSingleSocket } from '@/utils/getSocketIds';
 
 export const registerMessageEvents = (socket: Socket, userId: string): void => {
     socket.on(serverE.SEND_MESSAGE, async (chatId: string, to: string, text: string) => {
         // Execute the bulk operations
-        if (userSocketIDs.has(to)) {
-            socket.to(to).emit(clientE.MESSAGE_RECIEVED, chatId, userId, text);
+        const sId = getSingleSocket(to)
+        if (sId) {
+            socket.to(sId).emit(clientE.MESSAGE_RECIEVED, chatId, userId, text);
             console.log('send message', chatId, to, text);
         }
     });

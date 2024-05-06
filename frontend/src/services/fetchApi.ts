@@ -61,7 +61,7 @@ export async function fetchApi
         }
 
     } catch (error) {
-        console.log('error in fetchapi', error);
+        console.log('error in fetchapi');
         return null;
     }
 }

@@ -10,13 +10,7 @@ import Mutex from '@/types/mutex';
 import { showOnline } from '@/socket/onlineStatus';
 
 // store userIds with their current socketIds
-export const userSocketIDs = new Map();
-
-// set which chat is online
-export const onlineChats = new Set();
-
-// set which group is online
-export const onlineGroups = new Set();
+export const userSocketIDs = new Map<string, string>();
 
 // create a map to store mutexes
 export const chatLocks: Map<string, Mutex> = new Map();
@@ -48,7 +42,7 @@ export const setupSocketIO = (app: Application): HTTPServer => {
         if (!userId) {
             socket.disconnect();
         }
-        console.log("a user connected id: ", socket.id, ": ", userId);
+        console.log("a user connected id: ", userId, ": ", socket.id);
         userSocketIDs.set(userId, socket.id);
         showOnline(userId, true, socket);
 
@@ -56,7 +50,7 @@ export const setupSocketIO = (app: Application): HTTPServer => {
         registerNotificationEvents(socket, userId);
 
         socket.on('disconnect', () => {
-            console.log("a user disconnected id: ", socket.id, ": ", userId);
+            console.log("a user disconnected id: ", userId, ": ", socket.id);
             // eslint-disable-next-line drizzle/enforce-delete-with-where
             userSocketIDs.delete(userId);
             showOnline(userId, false, socket);

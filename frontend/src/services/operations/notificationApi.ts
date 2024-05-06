@@ -28,7 +28,7 @@ export const getUsersApi = async (userName: string): Promise<GetUsersRs> => {
 
 export const sendRequestApi = async (userId: string): Promise<boolean> => {
     try {
-        const resData: CommonRs = await fetchApi('POST', SEND_REQUEST, { userId }, { 'Content-Type': 'application/json' });
+        const resData: CommonRs = await fetchApi('POST', SEND_REQUEST, { reqUserId: userId }, { 'Content-Type': 'application/json' });
         if (resData && resData.success === true) {
             return true;
         }
@@ -41,7 +41,7 @@ export const sendRequestApi = async (userId: string): Promise<boolean> => {
 export const getAllNotificationsApi = async (): Promise<GetAllNotificationsRs> => {
     try {
         const resData: GetAllNotificationsRs = await fetchApi('GET', GET_ALL_NOTIFICATIONS);
-        if (resData && resData.success === true) {
+        if (resData) {
             return resData;
         }
         return {} as GetAllNotificationsRs;
@@ -53,7 +53,7 @@ export const getAllNotificationsApi = async (): Promise<GetAllNotificationsRs> =
 
 export const acceptRequestApi = async (userId: string): Promise<AcceptRequestRs> => {
     try {
-        const resData: AcceptRequestRs = await fetchApi('GET', ACCEPT_REQUEST, { userId });
+        const resData: AcceptRequestRs = await fetchApi('POST', ACCEPT_REQUEST, { acceptUserId: userId }, { 'Content-Type': 'application/json' });
         if (resData && resData.success === true) {
             return resData;
         }
@@ -67,7 +67,7 @@ export const checkOnlineFriendsApi = async (): Promise<CheckOnlineFriendsRs> => 
 
     try {
         const resData: CheckOnlineFriendsRs = await fetchApi('GET', CHECK_ONLINE_FRIENDS);
-        if (resData && resData.success === true) {
+        if (resData) {
             return resData;
         }
         return {} as CheckOnlineFriendsRs;

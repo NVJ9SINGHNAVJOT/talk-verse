@@ -48,6 +48,8 @@ const MainNavbar = () => {
   };
 
   useEffect(() => {
+    const currentPathname = location.pathname;
+
     const checkDefaultLogin = async () => {
       const response: CheckUserRs = await checkUserApi();
 
@@ -65,14 +67,13 @@ const MainNavbar = () => {
         dispatch(setUser(user));
         dispatch(setAuthUser(true));
       }
-
-      navigate(location.pathname);
-
+    
       setTimeout(() => {
         setCheckUser(false);
-      }, 1000);
+        navigate(currentPathname);
+      }, 500);
     };
-    
+
     checkDefaultLogin();
   }, []);
 

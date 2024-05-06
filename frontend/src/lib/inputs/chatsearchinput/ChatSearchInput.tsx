@@ -1,10 +1,14 @@
 import "@/lib/inputs/chatsearchinput/ChatSearchInput.css";
-import { getUsersApi } from "@/services/operations/notificationApi";
+import {
+  getUsersApi,
+  sendRequestApi,
+} from "@/services/operations/notificationApi";
 import { GetUsersRs } from "@/types/apis/notificationApiRs";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { RxAvatar } from "react-icons/rx";
 import { UserRequest } from "@/redux/slices/chatSlice";
+import { CiCirclePlus } from "react-icons/ci";
 
 const ChatSearchInput = () => {
   const [query, setQuery] = useState<string>("");
@@ -12,6 +16,12 @@ const ChatSearchInput = () => {
 
   const sendRequest = async (userId: string) => {
     setUsers((prev) => prev.filter((user) => user._id !== userId));
+    const response = await sendRequestApi(userId);
+    if (response) {
+      toast.success("Request send successfully");
+    } else {
+      toast.error("Error while sending request");
+    }
   };
 
   useEffect(() => {
@@ -27,8 +37,10 @@ const ChatSearchInput = () => {
           }
         } else if (response && response.success === false) {
           toast.info("No user exist for such name");
+          setUsers([]);
         } else {
           toast.error("error while checking user name");
+          setUsers([]);
         }
       }
     }, 1000);
@@ -36,7 +48,7 @@ const ChatSearchInput = () => {
   }, [query]);
 
   return (
-    <div className="input-container relative">
+    <div className="input-container relative flex justify-center">
       <input
         type="text"
         placeholder="Search Username"
@@ -44,13 +56,12 @@ const ChatSearchInput = () => {
       />
 
       {users && (
-        <div className=" absolute flex flex-wrap top-36 sm:top-24 w-[30rem] max-w-maxContent text-white">
+        <div className=" absolute flex flex-wrap justify-center gap-7 top-36 sm:top-24 sm:w-[35rem]  max-w-[40rem] text-white">
           {users.map((user, index) => {
             return (
               <div
                 key={index}
-                className=" flex items-center gap-x-3 bg-black hover:bg-transparent cursor-pointer px-3 py-1 rounded-lg"
-                onClick={() => sendRequest(user._id)}
+                className=" flex w-fit items-center gap-x-3 bg-black  px-3 py-1 rounded-lg"
               >
                 {user.imageUrl ? (
                   <img
@@ -59,9 +70,13 @@ const ChatSearchInput = () => {
                     alt="Loading..."
                   />
                 ) : (
-                  <RxAvatar className="w-10 h-10" />
+                  <RxAvatar className="w-10 h-10 aspect-auto" />
                 )}
                 <div>{user.userName}</div>
+                <CiCirclePlus
+                  onClick={() => sendRequest(user._id)}
+                  className=" text-white w-8 h-8 aspect-auto cursor-pointer hover:bg-white hover:text-black rounded-full"
+                />
               </div>
             );
           })}
