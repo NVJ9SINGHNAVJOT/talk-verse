@@ -1,9 +1,17 @@
 import { Socket } from 'socket.io';
-import { serverE } from '@/socket/events';
+import { clientE, serverE } from '@/socket/events';
+import { userSocketIDs } from '..';
 
-export const registerMessageEvents = (socket: Socket): void => {
-    socket.on(serverE.SEND_MESSAGE, async (chatId: string, from: string, to: string, text: string) => {
+export const registerMessageEvents = (socket: Socket, userId: string): void => {
+    socket.on(serverE.SEND_MESSAGE, async (chatId: string, to: string, text: string) => {
         // Execute the bulk operations
-        console.log('send message', chatId, from, to, text);
+        if (userSocketIDs.has(to)) {
+            socket.to(to).emit(clientE.MESSAGE_RECIEVED, chatId, userId, text);
+            console.log('send message', chatId, to, text);
+        }
+    });
+    socket.on(serverE.SEND_GROUP_MESSAGE, async (to: string, text: string, members: string[]) => {
+        // Execute the bulk operations
+        console.log('send group message', to, text, members);
     });
 };

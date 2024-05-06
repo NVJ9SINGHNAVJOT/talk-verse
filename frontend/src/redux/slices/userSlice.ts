@@ -4,7 +4,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 export type User = {
     firstName: string,
     lastName: string,
-    imageUrl: string | null
+    imageUrl?: string | null
 }
 
 interface UserState {

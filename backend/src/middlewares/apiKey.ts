@@ -9,8 +9,8 @@ function apiKey(req: Request, res: Response, next: NextFunction) {
             next();
         }
         else {
-            logger.error("unauthorized access denied");
-            return errRes(res, 401, "unauthorized access denied");
+            logger.error("unauthorized access denied for server");
+            return errRes(res, 401, "unauthorized access denied for server");
         }
     } catch (error) {
         return errRes(res, 401, "errror while checking authorization of apikey");

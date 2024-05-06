@@ -1,19 +1,14 @@
 import "@/lib/inputs/chatsearchinput/ChatSearchInput.css";
 import { getUsersApi } from "@/services/operations/notificationApi";
-import { UsersRs } from "@/types/apis/notificationApiRs";
+import { GetUsersRs } from "@/types/apis/notificationApiRs";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { RxAvatar } from "react-icons/rx";
-
-export type ReqUser = {
-  _id: string;
-  userName: string;
-  imageUrl: string;
-};
+import { UserRequest } from "@/redux/slices/chatSlice";
 
 const ChatSearchInput = () => {
   const [query, setQuery] = useState<string>("");
-  const [users, setUsers] = useState<ReqUser[]>([]);
+  const [users, setUsers] = useState<UserRequest[]>([]);
 
   const sendRequest = async (userId: string) => {
     setUsers((prev) => prev.filter((user) => user._id !== userId));
@@ -22,7 +17,7 @@ const ChatSearchInput = () => {
   useEffect(() => {
     const timeOutId = setTimeout(async () => {
       if (query) {
-        const response: UsersRs = await getUsersApi(query);
+        const response: GetUsersRs = await getUsersApi(query);
 
         if (response && response.success == true) {
           if (response.users) {

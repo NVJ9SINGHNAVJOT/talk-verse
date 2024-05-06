@@ -30,3 +30,13 @@ export type GetGroupMessagesRs = {
         createdAt: Date
     }[]
 }
+
+export type CreateGroupRs = {
+    success: boolean,
+    message: string,
+    newGroup: {
+        _id: string,
+        gpName: string,
+        gpImageUrl: string
+    }
+}

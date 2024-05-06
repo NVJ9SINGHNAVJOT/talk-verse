@@ -12,6 +12,8 @@ export const notificationEndPoints = {
   SEND_REQUEST: BASE_URL_SERVER + "/notification/sendRequest",
   GET_ALL_NOTIFICATIONS: BASE_URL_SERVER + "/notification/getAllNotifications",
   ACCEPT_REQUEST: BASE_URL_SERVER + "/notification/acceptRequest",
+  CHECK_ONLINE_FRIENDS: BASE_URL_SERVER + "/notification/checkOnlineFriends",
+  SET_UNSEEN_COUNT:BASE_URL_SERVER + "/notification/setUnseenCount"
 };
 
 export const chatEndPoints = {

@@ -1,6 +1,6 @@
 import { chatEndPoints } from "@/services/apis";
 import { fetchApi } from "@/services/fetchApi";
-import { ChatBarDataRs, GetChatMessagesRs, GetGroupMessagesRs } from "@/types/apis/chatApiRs";
+import { ChatBarDataRs, CreateGroupRs, GetChatMessagesRs, GetGroupMessagesRs } from "@/types/apis/chatApiRs";
 import { CommonRs } from "@/types/apis/common";
 const {
     CHAT_BAR_DATA,
@@ -10,16 +10,16 @@ const {
     CREATE_GROUP
 } = chatEndPoints;
 
-export const chatBarDataApi = async (): Promise<boolean> => {
+export const chatBarDataApi = async (): Promise<ChatBarDataRs> => {
     try {
         const resData: ChatBarDataRs = await fetchApi('GET', CHAT_BAR_DATA);
         // success false is used in response
         if (resData) {
-            return true;
+            return resData;
         }
-        return false;
+        return {} as ChatBarDataRs;
     } catch (error) {
-        return false;
+        return {} as ChatBarDataRs;
     }
 };
 
@@ -49,15 +49,15 @@ export const fileMessageApi = async (data: FormData): Promise<boolean> => {
     }
 };
 
-export const createGroupApi = async (data: FormData): Promise<boolean> => {
+export const createGroupApi = async (data: FormData): Promise<CreateGroupRs> => {
     try {
-        const resData: CommonRs = await fetchApi('POST', CREATE_GROUP, data);
+        const resData: CreateGroupRs = await fetchApi('POST', CREATE_GROUP, data);
         if (resData && resData.success === true) {
-            return true;
+            return resData;
         }
-        return false;
+        return {} as CreateGroupRs;
     } catch (error) {
-        return false;
+        return {} as CreateGroupRs;
     }
 };
 

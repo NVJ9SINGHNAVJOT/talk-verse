@@ -1,6 +1,17 @@
+import {
+  setChatBarData,
+  setFriends,
+  setGroups,
+  setOnlineFriend,
+  setUnseenMessages,
+  UnseenMessages,
+} from "@/redux/slices/chatSlice";
 import { setTalkPageLoading } from "@/redux/slices/pageLoadingSlice";
 import { chatBarDataApi } from "@/services/operations/chatApi";
-import { getAllNotificationsApi } from "@/services/operations/notificationApi";
+import {
+  checkOnlineFriendsApi,
+  getAllNotificationsApi,
+} from "@/services/operations/notificationApi";
 import {
   createContext,
   Dispatch,
@@ -71,13 +82,27 @@ export default function SocketProvider({ children }: ContextProviderProps) {
       });
 
       if (socketRef.current) {
-        const [res1, res2] = await Promise.all([
+        const [res1, res2, res3] = await Promise.all([
           getAllNotificationsApi(),
           chatBarDataApi(),
+          checkOnlineFriendsApi(),
         ]);
 
-        if (res1 && res2) {
-          dispatch(setTalkPageLoading(false));
+        if (res1 && res2 && res3) {
+          const newUnseenMessages: UnseenMessages = {};
+          res1.unseenMessages.forEach((message) => {
+            newUnseenMessages[message.mainId] = message.unseenCount;
+          });
+
+          dispatch(setUnseenMessages(newUnseenMessages));
+          dispatch(setFriends(res2.friends));
+          dispatch(setGroups(res2.groups));
+          dispatch(setChatBarData(res2.chatBarData));
+          dispatch(setOnlineFriend(res3.onlineFriends));
+
+          setTimeout(() => {
+            dispatch(setTalkPageLoading(false));
+          }, 1000);
         }
       }
     } catch (error) {

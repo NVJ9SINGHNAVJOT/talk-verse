@@ -5,3 +5,8 @@ export type SendRequestBody = {
 export type AcceptRequestBody = {
     acceptUserId: string,
 };
+
+export type SetUnseenCountBody = {
+    mainId: string,
+    count: number,
+}

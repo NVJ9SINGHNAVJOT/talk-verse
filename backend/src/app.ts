@@ -20,11 +20,10 @@ mongodbdatabaseConnect().catch(() => {
     console.log("mongodb connection failed");
 });
 
+app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
-
-app.use(cors(corsOptions));
 
 // server only accessible with key
 app.use(apiKey);

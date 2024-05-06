@@ -7,6 +7,7 @@ import { checkUserSocket } from '@/middlewares/socket';
 import { CustomSocket } from '@/types/custom';
 import corsOptions from '@/config/corsOptions';
 import Mutex from '@/types/mutex';
+import { showOnline } from '@/socket/onlineStatus';
 
 // store userIds with their current socketIds
 export const userSocketIDs = new Map();
@@ -49,14 +50,16 @@ export const setupSocketIO = (app: Application): HTTPServer => {
         }
         console.log("a user connected id: ", socket.id, ": ", userId);
         userSocketIDs.set(userId, socket.id);
+        showOnline(userId, true, socket);
 
-        registerMessageEvents(socket);
-        registerNotificationEvents(socket);
+        registerMessageEvents(socket, userId);
+        registerNotificationEvents(socket, userId);
 
         socket.on('disconnect', () => {
             console.log("a user disconnected id: ", socket.id, ": ", userId);
             // eslint-disable-next-line drizzle/enforce-delete-with-where
             userSocketIDs.delete(userId);
+            showOnline(userId, false, socket);
         });
     });
 

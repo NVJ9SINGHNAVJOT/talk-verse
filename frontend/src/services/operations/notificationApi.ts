@@ -1,14 +1,16 @@
-import { UnseenMessages } from "@/redux/slices/chatSlice";
 import { notificationEndPoints } from "@/services/apis";
 import { fetchApi } from "@/services/fetchApi";
 import { CommonRs } from "@/types/apis/common";
-import { GetAllNotificationsRs, GetUsersRs } from "@/types/apis/notificationApiRs";
+import { AcceptRequestRs, CheckOnlineFriendsRs, GetAllNotificationsRs, GetUsersRs } from "@/types/apis/notificationApiRs";
+
 
 const {
     GET_USERS,
     SEND_REQUEST,
     GET_ALL_NOTIFICATIONS,
-    ACCEPT_REQUEST
+    ACCEPT_REQUEST,
+    CHECK_ONLINE_FRIENDS,
+    SET_UNSEEN_COUNT
 } = notificationEndPoints;
 
 export const getUsersApi = async (userName: string): Promise<GetUsersRs> => {
@@ -36,26 +38,48 @@ export const sendRequestApi = async (userId: string): Promise<boolean> => {
     }
 };
 
-export const getAllNotificationsApi = async (): Promise<boolean> => {
+export const getAllNotificationsApi = async (): Promise<GetAllNotificationsRs> => {
     try {
         const resData: GetAllNotificationsRs = await fetchApi('GET', GET_ALL_NOTIFICATIONS);
         if (resData && resData.success === true) {
-            const newUnseenMessages: UnseenMessages = {};
-            resData.unseenMessages.forEach((message) => {
-                newUnseenMessages[message.mainId] = message.unseenCount;
-            });
-            return true;
+            return resData;
         }
-        return false;
+        return {} as GetAllNotificationsRs;
     } catch (error) {
-        return false;
+        return {} as GetAllNotificationsRs;
     }
 };
 
 
-export const acceptRequestApi = async (userId: string): Promise<boolean> => {
+export const acceptRequestApi = async (userId: string): Promise<AcceptRequestRs> => {
     try {
-        const resData: CommonRs = await fetchApi('GET', ACCEPT_REQUEST, { userId });
+        const resData: AcceptRequestRs = await fetchApi('GET', ACCEPT_REQUEST, { userId });
+        if (resData && resData.success === true) {
+            return resData;
+        }
+        return {} as AcceptRequestRs;
+    } catch (error) {
+        return {} as AcceptRequestRs;
+    }
+};
+
+export const checkOnlineFriendsApi = async (): Promise<CheckOnlineFriendsRs> => {
+
+    try {
+        const resData: CheckOnlineFriendsRs = await fetchApi('GET', CHECK_ONLINE_FRIENDS);
+        if (resData && resData.success === true) {
+            return resData;
+        }
+        return {} as CheckOnlineFriendsRs;
+    } catch (error) {
+        return {} as CheckOnlineFriendsRs;
+    }
+};
+
+export const setUnseenCount = async (mainId: string, count: number): Promise<boolean> => {
+
+    try {
+        const resData: CommonRs = await fetchApi('POST', SET_UNSEEN_COUNT, { mainId: mainId, count: count });
         if (resData && resData.success === true) {
             return true;
         }

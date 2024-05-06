@@ -1,13 +1,27 @@
 import GpMessage from "@/db/mongodb/models/GpMessage";
-import Group, { IGroup } from "@/db/mongodb/models/Group";
+import Group from "@/db/mongodb/models/Group";
 import Message from "@/db/mongodb/models/Message";
-import User, { IUser } from "@/db/mongodb/models/User";
+import User from "@/db/mongodb/models/User";
 import { CreateGroupBody, FileMessageBody } from "@/types/controller/chatReq";
 import { CustomRequest } from "@/types/custom";
 import uploadToCloudinary from "@/utils/cloudinaryUpload";
 import { errRes } from "@/utils/error";
 import { Request, Response } from 'express';
 
+type BarData = {
+    // common
+    _id: string,
+
+    // friend
+    chatId?: string
+    firstName?: string,
+    lastName?: string,
+    imageUrl?: string
+
+    // group
+    groupName?: string,
+    gpImageUrl?: string
+}
 export const chatBarData = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = (req as CustomRequest).userId;
@@ -38,21 +52,6 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
         }
 
         // sort as per chatBar
-        type BarData = {
-            // common
-            _id: string,
-
-            // friend
-            chatId?: string
-            firstName?: string,
-            lastName?: string,
-            imageUrl?: string
-
-            // group
-            groupName?: string,
-            gpImageUrl?: string
-        }
-
         const chatBar: (BarData)[] = [];
 
         // combine user friends and their chatId in array and push in chatbar 
@@ -205,6 +204,11 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
         return res.status(200).json({
             success: true,
             message: 'group created successfully',
+            newGroup: {
+                _id: newGroup._id,
+                gpName: newGroup.groupName,
+                gpImageUrl: newGroup.gpImageUrl
+            }
         });
 
     } catch (error) {

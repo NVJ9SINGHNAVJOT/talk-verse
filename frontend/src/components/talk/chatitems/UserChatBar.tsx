@@ -3,13 +3,17 @@ import { FiPlus } from "react-icons/fi";
 import { FaRegBell } from "react-icons/fa";
 import ChatBarItems from "@/components/talk/chatitems/ChatBarItems";
 import SearchModal from "@/components/talk/chatitems/SearchModal";
-import { useState } from "react";
 import CreateGroup from "@/components/talk/chatitems/CreateGroupModal";
+import { useSocketContext } from "@/context/SocketContext";
+import userChatBarEvents from "@/socket/userChatBarEvents";
+import { useState } from "react";
+
 
 const UserChatBar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
-
+  const { socket } = useSocketContext();
+ 
   const toggleSearchModal = () => {
     setIsSearchOpen(!isSearchOpen);
   };
@@ -17,6 +21,10 @@ const UserChatBar = () => {
   const toggelCreateGroupModal = () => {
     setIsCreateGroupOpen(!isCreateGroupOpen);
   };
+
+  if (socket) {
+    userChatBarEvents(socket);    
+  }
 
   return (
     <div className="w-full h-full bg-[#0D1117]">
