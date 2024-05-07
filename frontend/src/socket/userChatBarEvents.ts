@@ -5,6 +5,7 @@ import { Socket } from "socket.io-client";
 import {
     addChatBarData,
     addFriend,
+    addNewUnseen,
     addOnlineFriend,
     addUserRequest,
     addUserTyping,
@@ -15,20 +16,22 @@ import {
     UserRequest,
 } from "@/redux/slices/chatSlice";
 import { toast } from "react-toastify";
+import { SGroupMessageRecieved, SRequestAccepted, SUserRequest } from "@/types/scoket/eventTypes";
 
 // Custom hook to manage socket event listeners
 const useSocketEvents = (socket: Socket): void => {
     const dispatch = useDispatch();
 
     useEffect(() => {
+
         socket.on(
             clientE.USER_REQUEST,
-            (userId: string, userName: string, imageUrl?: string) => {
+            (data: SUserRequest) => {
                 dispatch(
                     addUserRequest({
-                        _id: userId,
-                        userName: userName,
-                        imageUrl: imageUrl ? imageUrl : "",
+                        _id: data._id,
+                        userName: data.userName,
+                        imageUrl: data.imageUrl,
                     } as UserRequest)
                 );
                 toast.info('New user request');
@@ -38,34 +41,37 @@ const useSocketEvents = (socket: Socket): void => {
         socket.on(
             clientE.REQUEST_ACCEPTED,
             (
-                newFriendId: string,
-                chatId: string,
-                firstName: string,
-                lastName: string,
-                imageUrl?: string
+                data: SRequestAccepted
             ) => {
                 dispatch(
                     addFriend({
-                        _id: newFriendId,
-                        chatId: chatId,
-                        firstName: firstName,
-                        lastName: lastName,
-                        imageUrl: imageUrl ? imageUrl : "",
+                        _id: data._id,
+                        chatId: data.chatId,
+                        firstName: data.firstName,
+                        lastName: data.lastName,
+                        imageUrl: data.imageUrl
                     } as Friend)
                 );
 
                 dispatch(
                     addChatBarData({
-                        _id: newFriendId,
-                        firstName: firstName,
-                        lastName: lastName,
-                        imageUrl: imageUrl ? imageUrl : "",
-                        chatId: chatId,
+                        _id: data._id,
+                        chatId: data.chatId,
+                        firstName: data.firstName,
+                        lastName: data.lastName,
+                        imageUrl: data.imageUrl ? data.imageUrl : "",
                     } as ChatBarData)
                 );
+
+                dispatch(addNewUnseen(data.chatId));
+
                 toast.success('New friend added');
             }
         );
+
+        socket.on(clientE.GROUP_MESSAGE_RECIEVED, (data: SGroupMessageRecieved)=>{
+            console.log(data);
+        });
 
         socket.on(clientE.OTHER_START_TYPING, (friendId: string) => {
             dispatch(addUserTyping(friendId));

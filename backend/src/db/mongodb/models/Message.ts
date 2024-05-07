@@ -4,14 +4,26 @@ import { IUser } from '@/db/mongodb/models/User';
 
 // Define an interface representing a Message document
 export interface IMessage extends Document {
+    uuId: string;
+    isFile: boolean;
     chatId: mongoose.Types.ObjectId & IChat;
     from: mongoose.Types.ObjectId & IUser;
     to: mongoose.Types.ObjectId & IUser;
     text: string;
+    createdAt: Date;
 }
 
 // Define the Message schema using the interface
 const messageSchema = new Schema<IMessage>({
+    uuId: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    isFile: {
+        type: Boolean,
+        default: false
+    },
     chatId: {
         type: Schema.Types.ObjectId,
         ref: 'Chat',
@@ -31,6 +43,10 @@ const messageSchema = new Schema<IMessage>({
         type: String,
         required: true,
         trim: true,
+    },
+    createdAt: {
+        type: Date,
+        required: true
     },
 }, { timestamps: true });
 

@@ -10,3 +10,7 @@ export type SetUnseenCountBody = {
     mainId: string,
     count: number,
 }
+
+export type SetOrderBody = {
+    mainId: string
+}

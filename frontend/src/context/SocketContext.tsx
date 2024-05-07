@@ -93,8 +93,8 @@ export default function SocketProvider({ children }: ContextProviderProps) {
           if (res1.success === true) {
             if (res1.unseenMessages) {
               const newUnseenMessages: UnseenMessages = {};
-              res1.unseenMessages.forEach((message) => {
-                newUnseenMessages[message.mainId] = message.unseenCount;
+              res1.unseenMessages.forEach((messages) => {
+                newUnseenMessages[messages.mainId] = messages.count;
               });
               dispatch(setUnseenMessages(newUnseenMessages));
             }

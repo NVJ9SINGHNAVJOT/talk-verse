@@ -4,13 +4,25 @@ import { IGroup } from '@/db/mongodb/models/Group';
 
 // Define an interface representing a Group Message document
 export interface IGpMessage extends Document {
+    uuId: string;
+    isFile: boolean,
     from: mongoose.Types.ObjectId & IUser;
     to: mongoose.Types.ObjectId & IGroup;
     text: string;
+    createdAt: Date;
 }
 
 // Define the Group Message schema using the interface
 const gpMessageSchema = new Schema<IGpMessage>({
+    uuId: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    isFile: {
+        type: Boolean,
+        default: false
+    },
     from: {
         type: Schema.Types.ObjectId,
         ref: 'User',
@@ -25,6 +37,10 @@ const gpMessageSchema = new Schema<IGpMessage>({
         type: String,
         required: true,
         trim: true,
+    },
+    createdAt: {
+        type: Date,
+        required: true
     },
 }, { timestamps: true });
 

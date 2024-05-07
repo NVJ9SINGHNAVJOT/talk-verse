@@ -1,4 +1,4 @@
-import { acceptRequest, checkOnlineFriends, getAllNotifications, getUsers, sendRequest, setUnseenCount } from '@/controllers/notification';
+import { acceptRequest, checkOnlineFriends, getAllNotifications, getUsers, sendRequest, setOrder, setUnseenCount } from '@/controllers/notification';
 import { auth } from '@/middlewares/auth';
 import express, { Router } from 'express';
 const router: Router = express.Router();
@@ -9,5 +9,6 @@ router.get('/getAllNotifications', auth, getAllNotifications);
 router.post('/acceptRequest', auth, acceptRequest);
 router.get('/checkOnlineFriends', auth, checkOnlineFriends);
 router.post('/setUnseenCount', auth, setUnseenCount);
+router.post('/setOrder', auth, setOrder);
 
 export default router;

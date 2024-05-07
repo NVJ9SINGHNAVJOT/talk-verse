@@ -1,7 +1,7 @@
 import { Socket } from 'socket.io';
 import User from "@/db/mongodb/models/User";
 import { userSocketIDs } from "@/socket/index";
-import { clientE } from './events';
+import { clientE } from '@/socket/events';
 
 export const showOnline = async (userId: string, status: boolean, socket: Socket) => {
 

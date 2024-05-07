@@ -1,12 +1,20 @@
 import GpMessage from "@/db/mongodb/models/GpMessage";
 import Group from "@/db/mongodb/models/Group";
 import Message from "@/db/mongodb/models/Message";
+import UnseenCount from "@/db/mongodb/models/UnseenCount";
 import User from "@/db/mongodb/models/User";
+import { logger } from "@/logger/logger";
+import { chatLocks, groupIds } from "@/socket";
+import { clientE } from "@/socket/events";
 import { CreateGroupBody, FileMessageBody } from "@/types/controller/chatReq";
 import { CustomRequest } from "@/types/custom";
+import { SGroupMessageRecieved } from "@/types/socket/eventTypes";
 import uploadToCloudinary from "@/utils/cloudinaryUpload";
+import emitSocketEvent from "@/utils/emitSocketEvent";
 import { errRes } from "@/utils/error";
+import { getMultiSockets } from "@/utils/getSocketIds";
 import { Request, Response } from 'express';
+import { v4 as uuidv4 } from "uuid";
 
 type BarData = {
     // common
@@ -92,7 +100,7 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
         });
 
     } catch (error) {
-        return errRes(res, 500, "error while sending request");
+        return errRes(res, 500, "error while sending request", error);
     }
 };
 
@@ -116,7 +124,7 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
             .sort({ createAt: -1 })
             .skip(skipN)
             .limit(20)
-            .select({ from: true, to: true, text: true, createdAt: true })
+            .select({ uuId: true, isFile: true, from: true, text: true, createdAt: true, _id: false })
             .lean()
             .exec();
 
@@ -134,7 +142,7 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
         });
 
     } catch (error) {
-        return errRes(res, 500, "error while getting chat messages");
+        return errRes(res, 500, "error while getting chat messages", error);
     }
 };
 
@@ -147,18 +155,58 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
         if (!userId) {
             return errRes(res, 400, 'user id not present');
         }
-        if (!data.from || !data.to || !data.isGroup || !data.mainId || !req.file) {
+        if (!data.from || !data.to || !data.mainId || !req.file) {
             return errRes(res, 400, 'invalid data for filemessage');
         }
-
 
         const secUrl = await uploadToCloudinary(req.file);
         if (secUrl === null) {
             return errRes(res, 500, "error while uploading user image");
         }
 
+        if (data.isGroup) {
+            const uuId = uuidv4();
+            const createdAt = new Date();
+            const sdata: SGroupMessageRecieved = {
+                uuId: uuId,
+                isFile: true,
+                from: data.from,
+                to: data.to,
+                text: secUrl,
+                createAt: createdAt,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                imageUrl: data.imageUrl,
+            };
 
-        // TODO: socket event
+            const members = groupIds.get(data.mainId);
+            if (!members) {
+                return errRes(res, 400, "no members for group for file message");
+            }
+
+            const channel = chatLocks.get(data.mainId);
+            if (!channel) {
+                return errRes(res, 500, 'no channel for group');
+            }
+            const memData = getMultiSockets(members);
+            if (members.length > 0 && memData.online.length > 0) {
+                // message through channel
+                await channel.lock();
+                emitSocketEvent(req, clientE.GROUP_MESSAGE_RECIEVED, sdata, null, memData.online);
+                channel.unlock();
+            }
+
+            // increase unseen count for offline members of group
+            try {
+                await GpMessage.create({ uuId: uuId, isFile: true, from: data.from, to: data.to, text: secUrl, createdAt: createdAt });
+                await UnseenCount.updateMany(
+                    { userId: { $in: memData.offline }, mainId: data.mainId },
+                    { $inc: { count: 1 } }
+                );
+            } catch (error) {
+                return errRes(res, 500, "error while updating unseen count for group members", { error, sdata });
+            }
+        }
 
         return res.status(200).json({
             success: true,
@@ -166,7 +214,7 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
         });
 
     } catch (error) {
-        return errRes(res, 500, 'error while uploading filemessage');
+        return errRes(res, 500, 'error while uploading filemessage', error);
     }
 };
 
@@ -212,7 +260,7 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
         });
 
     } catch (error) {
-        return errRes(res, 500, 'error while uploading filemessage');
+        return errRes(res, 500, 'error while uploading filemessage', error);
     }
 };
 
@@ -236,24 +284,28 @@ export const groupMessages = async (req: Request, res: Response): Promise<Respon
             .sort({ createAt: -1 })
             .skip(skipN)
             .limit(20)
-            .select({ from: true, text: true, createdAt: true })
+            .select({ uuId: true, isFile: true, from: true, text: true, createdAt: true, _id: false })
+            .populate({
+                path: "from",
+                select: "firstName lastName imageUrl"
+            })
             .lean()
             .exec();
 
         if (gpMessages.length === 0) {
             return res.status(200).json({
                 success: false,
-                message: 'no messages yet for this chatId'
+                message: 'no messages yet for this group'
             });
         }
 
         return res.status(200).json({
             success: true,
-            message: 'messages for chatid successfull',
+            message: 'messages for group successfull',
             messages: gpMessages
         });
 
     } catch (error) {
-        return errRes(res, 500, "error while getting chat messages");
+        return errRes(res, 500, "error while getting group messages", error);
     }
 };

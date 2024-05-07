@@ -114,11 +114,8 @@ const chatSlice = createSlice({
         setUnseenMessages(state, action: PayloadAction<UnseenMessages>) {
             state.unseenMessages = action.payload;
         },
-        addNewUnseen: (state, action: PayloadAction<{ key: string; value: number }>) => {
-            const { key, value } = action.payload;
-            if (state.unseenMessages) {
-                state.unseenMessages[key] = value;
-            }
+        addNewUnseen: (state, action: PayloadAction<string>) => {
+            state.unseenMessages[action.payload] = 0;
         },
         updateUnseenMessages: (state, action: PayloadAction<string>) => {
             const key = action.payload;

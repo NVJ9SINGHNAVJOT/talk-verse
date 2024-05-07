@@ -5,15 +5,29 @@ export const getSingleSocket = (userId: string) => {
     if (socketId) {
         return socketId;
     }
-    return "";
+    return undefined;
 };
 
-export const getMultiSockets = (users: string[]) => {
-    const socketIds = users.map((user) => {
-        if (userSocketIDs.has(user)) {
-            return userSocketIDs.get(user);
+export type Members = {
+    online: string[],
+    offline: string[]
+}
+export const getMultiSockets = (users: string[]): Members => {
+    const online: string[] = [];
+    const offline: string[] = [];
+
+    users.forEach((user) => {
+        const socketId = userSocketIDs.get(user);
+        if (socketId !== undefined) {
+            return online.push(socketId);
         }
+        return offline.push(user);
     });
 
-    return socketIds;
+    const membersData: Members = {
+        online: online,
+        offline: offline
+    };
+    
+    return membersData;
 };

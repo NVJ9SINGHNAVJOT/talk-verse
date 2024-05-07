@@ -44,15 +44,15 @@ const UserChatBar = () => {
     dispatch(deleteUserRequest(userId));
     const response = await acceptRequestApi(userId);
     if (response && response.success === true) {
-      dispatch(addFriend(response.newFriend));
-      const newChatBarData: ChatBarData = {
+      const newData: Friend & ChatBarData = {
         _id: response.newFriend._id,
         firstName: response.newFriend.firstName,
         lastName: response.newFriend.lastName,
         imageUrl: response.newFriend.imageUrl,
         chatId: response.newChatId,
       };
-      dispatch(addChatBarData(newChatBarData));
+      dispatch(addFriend(newData));
+      dispatch(addChatBarData(newData));
       toast.success("New friend added");
     } else {
       toast.error("Error while adding friend");

@@ -9,11 +9,8 @@ const developmentLogger = () => {
                 format: format.combine(
                     format.colorize(),
                     format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-                    format.json(),
                     format.printf(({ timestamp, level, message }) => {
-
                         return `[${timestamp}] ${level}: ${message}. data:`;
-
                     })
                 ),
             }),

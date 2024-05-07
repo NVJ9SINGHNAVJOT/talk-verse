@@ -1,4 +1,4 @@
-import { Friend, UserRequest } from "@/redux/slices/chatSlice";
+import { UserRequest } from "@/redux/slices/chatSlice";
 
 export type GetUsersRs = {
     success: boolean,
@@ -12,14 +12,19 @@ export type GetAllNotificationsRs = {
     userReqs?: UserRequest[],
     unseenMessages?: {
         mainId: string,
-        unseenCount: number
+        count: number
     }[]
 }
 
 export type AcceptRequestRs = {
     success: boolean,
     message: string,
-    newFriend: Friend,
+    newFriend: {
+        _id: string,
+        firstName: string,
+        lastName: string,
+        imageUrl?: string
+    },
     newChatId: string
 }
 

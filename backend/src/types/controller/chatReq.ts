@@ -1,8 +1,12 @@
 export type FileMessageBody = {
     isGroup: boolean,
     mainId: string,
+
     from: string,
-    to: string
+    to: string,
+    firstName: string,
+    lastName: string,
+    imageUrl?: string
 }
 
 export type CreateGroupBody = {

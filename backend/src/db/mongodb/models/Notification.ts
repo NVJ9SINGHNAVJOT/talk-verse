@@ -1,17 +1,12 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { IUser } from '@/db/mongodb/models/User';
-
-// Define interfaces for the nested objects in the Notification schema
-interface UnseenMessage {
-    mainId: mongoose.Types.ObjectId;
-    unseenCount: number;
-}
+import { IUnseenCount } from '@/db/mongodb/models/UnseenCount';
 
 // Define an interface representing a Notification document
 export interface INotification extends Document {
-    userId: mongoose.Types.ObjectId;
+    userId: mongoose.Types.ObjectId & IUser;
     friendRequests: mongoose.Types.ObjectId[] & IUser[];
-    unseenMessages: UnseenMessage[];
+    unseenMessages: mongoose.Types.ObjectId[] & IUnseenCount[];
 }
 
 // Define the Notification schema using the interface
@@ -29,14 +24,8 @@ const notificationSchema = new Schema<INotification>({
     ],
     unseenMessages: [
         {
-            mainId: {
-                type: mongoose.Types.ObjectId,
-                required: true
-            },
-            unseenCount: {
-                type: Number,
-                default: 0,
-            },
+            type: Schema.Types.ObjectId,
+            ref: 'UnseenCount'
         },
     ],
 }, { timestamps: true });

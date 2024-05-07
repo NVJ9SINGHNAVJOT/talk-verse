@@ -1,4 +1,6 @@
 import { ChatBarData, Friend, Group } from "@/redux/slices/chatSlice";
+import { GroupMessages } from "@/redux/slices/messagesSlice";
+import { SMessageRecieved } from "@/types/scoket/eventTypes";
 
 export type ChatBarDataRs = {
     success: boolean,
@@ -11,24 +13,13 @@ export type ChatBarDataRs = {
 export type GetChatMessagesRs = {
     success: boolean,
     message: string,
-    messages: {
-        _id: string,
-        from: string,
-        to: string,
-        text: string,
-        createdAt: Date
-    }[]
+    messages: SMessageRecieved[]
 }
 
 export type GetGroupMessagesRs = {
     success: boolean,
     message: string,
-    messages: {
-        _id: string,
-        from: string,
-        text: string,
-        createdAt: Date
-    }[]
+    messages: GroupMessages[]
 }
 
 export type CreateGroupRs = {

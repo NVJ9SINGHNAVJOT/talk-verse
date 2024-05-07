@@ -10,7 +10,8 @@ const {
     GET_ALL_NOTIFICATIONS,
     ACCEPT_REQUEST,
     CHECK_ONLINE_FRIENDS,
-    SET_UNSEEN_COUNT
+    SET_UNSEEN_COUNT,
+    SET_ORDER
 } = notificationEndPoints;
 
 export const getUsersApi = async (userName: string): Promise<GetUsersRs> => {
@@ -77,9 +78,20 @@ export const checkOnlineFriendsApi = async (): Promise<CheckOnlineFriendsRs> => 
 };
 
 export const setUnseenCount = async (mainId: string, count: number): Promise<boolean> => {
-
     try {
         const resData: CommonRs = await fetchApi('POST', SET_UNSEEN_COUNT, { mainId: mainId, count: count });
+        if (resData && resData.success === true) {
+            return true;
+        }
+        return false;
+    } catch (error) {
+        return false;
+    }
+};
+
+export const setOrderApi = async (mainId: string): Promise<boolean> => {
+    try {
+        const resData: CommonRs = await fetchApi('POST', SET_ORDER, { mainId: mainId });
         if (resData && resData.success === true) {
             return true;
         }
