@@ -7,18 +7,18 @@ import { logger } from '@/logger/logger';
 export const showOnline = async (userId: string, status: boolean, socket: Socket) => {
     try {
         const userData = await User.findById({ _id: userId }).select({ friends: true }).exec();
-        const onlineFriend: string[] = [];
+        const onlineFriends: string[] = [];
         userData?.friends.forEach((friend) => {
-            if (userSocketIDs.has(friend.friendId as unknown as string)) {
-                onlineFriend.push(friend.friendId as unknown as string);
+            if (userSocketIDs.has(friend.friendId._id as string)) {
+                onlineFriends.push(friend.friendId._id as string);
             }
         });
 
-        if (status && onlineFriend.length > 0) {
-            socket.to(onlineFriend).emit(clientE.SET_USER_OFFLINE, userId);
+        if (status && onlineFriends.length > 0) {
+            socket.to(onlineFriends).emit(clientE.SET_USER_OFFLINE, userId);
         }
         else {
-            socket.to(onlineFriend).emit(clientE.SET_USER_ONLINE, userId);
+            socket.to(onlineFriends).emit(clientE.SET_USER_ONLINE, userId);
         }
 
     } catch (error) {

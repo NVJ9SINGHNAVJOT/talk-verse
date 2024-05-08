@@ -19,11 +19,13 @@ import { SoAddedInGroup, SoGroupMessageRecieved, SoMessageRecieved, SoRequestAcc
 import { addGpMessages, addPMessages, GroupMessages } from "@/redux/slices/messagesSlice";
 
 // Custom hook to manage socket event listeners
-const useSocketEvents = (socket: Socket): void => {
+const useSocketEvents = (socket: Socket | null): void => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-
+        if (!socket) {
+            return;
+        }
         socket.on(
             clientE.USER_REQUEST,
             (data: SoUserRequest) => {

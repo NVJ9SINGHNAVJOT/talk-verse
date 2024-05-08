@@ -9,16 +9,15 @@ import { setTalkPageLoading } from "@/redux/slices/pageLoadingSlice";
 import { useDispatch } from "react-redux";
 
 const Talk = () => {
+  const { setupSocketConnection, disconnectSocket } = useSocketContext();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const talkPageLoading = useAppSelector(
     (state) => state.pageLoading.talkPageLoading
   );
 
-  const { setupSocketConnection, disconnectSocket } = useSocketContext();
-
   useEffect(() => {
+    dispatch(setTalkPageLoading(true));
     const getSocket = async () => {
       try {
         await setupSocketConnection();

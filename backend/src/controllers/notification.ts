@@ -71,9 +71,9 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
             return errRes(res, 400, 'user not present for given reqUserId');
         }
 
-        const myDetails = await User.findById({ _id: userId }).select({ userName: true, imageUrl: true }).exec();
+        const myDetails = await User.findById({ _id: userId }).select({ userName: true, imageUrl: true, _id: false }).exec();
         if (!myDetails) {
-            return errRes(res, 401, 'could not found user detaills');
+            return errRes(res, 401, 'could not found user details');
         }
 
         // update user with req
@@ -83,7 +83,7 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
         const socketId = getSingleSocket(data.reqUserId);
         if (socketId) {
             const sdata: SoUserRequest = {
-                _id: myDetails._id,
+                _id: userId,
                 userName: myDetails.userName,
                 imageUrl: myDetails.imageUrl
             };
@@ -231,9 +231,11 @@ export const checkOnlineFriends = async (req: Request, res: Response): Promise<R
         }
 
         const userData = await User.findById({ _id: userId }).select({ friends: true }).exec();
-        const onlineFriends = userData?.friends.map((friend) => {
-            if (userSocketIDs.has(friend.friendId as unknown as string)) {
-                return friend.friendId;
+        const onlineFriends: string[] = [];
+
+        userData?.friends.forEach((friend) => {
+            if (userSocketIDs.has(friend.friendId._id as string)) {
+                onlineFriends.push(friend.friendId._id);
             }
         });
 

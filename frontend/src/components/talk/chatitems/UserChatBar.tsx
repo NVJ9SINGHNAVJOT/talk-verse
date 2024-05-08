@@ -32,13 +32,10 @@ const UserChatBar = () => {
   const excSeeNotifRef = useRef<HTMLDivElement>(null);
   const userRequests = useAppSelector((state) => state.chat.userRequests);
   const chatBarData = useAppSelector((state) => state.chat.chatBarData);
+  useOnClickOutside(seeNotifRef, () => setSeeNotif(false), excSeeNotifRef);
   const dispatch = useDispatch();
 
-  if (socket) {
-    userChatBarEvents(socket);
-  }
-
-  useOnClickOutside(seeNotifRef, () => setSeeNotif(false), excSeeNotifRef);
+  userChatBarEvents(socket);
 
   const acceptReq = async (userId: string) => {
     dispatch(deleteUserRequest(userId));

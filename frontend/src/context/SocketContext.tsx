@@ -50,11 +50,10 @@ export const useSocketContext = (): SocketContextInterface => {
 };
 
 export default function SocketProvider({ children }: ContextProviderProps) {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
   const [socket, setSocket] = useState<Socket | null>(null);
   const socketRef = useRef<Socket | null>(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const setupSocketConnection = async () => {
     try {
@@ -115,7 +114,7 @@ export default function SocketProvider({ children }: ContextProviderProps) {
 
           setTimeout(() => {
             dispatch(setTalkPageLoading(false));
-          }, 1000);
+          }, 500);
         }
       }
     } catch (error) {
@@ -126,8 +125,8 @@ export default function SocketProvider({ children }: ContextProviderProps) {
 
   const disconnectSocket = (): void => {
     socketRef.current?.disconnect();
-    setSocket(null);
     socketRef.current = null;
+    setSocket(null);
   };
 
   return (
