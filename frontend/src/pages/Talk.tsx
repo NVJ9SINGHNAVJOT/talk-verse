@@ -1,4 +1,4 @@
-import ChatBar from "@/components/talk/chatitems/UserChatBar";
+import ChatBar from "@/components/talk/chatItems/UserChatBar";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useSocketContext } from "@/context/SocketContext";
 import { useEffect } from "react";

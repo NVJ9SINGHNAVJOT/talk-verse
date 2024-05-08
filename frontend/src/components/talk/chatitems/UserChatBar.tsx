@@ -1,9 +1,9 @@
 import { IoSearchOutline } from "react-icons/io5";
 import { FiPlus } from "react-icons/fi";
 import { FaRegBell } from "react-icons/fa";
-import FriendBarItem from "@/components/talk/chatitems/FriendBarItems";
-import SearchModal from "@/components/talk/chatitems/SearchModal";
-import CreateGroup from "@/components/talk/chatitems/CreateGroupModal";
+import FriendBarItem from "@/components/talk/chatItems/FriendBarItems";
+import SearchModal from "@/components/talk/chatItems/SearchModal";
+import CreateGroup from "@/components/talk/chatItems/CreateGroupModal";
 import { useSocketContext } from "@/context/SocketContext";
 import userChatBarEvents from "@/socket/userChatBarEvents";
 import { useRef, useState } from "react";
@@ -21,7 +21,7 @@ import {
 } from "@/redux/slices/chatSlice";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-import GroupBarItem from "./GroupBarItem";
+import GroupBarItem from "@/components/talk/chatItems/GroupBarItem";
 
 const UserChatBar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);

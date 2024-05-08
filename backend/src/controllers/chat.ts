@@ -112,17 +112,28 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
             return errRes(res, 400, 'user id not present');
         }
 
-        const { chatId, skip } = req.query;
+        const { chatId, createdAt } = req.query;
 
-        if (!chatId || !skip) {
+        if (!chatId) {
             return errRes(res, 400, 'invalid data in querry');
         }
 
-        const skipN = parseInt(skip as string);
+        let query;
+        if (createdAt) {
+            const before = new Date(createdAt as string);
+            query = {
+                chatId: chatId as string,
+                createdAt: { $lt: before }
+            };
+        }
+        else {
+            query = {
+                chatId: chatId as string
+            };
+        }
 
-        const messages = await Message.find({ chatId: chatId })
+        const messages = await Message.find(query)
             .sort({ createAt: -1 })
-            .skip(skipN)
             .limit(20)
             .select({ uuId: true, isFile: true, from: true, text: true, createdAt: true, _id: false })
             .lean()
@@ -321,17 +332,28 @@ export const groupMessages = async (req: Request, res: Response): Promise<Respon
             return errRes(res, 400, 'user id not present');
         }
 
-        const { groupId, skip } = req.query;
+        const { groupId, createdAt } = req.query;
 
-        if (!groupId || !skip) {
+        if (!groupId) {
             return errRes(res, 400, 'invalid data in querry');
         }
 
-        const skipN = parseInt(skip as string);
+        let query;
+        if (createdAt) {
+            const before = new Date(createdAt as string);
+            query = {
+                to: groupId as string,
+                createdAt: { $lt: before }
+            };
+        }
+        else {
+            query = {
+                to: groupId as string
+            };
+        }
 
-        const gpMessages = await GpMessage.find({ chatId: groupId })
+        const gpMessages = await GpMessage.find(query)
             .sort({ createAt: -1 })
-            .skip(skipN)
             .limit(20)
             .select({ uuId: true, isFile: true, from: true, text: true, createdAt: true, _id: false })
             .populate({

@@ -1,5 +1,5 @@
 import useOnClickOutside from "@/hooks/useOnClickOutside";
-import ChatSearchInput from "@/lib/inputs/chatsearchinput/ChatSearchInput";
+import ChatSearchInput from "@/lib/inputs/usersearchinput/UserSearchInput";
 import { useRef } from "react";
 
 type SearchModalProps = {

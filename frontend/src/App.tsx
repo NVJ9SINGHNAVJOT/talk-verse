@@ -6,7 +6,7 @@ import Home from "@/pages/Home";
 import Dashboard from "@/pages/Dashboard";
 import About from "@/pages/About";
 import Login from "@/pages/Login";
-import Individual from "@/components/talk/Individual";
+import Chat from "@/components/talk/chat";
 import Group from "@/components/talk/Group";
 import Error from "@/pages/Error";
 import Talk from "@/pages/Talk";
@@ -16,10 +16,9 @@ import { useRef } from "react";
 import useScrollOnTop from "@/hooks/useScrollOnTop";
 
 function App() {
-
   const pageRenderDivRef = useRef<HTMLDivElement>(null);
   useScrollOnTop(pageRenderDivRef);
-  
+
   return (
     <div className="w-screen h-screen overflow-y-auto overflow-x-hidden max-w-maxContent min-w-minContent">
       {/* main nav bar */}
@@ -50,7 +49,7 @@ function App() {
             }
           >
             <Route path="/talk" element={<Welcome />} />
-            <Route path="/talk/chat/:chatId?" element={<Individual />} />
+            <Route path="/talk/chat/:chatId?" element={<Chat />} />
             <Route path="/talk/group/:groupId?" element={<Group />} />
           </Route>
           <Route

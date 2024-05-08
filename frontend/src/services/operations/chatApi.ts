@@ -23,10 +23,10 @@ export const chatBarDataApi = async (): Promise<ChatBarDataRs> => {
     }
 };
 
-export const getMessagesApi = async (chatId: string, skip: string): Promise<GetChatMessagesRs> => {
+export const getMessagesApi = async (chatId: string, createdAt?: string): Promise<GetChatMessagesRs> => {
     try {
         const resData: GetChatMessagesRs = await fetchApi('GET', CHAT_MESSAGES, null, null,
-            { 'chatId': chatId, 'skip': skip });
+            { 'chatId': chatId, 'createdAt': createdAt ? createdAt : "" });
         // success false is used in response
         if (resData) {
             return resData;
@@ -61,10 +61,10 @@ export const createGroupApi = async (data: FormData): Promise<CreateGroupRs> => 
     }
 };
 
-export const getGroupMessagesApi = async (groupId: string, skip: string): Promise<GetGroupMessagesRs> => {
+export const getGroupMessagesApi = async (groupId: string, createdAt?: string): Promise<GetGroupMessagesRs> => {
     try {
         const resData: GetGroupMessagesRs = await fetchApi('GET', GROUP_MESSAGES, null, null,
-            { 'groupId': groupId, 'skip': skip });
+            { 'groupId': groupId, 'createdAt': createdAt ? createdAt : ""});
         // success false is used in response
         if (resData) {
             return resData;

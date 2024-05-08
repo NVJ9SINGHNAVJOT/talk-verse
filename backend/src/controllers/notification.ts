@@ -231,11 +231,20 @@ export const checkOnlineFriends = async (req: Request, res: Response): Promise<R
         }
 
         const userData = await User.findById({ _id: userId }).select({ friends: true }).exec();
+
+        if (userData?.friends.length === undefined || userData?.friends.length < 1) {
+            return res.status(200).json({
+                success: false,
+                message: 'user have no friends',
+            });
+        }
+
         const onlineFriends: string[] = [];
 
         userData?.friends.forEach((friend) => {
-            if (userSocketIDs.has(friend.friendId._id as string)) {
-                onlineFriends.push(friend.friendId._id);
+            const friendId: string = friend.friendId._id.toString();
+            if (userSocketIDs.has(friendId)) {
+                onlineFriends.push(friendId);
             }
         });
 

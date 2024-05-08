@@ -1,4 +1,4 @@
-import "@/lib/inputs/chatsearchinput/ChatSearchInput.css";
+import "@/lib/inputs/usersearchinput/UserSearchInput.css";
 import {
   getUsersApi,
   sendRequestApi,
@@ -9,10 +9,12 @@ import { toast } from "react-toastify";
 import { RxAvatar } from "react-icons/rx";
 import { UserRequest } from "@/redux/slices/chatSlice";
 import { CiCirclePlus } from "react-icons/ci";
+import { useAppSelector } from "@/redux/store";
 
-const ChatSearchInput = () => {
+const UserSearchInput = () => {
   const [query, setQuery] = useState<string>("");
   const [users, setUsers] = useState<UserRequest[]>([]);
+  const myFriends = useAppSelector((state) => state.chat.friends);
 
   const sendRequest = async (userId: string) => {
     setUsers((prev) => prev.filter((user) => user._id !== userId));
@@ -31,7 +33,14 @@ const ChatSearchInput = () => {
 
         if (response && response.success == true) {
           if (response.users) {
-            setUsers(response.users);
+            const newUsers: UserRequest[] = response.users.filter(
+              (newUser) =>
+                !myFriends.some((friend) => newUser._id === friend._id)
+            );
+            if (newUsers.length === 0) {
+              toast.info('No new users for this username');
+            }
+            setUsers(newUsers);
           } else {
             toast.error("No user exist for such name");
           }
@@ -73,6 +82,7 @@ const ChatSearchInput = () => {
                   <RxAvatar className="w-10 h-10 aspect-auto" />
                 )}
                 <div>{user.userName}</div>
+                {/* searched user is already a friend */}
                 <CiCirclePlus
                   onClick={() => sendRequest(user._id)}
                   className=" text-white w-8 h-8 aspect-auto cursor-pointer hover:bg-white hover:text-black rounded-full"
@@ -86,4 +96,4 @@ const ChatSearchInput = () => {
   );
 };
 
-export default ChatSearchInput;
+export default UserSearchInput;
