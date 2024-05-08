@@ -48,3 +48,4 @@ export type SoSendGroupMessage = {
     lastName: string,
     imageUrl?: string
 }
+

@@ -5,18 +5,18 @@ import { Socket } from "socket.io-client";
 import {
     addChatBarData,
     addFriend,
+    addGroup,
     addNewUnseen,
     addOnlineFriend,
     addUserRequest,
     addUserTyping,
-    ChatBarData,
-    Friend,
     removeOnlineFriend,
     removeUserTyping,
     UserRequest,
 } from "@/redux/slices/chatSlice";
 import { toast } from "react-toastify";
-import { SGroupMessageRecieved, SRequestAccepted, SUserRequest } from "@/types/scoket/eventTypes";
+import { SoAddedInGroup, SoGroupMessageRecieved, SoMessageRecieved, SoRequestAccepted, SoUserRequest } from "@/types/socket/eventTypes";
+import { addGpMessages, addPMessages, GroupMessages } from "@/redux/slices/messagesSlice";
 
 // Custom hook to manage socket event listeners
 const useSocketEvents = (socket: Socket): void => {
@@ -26,7 +26,7 @@ const useSocketEvents = (socket: Socket): void => {
 
         socket.on(
             clientE.USER_REQUEST,
-            (data: SUserRequest) => {
+            (data: SoUserRequest) => {
                 dispatch(
                     addUserRequest({
                         _id: data._id,
@@ -41,7 +41,7 @@ const useSocketEvents = (socket: Socket): void => {
         socket.on(
             clientE.REQUEST_ACCEPTED,
             (
-                data: SRequestAccepted
+                data: SoRequestAccepted
             ) => {
                 dispatch(
                     addFriend({
@@ -50,7 +50,7 @@ const useSocketEvents = (socket: Socket): void => {
                         firstName: data.firstName,
                         lastName: data.lastName,
                         imageUrl: data.imageUrl
-                    } as Friend)
+                    })
                 );
 
                 dispatch(
@@ -59,8 +59,8 @@ const useSocketEvents = (socket: Socket): void => {
                         chatId: data.chatId,
                         firstName: data.firstName,
                         lastName: data.lastName,
-                        imageUrl: data.imageUrl ? data.imageUrl : "",
-                    } as ChatBarData)
+                        imageUrl: data.imageUrl,
+                    })
                 );
 
                 dispatch(addNewUnseen(data.chatId));
@@ -69,8 +69,37 @@ const useSocketEvents = (socket: Socket): void => {
             }
         );
 
-        socket.on(clientE.GROUP_MESSAGE_RECIEVED, (data: SGroupMessageRecieved)=>{
-            console.log(data);
+        socket.on(clientE.ADDED_IN_GROUP, (data: SoAddedInGroup) => {
+            dispatch(addGroup({
+                _id: data._id,
+                groupName: data.groupName,
+                gpImageUrl: data.gpImageUrl
+            }));
+            dispatch(addChatBarData({
+                _id: data._id,
+                groupName: data.groupName,
+                gpImageUrl: data.gpImageUrl
+            }));
+        });
+
+        socket.on(clientE.GROUP_MESSAGE_RECIEVED, (data: SoGroupMessageRecieved) => {
+            const newGpMessage: GroupMessages = {
+                uuId: data.uuId,
+                isFile: data.isFile,
+                from: {
+                    _id: data.from,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    imageUrl: data.imageUrl
+                },
+                text: data.text,
+                createdAt: data.createdAt
+            };
+            dispatch(addGpMessages([newGpMessage]));
+        });
+
+        socket.on(clientE.MESSAGE_RECIEVED, (data: SoMessageRecieved) => {
+            dispatch(addPMessages([data]));
         });
 
         socket.on(clientE.OTHER_START_TYPING, (friendId: string) => {
@@ -92,11 +121,15 @@ const useSocketEvents = (socket: Socket): void => {
         return () => {
             socket.off(clientE.USER_REQUEST);
             socket.off(clientE.REQUEST_ACCEPTED);
+            socket.off(clientE.ADDED_IN_GROUP);
+            socket.off(clientE.GROUP_MESSAGE_RECIEVED);
+            socket.off(clientE.MESSAGE_RECIEVED);
             socket.off(clientE.OTHER_START_TYPING);
             socket.off(clientE.OTHER_STOP_TYPING);
             socket.off(clientE.SET_USER_ONLINE);
             socket.off(clientE.SET_USER_OFFLINE);
         };
+
     }, []);
 };
 

@@ -44,14 +44,17 @@ export const setupSocketIO = (app: Application): HTTPServer => {
             socket.disconnect();
         }
         console.log("a user connected id: ", userId, ": ", socket.id);
+        // set userId in userSocketIds and show friends that user in online
         userSocketIDs.set(userId, socket.id);
         showOnline(userId, true, socket);
 
-        registerMessageEvents(socket, userId);
+        // register events
         registerNotificationEvents(socket, userId);
+        registerMessageEvents(io, socket, userId);
 
         socket.on('disconnect', () => {
             console.log("a user disconnected id: ", userId, ": ", socket.id);
+            // delete userId in userSocketIds and show friends that user if offline
             // eslint-disable-next-line drizzle/enforce-delete-with-where
             userSocketIDs.delete(userId);
             showOnline(userId, false, socket);

@@ -7,7 +7,7 @@ import { chatLocks, userSocketIDs } from '@/socket/index';
 import { AcceptRequestBody, SendRequestBody, SetOrderBody, SetUnseenCountBody } from '@/types/controller/notificationReq';
 import { CustomRequest } from '@/types/custom';
 import Mutex from '@/types/mutex';
-import { SRequestAccepted, SUserRequest } from '@/types/socket/eventTypes';
+import { SoRequestAccepted, SoUserRequest } from '@/types/socket/eventTypes';
 import emitSocketEvent from '@/utils/emitSocketEvent';
 import { errRes } from '@/utils/error';
 import { getSingleSocket } from '@/utils/getSocketIds';
@@ -82,7 +82,7 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
 
         const socketId = getSingleSocket(data.reqUserId);
         if (socketId) {
-            const sdata: SUserRequest = {
+            const sdata: SoUserRequest = {
                 _id: myDetails._id,
                 userName: myDetails.userName,
                 imageUrl: myDetails.imageUrl
@@ -200,7 +200,7 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
         const socketId = getSingleSocket(data.acceptUserId);
 
         if (socketId && user2) {
-            const sdata: SRequestAccepted = {
+            const sdata: SoRequestAccepted = {
                 _id: user2._id,
                 chatId: chat._id,
                 firstName: user2.firstName,

@@ -1,4 +1,4 @@
-import { SMessageRecieved } from "@/types/scoket/eventTypes";
+import { SoMessageRecieved } from "@/types/socket/eventTypes";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -16,7 +16,7 @@ export type GroupMessages = {
 }
 
 interface messagesState {
-    pMess: SMessageRecieved[],
+    pMess: SoMessageRecieved[],
     gpMess: GroupMessages[]
 }
 
@@ -29,20 +29,30 @@ const messagesSlice = createSlice({
     name: "messages",
     initialState,
     reducers: {
-        setPMessages(state, action: PayloadAction<SMessageRecieved[]>) {
+        setPMessages(state, action: PayloadAction<SoMessageRecieved[]>) {
             state.pMess = action.payload;
         },
-        addPMessages(state, aciton: PayloadAction<SMessageRecieved[]>) {
-            state.pMess.concat(aciton.payload);
+        addPMessages(state, aciton: PayloadAction<SoMessageRecieved[]>) {
+            if (aciton.payload.length === 1) {
+                state.pMess.push(aciton.payload[0]);
+            }
+            else {
+                state.pMess.concat(aciton.payload);
+            }
         },
         setGpMessages(state, action: PayloadAction<GroupMessages[]>) {
             state.gpMess = action.payload;
         },
         addGpMessages(state, aciton: PayloadAction<GroupMessages[]>) {
-            state.gpMess.concat(aciton.payload);
+            if (aciton.payload.length === 1) {
+                state.gpMess.push(aciton.payload[0]);
+            }
+            else {
+                state.gpMess.concat(aciton.payload);
+            }
         }
     },
 });
 
-export const { setPMessages } = messagesSlice.actions;
+export const { setPMessages, addPMessages, setGpMessages, addGpMessages } = messagesSlice.actions;
 export default messagesSlice.reducer;

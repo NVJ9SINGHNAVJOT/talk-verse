@@ -2,21 +2,26 @@ import { Socket } from 'socket.io';
 import User from "@/db/mongodb/models/User";
 import { userSocketIDs } from "@/socket/index";
 import { clientE } from '@/socket/events';
+import { logger } from '@/logger/logger';
 
 export const showOnline = async (userId: string, status: boolean, socket: Socket) => {
+    try {
+        const userData = await User.findById({ _id: userId }).select({ friends: true }).exec();
+        const onlineFriend: string[] = [];
+        userData?.friends.forEach((friend) => {
+            if (userSocketIDs.has(friend.friendId as unknown as string)) {
+                onlineFriend.push(friend.friendId as unknown as string);
+            }
+        });
 
-    const userData = await User.findById({ _id: userId }).select({ friends: true }).exec();
-    const onlineFriend: string[] = [];
-    userData?.friends.forEach((friend) => {
-        if (userSocketIDs.has(friend.friendId as unknown as string)) {
-            onlineFriend.push(friend.friendId as unknown as string);
+        if (status && onlineFriend.length > 0) {
+            socket.to(onlineFriend).emit(clientE.SET_USER_OFFLINE, userId);
         }
-    });
+        else {
+            socket.to(onlineFriend).emit(clientE.SET_USER_ONLINE, userId);
+        }
 
-    if (status && onlineFriend.length > 0) {
-        socket.to(onlineFriend).emit(clientE.SET_USER_OFFLINE, userId);
-    }
-    else {
-        socket.to(onlineFriend).emit(clientE.SET_USER_ONLINE, userId);
+    } catch (error) {
+        logger.error('errow while setting user online for friends', { error: error });
     }
 };

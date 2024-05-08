@@ -3,12 +3,12 @@ import Group from "@/db/mongodb/models/Group";
 import Message from "@/db/mongodb/models/Message";
 import UnseenCount from "@/db/mongodb/models/UnseenCount";
 import User from "@/db/mongodb/models/User";
-import { logger } from "@/logger/logger";
 import { chatLocks, groupIds } from "@/socket";
 import { clientE } from "@/socket/events";
 import { CreateGroupBody, FileMessageBody } from "@/types/controller/chatReq";
 import { CustomRequest } from "@/types/custom";
-import { SGroupMessageRecieved } from "@/types/socket/eventTypes";
+import Mutex from "@/types/mutex";
+import { SoAddedInGroup, SoGroupMessageRecieved, SoMessageRecieved } from "@/types/socket/eventTypes";
 import uploadToCloudinary from "@/utils/cloudinaryUpload";
 import emitSocketEvent from "@/utils/emitSocketEvent";
 import { errRes } from "@/utils/error";
@@ -167,13 +167,13 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
         if (data.isGroup) {
             const uuId = uuidv4();
             const createdAt = new Date();
-            const sdata: SGroupMessageRecieved = {
+            const sdata: SoGroupMessageRecieved = {
                 uuId: uuId,
                 isFile: true,
                 from: data.from,
                 to: data.to,
                 text: secUrl,
-                createAt: createdAt,
+                createdAt: createdAt,
                 firstName: data.firstName,
                 lastName: data.lastName,
                 imageUrl: data.imageUrl,
@@ -199,12 +199,43 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
             // increase unseen count for offline members of group
             try {
                 await GpMessage.create({ uuId: uuId, isFile: true, from: data.from, to: data.to, text: secUrl, createdAt: createdAt });
-                await UnseenCount.updateMany(
-                    { userId: { $in: memData.offline }, mainId: data.mainId },
-                    { $inc: { count: 1 } }
-                );
+                if (memData.offline.length > 0) {
+                    await UnseenCount.updateMany(
+                        { userId: { $in: memData.offline }, mainId: data.mainId },
+                        { $inc: { count: 1 } }
+                    );
+                }
             } catch (error) {
                 return errRes(res, 500, "error while updating unseen count for group members", { error, sdata });
+            }
+        }
+        else {
+            const uuId = uuidv4();
+            const createdAt = new Date();
+            const sdata: SoMessageRecieved = {
+                uuId: uuId,
+                isFile: true,
+                from: data.from,
+                text: secUrl,
+                createdAt: createdAt,
+            };
+
+            const twoUser = getMultiSockets([userId, data.to]);
+            const channel = chatLocks.get(data.mainId);
+            if (!channel) {
+                return errRes(res, 500, 'no channel for two user chat');
+            }
+            await channel.lock();
+            emitSocketEvent(req, clientE.MESSAGE_RECIEVED, sdata, null, twoUser.online);
+            channel.unlock();
+
+            try {
+                await Message.create({ uuId: uuId, isFile: true, from: data.from, to: data.to, text: secUrl, createdAt: createdAt });
+                if (twoUser.offline.length === 1) {
+                    await UnseenCount.updateOne({ userId: twoUser.offline[0], mainId: data.mainId }, { $inc: { count: 1 } });
+                }
+            } catch (error) {
+                errRes(res, 500, 'error while updating unseen count for chat', error);
             }
         }
 
@@ -247,7 +278,25 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
             gpImageUrl: secUrl, members: data.userIdsInGroup
         });
 
-        // TODO: socket event
+        // Create a new mutex instance
+        const newMutex = new Mutex();
+        // set newmutex for new groupId
+        chatLocks.set(newGroup._id, newMutex);
+
+        await Promise.all(data.userIdsInGroup.map(async (userId) => {
+            await UnseenCount.create({ userId, mainId: newGroup._id });
+        }));
+
+        const memData = getMultiSockets(data.userIdsInGroup);
+        // in online users of group, event is emitted only except for creater, as creater get group in response
+        if (memData.online.length > 0) {
+            const sdata: SoAddedInGroup = {
+                _id: newGroup._id,
+                groupName: data.groupName,
+                gpImageUrl: secUrl
+            };
+            emitSocketEvent(req, clientE.ADDED_IN_GROUP, sdata, null, memData.online);
+        }
 
         return res.status(200).json({
             success: true,

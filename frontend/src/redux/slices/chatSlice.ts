@@ -108,6 +108,9 @@ const chatSlice = createSlice({
         },
         removeOnlineFriend(state, action: PayloadAction<string>) {
             state.onlineFriends.push(action.payload);
+            if (state.userTyping.includes(action.payload)) {
+                state.userTyping.filter((userId) => userId !== action.payload);
+            }
         },
 
         // unseenMessages

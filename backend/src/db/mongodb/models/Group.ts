@@ -4,8 +4,8 @@ import { IUser } from '@/db/mongodb/models/User';
 // Define an interface representing a Group document
 export interface IGroup extends Document {
     groupName: string;
-    gpImageUrl: string;
     gpCreater: mongoose.Types.ObjectId & IUser;
+    gpImageUrl: string;
     members: mongoose.Types.ObjectId[] & IUser[];
 }
 
@@ -16,14 +16,14 @@ const groupSchema = new Schema<IGroup>({
         required: true,
         trim: true,
     },
-    gpImageUrl: {
-        type: String,
-        trim: true,
-    },
     gpCreater: {
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true,
+    },
+    gpImageUrl: {
+        type: String,
+        trim: true,
     },
     members: [
         {
