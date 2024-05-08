@@ -149,6 +149,7 @@ const UserChatBar = () => {
         })}
       </div>
 
+      {/* modals for search user and create group */}
       {isSearchOpen && <SearchModal toggleSearchModal={toggleSearchModal} />}
       {isCreateGroupOpen && (
         <CreateGroup toggelCreateGroupModal={toggelCreateGroupModal} />
