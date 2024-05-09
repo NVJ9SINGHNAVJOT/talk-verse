@@ -1,32 +1,40 @@
-// useScrollToTop.ts
+import { useEffect } from "react";
 
-import { useState, useEffect } from 'react';
-
-const useScrollToTop = (targetRef: React.RefObject<HTMLElement>, callback: () => void) => {
-  const [isAtTop, setIsAtTop] = useState(true);
+const useScrollTrigger = (
+  ref: React.RefObject<HTMLDivElement>,
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+  loading: boolean,
+  setTrigger: React.Dispatch<React.SetStateAction<number>>,
+  stop: boolean) => {
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (targetRef.current) {
-        const scrollTop = targetRef.current.scrollTop;
-        setIsAtTop(scrollTop === 0);
+    const currentRef = ref.current; // Store the current ref value
+
+    function handleScroll() {
+      if (!ref.current) return;
+
+      const { scrollTop, scrollHeight, clientHeight } = ref.current;
+      const scrollPercentage = (scrollTop / (scrollHeight - clientHeight)) * 100;
+
+      if (scrollPercentage >= 90 && !loading && !stop) {
+        setLoading(() => true);
+        setTrigger((prev) => prev + 1);
+      }
+    }
+
+    if (ref.current) {
+      ref.current.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      if (currentRef) {
+        currentRef.removeEventListener('scroll', handleScroll);
       }
     };
 
-    document.addEventListener('scroll', handleScroll);
-
-    return () => {
-      document.removeEventListener('scroll', handleScroll);
-    };
-  }, [targetRef]);
-
-  useEffect(() => {
-    if (isAtTop) {
-      callback(); // Call the provided callback when scrollbar reaches the top
-    }
-  }, [isAtTop, callback]);
+  }, [ref]);
 };
 
-export default useScrollToTop;
+export default useScrollTrigger;
 
 

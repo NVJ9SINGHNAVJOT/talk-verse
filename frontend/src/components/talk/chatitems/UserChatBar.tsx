@@ -5,7 +5,7 @@ import FriendBarItem from "@/components/talk/chatItems/FriendBarItems";
 import SearchModal from "@/components/talk/chatItems/SearchModal";
 import CreateGroup from "@/components/talk/chatItems/CreateGroupModal";
 import { useSocketContext } from "@/context/SocketContext";
-import userChatBarEvents from "@/socket/userChatBarEvents";
+import userChatBarEvents from "@/socket/events/userChatBarEvents";
 import { useRef, useState } from "react";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import { useAppSelector } from "@/redux/store";

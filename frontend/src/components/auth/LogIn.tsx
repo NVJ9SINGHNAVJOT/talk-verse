@@ -1,6 +1,6 @@
 import { logInApi } from "@/services/operations/authApi";
 import { setAuthUser, setLoading } from "@/redux/slices/authSlice";
-import { setUser, User } from "@/redux/slices/userSlice";
+import { setUser } from "@/redux/slices/userSlice";
 import { useAppSelector } from "@/redux/store";
 import { CheckUserRs } from "@/types/apis/authApiRs";
 import { useForm } from "react-hook-form";
@@ -44,12 +44,7 @@ const LogIn = (props: SignInProps) => {
     dispatch(setLoading(false));
 
     if (response && response.success === true) {
-      const user: User = {
-        firstName: response.firstName,
-        lastName: response.lastName,
-        imageUrl: response.imageUrl ?? "",
-      };
-      dispatch(setUser(user));
+      dispatch(setUser(response.user));
       navigate("/");
 
       setTimeout(() => {

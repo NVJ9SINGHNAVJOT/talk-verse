@@ -1,11 +1,10 @@
 export type FileMessageBody = {
-    isGroup: boolean,
+    isGroup: string,
     mainId: string,
 
-    from: string,
     to: string,
-    firstName: string,
-    lastName: string,
+    firstName?: string,
+    lastName?: string,
     imageUrl?: string
 }
 

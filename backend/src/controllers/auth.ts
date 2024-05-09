@@ -141,9 +141,12 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
         return res.cookie(process.env.TOKEN_NAME as string, newUserToken, options).status(200).json({
           success: true,
           message: "user login successfull",
-          firstName: user?.firstName,
-          lastName: user?.lastName,
-          imageUrl: user?.imageUrl
+          user: {
+            _id: user?._id,
+            firstName: user?.firstName,
+            lastName: user?.lastName,
+            imageUrl: user?.imageUrl
+          }
         });
       }
       else {
@@ -192,9 +195,12 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
     return res.status(200).json({
       success: true,
       message: "user check successfull",
-      firstName: user?.firstName,
-      lastName: user?.lastName,
-      imageUrl: user?.imageUrl
+      user: {
+        _id: user?._id,
+        firstName: user?.firstName,
+        lastName: user?.lastName,
+        imageUrl: user?.imageUrl
+      }
     });
   }
   catch (error) {

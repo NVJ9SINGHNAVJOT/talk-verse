@@ -1,7 +1,7 @@
+import { User } from "@/redux/slices/userSlice";
+
 export type CheckUserRs = {
     success: boolean,
     message: string,
-    firstName: string,
-    lastName: string,
-    imageUrl?: string
+    user: User
 }

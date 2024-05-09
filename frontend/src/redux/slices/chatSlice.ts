@@ -144,7 +144,7 @@ const chatSlice = createSlice({
         },
         removeUserTyping(state, action: PayloadAction<string>) {
             state.userTyping = state.userTyping.filter((userId) => userId !== action.payload);
-        }
+        }               
     },
 });
 

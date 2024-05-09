@@ -3,7 +3,7 @@ import Notification from '@/db/mongodb/models/Notification';
 import UnseenCount from '@/db/mongodb/models/UnseenCount';
 import User from '@/db/mongodb/models/User';
 import { clientE } from '@/socket/events';
-import { chatLocks, userSocketIDs } from '@/socket/index';
+import { channels, userSocketIDs } from '@/socket/index';
 import { AcceptRequestBody, SendRequestBody, SetOrderBody, SetUnseenCountBody } from '@/types/controller/notificationReq';
 import { CustomRequest } from '@/types/custom';
 import Mutex from '@/types/mutex';
@@ -195,7 +195,7 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
         // Create a new mutex instance
         const newMutex = new Mutex();
         // set newmutex for new chatid
-        chatLocks.set(chat._id, newMutex);
+        channels.set(chat._id, newMutex);
 
         const socketId = getSingleSocket(data.acceptUserId);
 

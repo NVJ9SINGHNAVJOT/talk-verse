@@ -6,7 +6,7 @@ import Home from "@/pages/Home";
 import Dashboard from "@/pages/Dashboard";
 import About from "@/pages/About";
 import Login from "@/pages/Login";
-import Chat from "@/components/talk/chat";
+import Chat from "@/components/talk/Chat";
 import Group from "@/components/talk/Group";
 import Error from "@/pages/Error";
 import Talk from "@/pages/Talk";

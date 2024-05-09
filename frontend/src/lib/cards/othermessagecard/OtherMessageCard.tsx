@@ -1,12 +1,16 @@
 import "@/lib/cards/othermessagecard/OtherMessageCard.css";
+import { SoMessageRecieved } from "@/types/socket/eventTypes";
+import { getDTimeStamp } from "@/utils/getTime";
 
-const OtherMessageCard = () => {
+type OtherMessageCardProps = {
+  message: SoMessageRecieved;
+};
+
+const OtherMessageCard = (props: OtherMessageCardProps) => {
   return (
     <div className="othermessage self-start flex flex-col">
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa, quod!
-      </p>
-      <p className=" mt-4">16:50</p>
+      <p>{props.message.text}</p>
+      <p className=" mt-4">{getDTimeStamp(props.message.createdAt)}</p>
     </div>
   );
 };

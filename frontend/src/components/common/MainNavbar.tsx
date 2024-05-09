@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import { checkUserApi } from "@/services/operations/authApi";
 import { CheckUserRs } from "@/types/apis/authApiRs";
-import { setUser, User } from "@/redux/slices/userSlice";
+import { setUser } from "@/redux/slices/userSlice";
 import { useDispatch } from "react-redux";
 import { setAuthUser } from "@/redux/slices/authSlice";
 import SiteLoadingModal from "./SiteLoadingModal";
@@ -53,21 +53,11 @@ const MainNavbar = () => {
     const checkDefaultLogin = async () => {
       const response: CheckUserRs = await checkUserApi();
 
-      if (
-        response &&
-        response.success === true &&
-        response.firstName &&
-        response.lastName
-      ) {
-        const user: User = {
-          firstName: response.firstName,
-          lastName: response.lastName,
-          imageUrl: response.imageUrl ? response.imageUrl : "",
-        };
-        dispatch(setUser(user));
+      if (response && response.success === true) {
+        dispatch(setUser(response.user));
         dispatch(setAuthUser(true));
       }
-    
+
       setTimeout(() => {
         setCheckUser(false);
         navigate(currentPathname);

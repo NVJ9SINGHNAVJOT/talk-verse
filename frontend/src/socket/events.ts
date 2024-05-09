@@ -7,7 +7,7 @@ export const clientE = {
     MESSAGE_RECIEVED: "MESSAGE_RECIEVED",
     GROUP_MESSAGE_RECIEVED: "GROUP_MESSAGE_RECIEVED",
 
-    // below both events are only triggered when user is onffline from server only
+    // below both events are only triggered when user is connected | disconnected from server only
     SET_USER_ONLINE: "SET_USER_ONLINE",
     SET_USER_OFFLINE: "SET_USER_OFFLINE",
 

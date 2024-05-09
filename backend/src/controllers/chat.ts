@@ -3,7 +3,7 @@ import Group from "@/db/mongodb/models/Group";
 import Message from "@/db/mongodb/models/Message";
 import UnseenCount from "@/db/mongodb/models/UnseenCount";
 import User from "@/db/mongodb/models/User";
-import { chatLocks, groupIds } from "@/socket";
+import { channels, groupIds } from "@/socket";
 import { clientE } from "@/socket/events";
 import { CreateGroupBody, FileMessageBody } from "@/types/controller/chatReq";
 import { CustomRequest } from "@/types/custom";
@@ -140,9 +140,15 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
             .exec();
 
         if (messages.length === 0) {
+            if (createdAt) {
+                return res.status(200).json({
+                    success: false,
+                    message: 'no messages yet for this chatId'
+                });
+            }
             return res.status(200).json({
                 success: false,
-                message: 'no messages yet for this chatId'
+                message: 'no further messages for this chatId'
             });
         }
 
@@ -166,7 +172,7 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
         if (!userId) {
             return errRes(res, 400, 'user id not present');
         }
-        if (!data.from || !data.to || !data.mainId || !req.file) {
+        if (!data.to || !data.mainId || !req.file) {
             return errRes(res, 400, 'invalid data for filemessage');
         }
 
@@ -175,13 +181,16 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
             return errRes(res, 500, "error while uploading user image");
         }
 
-        if (data.isGroup) {
+        if (data.isGroup === "1") {
+            if (!data.firstName || !data.lastName) {
+                return errRes(res, 400, 'invalid data for sending group message');
+            }
             const uuId = uuidv4();
             const createdAt = new Date();
             const sdata: SoGroupMessageRecieved = {
                 uuId: uuId,
                 isFile: true,
-                from: data.from,
+                from: userId,
                 to: data.to,
                 text: secUrl,
                 createdAt: createdAt,
@@ -195,7 +204,7 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
                 return errRes(res, 400, "no members for group for file message");
             }
 
-            const channel = chatLocks.get(data.mainId);
+            const channel = channels.get(data.mainId);
             if (!channel) {
                 return errRes(res, 500, 'no channel for group');
             }
@@ -209,7 +218,7 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
 
             // increase unseen count for offline members of group
             try {
-                await GpMessage.create({ uuId: uuId, isFile: true, from: data.from, to: data.to, text: secUrl, createdAt: createdAt });
+                await GpMessage.create({ uuId: uuId, isFile: true, from: userId, to: data.to, text: secUrl, createdAt: createdAt });
                 if (memData.offline.length > 0) {
                     await UnseenCount.updateMany(
                         { userId: { $in: memData.offline }, mainId: data.mainId },
@@ -226,13 +235,13 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
             const sdata: SoMessageRecieved = {
                 uuId: uuId,
                 isFile: true,
-                from: data.from,
+                from: userId,
                 text: secUrl,
                 createdAt: createdAt,
             };
 
             const twoUser = getMultiSockets([userId, data.to]);
-            const channel = chatLocks.get(data.mainId);
+            const channel = channels.get(data.mainId);
             if (!channel) {
                 return errRes(res, 500, 'no channel for two user chat');
             }
@@ -241,7 +250,7 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
             channel.unlock();
 
             try {
-                await Message.create({ uuId: uuId, isFile: true, from: data.from, to: data.to, text: secUrl, createdAt: createdAt });
+                await Message.create({ uuId: uuId, isFile: true, from: userId, to: data.to, text: secUrl, createdAt: createdAt });
                 if (twoUser.offline.length === 1) {
                     await UnseenCount.updateOne({ userId: twoUser.offline[0], mainId: data.mainId }, { $inc: { count: 1 } });
                 }
@@ -292,7 +301,7 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
         // Create a new mutex instance
         const newMutex = new Mutex();
         // set newmutex for new groupId
-        chatLocks.set(newGroup._id, newMutex);
+        channels.set(newGroup._id, newMutex);
 
         await Promise.all(data.userIdsInGroup.map(async (userId) => {
             await UnseenCount.create({ userId, mainId: newGroup._id });

@@ -29,7 +29,6 @@ const useSocketEvents = (socket: Socket | null): void => {
         socket.on(
             clientE.USER_REQUEST,
             (data: SoUserRequest) => {
-                console.log('rq data', data)
                 dispatch(
                     addUserRequest({
                         _id: data._id,

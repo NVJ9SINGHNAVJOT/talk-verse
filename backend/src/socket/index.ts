@@ -15,7 +15,7 @@ export const userSocketIDs = new Map<string, string>();
 export const groupIds = new Map<string, string[]>();
 
 // create a map to store mutexes for mainID   chatId/_id  ->   chatId is for two users and _id is of group
-export const chatLocks: Map<string, Mutex> = new Map();
+export const channels: Map<string, Mutex> = new Map();
 
 export const setupSocketIO = (app: Application): HTTPServer => {
     const httpServer: HTTPServer = createServer(app);

@@ -17,18 +17,21 @@ export type GroupMessages = {
 
 interface messagesState {
     pMess: SoMessageRecieved[],
-    gpMess: GroupMessages[]
+    gpMess: GroupMessages[],
+    currFriendId: string | undefined
 }
 
 const initialState = {
     pMess: [],
-    gpMess: []
+    gpMess: [],
+    currFriendId: undefined
 } satisfies messagesState as messagesState;
 
 const messagesSlice = createSlice({
     name: "messages",
     initialState,
     reducers: {
+        // two users chat messages
         setPMessages(state, action: PayloadAction<SoMessageRecieved[]>) {
             state.pMess = action.payload;
         },
@@ -40,6 +43,7 @@ const messagesSlice = createSlice({
                 state.pMess.concat(aciton.payload);
             }
         },
+        // group chat messages
         setGpMessages(state, action: PayloadAction<GroupMessages[]>) {
             state.gpMess = action.payload;
         },
@@ -50,6 +54,9 @@ const messagesSlice = createSlice({
             else {
                 state.gpMess.concat(aciton.payload);
             }
+        },
+        setCurrFriendId(state, aciton: PayloadAction<string>){
+            state.currFriendId = aciton.payload;
         }
     },
 });

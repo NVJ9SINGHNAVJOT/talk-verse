@@ -2,7 +2,7 @@ import { Server, Socket } from 'socket.io';
 import { clientE, serverE } from '@/socket/events';
 import { getMultiSockets, getSingleSocket } from '@/utils/getSocketIds';
 import { SoGroupMessageRecieved, SoMessageRecieved, SoSendGroupMessage, SoSendMessage } from '@/types/socket/eventTypes';
-import { chatLocks, groupIds } from '@/socket/index';
+import { channels, groupIds } from '@/socket/index';
 import { logger } from '@/logger/logger';
 import { v4 as uuidv4 } from "uuid";
 import Message from '@/db/mongodb/models/Message';
@@ -24,9 +24,9 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
 
             const sId = getSingleSocket(data.to);
             if (sId) {
-                const channel = chatLocks.get(data.chatId);
+                const channel = channels.get(data.chatId);
                 if (!channel) {
-                    logger.error('channel is not present in chatLocks', data);
+                    logger.error('channel is not present in channels', data);
                     return;
                 }
                 await channel.lock();
@@ -70,7 +70,7 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
             }
             const memData = getMultiSockets(members);
             if (memData.online.length > 0) {
-                const channel = chatLocks.get(data._id);
+                const channel = channels.get(data._id);
                 if (!channel) {
                     logger.error('channel not present for groupId', { data: data, newGpMessage: newGpMessage });
                     return;
