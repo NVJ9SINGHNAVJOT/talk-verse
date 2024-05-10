@@ -1,6 +1,8 @@
 import { Friend } from "@/redux/slices/chatSlice";
+import { setCurrFriendId } from "@/redux/slices/messagesSlice";
 import { useAppSelector } from "@/redux/store";
 import { RxAvatar } from "react-icons/rx";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 export type ChatBarItemsProps = {
@@ -13,13 +15,15 @@ const FriendBarItems = (props: ChatBarItemsProps) => {
   const isTyping = useAppSelector((state) => state.chat.userTyping);
   const unseenMessages = useAppSelector((state) => state.chat.unseenMessages);
   const navigate = useNavigate();
-  const goToChat = (chatId: string) => {
-    navigate(`/talk/chat/${chatId}`);
+  const dispatch = useDispatch();
+  const goToChat = () => {
+    dispatch(setCurrFriendId(friend._id));
+    navigate(`/talk/chat/${friend.chatId}`);
   };
 
   return (
     <div
-      onClick={() => goToChat(friend.chatId)}
+      onClick={() => goToChat()}
       className=" relative w-full h-[3.8rem] flex justify-between items-center px-4 cursor-pointer
       transition-all duration-100 ease-in-out delay-0 hover:bg-[#21262C]"
     >

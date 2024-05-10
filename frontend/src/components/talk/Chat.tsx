@@ -34,40 +34,33 @@ const Chat = () => {
   useEffect(() => {
     const getMessages = async () => {
       if (chatId) {
+        let response: GetChatMessagesRs;
         // initial call for getting messages
-        if (lastCreatedAt !== undefined && trigger !== 0) {
-          const response: GetChatMessagesRs = await getMessagesApi(
-            chatId,
-            lastCreatedAt.toISOString()
-          );
+        if (lastCreatedAt === undefined && trigger === 0) {
+          response = await getMessagesApi(chatId);
+        } else if (lastCreatedAt !== undefined) {
+          response = await getMessagesApi(chatId, lastCreatedAt.toISOString());
+        } else {
+          return;
+        }
 
-          if (response) {
+        if (response) {
+          // no messages yet for this chatId
+          if (response.success === false && response.message === undefined) {
+            setStop(true);
+            return;
+          } else if (response.messages && response.messages.length > 0) {
             // no further messages for this chatId
-            if (response.success === true && response.message?.length < 20) {
+            if (response.messages.length < 20) {
               setStop(true);
             }
             dispatch(addPMessages(response.messages));
             setLastCreateAt(
               response.messages[response.messages.length - 1].createdAt
             );
-          } else {
-            toast.error("Error while getting messages for chat");
           }
         } else {
-          // get messages from last message -> createdAt time
-          const response: GetChatMessagesRs = await getMessagesApi(chatId);
-          if (response) {
-            // no further messages for this chatId
-            if (response.success === true && response.message?.length < 20) {
-              setStop(true);
-            }
-            dispatch(addPMessages(response.messages));
-            setLastCreateAt(
-              response.messages[response.messages.length - 1].createdAt
-            );
-          } else {
-            toast.error("Error while getting messages for chat");
-          }
+          toast.error("Error while getting messages for chat");
         }
         setLoading(false);
       }
@@ -137,7 +130,7 @@ const Chat = () => {
             Let's talk chill thrill!
           </div>
         ) : (
-          pmessages.map((message, index) => {
+          pmessages?.map((message, index) => {
             if (message.from === currUser?._id) {
               return <MessageCard key={index} message={message} />;
             }
@@ -158,14 +151,21 @@ const Chat = () => {
           ref={fileInputRef}
           onChange={handleFileChange}
           className=" absolute w-0 h-0"
+          type="file"
+          accept=".jpg , .jpeg, .png"
         />
-        <input
-          type="text"
-          className=" w-7/12 h-4/5 bg-black rounded-2xl text-white px-4 focus:outline-none 
-        focus:bg-transparent border-b-2 border-transparent focus:border-emerald-800"
-          placeholder="Message"
-          {...register("text", { required: true })}
-        />
+        <div className="relative w-7/12 h-4/5">
+          <button type="submit" className=" w-0 h-0 absolute -z-10 ">
+            Submit
+          </button>
+          <input
+            type="text"
+            className="w-full h-full  bg-black rounded-2xl text-white px-4 focus:outline-none 
+            focus:bg-transparent border-b-2 border-transparent focus:border-emerald-800"
+            placeholder="Message"
+            {...register("text", { required: true })}
+          />
+        </div>
       </form>
     </div>
   );

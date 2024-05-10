@@ -55,11 +55,11 @@ const messagesSlice = createSlice({
                 state.gpMess.concat(aciton.payload);
             }
         },
-        setCurrFriendId(state, aciton: PayloadAction<string>){
+        setCurrFriendId(state, aciton: PayloadAction<string>) {
             state.currFriendId = aciton.payload;
         }
     },
 });
 
-export const { setPMessages, addPMessages, setGpMessages, addGpMessages } = messagesSlice.actions;
+export const { setPMessages, addPMessages, setGpMessages, addGpMessages, setCurrFriendId } = messagesSlice.actions;
 export default messagesSlice.reducer;

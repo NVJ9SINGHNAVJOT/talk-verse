@@ -84,6 +84,11 @@ const useSocketEvents = (socket: Socket | null): void => {
             }));
         });
 
+        socket.on(clientE.MESSAGE_RECIEVED, (data: SoMessageRecieved) => {
+            // TODO: make setCount api call as unseen
+            dispatch(addPMessages([data]));
+        });
+
         socket.on(clientE.GROUP_MESSAGE_RECIEVED, (data: SoGroupMessageRecieved) => {
             const newGpMessage: GroupMessages = {
                 uuId: data.uuId,
@@ -97,11 +102,8 @@ const useSocketEvents = (socket: Socket | null): void => {
                 text: data.text,
                 createdAt: data.createdAt
             };
+            // TODO: make setCount api call as unseen
             dispatch(addGpMessages([newGpMessage]));
-        });
-
-        socket.on(clientE.MESSAGE_RECIEVED, (data: SoMessageRecieved) => {
-            dispatch(addPMessages([data]));
         });
 
         socket.on(clientE.OTHER_START_TYPING, (friendId: string) => {

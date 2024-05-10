@@ -13,13 +13,13 @@ export type ChatBarDataRs = {
 export type GetChatMessagesRs = {
     success: boolean,
     message: string,
-    messages: SoMessageRecieved[]
+    messages?: SoMessageRecieved[]
 }
 
 export type GetGroupMessagesRs = {
     success: boolean,
     message: string,
-    messages: GroupMessages[]
+    messages?: GroupMessages[]
 }
 
 export type CreateGroupRs = {

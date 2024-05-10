@@ -12,7 +12,7 @@ export type Members = {
     online: string[],
     offline: string[]
 }
-export const getMultiSockets = (users: string[]): Members => {
+export const getMultiSockets = (users: string[], currUserId: string): Members => {
     const online: string[] = [];
     const offline: string[] = [];
 
@@ -21,13 +21,15 @@ export const getMultiSockets = (users: string[]): Members => {
         if (socketId !== undefined) {
             return online.push(socketId);
         }
-        return offline.push(user);
+        else if (user !== currUserId) {
+            return offline.push(user);
+        }
     });
+
 
     const membersData: Members = {
         online: online,
         offline: offline
     };
-    
     return membersData;
 };
