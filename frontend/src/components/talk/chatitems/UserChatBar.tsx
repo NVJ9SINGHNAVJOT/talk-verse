@@ -15,6 +15,7 @@ import { CiCirclePlus } from "react-icons/ci";
 import {
   addChatBarData,
   addFriend,
+  addNewUnseen,
   ChatBarData,
   deleteUserRequest,
   Friend,
@@ -49,6 +50,7 @@ const UserChatBar = () => {
         chatId: response.newChatId,
       };
       dispatch(addFriend(newData));
+      dispatch(addNewUnseen(response.newChatId));
       dispatch(addChatBarData(newData));
       toast.success("New friend added");
     } else {

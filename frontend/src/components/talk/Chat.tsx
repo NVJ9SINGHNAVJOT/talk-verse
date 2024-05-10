@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 import useScrollTrigger from "@/hooks/useScrollTrigger";
 import { GetChatMessagesRs } from "@/types/apis/chatApiRs";
 import { useDispatch } from "react-redux";
-import { addPMessages } from "@/redux/slices/messagesSlice";
+import { addPMessages, setPMessages } from "@/redux/slices/messagesSlice";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { MessageText } from "@/types/common";
@@ -38,6 +38,7 @@ const Chat = () => {
         // initial call for getting messages
         if (lastCreatedAt === undefined && trigger === 0) {
           response = await getMessagesApi(chatId);
+          // TODO: setCount api call to set count 0
         } else if (lastCreatedAt !== undefined) {
           response = await getMessagesApi(chatId, lastCreatedAt.toISOString());
         } else {
@@ -66,6 +67,10 @@ const Chat = () => {
       }
     };
     getMessages();
+
+    return () => {
+      dispatch(setPMessages([]));
+    };
   }, [trigger]);
 
   const handleFileTagRefClick = () => {

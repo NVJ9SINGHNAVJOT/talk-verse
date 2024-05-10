@@ -195,7 +195,8 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
         // Create a new mutex instance
         const newMutex = new Mutex();
         // set newmutex for new chatid
-        channels.set(chat._id, newMutex);
+
+        channels.set(chat._id.toString(), newMutex);
 
         const socketId = getSingleSocket(data.acceptUserId);
 

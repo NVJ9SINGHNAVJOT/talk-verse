@@ -308,7 +308,7 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
         // Create a new mutex instance
         const newMutex = new Mutex();
         // set newmutex for new groupId
-        channels.set(newGroup._id, newMutex);
+        channels.set(newGroup._id.toString(), newMutex);
 
         await Promise.all(data.userIdsInGroup.map(async (userId) => {
             await UnseenCount.create({ userId, mainId: newGroup._id });

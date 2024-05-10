@@ -44,8 +44,10 @@ const FriendBarItems = (props: ChatBarItemsProps) => {
       <div className=" flex gap-x-2 justify-center items-center">
         <div
           className={`${
-            unseenMessages[friend.chatId] === 0 && " bg-transparent "
-          } rounded-full bg-orange-500 text-white w-7 h-7 text-center`}
+            unseenMessages[friend.chatId] === 0
+              ? " bg-transparent "
+              : "bg-orange-500"
+          } rounded-full text-white w-7 h-7 text-center`}
         >
           {unseenMessages[friend.chatId] === 0
             ? ""

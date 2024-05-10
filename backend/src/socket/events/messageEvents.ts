@@ -99,7 +99,7 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
                         );
                     }
                 } catch (error) {
-                    logger.error('error while creating goupMessage', { error: error, data: data, newGpMessage: newGpMessage })
+                    logger.error('error while creating goupMessage', { error: error, data: data, newGpMessage: newGpMessage });
                 }
             }
         } catch (error) {
