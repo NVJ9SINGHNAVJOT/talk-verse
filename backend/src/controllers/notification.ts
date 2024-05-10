@@ -4,9 +4,9 @@ import UnseenCount from '@/db/mongodb/models/UnseenCount';
 import User from '@/db/mongodb/models/User';
 import { clientE } from '@/socket/events';
 import { channels, userSocketIDs } from '@/socket/index';
-import { AcceptRequestBody, SendRequestBody, SetOrderBody, SetUnseenCountBody } from '@/types/controller/notificationReq';
+import { AcceptRequestBody, SendRequestBody, SetOrderBody, SetUnseenCountBody } from '@/types/controllers/notificationReq';
 import { CustomRequest } from '@/types/custom';
-import Mutex from '@/types/mutex';
+import Channel from '@/types/channel';
 import { SoRequestAccepted, SoUserRequest } from '@/types/socket/eventTypes';
 import emitSocketEvent from '@/utils/emitSocketEvent';
 import { errRes } from '@/utils/error';
@@ -193,10 +193,10 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
         await user2?.save();
 
         // Create a new mutex instance
-        const newMutex = new Mutex();
+        const newChannel = new Channel();
         // set newmutex for new chatid
 
-        channels.set(chat._id.toString(), newMutex);
+        channels.set(chat._id.toString(), newChannel);
 
         const socketId = getSingleSocket(data.acceptUserId);
 

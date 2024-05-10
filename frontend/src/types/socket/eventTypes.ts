@@ -1,3 +1,5 @@
+/* ===== Caution: Any changes in socket events types need to be changed in backend as well ===== */
+
 // client
 export type SoUserRequest = {
     _id: string,
@@ -21,7 +23,7 @@ export type SoMessageRecieved = {
     isFile: boolean,
     from: string,
     text: string,
-    createdAt: Date,
+    createdAt: string,
 }
 export type SoGroupMessageRecieved = {
     uuId: string,
@@ -29,7 +31,7 @@ export type SoGroupMessageRecieved = {
     from: string,
     to: string,
     text: string,
-    createdAt: Date,
+    createdAt: string,
     firstName: string,
     lastName: string,
     imageUrl?: string,
@@ -48,4 +50,3 @@ export type SoSendGroupMessage = {
     lastName: string,
     imageUrl?: string
 }
-

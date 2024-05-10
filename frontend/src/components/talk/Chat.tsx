@@ -4,7 +4,7 @@ import { MdAttachFile } from "react-icons/md";
 import { useEffect, useRef, useState } from "react";
 import { useAppSelector } from "@/redux/store";
 import { fileMessageApi, getMessagesApi } from "@/services/operations/chatApi";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useScrollTrigger from "@/hooks/useScrollTrigger";
 import { GetChatMessagesRs } from "@/types/apis/chatApiRs";
 import { useDispatch } from "react-redux";
@@ -14,33 +14,43 @@ import { useForm } from "react-hook-form";
 import { MessageText } from "@/types/common";
 import { sendMessageEvent } from "@/socket/emitEvents/emitMessageEvents";
 import { useSocketContext } from "@/context/SocketContext";
+import useScrollToBottom from "@/hooks/useScrollToBottom";
+import { startTypingEvent } from "@/socket/emitEvents/emitNotificationEvents";
 
 const Chat = () => {
+  const currFriendId = useAppSelector((state) => state.messages.currFriendId);
   const { chatId } = useParams();
   const [loading, setLoading] = useState<boolean>(true);
   const [stop, setStop] = useState<boolean>(false);
   const [trigger, setTrigger] = useState<number>(0);
-  const [lastCreatedAt, setLastCreateAt] = useState<Date>();
+  const [lastCreatedAt, setLastCreateAt] = useState<string>();
   const pmessages = useAppSelector((state) => state.messages.pMess);
   const currUser = useAppSelector((state) => state.user.user);
   const scrollableDivRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const currFriendId = useAppSelector((state) => state.messages.currFriendId);
   const { socket } = useSocketContext();
+  const navigate = useNavigate();
 
-  useScrollTrigger(scrollableDivRef, setLoading, loading, setTrigger, stop);
+  //useScrollTrigger(scrollableDivRef, setLoading, loading, setTrigger, stop);
+  useScrollToBottom(scrollableDivRef);
+
+  useEffect(() => {
+    if (!currFriendId) {
+      navigate("/talk");
+    }
+  }, []);
 
   useEffect(() => {
     const getMessages = async () => {
-      if (chatId) {
+      if (chatId && currFriendId) {
         let response: GetChatMessagesRs;
         // initial call for getting messages
         if (lastCreatedAt === undefined && trigger === 0) {
           response = await getMessagesApi(chatId);
           // TODO: setCount api call to set count 0
         } else if (lastCreatedAt !== undefined) {
-          response = await getMessagesApi(chatId, lastCreatedAt.toISOString());
+          response = await getMessagesApi(chatId, lastCreatedAt);
         } else {
           return;
         }
@@ -123,11 +133,35 @@ const Chat = () => {
     sendMessageEvent(socket, chatId, currFriendId, data.text);
   };
 
+  const startTyping = () => {
+    if (!socket) {
+      toast.error("Network connection is not established");
+      return;
+    }
+    if (!currFriendId) {
+      toast.error("Invalid chat");
+      return;
+    }
+    startTypingEvent(socket, currFriendId);
+  };
+
+  const stopTyping = () => {
+    if (!socket) {
+      toast.error("Network connection is not established");
+      return;
+    }
+    if (!currFriendId) {
+      toast.error("Invalid chat");
+      return;
+    }
+    startTypingEvent(socket, currFriendId);
+  };
+
   return (
     <div className="w-full h-full">
       <div
         ref={scrollableDivRef}
-        className="w-full h-[90%] px-8 overflow-y-scroll flex flex-col-reverse"
+        className="w-full h-[90%] px-8 overflow-y-scroll flex flex-col"
       >
         {/* messages for chat */}
         {pmessages?.length === 0 ? (
@@ -169,6 +203,8 @@ const Chat = () => {
             focus:bg-transparent border-b-2 border-transparent focus:border-emerald-800"
             placeholder="Message"
             {...register("text", { required: true })}
+            onFocus={() => startTyping()}
+            onBlur={() => stopTyping()}
           />
         </div>
       </form>

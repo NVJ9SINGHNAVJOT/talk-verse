@@ -5,9 +5,9 @@ import UnseenCount from "@/db/mongodb/models/UnseenCount";
 import User from "@/db/mongodb/models/User";
 import { channels, groupIds } from "@/socket";
 import { clientE } from "@/socket/events";
-import { CreateGroupBody, FileMessageBody } from "@/types/controller/chatReq";
+import { CreateGroupBody, FileMessageBody } from "@/types/controllers/chatReq";
 import { CustomRequest } from "@/types/custom";
-import Mutex from "@/types/mutex";
+import Channel from "@/types/channel";
 import { SoAddedInGroup, SoGroupMessageRecieved, SoMessageRecieved } from "@/types/socket/eventTypes";
 import uploadToCloudinary from "@/utils/cloudinaryUpload";
 import emitSocketEvent from "@/utils/emitSocketEvent";
@@ -207,7 +207,7 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
                     from: userId,
                     to: data.to,
                     text: secUrl,
-                    createdAt: createdAt,
+                    createdAt: createdAt.toISOString(),
                     firstName: data.firstName,
                     lastName: data.lastName,
                     imageUrl: data.imageUrl,
@@ -248,7 +248,7 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
                 isFile: true,
                 from: userId,
                 text: secUrl,
-                createdAt: createdAt,
+                createdAt: createdAt.toISOString(),
             };
             if (twoUser.online.length > 0) {
                 emitSocketEvent(req, clientE.MESSAGE_RECIEVED, sdata, null, twoUser.online);
@@ -306,9 +306,12 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
         });
 
         // Create a new mutex instance
-        const newMutex = new Mutex();
+        const newChannel = new Channel();
         // set newmutex for new groupId
-        channels.set(newGroup._id.toString(), newMutex);
+        channels.set(newGroup._id.toString(), newChannel);
+
+        // set members with groupId
+        groupIds.set(newGroup._id.toString(), data.userIdsInGroup);
 
         await Promise.all(data.userIdsInGroup.map(async (userId) => {
             await UnseenCount.create({ userId, mainId: newGroup._id });

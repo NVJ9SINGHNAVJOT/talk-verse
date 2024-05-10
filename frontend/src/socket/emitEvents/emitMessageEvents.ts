@@ -1,5 +1,5 @@
 import { Socket } from "socket.io-client";
-import { serverE } from "../events";
+import { serverE } from "@/socket/events";
 import { SoSendMessage } from "@/types/socket/eventTypes";
 
 export const sendMessageEvent = (socket: Socket, chatId: string, to: string, text: string) => {

@@ -28,7 +28,7 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
                 isFile: false,
                 from: userId,
                 text: data.text,
-                createdAt: createdAt
+                createdAt: createdAt.toISOString()
             };
             const sId = getSingleSocket(data.to);
             if (sId) {
@@ -81,7 +81,7 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
                     from: userId,
                     to: data._id,
                     text: data.text,
-                    createdAt: createdAt,
+                    createdAt: createdAt.toISOString(),
                     firstName: data.firstName,
                     lastName: data.lastName,
                     imageUrl: data.imageUrl

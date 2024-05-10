@@ -6,7 +6,7 @@ import { registerNotificationEvents } from '@/socket/events/notificationEvents';
 import { checkUserSocket } from '@/middlewares/socket';
 import { CustomSocket } from '@/types/custom';
 import corsOptions from '@/config/corsOptions';
-import Mutex from '@/types/mutex';
+import Channel from '@/types/channel';
 import { showOnline } from '@/utils/onlineStatus';
 
 // store userIds with their current socketIds
@@ -14,8 +14,8 @@ export const userSocketIDs = new Map<string, string>();
 // store group members with groupId
 export const groupIds = new Map<string, string[]>();
 
-// create a map to store mutexes for mainID   chatId/_id  ->   chatId is for two users and _id is of group
-export const channels: Map<string, Mutex> = new Map();
+// create a map to store channels for mainID   chatId/_id  ->   chatId is for two users and _id is of group
+export const channels: Map<string, Channel> = new Map();
 
 export const setupSocketIO = (app: Application): HTTPServer => {
     const httpServer: HTTPServer = createServer(app);

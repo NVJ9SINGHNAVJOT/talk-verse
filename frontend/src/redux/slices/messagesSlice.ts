@@ -12,7 +12,7 @@ export type GroupMessages = {
         imageUrl?: string
     }
     text: string,
-    createdAt: Date
+    createdAt: string
 }
 
 interface messagesState {
@@ -40,7 +40,7 @@ const messagesSlice = createSlice({
                 state.pMess.push(aciton.payload[0]);
             }
             else {
-                state.pMess.concat(aciton.payload);
+                state.pMess = state.pMess.concat(aciton.payload);
             }
         },
         // group chat messages

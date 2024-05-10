@@ -49,7 +49,7 @@ class AtomicBoolean {
 }
 
 // mutex for messages
-class Mutex {
+class Channel {
     private _locked = new AtomicBoolean(false);
     private _queue: Queue<() => void> = new Queue<() => void>();
 
@@ -73,4 +73,4 @@ class Mutex {
     }
 }
 
-export default Mutex;
+export default Channel;

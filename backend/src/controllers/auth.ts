@@ -1,5 +1,5 @@
 import User from '@/db/mongodb/models/User';
-import { LogInBody, SignUpBody } from '@/types/controller/authReq';
+import { LogInBody, SignUpBody } from '@/types/controllers/authReq';
 import { Request, Response } from 'express';
 import uploadToCloudinary from '@/utils/cloudinaryUpload';
 import { errRes } from '@/utils/error';

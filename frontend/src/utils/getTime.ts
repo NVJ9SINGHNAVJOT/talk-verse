@@ -1,3 +1,4 @@
-export const getDTimeStamp = (date: Date) => {
-    return date.toLocaleDateString() + "  " + date.getHours() + ":" + date.getMinutes();
+export const getDTimeStamp = (date: string) => {
+    const timeStamp = new Date(date);
+    return timeStamp.toLocaleDateString() + "  " + timeStamp.getHours() + ":" + timeStamp.getMinutes();
 };
