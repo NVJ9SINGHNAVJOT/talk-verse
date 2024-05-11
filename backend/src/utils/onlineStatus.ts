@@ -24,10 +24,10 @@ export const showOnline = async (userId: string, status: boolean, socket: Socket
 
         if (onlineFriends.length > 0) {
             if (status) {
-                socket.to(onlineFriends).emit(clientE.SET_USER_OFFLINE, userId);
+                socket.to(onlineFriends).emit(clientE.SET_USER_ONLINE, userId);
                 return;
             }
-            socket.to(onlineFriends).emit(clientE.SET_USER_ONLINE, userId);
+            socket.to(onlineFriends).emit(clientE.SET_USER_OFFLINE, userId);
         }
 
     } catch (error) {
