@@ -209,6 +209,14 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
                 imageUrl: user2.imageUrl
             };
             emitSocketEvent(req, clientE.REQUEST_ACCEPTED, sdata, socketId);
+            emitSocketEvent(req, clientE.SET_USER_ONLINE, user2._id.toString(), socketId);
+
+            // socketId is of other user, now send useronline to myself as other user is online and socketId is present
+            // get mysocketId
+            const mySocketId = getSingleSocket(userId);
+            if (mySocketId && user1) {
+                emitSocketEvent(req, clientE.SET_USER_ONLINE, user1._id.toString(), mySocketId);
+            }
         }
 
         return res.status(200).json({

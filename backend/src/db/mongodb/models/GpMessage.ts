@@ -10,6 +10,7 @@ export interface IGpMessage extends Document {
     to: mongoose.Types.ObjectId & IGroup;
     text: string;
     createdAt: Date;
+    updatedAt: Date;
 }
 
 // Define the Group Message schema using the interface
@@ -42,7 +43,11 @@ const gpMessageSchema = new Schema<IGpMessage>({
         type: Date,
         required: true
     },
-}, { timestamps: true });
+    updatedAt: {
+        type: Date,
+        default: Date.now,
+    }
+},);
 
 // Create the Group Message model
 const GpMessage: Model<IGpMessage> = mongoose.model<IGpMessage>('GpMessage', gpMessageSchema);

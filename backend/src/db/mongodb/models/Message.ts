@@ -11,6 +11,7 @@ export interface IMessage extends Document {
     to: mongoose.Types.ObjectId & IUser;
     text: string;
     createdAt: Date;
+    updatedAt: Date;
 }
 
 // Define the Message schema using the interface
@@ -48,7 +49,11 @@ const messageSchema = new Schema<IMessage>({
         type: Date,
         required: true
     },
-}, { timestamps: true });
+    updatedAt: {
+        type: Date,
+        default: Date.now,
+    }
+},);
 
 // Create the Message model
 const Message: Model<IMessage> = mongoose.model<IMessage>('Message', messageSchema);

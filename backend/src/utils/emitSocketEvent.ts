@@ -1,7 +1,7 @@
 import { logger } from '@/logger/logger';
 import { Request } from 'express';
 
-const emitSocketEvent = (req: Request, event: string, sdata: unknown, roomId?: string | null, roomIds?: string[]) => {
+const emitSocketEvent = (req: Request, event: string, sdata: unknown | string, roomId: string | null, roomIds?: string[]) => {
     try {
         if (roomId) {
             req.app.get("io").to(roomId).emit(event, sdata);
