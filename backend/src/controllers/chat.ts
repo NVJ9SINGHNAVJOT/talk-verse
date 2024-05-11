@@ -119,8 +119,10 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
         }
 
         let query;
+        console.log('createdat', createdAt)
         if (createdAt) {
             const before = new Date(createdAt as string);
+            console.log('bveforeee', before)
             query = {
                 chatId: chatId as string,
                 createdAt: { $lt: before }

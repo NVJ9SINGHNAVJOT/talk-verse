@@ -140,6 +140,9 @@ const chatSlice = createSlice({
         },
 
         // userTyping
+        resetTyping(state) {
+            state.userTyping = [];
+        },
         addUserTyping(state, action: PayloadAction<string>) {
             state.userTyping.push(action.payload);
         },
@@ -156,7 +159,7 @@ export const {
     setOnlineFriend, addOnlineFriend, removeOnlineFriend,
     setUnseenMessages, addNewUnseen, updateUnseenMessages,
     addUserRequest, setUserRequests, deleteUserRequest,
-    addUserTyping, removeUserTyping
+    resetTyping, addUserTyping, removeUserTyping
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

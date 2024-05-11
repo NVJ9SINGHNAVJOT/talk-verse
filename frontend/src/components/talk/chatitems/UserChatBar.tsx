@@ -6,7 +6,7 @@ import SearchModal from "@/components/talk/chatItems/SearchModal";
 import CreateGroup from "@/components/talk/chatItems/CreateGroupModal";
 import { useSocketContext } from "@/context/SocketContext";
 import userChatBarEvents from "@/socket/events/userChatBarEvents";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import { useAppSelector } from "@/redux/store";
 import { acceptRequestApi } from "@/services/operations/notificationApi";
@@ -19,6 +19,11 @@ import {
   ChatBarData,
   deleteUserRequest,
   Friend,
+  resetTyping,
+  setChatBarData,
+  setFriends,
+  setGroups,
+  setOnlineFriend,
 } from "@/redux/slices/chatSlice";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
@@ -65,6 +70,16 @@ const UserChatBar = () => {
   const toggelCreateGroupModal = () => {
     setIsCreateGroupOpen(!isCreateGroupOpen);
   };
+
+  useEffect(() => {
+    return () => {
+      dispatch(setChatBarData([]));
+      dispatch(setFriends([]));
+      dispatch(setGroups([]));
+      dispatch(setOnlineFriend([]));
+      dispatch(resetTyping());
+    };
+  }, []);
 
   return (
     <div className="w-full h-full bg-[#0D1117]">
