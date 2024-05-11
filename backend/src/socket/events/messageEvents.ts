@@ -13,6 +13,11 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
 
     socket.on(serverE.SEND_MESSAGE, async (data: SoSendMessage) => {
         try {
+            if (!data.chatId || !data.text || !data.to) {
+                logger.error('invalid data in socket send message event', { data: data });
+                return;
+            }
+
             const channel = channels.get(data.chatId);
             if (!channel) {
                 logger.error('channel is not present in channels', data);
@@ -55,7 +60,10 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
 
     socket.on(serverE.SEND_GROUP_MESSAGE, async (data: SoSendGroupMessage) => {
         try {
-
+            if (!data._id || !data.text || !data.firstName || !data.lastName) {
+                logger.error('invalid data in socket send group message event', { data: data });
+                return;
+            }
 
             const members = groupIds.get(data._id);
             if (!members || members.length === 0) {
