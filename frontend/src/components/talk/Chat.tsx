@@ -31,8 +31,10 @@ const Chat = () => {
   const { chatId } = useParams();
   const [loading, setLoading] = useState<boolean>(true);
   const [stop, setStop] = useState<boolean>(false);
-  const [trigger, setTrigger] = useState<number>(0);
-  const [lastCreatedAt, setLastCreateAt] = useState<string>();
+  const [trigger, setTrigger] = useState<number>(1);
+  const [lastCreatedAt, setLastCreateAt] = useState<string | undefined>(
+    undefined
+  );
   const pmessages = useAppSelector((state) => state.messages.pMess);
   const currUser = useAppSelector((state) => state.user.user);
   const scrollableDivRef = useRef<HTMLDivElement>(null);
@@ -47,19 +49,29 @@ const Chat = () => {
     if (!chatId || !currFriendId || !currMainId || currMainId !== chatId) {
       navigate("/talk");
     }
+    console.log("new chatid");
+    setTrigger(0);
+    setLastCreateAt(undefined);
+    dispatch(setPMessages([]));
+    setLoading(true), setStop(false);
+  }, [currFriendId]);
+
+  useEffect(() => {
     return () => {
+      console.log("why this is happening");
       dispatch(setCurrFriendId(""));
       dispatch(setMainId(""));
-      dispatch(setPMessages([]));
     };
   }, []);
 
+  // infinite loading of messages
   useEffect(() => {
+    console.log("new problem", chatId, chatId === currMainId, currFriendId);
     const getMessages = async () => {
-      if (chatId && currFriendId) {
+      if (chatId && chatId === currMainId && currFriendId) {
         let response: GetChatMessagesRs;
         // initial call for getting messages
-        if (lastCreatedAt === undefined && trigger === 0) {
+        if (trigger === 1) {
           response = await getMessagesApi(chatId);
           // setCount api call to set count 0
           if (response && response.messages && response.messages.length > 0) {

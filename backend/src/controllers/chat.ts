@@ -69,7 +69,7 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
                 firstName: item.friendId.firstName,
                 lastName: item.friendId.lastName,
                 imageUrl: item.friendId.imageUrl,
-                chatId: item.chatId as unknown as string,
+                chatId: item.chatId.toString(),
             };
             chatBar.push(newValue);
             return newValue;
@@ -83,8 +83,10 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
 
         // sort chatbar as per user chatbarorder
         const sortedBarData = chatBar.sort((a, b) => {
-            const indexA = userFriends?.chatBarOrder.indexOf(a._id);
-            const indexB = userFriends?.chatBarOrder.indexOf(b._id);
+            const tempA = a.chatId ? a.chatId : a._id.toString();
+            const tempB = b.chatId ? b.chatId : b._id.toString();
+            const indexA = userFriends?.chatBarOrder?.indexOf(tempA);
+            const indexB = userFriends?.chatBarOrder?.indexOf(tempB);
             if (indexA === undefined || indexB === undefined) {
                 return 0;
             }
@@ -100,7 +102,7 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
         });
 
     } catch (error) {
-        return errRes(res, 500, "error while sending request", error);
+        return errRes(res, 500, "error while getting chatbar data", error);
     }
 };
 
@@ -376,7 +378,7 @@ export const groupMessages = async (req: Request, res: Response): Promise<Respon
         const gpMessages = await GpMessage.find(query)
             .sort({ createdAt: -1 })
             .limit(20)
-            .select({ uuId: true, isFile: true, from: true, text: true, createdAt: true, _id: false })
+            .select({ uuId: true, isFile: true, from: true, to: true, text: true, createdAt: true, _id: false })
             .populate({
                 path: "from",
                 select: "firstName lastName imageUrl"

@@ -5,7 +5,10 @@ import {
   setOnlineFriend,
   setUserRequests,
 } from "@/redux/slices/chatSlice";
-import { setUnseenMessages, UnseenMessages } from "@/redux/slices/messagesSlice";
+import {
+  setUnseenMessages,
+  UnseenMessages,
+} from "@/redux/slices/messagesSlice";
 import { setTalkPageLoading } from "@/redux/slices/pageLoadingSlice";
 import { chatBarDataApi } from "@/services/operations/chatApi";
 import {
@@ -114,6 +117,9 @@ export default function SocketProvider({ children }: ContextProviderProps) {
           setTimeout(() => {
             dispatch(setTalkPageLoading(false));
           }, 500);
+        } else {
+          toast.error("Error while connecting");
+          navigate("/error");
         }
       }
     } catch (error) {

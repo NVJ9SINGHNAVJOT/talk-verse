@@ -15,7 +15,7 @@ import {
 } from "@/redux/slices/chatSlice";
 import { toast } from "react-toastify";
 import { SoAddedInGroup, SoGroupMessageRecieved, SoMessageRecieved, SoRequestAccepted, SoUserRequest } from "@/types/socket/eventTypes";
-import { addGpMessages, addNewUnseen, addPMessages, GroupMessages } from "@/redux/slices/messagesSlice";
+import { addGpMessages, addLivePMessage, addNewUnseen, GroupMessages } from "@/redux/slices/messagesSlice";
 
 // Custom hook to manage socket event listeners
 const useSocketEvents = (socket: Socket | null): void => {
@@ -84,7 +84,7 @@ const useSocketEvents = (socket: Socket | null): void => {
         });
 
         socket.on(clientE.MESSAGE_RECIEVED, (data: SoMessageRecieved) => {
-            dispatch(addPMessages([data]));
+            dispatch(addLivePMessage(data));
         });
 
         socket.on(clientE.GROUP_MESSAGE_RECIEVED, (data: SoGroupMessageRecieved) => {
@@ -97,6 +97,7 @@ const useSocketEvents = (socket: Socket | null): void => {
                     lastName: data.lastName,
                     imageUrl: data.imageUrl
                 },
+                to: data.to,
                 text: data.text,
                 createdAt: data.createdAt
             };

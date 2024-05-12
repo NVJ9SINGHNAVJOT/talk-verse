@@ -99,8 +99,8 @@ const chatSlice = createSlice({
         setOnlineFriend(state, action: PayloadAction<string[]>) {
             state.onlineFriends = action.payload;
         },
-        addOnlineFriend(state, aciton: PayloadAction<string>) {
-            state.onlineFriends.push(aciton.payload);
+        addOnlineFriend(state, action: PayloadAction<string>) {
+            state.onlineFriends.push(action.payload);
         },
         removeOnlineFriend(state, action: PayloadAction<string>) {
             state.onlineFriends = state.onlineFriends.filter((userId) => userId !== action.payload);

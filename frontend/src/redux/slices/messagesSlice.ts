@@ -11,7 +11,8 @@ export type GroupMessages = {
         firstName: string,
         lastName: string,
         imageUrl?: string
-    }
+    },
+    to: string,
     text: string,
     createdAt: string
 }
@@ -43,19 +44,19 @@ const messagesSlice = createSlice({
         setPMessages(state, action: PayloadAction<SoMessageRecieved[]>) {
             state.pMess = action.payload;
         },
-        addPMessages(state, aciton: PayloadAction<SoMessageRecieved[]>) {
-            if (!state.currMainId || aciton.payload[0].chatId !== state.currMainId) {
-                const key = aciton.payload[0].chatId;
+        addPMessages(state, action: PayloadAction<SoMessageRecieved[]>) {
+            state.pMess = state.pMess.concat(action.payload);
+        },
+        addLivePMessage(state, action: PayloadAction<SoMessageRecieved>) {
+            if (state.currMainId && action.payload.chatId === state.currMainId) {
+                state.pMess.unshift(action.payload);
+            }
+            else {
+                const key = action.payload.chatId;
                 setUnseenCount(key, state.unseenMessages[key] + 1);
                 if (state.unseenMessages && key in state.unseenMessages) {
                     state.unseenMessages[key] += 1;
                 }
-            }
-            else if (aciton.payload.length === 1) {
-                state.pMess.unshift(aciton.payload[0]);
-            }
-            else {
-                state.pMess = state.pMess.concat(aciton.payload);
             }
         },
 
@@ -63,18 +64,25 @@ const messagesSlice = createSlice({
         setGpMessages(state, action: PayloadAction<GroupMessages[]>) {
             state.gpMess = action.payload;
         },
-        addGpMessages(state, aciton: PayloadAction<GroupMessages[]>) {
-            if (aciton.payload.length === 1) {
-                state.gpMess.unshift(aciton.payload[0]);
+        addGpMessages(state, action: PayloadAction<GroupMessages[]>) {
+            state.gpMess = state.gpMess.concat(action.payload);
+        },
+        addLiveGpMessage(state, action: PayloadAction<GroupMessages>) {
+            if (state.currMainId && action.payload.to === state.currMainId) {
+                state.gpMess.unshift(action.payload);
             }
             else {
-                state.gpMess = state.gpMess.concat(aciton.payload);
+                const key = action.payload.to;
+                setUnseenCount(key, state.unseenMessages[key] + 1);
+                if (state.unseenMessages && key in state.unseenMessages) {
+                    state.unseenMessages[key] += 1;
+                }
             }
         },
 
         // set ids for chat
-        setCurrFriendId(state, aciton: PayloadAction<string>) {
-            state.currFriendId = aciton.payload;
+        setCurrFriendId(state, action: PayloadAction<string>) {
+            state.currFriendId = action.payload;
         },
         setMainId(state, action: PayloadAction<string>) {
             state.currMainId = action.payload;
@@ -89,16 +97,16 @@ const messagesSlice = createSlice({
         },
         resetUnseenMessage(state, action: PayloadAction<string>) {
             const key = action.payload;
-            setUnseenCount(key, 0);
-            if (state.unseenMessages && key in state.unseenMessages) {
+            if (state.unseenMessages && key in state.unseenMessages && state.unseenMessages[key] !== 0) {
+                setUnseenCount(key, 0);
                 state.unseenMessages[key] = 0;
             }
         },
     },
 });
 
-export const { setPMessages, addPMessages,
-    setGpMessages, addGpMessages,
+export const { setPMessages, addPMessages, addLivePMessage,
+    setGpMessages, addGpMessages, addLiveGpMessage,
     setCurrFriendId, setMainId,
     setUnseenMessages, addNewUnseen, resetUnseenMessage,
 } = messagesSlice.actions;
