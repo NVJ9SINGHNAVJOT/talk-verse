@@ -38,7 +38,7 @@ const UserSearchInput = () => {
                 !myFriends.some((friend) => newUser._id === friend._id)
             );
             if (newUsers.length === 0) {
-              toast.info('No new users for this username');
+              toast.info("No new users for this username");
             }
             setUsers(newUsers);
           } else {
@@ -64,8 +64,11 @@ const UserSearchInput = () => {
         onChange={(event) => setQuery(event.target.value)}
       />
 
-      {users && (
-        <div className=" absolute flex flex-wrap justify-center gap-7 top-36 sm:top-24 sm:w-[35rem]  max-w-[40rem] text-white">
+      {users.length > 0 && (
+        <div
+          className=" absolute flex flex-wrap justify-center gap-7 top-36 sm:top-24 sm:w-[35rem]  max-w-[40rem] text-white 
+          max-h-[calc(100vh-62vh)] overflow-y-scroll"
+        >
           {users.map((user, index) => {
             return (
               <div
@@ -82,7 +85,6 @@ const UserSearchInput = () => {
                   <RxAvatar className="w-10 h-10 aspect-auto" />
                 )}
                 <div>{user.userName}</div>
-                {/* searched user is already a friend */}
                 <CiCirclePlus
                   onClick={() => sendRequest(user._id)}
                   className=" text-white w-8 h-8 aspect-auto cursor-pointer hover:bg-white hover:text-black rounded-full"

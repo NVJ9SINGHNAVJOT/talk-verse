@@ -9,7 +9,7 @@ import {
   setUnseenMessages,
   UnseenMessages,
 } from "@/redux/slices/messagesSlice";
-import { setTalkPageLoading } from "@/redux/slices/pageLoadingSlice";
+import { setTalkPageLoading } from "@/redux/slices/loadingSlice";
 import { chatBarDataApi } from "@/services/operations/chatApi";
 import {
   checkOnlineFriendsApi,

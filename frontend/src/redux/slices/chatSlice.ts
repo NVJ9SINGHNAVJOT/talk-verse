@@ -1,3 +1,4 @@
+import { setOrderApi } from "@/services/operations/notificationApi";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -43,6 +44,7 @@ interface ChatState {
     onlineFriends: string[],
     userRequests: UserRequest[],
     userTyping: string[],
+    lastMainId: string | undefined
 }
 
 const initialState = {
@@ -52,6 +54,7 @@ const initialState = {
     onlineFriends: [],
     userRequests: [],
     userTyping: [],
+    lastMainId: undefined
 } satisfies ChatState as ChatState;
 
 const chatSlice = createSlice({
@@ -81,12 +84,32 @@ const chatSlice = createSlice({
             state.chatBarData = action.payload;
         },
         addChatBarData(state, action: PayloadAction<ChatBarData>) {
+            const { chatId } = action.payload;
+            if (chatId) {
+                state.lastMainId = chatId;
+            }
+            else {
+                state.lastMainId = action.payload._id;
+            }
             state.chatBarData.unshift(action.payload);
         },
-        setChatBarDataToFirst(state, action: PayloadAction<string>) {
+        setFriendToFirst(state, action: PayloadAction<string>) {
+            setOrderApi(action.payload);
+            state.lastMainId = action.payload;
+            const dataIdToMove = action.payload;
+            const dataIndex = state.chatBarData.findIndex(data => data.chatId === dataIdToMove);
+            if (dataIndex !== undefined && dataIndex !== -1) {
+                const data = state.chatBarData.splice(dataIndex, 1);
+                if (data !== undefined) {
+                    state.chatBarData?.unshift(data[0]);
+                }
+            }
+        },
+        setGroupToFirst(state, action: PayloadAction<string>) {
+            setOrderApi(action.payload);
+            state.lastMainId = action.payload;
             const dataIdToMove = action.payload;
             const dataIndex = state.chatBarData.findIndex(data => data._id === dataIdToMove);
-
             if (dataIndex !== undefined && dataIndex !== -1) {
                 const data = state.chatBarData.splice(dataIndex, 1);
                 if (data !== undefined) {
@@ -129,6 +152,11 @@ const chatSlice = createSlice({
         },
         removeUserTyping(state, action: PayloadAction<string>) {
             state.userTyping = state.userTyping.filter((userId) => userId !== action.payload);
+        },
+
+        // set lastMainId
+        setLastMainId(state, action: PayloadAction<string>) {
+            state.lastMainId = action.payload;
         }
     },
 });
@@ -136,10 +164,11 @@ const chatSlice = createSlice({
 export const {
     setFriends, addFriend,
     setGroups, addGroup,
-    setChatBarData, addChatBarData, setChatBarDataToFirst,
+    setChatBarData, addChatBarData, setFriendToFirst, setGroupToFirst,
     setOnlineFriend, addOnlineFriend, removeOnlineFriend,
     addUserRequest, setUserRequests, deleteUserRequest,
-    resetTyping, addUserTyping, removeUserTyping
+    resetTyping, addUserTyping, removeUserTyping,
+    setLastMainId
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

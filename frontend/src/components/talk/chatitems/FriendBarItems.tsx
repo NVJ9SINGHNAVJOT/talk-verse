@@ -36,7 +36,7 @@ const FriendBarItems = (props: ChatBarItemsProps) => {
             className=" size-11 aspect-square rounded-2xl ring-2 ring-slate-400"
           />
         ) : (
-          <RxAvatar className="  size-11 aspect-square text-white rounded-2xl ring-2 ring-slate-400" />
+          <RxAvatar className="  size-11 aspect-square text-white rounded-full  ring-2 ring-slate-400" />
         )}
         <p className=" pl-4 text-white text-[1rem] pb-2">
           {friend.firstName + " " + friend.lastName}

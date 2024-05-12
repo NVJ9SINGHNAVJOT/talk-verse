@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useAppSelector } from "@/redux/store";
 import { Skeleton } from "@/lib/shadcn-ui/components/ui/skeleton";
-import { setTalkPageLoading } from "@/redux/slices/pageLoadingSlice";
+import { setTalkPageLoading } from "@/redux/slices/loadingSlice";
 import { useDispatch } from "react-redux";
 
 const Talk = () => {
@@ -13,7 +13,7 @@ const Talk = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const talkPageLoading = useAppSelector(
-    (state) => state.pageLoading.talkPageLoading
+    (state) => state.loading.talkPageLoading
   );
 
   useEffect(() => {

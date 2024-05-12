@@ -6,6 +6,15 @@ import { FcConferenceCall } from "react-icons/fc";
 const Home = () => {
   return (
     <div className="w-full bg-grayblack">
+      <section className=" ct-rainbow w-full h-[45rem] flex flex-col items-center justify-center">
+        <div
+          className="ct-rainbowHeading font-be-veitnam-pro text-8xl font-extrabold
+          mix-blend-difference text-white brightness-[900]
+          filter"
+        >
+          TalkVerse
+        </div>
+      </section>
       <section className="w-full flex flex-col gap-y-16 lm:flex-row lm:gap-y-0 justify-evenly items-center pt-28 pb-28">
         <div
           className="w-8/12 h-[25rem] lm:w-5/12 text-white flex flex-col justify-center items-center
@@ -31,20 +40,8 @@ const Home = () => {
           className="w-[25rem] aspect-square"
         ></img>
       </section>
-
       <section className="w-full flex justify-evenly items-center pt-8 py-36">
         <TrackingCard />
-      </section>
-
-      <section className=" ct-rainbow w-full h-[45rem] flex flex-col items-center justify-center">
-        <div className=" w-[110%] h-16 absolute blur-sm bg-grayblack z-50 -top-6 m-0 p-0 "></div>
-        <div
-          className="ct-rainbowHeading font-be-veitnam-pro text-8xl font-extrabold
-          mix-blend-difference text-white brightness-[900]
-          filter"
-        >
-          TalkVerse
-        </div>
       </section>
       {/* footer */}
       <MainFooter />

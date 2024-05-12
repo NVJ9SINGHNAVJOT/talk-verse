@@ -5,10 +5,9 @@ import UnseenCount from "@/db/mongodb/models/UnseenCount";
 import User from "@/db/mongodb/models/User";
 import { channels, groupIds } from "@/socket";
 import { clientE } from "@/socket/events";
-import { CreateGroupBody, FileMessageBody } from "@/types/controllers/chatReq";
+import { FileMessageBody } from "@/types/controllers/chatReq";
 import { CustomRequest } from "@/types/custom";
-import Channel from "@/types/channel";
-import { SoAddedInGroup, SoGroupMessageRecieved, SoMessageRecieved } from "@/types/socket/eventTypes";
+import { SoGroupMessageRecieved, SoMessageRecieved } from "@/types/socket/eventTypes";
 import uploadToCloudinary from "@/utils/cloudinaryUpload";
 import emitSocketEvent from "@/utils/emitSocketEvent";
 import { errRes } from "@/utils/error";
@@ -39,7 +38,7 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
         }
 
         const userFriends = await User.findById({ _id: userId })
-            .select({ friends: true, chatBar: true })
+            .select({ friends: true, chatBarOrder: true })
             .populate({
                 path: 'friends.friendId',
                 select: 'firstName lastName imageUrl',
@@ -85,8 +84,8 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
         const sortedBarData = chatBar.sort((a, b) => {
             const tempA = a.chatId ? a.chatId : a._id.toString();
             const tempB = b.chatId ? b.chatId : b._id.toString();
-            const indexA = userFriends?.chatBarOrder?.indexOf(tempA);
-            const indexB = userFriends?.chatBarOrder?.indexOf(tempB);
+            const indexA = userFriends?.chatBarOrder.indexOf(tempA);
+            const indexB = userFriends?.chatBarOrder.indexOf(tempB);
             if (indexA === undefined || indexB === undefined) {
                 return 0;
             }
@@ -273,73 +272,6 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
         return res.status(200).json({
             success: true,
             message: 'filemessage send successfully',
-        });
-
-    } catch (error) {
-        return errRes(res, 500, 'error while uploading filemessage', error);
-    }
-};
-
-export const createGroup = async (req: Request, res: Response): Promise<Response> => {
-    try {
-        const userId = (req as CustomRequest).userId;
-        const data: CreateGroupBody = req.body;
-
-        // validation
-        if (!userId) {
-            return errRes(res, 400, 'user id not present');
-        }
-        if (!data.groupName || data.userIdsInGroup.length === 0) {
-            return errRes(res, 400, 'invalid data for creating group');
-        }
-
-        let secUrl;
-        if (req.file) {
-            secUrl = await uploadToCloudinary(req.file);
-            if (secUrl === null) {
-                return errRes(res, 500, "error while uploading user image");
-            }
-        }
-        else {
-            secUrl = "";
-        }
-
-        const newGroup = await Group.create({
-            groupName: data.groupName, gpCreater: userId,
-            gpImageUrl: secUrl, members: data.userIdsInGroup
-        });
-
-        // Create a new mutex instance
-        const newChannel = new Channel();
-        // set newmutex for new groupId
-        channels.set(newGroup._id.toString(), newChannel);
-
-        // set members with groupId
-        groupIds.set(newGroup._id.toString(), data.userIdsInGroup);
-
-        await Promise.all(data.userIdsInGroup.map(async (userId) => {
-            await UnseenCount.create({ userId, mainId: newGroup._id });
-        }));
-
-        const memData = getMultiSockets(data.userIdsInGroup, userId);
-        // in online users of group, event is emitted only except for creater, as creater get group in response
-        if (memData.online.length > 0) {
-            const sdata: SoAddedInGroup = {
-                _id: newGroup._id,
-                groupName: data.groupName,
-                gpImageUrl: secUrl
-            };
-            emitSocketEvent(req, clientE.ADDED_IN_GROUP, sdata, null, memData.online);
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: 'group created successfully',
-            newGroup: {
-                _id: newGroup._id,
-                gpName: newGroup.groupName,
-                gpImageUrl: newGroup.gpImageUrl
-            }
         });
 
     } catch (error) {

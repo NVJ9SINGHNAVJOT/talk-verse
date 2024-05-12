@@ -22,6 +22,7 @@ import {
   setChatBarData,
   setFriends,
   setGroups,
+  setLastMainId,
   setOnlineFriend,
 } from "@/redux/slices/chatSlice";
 import { toast } from "react-toastify";
@@ -78,6 +79,7 @@ const UserChatBar = () => {
       dispatch(setGroups([]));
       dispatch(setOnlineFriend([]));
       dispatch(resetTyping());
+      dispatch(setLastMainId(""));
     };
   }, []);
 

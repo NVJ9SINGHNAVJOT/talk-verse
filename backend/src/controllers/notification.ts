@@ -3,15 +3,18 @@ import Notification from '@/db/mongodb/models/Notification';
 import UnseenCount from '@/db/mongodb/models/UnseenCount';
 import User from '@/db/mongodb/models/User';
 import { clientE } from '@/socket/events';
-import { channels, userSocketIDs } from '@/socket/index';
+import { channels, groupIds, userSocketIDs } from '@/socket/index';
 import { AcceptRequestBody, SendRequestBody, SetOrderBody, SetUnseenCountBody } from '@/types/controllers/notificationReq';
 import { CustomRequest } from '@/types/custom';
 import Channel from '@/types/channel';
-import { SoRequestAccepted, SoUserRequest } from '@/types/socket/eventTypes';
+import { SoAddedInGroup, SoRequestAccepted, SoUserRequest } from '@/types/socket/eventTypes';
 import emitSocketEvent from '@/utils/emitSocketEvent';
 import { errRes } from '@/utils/error';
-import { getSingleSocket } from '@/utils/getSocketIds';
+import { getMultiSockets, getSingleSocket } from '@/utils/getSocketIds';
 import { Request, Response } from 'express';
+import { CreateGroupBody } from '@/types/controllers/chatReq';
+import uploadToCloudinary from '@/utils/cloudinaryUpload';
+import Group from '@/db/mongodb/models/Group';
 
 export const getUsers = async (req: Request, res: Response): Promise<Response> => {
     try {
@@ -30,8 +33,18 @@ export const getUsers = async (req: Request, res: Response): Promise<Response> =
             });
         }
 
-        const users = await User.find({ _id: { $nin: userId }, userName: { $regex: userName, $options: 'i' } })
-            .select({ userName: true, imageUrl: true }).exec();
+        const userFriends = await User.findById({ _id: userId }).select({ friends: true }).exec();
+
+        const excluedIds: string[] = [];
+
+        userFriends?.friends?.map((item) => {
+            excluedIds.push(item.friendId._id.toString());
+        }
+        );
+        excluedIds.push(userId);
+
+        const users = await User.find({ _id: { $nin: excluedIds }, userName: { $regex: userName, $options: 'i' } })
+            .select({ userName: true, imageUrl: true }).limit(20).exec();
 
         if (users.length < 1) {
             return res.status(200).json({
@@ -65,7 +78,19 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
         }
 
         // check user exist or not for req id
-        const checkUser = await User.findById({ _id: data.reqUserId }).select({ userName: true, imageUrl: true }).exec();
+        const checkUser = await User.findById({ _id: data.reqUserId }).select({ userName: true, imageUrl: true, friends: true }).exec();
+
+        let errCheck: boolean = false;
+        checkUser?.friends?.forEach((item) => {
+            if (userId === item.friendId._id.toString()) {
+                errCheck = true;
+                return;
+            }
+        });
+
+        if (errCheck) {
+            return errRes(res, 400, 'requested user is already friend of user');
+        }
 
         if (!checkUser) {
             return errRes(res, 400, 'user not present for given reqUserId');
@@ -231,6 +256,76 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
     }
 };
 
+export const createGroup = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const userId = (req as CustomRequest).userId;
+        const data: CreateGroupBody = req.body;
+
+        // validation
+        if (!userId) {
+            return errRes(res, 400, 'user id not present');
+        }
+        if (!data.groupName || data.userIdsInGroup.length === 0) {
+            return errRes(res, 400, 'invalid data for creating group');
+        }
+
+        let secUrl;
+        if (req.file) {
+            secUrl = await uploadToCloudinary(req.file);
+            if (secUrl === null) {
+                return errRes(res, 500, "error while uploading user image");
+            }
+        }
+        else {
+            secUrl = "";
+        }
+
+        const newGroup = await Group.create({
+            groupName: data.groupName, gpCreater: userId,
+            gpImageUrl: secUrl, members: data.userIdsInGroup
+        });
+
+        // Create a new mutex instance
+        const newChannel = new Channel();
+        // set newmutex for new groupId
+        channels.set(newGroup._id.toString(), newChannel);
+
+        // set members with groupId
+        groupIds.set(newGroup._id.toString(), data.userIdsInGroup);
+
+        await Promise.all(data.userIdsInGroup.map(async (userId) => {
+            await UnseenCount.create({ userId: userId, mainId: newGroup._id });
+            const groupUser = await User.findById({ _id: userId });
+            groupUser?.chatBarOrder.unshift(newGroup._id);
+            await groupUser?.save();
+        }));
+
+        const memData = getMultiSockets(data.userIdsInGroup, userId);
+        // in online users of group, event is emitted only except for creater, as creater get group in response
+        if (memData.online.length > 0) {
+            const sdata: SoAddedInGroup = {
+                _id: newGroup._id,
+                groupName: data.groupName,
+                gpImageUrl: secUrl
+            };
+            emitSocketEvent(req, clientE.ADDED_IN_GROUP, sdata, null, memData.online);
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: 'group created successfully',
+            newGroup: {
+                _id: newGroup._id,
+                gpName: newGroup.groupName,
+                gpImageUrl: newGroup.gpImageUrl
+            }
+        });
+
+    } catch (error) {
+        return errRes(res, 500, 'error while uploading filemessage', error);
+    }
+};
+
 export const checkOnlineFriends = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = (req as CustomRequest).userId;
@@ -309,12 +404,10 @@ export const setOrder = async (req: Request, res: Response): Promise<Response> =
             return errRes(res, 400, 'user id not present');
         }
 
-        if (!data.mainId || !data.mainId) {
+        if (!data.mainId) {
             return errRes(res, 400, 'invalid data for setunseencount');
         }
-
         const user = await User.findById({ _id: userId }).select({ chatBarOrder: true });
-
         const existingIndex = user?.chatBarOrder.indexOf(data.mainId);
 
         if (existingIndex !== undefined && existingIndex !== -1) {
@@ -335,7 +428,7 @@ export const setOrder = async (req: Request, res: Response): Promise<Response> =
         });
 
     } catch (error) {
-        return errRes(res, 400, 'error while setting order');
+        return errRes(res, 400, 'error while setting order', error);
     }
 };
 

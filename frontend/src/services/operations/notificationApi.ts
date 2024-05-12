@@ -1,5 +1,6 @@
 import { notificationEndPoints } from "@/services/apis";
 import { fetchApi } from "@/services/fetchApi";
+import { CreateGroupRs } from "@/types/apis/chatApiRs";
 import { CommonRs } from "@/types/apis/common";
 import { AcceptRequestRs, CheckOnlineFriendsRs, GetAllNotificationsRs, GetUsersRs } from "@/types/apis/notificationApiRs";
 
@@ -9,6 +10,7 @@ const {
     SEND_REQUEST,
     GET_ALL_NOTIFICATIONS,
     ACCEPT_REQUEST,
+    CREATE_GROUP,
     CHECK_ONLINE_FRIENDS,
     SET_UNSEEN_COUNT,
     SET_ORDER
@@ -51,7 +53,6 @@ export const getAllNotificationsApi = async (): Promise<GetAllNotificationsRs> =
     }
 };
 
-
 export const acceptRequestApi = async (userId: string): Promise<AcceptRequestRs> => {
     try {
         const resData: AcceptRequestRs = await fetchApi('POST', ACCEPT_REQUEST, { acceptUserId: userId }, { 'Content-Type': 'application/json' });
@@ -61,6 +62,18 @@ export const acceptRequestApi = async (userId: string): Promise<AcceptRequestRs>
         return {} as AcceptRequestRs;
     } catch (error) {
         return {} as AcceptRequestRs;
+    }
+};
+
+export const createGroupApi = async (data: FormData): Promise<CreateGroupRs> => {
+    try {
+        const resData: CreateGroupRs = await fetchApi('POST', CREATE_GROUP, data);
+        if (resData && resData.success === true) {
+            return resData;
+        }
+        return {} as CreateGroupRs;
+    } catch (error) {
+        return {} as CreateGroupRs;
     }
 };
 

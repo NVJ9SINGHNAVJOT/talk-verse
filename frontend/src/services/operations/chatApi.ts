@@ -1,13 +1,12 @@
 import { chatEndPoints } from "@/services/apis";
 import { fetchApi } from "@/services/fetchApi";
-import { ChatBarDataRs, CreateGroupRs, GetChatMessagesRs, GetGroupMessagesRs } from "@/types/apis/chatApiRs";
+import { ChatBarDataRs, GetChatMessagesRs, GetGroupMessagesRs } from "@/types/apis/chatApiRs";
 import { CommonRs } from "@/types/apis/common";
 const {
     CHAT_BAR_DATA,
     CHAT_MESSAGES,
     GROUP_MESSAGES,
     FILE_MESSAGE,
-    CREATE_GROUP
 } = chatEndPoints;
 
 export const chatBarDataApi = async (): Promise<ChatBarDataRs> => {
@@ -49,22 +48,10 @@ export const fileMessageApi = async (data: FormData): Promise<boolean> => {
     }
 };
 
-export const createGroupApi = async (data: FormData): Promise<CreateGroupRs> => {
-    try {
-        const resData: CreateGroupRs = await fetchApi('POST', CREATE_GROUP, data);
-        if (resData && resData.success === true) {
-            return resData;
-        }
-        return {} as CreateGroupRs;
-    } catch (error) {
-        return {} as CreateGroupRs;
-    }
-};
-
 export const getGroupMessagesApi = async (groupId: string, createdAt?: string): Promise<GetGroupMessagesRs> => {
     try {
         const resData: GetGroupMessagesRs = await fetchApi('GET', GROUP_MESSAGES, null, null,
-            { 'groupId': groupId, 'createdAt': createdAt ? createdAt : ""});
+            { 'groupId': groupId, 'createdAt': createdAt ? createdAt : "" });
         // success false is used in response
         if (resData) {
             return resData;

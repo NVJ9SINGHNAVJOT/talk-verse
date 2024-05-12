@@ -24,14 +24,18 @@ import {
   startTypingEvent,
   stopTypingEvent,
 } from "@/socket/emitEvents/emitNotificationEvents";
+import { setFriendToFirst } from "@/redux/slices/chatSlice";
 
 const Chat = () => {
   const currFriendId = useAppSelector((state) => state.messages.currFriendId);
   const currMainId = useAppSelector((state) => state.messages.currMainId);
+  const lastMainId = useAppSelector((state) => state.chat.lastMainId);
   const { chatId } = useParams();
   const [loading, setLoading] = useState<boolean>(true);
   const [stop, setStop] = useState<boolean>(false);
-  const [trigger, setTrigger] = useState<number>(1);
+  const [trigger, setTrigger] = useState<number>(0);
+  const [trigAssist, setTrigAssist] = useState<boolean>(false);
+  const isMountingRef = useRef(true);
   const [lastCreatedAt, setLastCreateAt] = useState<string | undefined>(
     undefined
   );
@@ -46,32 +50,38 @@ const Chat = () => {
   useScrollTrigger(scrollableDivRef, setLoading, loading, setTrigger, stop);
 
   useEffect(() => {
-    if (!chatId || !currFriendId || !currMainId || currMainId !== chatId) {
-      navigate("/talk");
-    }
-    console.log("new chatid");
-    setTrigger(0);
-    setLastCreateAt(undefined);
-    dispatch(setPMessages([]));
-    setLoading(true), setStop(false);
-  }, [currFriendId]);
-
-  useEffect(() => {
     return () => {
-      console.log("why this is happening");
       dispatch(setCurrFriendId(""));
       dispatch(setMainId(""));
     };
   }, []);
 
+  useEffect(() => {
+    if (!chatId || !currFriendId || !currMainId || currMainId !== chatId) {
+      navigate("/talk");
+    }
+
+    if (isMountingRef.current) {
+      isMountingRef.current = false;
+      return;
+    }
+    setLastCreateAt(undefined);
+    dispatch(setPMessages([]));
+    setLoading(true), setStop(false);
+    if (trigger === 0) {
+      setTrigAssist((prev) => !prev);
+    } else {
+      setTrigger(0);
+    }
+  }, [chatId]);
+
   // infinite loading of messages
   useEffect(() => {
-    console.log("new problem", chatId, chatId === currMainId, currFriendId);
     const getMessages = async () => {
-      if (chatId && chatId === currMainId && currFriendId) {
+      if (chatId && currFriendId && chatId === currMainId) {
         let response: GetChatMessagesRs;
         // initial call for getting messages
-        if (trigger === 1) {
+        if (lastCreatedAt === undefined) {
           response = await getMessagesApi(chatId);
           // setCount api call to set count 0
           if (response && response.messages && response.messages.length > 0) {
@@ -106,7 +116,7 @@ const Chat = () => {
       }
     };
     getMessages();
-  }, [trigger]);
+  }, [trigger, trigAssist]);
 
   const handleFileTagRefClick = () => {
     fileInputRef.current?.click();
@@ -151,11 +161,15 @@ const Chat = () => {
       toast.error("Network connection is not established");
       return;
     }
-    if (!chatId || !currFriendId) {
+    if (!chatId || !currFriendId || !currMainId) {
       toast.error("Invalid chat");
       return;
     }
+
     sendMessageEvent(socket, chatId, currFriendId, data.text);
+    if (!lastMainId || lastMainId !== chatId) {
+      dispatch(setFriendToFirst(chatId));
+    }
   };
 
   const startTyping = () => {
