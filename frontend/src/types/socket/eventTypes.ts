@@ -21,6 +21,7 @@ export type SoAddedInGroup = {
 export type SoMessageRecieved = {
     uuId: string,
     isFile: boolean,
+    chatId: string,
     from: string,
     text: string,
     createdAt: string,

@@ -79,7 +79,7 @@ export const checkOnlineFriendsApi = async (): Promise<CheckOnlineFriendsRs> => 
 
 export const setUnseenCount = async (mainId: string, count: number): Promise<boolean> => {
     try {
-        const resData: CommonRs = await fetchApi('POST', SET_UNSEEN_COUNT, { mainId: mainId, count: count });
+        const resData: CommonRs = await fetchApi('POST', SET_UNSEEN_COUNT, { mainId: mainId, count: count }, { 'Content-Type': 'application/json' });
         if (resData && resData.success === true) {
             return true;
         }
@@ -91,7 +91,7 @@ export const setUnseenCount = async (mainId: string, count: number): Promise<boo
 
 export const setOrderApi = async (mainId: string): Promise<boolean> => {
     try {
-        const resData: CommonRs = await fetchApi('POST', SET_ORDER, { mainId: mainId });
+        const resData: CommonRs = await fetchApi('POST', SET_ORDER, { mainId: mainId }, { 'Content-Type': 'application/json' });
         if (resData && resData.success === true) {
             return true;
         }

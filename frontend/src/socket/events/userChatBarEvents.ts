@@ -6,7 +6,6 @@ import {
     addChatBarData,
     addFriend,
     addGroup,
-    addNewUnseen,
     addOnlineFriend,
     addUserRequest,
     addUserTyping,
@@ -16,7 +15,7 @@ import {
 } from "@/redux/slices/chatSlice";
 import { toast } from "react-toastify";
 import { SoAddedInGroup, SoGroupMessageRecieved, SoMessageRecieved, SoRequestAccepted, SoUserRequest } from "@/types/socket/eventTypes";
-import { addGpMessages, addPMessages, GroupMessages } from "@/redux/slices/messagesSlice";
+import { addGpMessages, addNewUnseen, addPMessages, GroupMessages } from "@/redux/slices/messagesSlice";
 
 // Custom hook to manage socket event listeners
 const useSocketEvents = (socket: Socket | null): void => {
@@ -85,7 +84,6 @@ const useSocketEvents = (socket: Socket | null): void => {
         });
 
         socket.on(clientE.MESSAGE_RECIEVED, (data: SoMessageRecieved) => {
-            // TODO: make setCount api call as unseen
             dispatch(addPMessages([data]));
         });
 

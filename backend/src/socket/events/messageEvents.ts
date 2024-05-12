@@ -31,6 +31,7 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
             const newMessage: SoMessageRecieved = {
                 uuId: uuId,
                 isFile: false,
+                chatId: data.chatId,
                 from: userId,
                 text: data.text,
                 createdAt: createdAt.toISOString()

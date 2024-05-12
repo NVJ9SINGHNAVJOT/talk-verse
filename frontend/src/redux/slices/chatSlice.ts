@@ -36,15 +36,11 @@ export type UserRequest = {
     imageUrl?: string;
 };
 
-// Record<mainId, count>
-export type UnseenMessages = Record<string, number>;
-
 interface ChatState {
     friends: Friend[],
     groups: Group[],
     chatBarData: ChatBarData[],
     onlineFriends: string[],
-    unseenMessages: UnseenMessages,
     userRequests: UserRequest[],
     userTyping: string[],
 }
@@ -54,7 +50,6 @@ const initialState = {
     groups: [],
     chatBarData: [],
     onlineFriends: [],
-    unseenMessages: {},
     userRequests: [],
     userTyping: [],
 } satisfies ChatState as ChatState;
@@ -93,9 +88,9 @@ const chatSlice = createSlice({
             const dataIndex = state.chatBarData.findIndex(data => data._id === dataIdToMove);
 
             if (dataIndex !== undefined && dataIndex !== -1) {
-                const data = state.friends.splice(dataIndex, 1);
+                const data = state.chatBarData.splice(dataIndex, 1);
                 if (data !== undefined) {
-                    state.friends?.unshift(data[0]);
+                    state.chatBarData?.unshift(data[0]);
                 }
             }
         },
@@ -111,20 +106,6 @@ const chatSlice = createSlice({
             state.onlineFriends = state.onlineFriends.filter((userId) => userId !== action.payload);
             if (state.userTyping.includes(action.payload)) {
                 state.userTyping = state.userTyping.filter((userId) => userId !== action.payload);
-            }
-        },
-
-        // unseenMessages
-        setUnseenMessages(state, action: PayloadAction<UnseenMessages>) {
-            state.unseenMessages = action.payload;
-        },
-        addNewUnseen: (state, action: PayloadAction<string>) => {
-            state.unseenMessages[action.payload] = 0;
-        },
-        updateUnseenMessages: (state, action: PayloadAction<string>) => {
-            const key = action.payload;
-            if (state.unseenMessages && key in state.unseenMessages) {
-                state.unseenMessages[key] += 1;
             }
         },
 
@@ -157,7 +138,6 @@ export const {
     setGroups, addGroup,
     setChatBarData, addChatBarData, setChatBarDataToFirst,
     setOnlineFriend, addOnlineFriend, removeOnlineFriend,
-    setUnseenMessages, addNewUnseen, updateUnseenMessages,
     addUserRequest, setUserRequests, deleteUserRequest,
     resetTyping, addUserTyping, removeUserTyping
 } = chatSlice.actions;

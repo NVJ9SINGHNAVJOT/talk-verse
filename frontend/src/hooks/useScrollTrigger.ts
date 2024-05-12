@@ -8,31 +8,33 @@ const useScrollTrigger = (
   stop: boolean) => {
 
   useEffect(() => {
-    const currentRef = ref.current; // Store the current ref value
-
-    function handleScroll() {
+    if (!ref.current) {
+      return;
+    }
+    const currReft = ref.current;
+    function handleScrollTrig() {
       if (!ref.current) return;
 
-      const { scrollTop, scrollHeight, clientHeight } = ref.current;
-      const scrollPercentage = (scrollTop / (scrollHeight - clientHeight)) * 100;
+      const { scrollTop, clientHeight, scrollHeight } = ref.current;
+      const scrollPercentage = Math.floor(((clientHeight - scrollTop) / (scrollHeight)) * 100);
 
-      if (scrollPercentage >= 90 && !loading && !stop) {
+      if (scrollPercentage > 85 && !loading && !stop) {
         setLoading(() => true);
-        setTrigger((prev) => prev + 1);
+        setTimeout(() => {
+          setTrigger((prev) => prev + 1);
+        }, 1000);
       }
     }
 
     if (ref.current) {
-      ref.current.addEventListener('scroll', handleScroll);
+      ref.current.addEventListener('scroll', handleScrollTrig);
     }
 
     return () => {
-      if (currentRef) {
-        currentRef.removeEventListener('scroll', handleScroll);
-      }
+      currReft.removeEventListener('scroll', handleScrollTrig);
     };
 
-  }, [ref]);
+  }, [ref, loading, stop]);
 };
 
 export default useScrollTrigger;

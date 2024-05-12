@@ -15,7 +15,6 @@ import { CiCirclePlus } from "react-icons/ci";
 import {
   addChatBarData,
   addFriend,
-  addNewUnseen,
   ChatBarData,
   deleteUserRequest,
   Friend,
@@ -28,6 +27,7 @@ import {
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import GroupBarItem from "@/components/talk/chatItems/GroupBarItem";
+import { addNewUnseen } from "@/redux/slices/messagesSlice";
 
 const UserChatBar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);

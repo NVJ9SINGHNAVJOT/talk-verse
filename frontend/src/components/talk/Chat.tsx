@@ -8,17 +8,26 @@ import { useNavigate, useParams } from "react-router-dom";
 import useScrollTrigger from "@/hooks/useScrollTrigger";
 import { GetChatMessagesRs } from "@/types/apis/chatApiRs";
 import { useDispatch } from "react-redux";
-import { addPMessages, setPMessages } from "@/redux/slices/messagesSlice";
+import {
+  addPMessages,
+  resetUnseenMessage,
+  setCurrFriendId,
+  setMainId,
+  setPMessages,
+} from "@/redux/slices/messagesSlice";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { MessageText } from "@/types/common";
 import { sendMessageEvent } from "@/socket/emitEvents/emitMessageEvents";
 import { useSocketContext } from "@/context/SocketContext";
-import useScrollToBottom from "@/hooks/useScrollToBottom";
-import { startTypingEvent } from "@/socket/emitEvents/emitNotificationEvents";
+import {
+  startTypingEvent,
+  stopTypingEvent,
+} from "@/socket/emitEvents/emitNotificationEvents";
 
 const Chat = () => {
   const currFriendId = useAppSelector((state) => state.messages.currFriendId);
+  const currMainId = useAppSelector((state) => state.messages.currMainId);
   const { chatId } = useParams();
   const [loading, setLoading] = useState<boolean>(true);
   const [stop, setStop] = useState<boolean>(false);
@@ -32,13 +41,17 @@ const Chat = () => {
   const { socket } = useSocketContext();
   const navigate = useNavigate();
 
-  //useScrollTrigger(scrollableDivRef, setLoading, loading, setTrigger, stop);
-  useScrollToBottom(scrollableDivRef);
+  useScrollTrigger(scrollableDivRef, setLoading, loading, setTrigger, stop);
 
   useEffect(() => {
-    if (!currFriendId) {
+    if (!chatId || !currFriendId || !currMainId || currMainId !== chatId) {
       navigate("/talk");
     }
+    return () => {
+      dispatch(setCurrFriendId(""));
+      dispatch(setMainId(""));
+      dispatch(setPMessages([]));
+    };
   }, []);
 
   useEffect(() => {
@@ -48,7 +61,10 @@ const Chat = () => {
         // initial call for getting messages
         if (lastCreatedAt === undefined && trigger === 0) {
           response = await getMessagesApi(chatId);
-          // TODO: setCount api call to set count 0
+          // setCount api call to set count 0
+          if (response && response.messages && response.messages.length > 0) {
+            dispatch(resetUnseenMessage(chatId));
+          }
         } else if (lastCreatedAt !== undefined) {
           response = await getMessagesApi(chatId, lastCreatedAt);
         } else {
@@ -57,9 +73,8 @@ const Chat = () => {
 
         if (response) {
           // no messages yet for this chatId
-          if (response.success === false && response.message === undefined) {
+          if (response.success === false && !response.messages) {
             setStop(true);
-            return;
           } else if (response.messages && response.messages.length > 0) {
             // no further messages for this chatId
             if (response.messages.length < 20) {
@@ -73,14 +88,12 @@ const Chat = () => {
         } else {
           toast.error("Error while getting messages for chat");
         }
-        setLoading(false);
+        setTimeout(() => {
+          setLoading(false);
+        }, 2000);
       }
     };
     getMessages();
-
-    return () => {
-      dispatch(setPMessages([]));
-    };
   }, [trigger]);
 
   const handleFileTagRefClick = () => {
@@ -154,18 +167,18 @@ const Chat = () => {
       toast.error("Invalid chat");
       return;
     }
-    startTypingEvent(socket, currFriendId);
+    stopTypingEvent(socket, currFriendId);
   };
 
   return (
     <div className="w-full h-full">
       <div
         ref={scrollableDivRef}
-        className="w-full h-[90%] px-8 overflow-y-scroll flex flex-col"
+        className="w-full h-[90%] px-8 overflow-y-scroll flex flex-col-reverse scroll-smooth "
       >
         {/* messages for chat */}
         {pmessages?.length === 0 ? (
-          <div className=" w-5/6 text-white font-be-veitnam-pro text-2xl p-7 text-center mx-auto">
+          <div className=" w-5/6 text-white font-be-veitnam-pro text-2xl p-7 text-center mx-auto my-auto">
             Let's talk chill thrill!
           </div>
         ) : (
@@ -202,7 +215,11 @@ const Chat = () => {
             className="w-full h-full  bg-black rounded-2xl text-white px-4 focus:outline-none 
             focus:bg-transparent border-b-2 border-transparent focus:border-emerald-800"
             placeholder="Message"
-            {...register("text", { required: true })}
+            {...register("text", {
+              required: true,
+              minLength: 1,
+              maxLength: 50,
+            })}
             onFocus={() => startTyping()}
             onBlur={() => stopTyping()}
           />

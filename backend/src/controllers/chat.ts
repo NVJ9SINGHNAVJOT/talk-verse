@@ -119,10 +119,9 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
         }
 
         let query;
-        console.log('createdat', createdAt)
+
         if (createdAt) {
             const before = new Date(createdAt as string);
-            console.log('bveforeee', before)
             query = {
                 chatId: chatId as string,
                 createdAt: { $lt: before }
@@ -135,9 +134,9 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
         }
 
         const messages = await Message.find(query)
-            .sort({ createAt: -1 })
+            .sort({ createdAt: -1 })
             .limit(20)
-            .select({ uuId: true, isFile: true, from: true, text: true, createdAt: true, _id: false })
+            .select({ uuId: true, isFile: true, chatId: true, from: true, text: true, createdAt: true, _id: false })
             .lean()
             .exec();
 
@@ -248,6 +247,7 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
             const sdata: SoMessageRecieved = {
                 uuId: uuId,
                 isFile: true,
+                chatId: data.mainId,
                 from: userId,
                 text: secUrl,
                 createdAt: createdAt.toISOString(),
@@ -374,7 +374,7 @@ export const groupMessages = async (req: Request, res: Response): Promise<Respon
         }
 
         const gpMessages = await GpMessage.find(query)
-            .sort({ createAt: -1 })
+            .sort({ createdAt: -1 })
             .limit(20)
             .select({ uuId: true, isFile: true, from: true, text: true, createdAt: true, _id: false })
             .populate({

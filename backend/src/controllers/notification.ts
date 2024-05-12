@@ -283,7 +283,7 @@ export const setUnseenCount = async (req: Request, res: Response): Promise<Respo
             return errRes(res, 400, 'user id not present');
         }
 
-        if (!data.mainId || !data.count) {
+        if (!data.mainId || data.count === undefined) {
             return errRes(res, 400, 'invalid data for setunseencount');
         }
 

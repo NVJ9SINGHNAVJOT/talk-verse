@@ -3,10 +3,9 @@ import {
   setFriends,
   setGroups,
   setOnlineFriend,
-  setUnseenMessages,
   setUserRequests,
-  UnseenMessages,
 } from "@/redux/slices/chatSlice";
+import { setUnseenMessages, UnseenMessages } from "@/redux/slices/messagesSlice";
 import { setTalkPageLoading } from "@/redux/slices/pageLoadingSlice";
 import { chatBarDataApi } from "@/services/operations/chatApi";
 import {
