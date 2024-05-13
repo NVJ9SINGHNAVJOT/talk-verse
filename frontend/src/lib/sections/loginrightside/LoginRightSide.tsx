@@ -1,4 +1,4 @@
-import "@/components/login/loginrightside/LoginRightSide.css";
+import "@/lib/sections/loginrightside/LoginRightSide.css";
 
 const LoginRightSide = () => {
   return (

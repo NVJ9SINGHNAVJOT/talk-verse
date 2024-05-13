@@ -17,12 +17,14 @@ export const getMultiSockets = (users: string[], currUserId: string): Members =>
     const offline: string[] = [];
 
     users.forEach((user) => {
-        const socketId = userSocketIDs.get(user);
-        if (socketId !== undefined) {
-            return online.push(socketId);
-        }
-        else if (user !== currUserId) {
-            return offline.push(user);
+        if (user !== currUserId) {
+            const socketId = userSocketIDs.get(user);
+            if (socketId !== undefined) {
+                online.push(socketId);
+            }
+            else {
+                offline.push(user);
+            }
         }
     });
 

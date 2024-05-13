@@ -1,6 +1,6 @@
 import LogIn from "@/components/auth/LogIn";
 import SignUp from "@/components/auth/SignUp";
-import LoginRightSide from "@/components/login/loginrightside/LoginRightSide";
+import LoginRightSide from "@/lib/sections/loginrightside/LoginRightSide";
 import { setIsLogin } from "@/redux/slices/authSlice";
 import { useAppSelector } from "@/redux/store";
 import { useDispatch } from "react-redux";

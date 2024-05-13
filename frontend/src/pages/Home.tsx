@@ -2,19 +2,12 @@ import homePageImage from "@/assets/images/homePage.png";
 import TrackingCard from "@/lib/cards/trackingcard/TrackingCard";
 import MainFooter from "@/components/common/MainFooter";
 import { FcConferenceCall } from "react-icons/fc";
+import RainbowSection from "@/lib/sections/rainbowsection/RainbowSection";
 
 const Home = () => {
   return (
     <div className="w-full bg-grayblack">
-      <section className=" ct-rainbow w-full h-[45rem] flex flex-col items-center justify-center">
-        <div
-          className="ct-rainbowHeading font-be-veitnam-pro text-8xl font-extrabold
-          mix-blend-difference text-white brightness-[900]
-          filter"
-        >
-          TalkVerse
-        </div>
-      </section>
+      <RainbowSection />
       <section className="w-full flex flex-col gap-y-16 lm:flex-row lm:gap-y-0 justify-evenly items-center pt-28 pb-28">
         <div
           className="w-8/12 h-[25rem] lm:w-5/12 text-white flex flex-col justify-center items-center
