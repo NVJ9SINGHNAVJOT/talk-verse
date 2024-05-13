@@ -25,6 +25,9 @@ import {
   stopTypingEvent,
 } from "@/socket/emitEvents/emitNotificationEvents";
 import { setFriendToFirst } from "@/redux/slices/chatSlice";
+import { CommonRs } from "@/types/apis/common";
+import { setWorkModal } from "@/redux/slices/loadingSlice";
+import WorkModal from "@/lib/modals/workmodal/WorkModal";
 
 const Chat = () => {
   const currFriendId = useAppSelector((state) => state.messages.currFriendId);
@@ -32,6 +35,7 @@ const Chat = () => {
   const lastMainId = useAppSelector((state) => state.chat.lastMainId);
   const pmessages = useAppSelector((state) => state.messages.pMess);
   const currUser = useAppSelector((state) => state.user.user);
+  const workModal = useAppSelector((state) => state.loading.workModal);
   const dispatch = useDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { socket } = useSocketContext();
@@ -128,7 +132,7 @@ const Chat = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const fileType = file.type;
@@ -147,12 +151,17 @@ const Chat = () => {
           };
         */
         const sendFile = new FormData();
-        sendFile.append("imageFile", file);
+        sendFile.append("fileMessg", file);
         sendFile.append("isGroup", "0");
         sendFile.append("mainId", chatId);
         sendFile.append("to", currFriendId);
 
-        fileMessageApi(sendFile);
+        dispatch(setWorkModal(true));
+        const response: CommonRs = await fileMessageApi(sendFile);
+        if (!response || response.success === false) {
+          toast.error("Error while uploading file");
+        }
+        dispatch(setWorkModal(false));
       } else {
         toast.error("Select .jpg/.jpeg/.png type file");
       }
@@ -257,6 +266,7 @@ const Chat = () => {
           />
         </div>
       </form>
+      {workModal && <WorkModal title="Uploading file" />}
     </div>
   );
 };

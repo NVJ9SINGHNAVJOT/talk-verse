@@ -25,6 +25,9 @@ const uploadToCloudinary = async (file: Express.Multer.File): Promise<string | n
         return secureUrl;
 
     } catch (error) {
+        if (fs.existsSync(file.path)) {
+            fs.unlinkSync(file.path);
+        }
         return null;
     }
 };

@@ -14,6 +14,7 @@ import { errRes } from "@/utils/error";
 import { getMultiSockets } from "@/utils/getSocketIds";
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from "uuid";
+import fs from 'fs';
 
 type BarData = {
     // common
@@ -180,6 +181,9 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
 
         const secUrl = await uploadToCloudinary(req.file);
         if (secUrl === null) {
+            if (fs.existsSync(req.file.path)) {
+                fs.unlinkSync(req.file.path);
+            }
             return errRes(res, 500, "error while uploading user image");
         }
 
@@ -236,7 +240,7 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
             }
         }
         else {
-            const twoUser = getMultiSockets([userId, data.to], userId);
+            const twoUser = getMultiSockets([userId, data.to]);
             const channel = channels.get(data.mainId);
             if (!channel) {
                 return errRes(res, 500, 'no channel for two user chat');
@@ -260,7 +264,10 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
             channel.unlock();
 
             try {
-                await Message.create({ uuId: uuId, isFile: true, from: userId, to: data.to, text: secUrl, createdAt: createdAt });
+                await Message.create({
+                    uuId: uuId, isFile: true, chatId: data.mainId, from: userId,
+                    to: data.to, text: secUrl, createdAt: createdAt
+                });
                 if (twoUser.offline.length === 1) {
                     await UnseenCount.updateOne({ userId: twoUser.offline[0], mainId: data.mainId }, { $inc: { count: 1 } });
                 }

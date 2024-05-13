@@ -149,7 +149,7 @@ const Group = () => {
           };
         */
         const sendFile = new FormData();
-        sendFile.append("imageFile", file);
+        sendFile.append("fileMessg", file);
         sendFile.append("isGroup", "1");
         sendFile.append("mainId", groupId);
         sendFile.append("to", groupId);

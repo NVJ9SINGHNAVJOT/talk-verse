@@ -6,6 +6,7 @@ import {
   setUserRequests,
 } from "@/redux/slices/chatSlice";
 import {
+  setMyId,
   setUnseenMessages,
   UnseenMessages,
 } from "@/redux/slices/messagesSlice";
@@ -28,6 +29,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { io, Socket } from "socket.io-client";
+import { useAppSelector } from "@/redux/store";
 
 interface SocketContextInterface {
   socket: Socket | null;
@@ -52,12 +54,19 @@ export const useSocketContext = (): SocketContextInterface => {
 };
 
 export default function SocketProvider({ children }: ContextProviderProps) {
+  const myUserId = useAppSelector((state) => state.user.user?._id);
   const [socket, setSocket] = useState<Socket | null>(null);
   const socketRef = useRef<Socket | null>(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const setupSocketConnection = async () => {
+    if (!myUserId) {
+      toast.error("Error while connecting");
+      navigate("/error");
+      return;
+    }
+    dispatch(setMyId(myUserId));
     try {
       const socketInstance = io(
         process.env.REACT_APP_BASE_URL_SOCKET_IO_SERVER as string,

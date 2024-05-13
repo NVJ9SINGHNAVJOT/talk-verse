@@ -27,6 +27,7 @@ interface messagesState {
     mainChatId: string | undefined,
     mainGroupId: string | undefined,
     unseenMessages: UnseenMessages,
+    myId: string | undefined
 }
 
 const initialState = {
@@ -36,6 +37,7 @@ const initialState = {
     mainChatId: undefined,
     mainGroupId: undefined,
     unseenMessages: {},
+    myId: undefined
 } satisfies messagesState as messagesState;
 
 const messagesSlice = createSlice({
@@ -53,7 +55,7 @@ const messagesSlice = createSlice({
             if (state.mainChatId && action.payload.chatId === state.mainChatId) {
                 state.pMess.unshift(action.payload);
             }
-            else {
+            else if (action.payload.from !== state.myId) {
                 const key = action.payload.chatId;
                 setUnseenCount(key, state.unseenMessages[key] + 1);
                 if (state.unseenMessages && key in state.unseenMessages) {
@@ -73,7 +75,7 @@ const messagesSlice = createSlice({
             if (state.mainGroupId && action.payload.to === state.mainGroupId) {
                 state.gpMess.unshift(action.payload);
             }
-            else {
+            else if (action.payload.from._id !== state.myId) {
                 const key = action.payload.to;
                 setUnseenCount(key, state.unseenMessages[key] + 1);
                 if (state.unseenMessages && key in state.unseenMessages) {
@@ -92,6 +94,9 @@ const messagesSlice = createSlice({
         },
         setMainGroupId(state, action: PayloadAction<string>) {
             state.mainGroupId = action.payload;
+        },
+        setMyId(state, action: PayloadAction<string>) {
+            state.myId = action.payload;
         },
 
         // unseenMessages
@@ -113,7 +118,7 @@ const messagesSlice = createSlice({
 
 export const { setPMessages, addPMessages, addLivePMessage,
     setGpMessages, addGpMessages, addLiveGpMessage,
-    setCurrFriendId, setMainChatId, setMainGroupId,
+    setCurrFriendId, setMainChatId, setMainGroupId, setMyId,
     setUnseenMessages, addNewUnseen, resetUnseenMessage,
 } = messagesSlice.actions;
 export default messagesSlice.reducer;
