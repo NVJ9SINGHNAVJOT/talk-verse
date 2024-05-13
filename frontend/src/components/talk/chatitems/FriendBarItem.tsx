@@ -5,15 +5,17 @@ import { RxAvatar } from "react-icons/rx";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-export type ChatBarItemsProps = {
+export type FriendBarItemsProps = {
   friend: Friend;
 };
 
-const FriendBarItems = (props: ChatBarItemsProps) => {
+const FriendBarItem = (props: FriendBarItemsProps) => {
   const friend = props.friend;
   const onlineFriends = useAppSelector((state) => state.chat.onlineFriends);
   const isTyping = useAppSelector((state) => state.chat.userTyping);
-  const unseenMessages = useAppSelector((state) => state.messages.unseenMessages);
+  const unseenMessages = useAppSelector(
+    (state) => state.messages.unseenMessages
+  );
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const goToChat = () => {
@@ -71,4 +73,4 @@ const FriendBarItems = (props: ChatBarItemsProps) => {
   );
 };
 
-export default FriendBarItems;
+export default FriendBarItem;

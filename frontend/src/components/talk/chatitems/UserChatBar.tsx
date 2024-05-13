@@ -1,7 +1,6 @@
 import { IoSearchOutline } from "react-icons/io5";
 import { FiPlus } from "react-icons/fi";
 import { FaRegBell } from "react-icons/fa";
-import FriendBarItem from "@/components/talk/chatItems/FriendBarItems";
 import SearchModal from "@/components/talk/chatItems/SearchModal";
 import CreateGroup from "@/components/talk/chatItems/CreateGroupModal";
 import { useSocketContext } from "@/context/SocketContext";
@@ -29,6 +28,8 @@ import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import GroupBarItem from "@/components/talk/chatItems/GroupBarItem";
 import { addNewUnseen } from "@/redux/slices/messagesSlice";
+import { SoAddedInGroup } from "@/types/socket/eventTypes";
+import FriendBarItem from "@/components/talk/chatItems/FriendBarItem";
 
 const UserChatBar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -148,21 +149,15 @@ const UserChatBar = () => {
 
       {/* chat user component */}
       <div className="w-full h-[calc(100vh-8rem)] overflow-y-scroll scroll-smooth">
-        {chatBarData?.map((data, index) => {
-          if (data.chatId) {
-            return (
-              <div key={index}>
-                <FriendBarItem friend={data as Friend} />
-              </div>
-            );
-          } else {
-            return (
-              <div key={index}>
-                <GroupBarItem />
-              </div>
-            );
-          }
-        })}
+        {chatBarData?.map((data, index) => (
+          <div key={index}>
+            {data.chatId !== undefined ? (
+              <FriendBarItem friend={data as Friend} />
+            ) : (
+              <GroupBarItem group={data as SoAddedInGroup} />
+            )}
+          </div>
+        ))}
       </div>
 
       {/* modals for search user and create group */}

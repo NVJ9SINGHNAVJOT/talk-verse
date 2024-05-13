@@ -140,7 +140,7 @@ export const getAllNotifications = async (req: Request, res: Response): Promise<
             },
             {
                 path: 'unseenMessages',
-                select: 'mainId count'
+                select: 'mainId count -_id'
             }]).exec();
 
         if (!notifications) {
@@ -265,9 +265,15 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
         if (!userId) {
             return errRes(res, 400, 'user id not present');
         }
-        if (!data.groupName || data.userIdsInGroup.length === 0) {
+        if (!data.groupName || !data.userIdsInGroup) {
             return errRes(res, 400, 'invalid data for creating group');
         }
+
+        const memebers: string[] = JSON.parse(data.userIdsInGroup);
+        if (memebers?.length < 1) {
+            return errRes(res, 400, 'invalid data for creating group');
+        }
+        memebers.push(userId);
 
         let secUrl;
         if (req.file) {
@@ -282,7 +288,7 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
 
         const newGroup = await Group.create({
             groupName: data.groupName, gpCreater: userId,
-            gpImageUrl: secUrl, members: data.userIdsInGroup
+            gpImageUrl: secUrl, members: memebers
         });
 
         // Create a new mutex instance
@@ -291,16 +297,17 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
         channels.set(newGroup._id.toString(), newChannel);
 
         // set members with groupId
-        groupIds.set(newGroup._id.toString(), data.userIdsInGroup);
+        groupIds.set(newGroup._id.toString(), memebers);
 
-        await Promise.all(data.userIdsInGroup.map(async (userId) => {
-            await UnseenCount.create({ userId: userId, mainId: newGroup._id });
+        await Promise.all(memebers.map(async (userId) => {
+            const ucOfGroupMem = await UnseenCount.create({ userId: userId, mainId: newGroup._id });
+            await Notification.findOneAndUpdate({ userId: userId }, { $push: { unseenMessages: ucOfGroupMem._id } }).exec();
             const groupUser = await User.findById({ _id: userId });
             groupUser?.chatBarOrder.unshift(newGroup._id);
             await groupUser?.save();
         }));
 
-        const memData = getMultiSockets(data.userIdsInGroup, userId);
+        const memData = getMultiSockets(memebers, userId);
         // in online users of group, event is emitted only except for creater, as creater get group in response
         if (memData.online.length > 0) {
             const sdata: SoAddedInGroup = {
@@ -316,13 +323,13 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
             message: 'group created successfully',
             newGroup: {
                 _id: newGroup._id,
-                gpName: newGroup.groupName,
+                groupName: newGroup.groupName,
                 gpImageUrl: newGroup.gpImageUrl
             }
         });
 
     } catch (error) {
-        return errRes(res, 500, 'error while uploading filemessage', error);
+        return errRes(res, 500, 'error while creating group', error);
     }
 };
 

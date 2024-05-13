@@ -1,12 +1,12 @@
-import { ChatBarData, Friend, Group } from "@/redux/slices/chatSlice";
+import { ChatBarData, Friend } from "@/redux/slices/chatSlice";
 import { GroupMessages } from "@/redux/slices/messagesSlice";
-import { SoMessageRecieved } from "@/types/socket/eventTypes";
+import { SoAddedInGroup, SoMessageRecieved } from "@/types/socket/eventTypes";
 
 export type ChatBarDataRs = {
     success: boolean,
     message: string,
     friends?: Friend[],
-    groups?: Group[],
+    groups?: SoAddedInGroup[],
     chatBarData?: ChatBarData[]
 }
 
@@ -25,9 +25,5 @@ export type GetGroupMessagesRs = {
 export type CreateGroupRs = {
     success: boolean,
     message: string,
-    newGroup: {
-        _id: string,
-        gpName: string,
-        gpImageUrl: string
-    }
+    newGroup: SoAddedInGroup
 }

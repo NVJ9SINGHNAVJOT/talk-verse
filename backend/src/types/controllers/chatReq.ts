@@ -10,5 +10,5 @@ export type FileMessageBody = {
 
 export type CreateGroupBody = {
     groupName: string,
-    userIdsInGroup: string[]
+    userIdsInGroup: string // JSON.stringify
 }

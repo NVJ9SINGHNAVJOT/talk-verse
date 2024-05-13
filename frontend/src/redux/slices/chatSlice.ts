@@ -1,4 +1,5 @@
 import { setOrderApi } from "@/services/operations/notificationApi";
+import { SoAddedInGroup } from "@/types/socket/eventTypes";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -25,12 +26,6 @@ export type Friend = {
     imageUrl?: string
 }
 
-export type Group = {
-    _id: string,
-    groupName: string,
-    gpImageUrl?: string
-}
-
 export type UserRequest = {
     _id: string;
     userName: string;
@@ -39,7 +34,7 @@ export type UserRequest = {
 
 interface ChatState {
     friends: Friend[],
-    groups: Group[],
+    groups: SoAddedInGroup[],
     chatBarData: ChatBarData[],
     onlineFriends: string[],
     userRequests: UserRequest[],
@@ -72,10 +67,10 @@ const chatSlice = createSlice({
         },
 
         // groups
-        setGroups(state, action: PayloadAction<Group[]>) {
+        setGroups(state, action: PayloadAction<SoAddedInGroup[]>) {
             state.groups = action.payload;
         },
-        addGroup(state, action: PayloadAction<Group>) {
+        addGroup(state, action: PayloadAction<SoAddedInGroup>) {
             state.groups.push(action.payload);
         },
 
@@ -101,7 +96,7 @@ const chatSlice = createSlice({
             if (dataIndex !== undefined && dataIndex !== -1) {
                 const data = state.chatBarData.splice(dataIndex, 1);
                 if (data !== undefined) {
-                    state.chatBarData?.unshift(data[0]);
+                    state.chatBarData.unshift(data[0]);
                 }
             }
         },
@@ -113,7 +108,7 @@ const chatSlice = createSlice({
             if (dataIndex !== undefined && dataIndex !== -1) {
                 const data = state.chatBarData.splice(dataIndex, 1);
                 if (data !== undefined) {
-                    state.chatBarData?.unshift(data[0]);
+                    state.chatBarData.unshift(data[0]);
                 }
             }
         },

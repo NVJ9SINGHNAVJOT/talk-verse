@@ -9,8 +9,8 @@ type OtherMessageCardProps = {
 const OtherMessageCard = (props: OtherMessageCardProps) => {
   return (
     <div className="othermessage self-start flex flex-col">
-      <p>{props.message.text}</p>
-      <p className=" mt-4 text-snow-700">
+      <p className=" text-[0.9rem]">{props.message.text}</p>
+      <p className=" mt-2 self-start  text-snow-700 text-xs">
         {getDTimeStamp(props.message.createdAt)}
       </p>
     </div>

@@ -15,7 +15,7 @@ import {
 } from "@/redux/slices/chatSlice";
 import { toast } from "react-toastify";
 import { SoAddedInGroup, SoGroupMessageRecieved, SoMessageRecieved, SoRequestAccepted, SoUserRequest } from "@/types/socket/eventTypes";
-import { addGpMessages, addLivePMessage, addNewUnseen, GroupMessages } from "@/redux/slices/messagesSlice";
+import { addLivePMessage, addNewUnseen, GroupMessages } from "@/redux/slices/messagesSlice";
 
 // Custom hook to manage socket event listeners
 const useSocketEvents = (socket: Socket | null): void => {
@@ -71,16 +71,14 @@ const useSocketEvents = (socket: Socket | null): void => {
         );
 
         socket.on(clientE.ADDED_IN_GROUP, (data: SoAddedInGroup) => {
-            dispatch(addGroup({
-                _id: data._id,
-                groupName: data.groupName,
-                gpImageUrl: data.gpImageUrl
-            }));
+            dispatch(addGroup(data));
+            dispatch(addNewUnseen(data._id));
             dispatch(addChatBarData({
                 _id: data._id,
                 groupName: data.groupName,
                 gpImageUrl: data.gpImageUrl
             }));
+            toast.success('Added in new Group');
         });
 
         socket.on(clientE.MESSAGE_RECIEVED, (data: SoMessageRecieved) => {
@@ -102,7 +100,7 @@ const useSocketEvents = (socket: Socket | null): void => {
                 createdAt: data.createdAt
             };
             // TODO: make setCount api call as unseen
-            dispatch(addGpMessages([newGpMessage]));
+            console.log(newGpMessage)
         });
 
         socket.on(clientE.OTHER_START_TYPING, (friendId: string) => {

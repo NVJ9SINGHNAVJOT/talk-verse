@@ -12,9 +12,7 @@ const Talk = () => {
   const { setupSocketConnection, disconnectSocket } = useSocketContext();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const talkPageLoading = useAppSelector(
-    (state) => state.loading.talkPageLoading
-  );
+  const talkPageLd = useAppSelector((state) => state.loading.talkPageLd);
 
   useEffect(() => {
     dispatch(setTalkPageLoading(true));
@@ -36,7 +34,7 @@ const Talk = () => {
 
   return (
     <div className="w-full flex bg-grayblack h-[calc(100vh-4rem)]">
-      {talkPageLoading ? (
+      {talkPageLd ? (
         <div className="w-full flex bg-grayblack h-[calc(100vh-4rem)]">
           {/* left bar chat list section*/}
           <section className="w-3/12 h-full flex justify-center items-center">

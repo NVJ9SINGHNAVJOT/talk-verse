@@ -7,11 +7,11 @@
   width: fit-content;
   position: relative;
   width: fit-content;
-  margin: 40px 4px;
+  margin: 10px 4px;
   background: none;
   border: 1px solid #353535;
   outline: none;
-  padding: 8px 18px;
+  padding: 4px 16px;
   font-size: 15px;
   border-top-left-radius: 5px;
   border-bottom-right-radius: 5px;
@@ -43,6 +43,6 @@
   border-top: 17px solid #353535;
   border-right: 16px solid transparent;
   border-left: 16px solid transparent;
-  top: -1px;
+  top: -0.5px;
   right: -17px;
 }

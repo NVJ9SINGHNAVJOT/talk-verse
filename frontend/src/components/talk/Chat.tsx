@@ -49,13 +49,18 @@ const Chat = () => {
 
   useScrollTrigger(scrollableDivRef, setLoading, loading, setTrigger, stop);
 
+  // clean up for chat page
   useEffect(() => {
     return () => {
       dispatch(setCurrFriendId(""));
       dispatch(setMainId(""));
+      setLastCreateAt(undefined);
+      dispatch(setPMessages([]));
+      setLoading(true), setStop(false);
     };
   }, []);
 
+  // infinite loading of messages
   useEffect(() => {
     if (!chatId || !currFriendId || !currMainId || currMainId !== chatId) {
       navigate("/talk");
@@ -75,7 +80,6 @@ const Chat = () => {
     }
   }, [chatId]);
 
-  // infinite loading of messages
   useEffect(() => {
     const getMessages = async () => {
       if (chatId && currFriendId && chatId === currMainId) {

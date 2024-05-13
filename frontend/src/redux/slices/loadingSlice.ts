@@ -3,11 +3,13 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 
 interface LoadingState {
-    talkPageLoading: boolean,
+    talkPageLd: boolean,
+    createGroupLd: boolean,
 }
 
 const initialState = {
-    talkPageLoading: true,
+    talkPageLd: true,
+    createGroupLd: false,
 } satisfies LoadingState as LoadingState;
 
 const loadingSlice = createSlice({
@@ -15,10 +17,13 @@ const loadingSlice = createSlice({
     initialState,
     reducers: {
         setTalkPageLoading(state, action: PayloadAction<boolean>) {
-            state.talkPageLoading = action.payload;
+            state.talkPageLd = action.payload;
         },
+        setCreateGroupLoading(state, action: PayloadAction<boolean>) {
+            state.createGroupLd = action.payload;
+        }
     },
 });
 
-export const { setTalkPageLoading } = loadingSlice.actions;
+export const { setTalkPageLoading, setCreateGroupLoading } = loadingSlice.actions;
 export default loadingSlice.reducer;
