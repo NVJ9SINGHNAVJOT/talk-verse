@@ -1,4 +1,4 @@
-import { setMainId } from "@/redux/slices/messagesSlice";
+import { setMainGroupId } from "@/redux/slices/messagesSlice";
 import { useAppSelector } from "@/redux/store";
 import { SoAddedInGroup } from "@/types/socket/eventTypes";
 import { CiImageOn } from "react-icons/ci";
@@ -17,7 +17,7 @@ const GroupBarItem = (props: GroupBarItemsProps) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const goToGroup = () => {
-    dispatch(setMainId(group._id));
+    dispatch(setMainGroupId(group._id));
     navigate(`/talk/group/${group._id}`);
   };
 

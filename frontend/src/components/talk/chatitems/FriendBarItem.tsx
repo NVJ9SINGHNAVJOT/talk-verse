@@ -1,5 +1,5 @@
 import { Friend } from "@/redux/slices/chatSlice";
-import { setCurrFriendId, setMainId } from "@/redux/slices/messagesSlice";
+import { setCurrFriendId, setMainChatId } from "@/redux/slices/messagesSlice";
 import { useAppSelector } from "@/redux/store";
 import { RxAvatar } from "react-icons/rx";
 import { useDispatch } from "react-redux";
@@ -20,7 +20,7 @@ const FriendBarItem = (props: FriendBarItemsProps) => {
   const dispatch = useDispatch();
   const goToChat = () => {
     dispatch(setCurrFriendId(friend._id));
-    dispatch(setMainId(friend.chatId));
+    dispatch(setMainChatId(friend.chatId));
     navigate(`/talk/chat/${friend.chatId}`);
   };
 

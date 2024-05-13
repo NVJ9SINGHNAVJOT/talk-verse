@@ -12,12 +12,30 @@ export type Members = {
     online: string[],
     offline: string[]
 }
-export const getMultiSockets = (users: string[], currUserId: string): Members => {
+export const getMultiSockets = (users: string[], currUserId?: string): Members => {
     const online: string[] = [];
     const offline: string[] = [];
 
-    users.forEach((user) => {
-        if (user !== currUserId) {
+    if (currUserId) {
+        users.forEach((user) => {
+            if (user !== currUserId) {
+                const socketId = userSocketIDs.get(user);
+                if (socketId !== undefined) {
+                    online.push(socketId);
+                }
+                else {
+                    offline.push(user);
+                }
+            }
+        });
+        const membersData: Members = {
+            online: online,
+            offline: offline
+        };
+        return membersData;
+    }
+    else {
+        users.forEach((user) => {
             const socketId = userSocketIDs.get(user);
             if (socketId !== undefined) {
                 online.push(socketId);
@@ -25,13 +43,12 @@ export const getMultiSockets = (users: string[], currUserId: string): Members =>
             else {
                 offline.push(user);
             }
-        }
-    });
 
-
-    const membersData: Members = {
-        online: online,
-        offline: offline
-    };
-    return membersData;
+        });
+        const membersData: Members = {
+            online: online,
+            offline: offline
+        };
+        return membersData;
+    }
 };

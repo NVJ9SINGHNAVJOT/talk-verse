@@ -71,47 +71,47 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
                 logger.error('no members present for group', { data: data });
                 return;
             }
-            console.log('reached backend', data)
-            const memData = getMultiSockets(members, userId);
-            if (memData.online.length > 0) {
-                const channel = channels.get(data._id);
-                if (!channel) {
-                    logger.error('channel not present for groupId', { data: data });
-                    return;
-                }
 
-                // message through channel
-                await channel.lock();
-                const uuId = uuidv4();
-                const createdAt = new Date();
-
-                const newGpMessage: SoGroupMessageRecieved = {
-                    uuId: uuId,
-                    isFile: false,
-                    from: userId,
-                    to: data._id,
-                    text: data.text,
-                    createdAt: createdAt.toISOString(),
-                    firstName: data.firstName,
-                    lastName: data.lastName,
-                    imageUrl: data.imageUrl
-                };
-                io.to(memData.online).emit(clientE.GROUP_MESSAGE_RECIEVED, newGpMessage);
-                // release channel
-                channel.unlock();
-
-                try {
-                    await GpMessage.create({ uuId: uuId, from: userId, to: data._id, text: data.text, createdAt: createdAt });
-                    if (memData.offline.length > 0) {
-                        await UnseenCount.updateMany(
-                            { userId: { $in: memData.offline }, mainId: data._id },
-                            { $inc: { count: 1 } }
-                        );
-                    }
-                } catch (error) {
-                    logger.error('error while creating goupMessage', { error: error, data: data, newGpMessage: newGpMessage });
-                }
+            const channel = channels.get(data._id);
+            if (!channel) {
+                logger.error('channel not present for groupId', { data: data });
+                return;
             }
+            const memData = getMultiSockets(members);
+            memData.online.push(socket.id);
+
+            // message through channel
+            await channel.lock();
+            const uuId = uuidv4();
+            const createdAt = new Date();
+
+            const newGpMessage: SoGroupMessageRecieved = {
+                uuId: uuId,
+                isFile: false,
+                from: userId,
+                to: data._id,
+                text: data.text,
+                createdAt: createdAt.toISOString(),
+                firstName: data.firstName,
+                lastName: data.lastName,
+                imageUrl: data.imageUrl
+            };
+            io.to(memData.online).emit(clientE.GROUP_MESSAGE_RECIEVED, newGpMessage);
+            // release channel
+            channel.unlock();
+
+            try {
+                await GpMessage.create({ uuId: uuId, from: userId, to: data._id, text: data.text, createdAt: createdAt });
+                if (memData.offline.length > 0) {
+                    await UnseenCount.updateMany(
+                        { userId: { $in: memData.offline }, mainId: data._id },
+                        { $inc: { count: 1 } }
+                    );
+                }
+            } catch (error) {
+                logger.error('error while creating goupMessage', { error: error, data: data, newGpMessage: newGpMessage });
+            }
+
         } catch (error) {
             logger.error('error while sending group message', { error: error });
         }
