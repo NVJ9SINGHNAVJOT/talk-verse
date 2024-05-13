@@ -15,7 +15,7 @@ import {
 } from "@/redux/slices/chatSlice";
 import { toast } from "react-toastify";
 import { SoAddedInGroup, SoGroupMessageRecieved, SoMessageRecieved, SoRequestAccepted, SoUserRequest } from "@/types/socket/eventTypes";
-import { addLivePMessage, addNewUnseen, GroupMessages } from "@/redux/slices/messagesSlice";
+import { addLiveGpMessage, addLivePMessage, addNewUnseen, GroupMessages } from "@/redux/slices/messagesSlice";
 
 // Custom hook to manage socket event listeners
 const useSocketEvents = (socket: Socket | null): void => {
@@ -99,8 +99,7 @@ const useSocketEvents = (socket: Socket | null): void => {
                 text: data.text,
                 createdAt: data.createdAt
             };
-            // TODO: make setCount api call as unseen
-            console.log(newGpMessage)
+            dispatch(addLiveGpMessage(newGpMessage));
         });
 
         socket.on(clientE.OTHER_START_TYPING, (friendId: string) => {

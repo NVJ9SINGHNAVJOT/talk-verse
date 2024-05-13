@@ -1,0 +1,49 @@
+.message {
+    /* Firefox */
+    width: -moz-fit-content;
+    /* Chrome, Safari */
+    width: -webkit-fit-content;
+    /* Standard syntax */
+    width: fit-content;
+    position: relative;
+    width: fit-content;
+    margin: 10px 4px;
+    background: none;
+    border: 1px solid #353535;
+    outline: none;
+    padding: 4px 16px;
+    font-size: 15px;
+    border-top-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    color: rgb(255, 255, 255);
+    box-shadow: rgb(81 81 81 / 23%) 0px -36px 30px 0px inset,
+      rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px,
+      rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px,
+      rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+  }
+  
+  .message:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-top: 15px solid #212121;
+    border-right: 15px solid transparent;
+    border-left: 15px solid #212121;
+    top: 0;
+    right: -15px;
+  }
+  
+  .message:before {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-top: 17px solid #353535;
+    border-right: 16px solid transparent;
+    border-left: 16px solid transparent;
+    top: -0.5px;
+    right: -17px;
+  }
+  

@@ -30,6 +30,14 @@ const Chat = () => {
   const currFriendId = useAppSelector((state) => state.messages.currFriendId);
   const currMainId = useAppSelector((state) => state.messages.currMainId);
   const lastMainId = useAppSelector((state) => state.chat.lastMainId);
+  const pmessages = useAppSelector((state) => state.messages.pMess);
+  const currUser = useAppSelector((state) => state.user.user);
+  const dispatch = useDispatch();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { socket } = useSocketContext();
+  const navigate = useNavigate();
+
+  /* ===== infinite loading of messages |start| ===== */
   const { chatId } = useParams();
   const [loading, setLoading] = useState<boolean>(true);
   const [stop, setStop] = useState<boolean>(false);
@@ -39,14 +47,7 @@ const Chat = () => {
   const [lastCreatedAt, setLastCreateAt] = useState<string | undefined>(
     undefined
   );
-  const pmessages = useAppSelector((state) => state.messages.pMess);
-  const currUser = useAppSelector((state) => state.user.user);
   const scrollableDivRef = useRef<HTMLDivElement>(null);
-  const dispatch = useDispatch();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const { socket } = useSocketContext();
-  const navigate = useNavigate();
-
   useScrollTrigger(scrollableDivRef, setLoading, loading, setTrigger, stop);
 
   // clean up for chat page
@@ -60,7 +61,6 @@ const Chat = () => {
     };
   }, []);
 
-  // infinite loading of messages
   useEffect(() => {
     if (!chatId || !currFriendId || !currMainId || currMainId !== chatId) {
       navigate("/talk");
@@ -80,6 +80,7 @@ const Chat = () => {
     }
   }, [chatId]);
 
+  // fetch data as per scroll
   useEffect(() => {
     const getMessages = async () => {
       if (chatId && currFriendId && chatId === currMainId) {
@@ -121,6 +122,7 @@ const Chat = () => {
     };
     getMessages();
   }, [trigger, trigAssist]);
+  /* ===== infinite loading of messages |end| ===== */
 
   const handleFileTagRefClick = () => {
     fileInputRef.current?.click();
