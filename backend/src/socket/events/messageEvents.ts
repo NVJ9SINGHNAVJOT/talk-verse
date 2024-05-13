@@ -71,6 +71,7 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
                 logger.error('no members present for group', { data: data });
                 return;
             }
+            console.log('reached backend', data)
             const memData = getMultiSockets(members, userId);
             if (memData.online.length > 0) {
                 const channel = channels.get(data._id);

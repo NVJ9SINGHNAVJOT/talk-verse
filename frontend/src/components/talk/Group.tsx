@@ -7,7 +7,7 @@ import {
   addGpMessages,
   resetUnseenMessage,
   setGpMessages,
-  setMainId,
+  setMainGroupId,
 } from "@/redux/slices/messagesSlice";
 import { useAppSelector } from "@/redux/store";
 import {
@@ -26,7 +26,7 @@ import { toast } from "react-toastify";
 
 const Group = () => {
   const { register, handleSubmit, reset } = useForm<MessageText>();
-  const currMainId = useAppSelector((state) => state.messages.currMainId);
+  const mainGroupId = useAppSelector((state) => state.messages.mainGroupId);
   const gpMessages = useAppSelector((state) => state.messages.gpMess);
   const lastMainId = useAppSelector((state) => state.chat.lastMainId);
   const currUser = useAppSelector((state) => state.user.user);
@@ -51,7 +51,7 @@ const Group = () => {
   // clean up for group page
   useEffect(() => {
     return () => {
-      dispatch(setMainId(""));
+      dispatch(setMainGroupId(""));
       setLastCreateAt(undefined);
       dispatch(setGpMessages([]));
       setLoading(true), setStop(false);
@@ -59,7 +59,7 @@ const Group = () => {
   }, []);
 
   useEffect(() => {
-    if (!groupId || !currMainId || currMainId !== groupId) {
+    if (!groupId || !mainGroupId || mainGroupId !== groupId) {
       navigate("/talk");
     }
 
@@ -80,7 +80,7 @@ const Group = () => {
   // fetch data as per scroll
   useEffect(() => {
     const getMessages = async () => {
-      if (groupId && groupId === currMainId) {
+      if (groupId && groupId === mainGroupId) {
         let response: GetGroupMessagesRs;
         // initial call for getting messages
         if (lastCreatedAt === undefined) {
@@ -172,13 +172,12 @@ const Group = () => {
       toast.error("Network connection is not established");
       return;
     }
-    if (!groupId || !currMainId || !currUser) {
+    if (!groupId || !mainGroupId || !currUser) {
       toast.error("Invalid group");
       return;
     }
 
     if (currUser.imageUrl) {
-      console.log("message send", data);
       sendGroupMessageEvent(
         socket,
         groupId,

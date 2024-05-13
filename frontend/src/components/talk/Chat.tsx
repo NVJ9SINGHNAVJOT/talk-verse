@@ -12,7 +12,7 @@ import {
   addPMessages,
   resetUnseenMessage,
   setCurrFriendId,
-  setMainId,
+  setMainChatId,
   setPMessages,
 } from "@/redux/slices/messagesSlice";
 import { toast } from "react-toastify";
@@ -28,7 +28,7 @@ import { setFriendToFirst } from "@/redux/slices/chatSlice";
 
 const Chat = () => {
   const currFriendId = useAppSelector((state) => state.messages.currFriendId);
-  const currMainId = useAppSelector((state) => state.messages.currMainId);
+  const mainChatId = useAppSelector((state) => state.messages.mainChatId);
   const lastMainId = useAppSelector((state) => state.chat.lastMainId);
   const pmessages = useAppSelector((state) => state.messages.pMess);
   const currUser = useAppSelector((state) => state.user.user);
@@ -54,7 +54,7 @@ const Chat = () => {
   useEffect(() => {
     return () => {
       dispatch(setCurrFriendId(""));
-      dispatch(setMainId(""));
+      dispatch(setMainChatId(""));
       setLastCreateAt(undefined);
       dispatch(setPMessages([]));
       setLoading(true), setStop(false);
@@ -62,7 +62,7 @@ const Chat = () => {
   }, []);
 
   useEffect(() => {
-    if (!chatId || !currFriendId || !currMainId || currMainId !== chatId) {
+    if (!chatId || !currFriendId || !mainChatId || mainChatId !== chatId) {
       navigate("/talk");
     }
 
@@ -83,7 +83,7 @@ const Chat = () => {
   // fetch data as per scroll
   useEffect(() => {
     const getMessages = async () => {
-      if (chatId && currFriendId && chatId === currMainId) {
+      if (chatId && currFriendId && chatId === mainChatId) {
         let response: GetChatMessagesRs;
         // initial call for getting messages
         if (lastCreatedAt === undefined) {
@@ -167,7 +167,7 @@ const Chat = () => {
       toast.error("Network connection is not established");
       return;
     }
-    if (!chatId || !currFriendId || !currMainId) {
+    if (!chatId || !currFriendId || !mainChatId) {
       toast.error("Invalid chat");
       return;
     }

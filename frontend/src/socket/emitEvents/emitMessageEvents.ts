@@ -19,5 +19,6 @@ export const sendGroupMessageEvent = (socket: Socket, groupId: string, text: str
         text: text,
         imageUrl: imageUrl
     };
+    console.log('frontend', newGpMessage)
     socket.emit(serverE.SEND_GROUP_MESSAGE, newGpMessage);
 };

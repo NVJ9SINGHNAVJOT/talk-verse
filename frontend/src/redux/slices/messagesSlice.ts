@@ -24,7 +24,8 @@ interface messagesState {
     pMess: SoMessageRecieved[],
     gpMess: GroupMessages[],
     currFriendId: string | undefined,
-    currMainId: string | undefined,
+    mainChatId: string | undefined,
+    mainGroupId: string | undefined,
     unseenMessages: UnseenMessages,
 }
 
@@ -32,7 +33,8 @@ const initialState = {
     pMess: [],
     gpMess: [],
     currFriendId: undefined,
-    currMainId: undefined,
+    mainChatId: undefined,
+    mainGroupId: undefined,
     unseenMessages: {},
 } satisfies messagesState as messagesState;
 
@@ -48,7 +50,7 @@ const messagesSlice = createSlice({
             state.pMess = state.pMess.concat(action.payload);
         },
         addLivePMessage(state, action: PayloadAction<SoMessageRecieved>) {
-            if (state.currMainId && action.payload.chatId === state.currMainId) {
+            if (state.mainChatId && action.payload.chatId === state.mainChatId) {
                 state.pMess.unshift(action.payload);
             }
             else {
@@ -68,7 +70,7 @@ const messagesSlice = createSlice({
             state.gpMess = state.gpMess.concat(action.payload);
         },
         addLiveGpMessage(state, action: PayloadAction<GroupMessages>) {
-            if (state.currMainId && action.payload.to === state.currMainId) {
+            if (state.mainGroupId && action.payload.to === state.mainGroupId) {
                 state.gpMess.unshift(action.payload);
             }
             else {
@@ -84,8 +86,12 @@ const messagesSlice = createSlice({
         setCurrFriendId(state, action: PayloadAction<string>) {
             state.currFriendId = action.payload;
         },
-        setMainId(state, action: PayloadAction<string>) {
-            state.currMainId = action.payload;
+        setMainChatId(state, action: PayloadAction<string>) {
+
+            state.mainChatId = action.payload;
+        },
+        setMainGroupId(state, action: PayloadAction<string>) {
+            state.mainGroupId = action.payload;
         },
 
         // unseenMessages
@@ -107,7 +113,7 @@ const messagesSlice = createSlice({
 
 export const { setPMessages, addPMessages, addLivePMessage,
     setGpMessages, addGpMessages, addLiveGpMessage,
-    setCurrFriendId, setMainId,
+    setCurrFriendId, setMainChatId, setMainGroupId,
     setUnseenMessages, addNewUnseen, resetUnseenMessage,
 } = messagesSlice.actions;
 export default messagesSlice.reducer;
