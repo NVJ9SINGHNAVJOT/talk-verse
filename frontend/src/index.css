@@ -219,3 +219,89 @@
     inset 0px 0px 10px rgba(255, 212, 59, 0.5),
     0px 0px 100px rgba(255, 212, 59, 0.5), 0px 0px 100px rgba(255, 102, 0, 0.5);
 }
+
+/* message card */
+.ct-message {
+  position: relative;
+  margin: 10px 4px;
+  background: none;
+  border: 1px solid #353535;
+  outline: none;
+  padding: 4px 16px;
+  border-top-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  color: rgb(255, 255, 255);
+  box-shadow: rgb(81 81 81 / 23%) 0px -36px 30px 0px inset,
+    rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px,
+    rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px,
+    rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+}
+
+.ct-message :after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 15px solid #252525;
+  border-right: 15px solid transparent;
+  border-left: 15px solid #252525;
+  top: 0;
+  right: -15px;
+}
+
+.ct-message :before {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 17px solid #353535;
+  border-right: 16px solid transparent;
+  border-left: 16px solid transparent;
+  top: -0.5px;
+  right: -17px;
+}
+
+/* other message card */
+.ct-othermessage {
+  position: relative;
+  margin: 10px 4px;
+  background: black;
+  border: 1px solid #353535;
+  outline: none;
+  padding: 4px 16px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  color: rgb(227, 227, 227);
+  filter: brightness(1.1);
+  filter: contrast(1.5);
+  box-shadow: rgb(81 81 81 / 23%) 0px -36px 30px 0px inset,
+    rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px,
+    rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px,
+    rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+}
+
+.ct-othermessage:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 15px solid #000000;
+  border-left: 15px solid transparent;
+  border-right: 15px solid #000000;
+  top: 0;
+  left: -15px;
+}
+
+.ct-othermessage:before {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 17px solid #353535;
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+  top: -0.5px;
+  left: -17px;
+}

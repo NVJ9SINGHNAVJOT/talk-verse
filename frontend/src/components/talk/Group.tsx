@@ -1,7 +1,7 @@
 import { useSocketContext } from "@/context/SocketContext";
 import useScrollTrigger from "@/hooks/useScrollTrigger";
-import GpMessageCard from "@/lib/cards/gpmessagecard/GpMessageCard";
-import OtherGpMessageCard from "@/lib/cards/othergpmessagecard/OtherGpMessageCard";
+import GpMessageCard from "@/components/talk/message/GpMessageCard";
+import OtherGpMessageCard from "@/components/talk/message/OtherGpMessageCard";
 import { setGroupToFirst } from "@/redux/slices/chatSlice";
 import {
   addGpMessages,
@@ -227,7 +227,7 @@ const Group = () => {
             {...register("text", {
               required: true,
               minLength: 1,
-              maxLength: 50,
+              maxLength: 200,
             })}
           />
         </div>

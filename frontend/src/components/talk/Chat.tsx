@@ -1,5 +1,5 @@
-import OtherMessageCard from "@/lib/cards/othermessagecard/OtherMessageCard";
-import MessageCard from "@/lib/cards/messagecard/MessageCard";
+import OtherMessageCard from "@/components/talk/message/OtherMessageCard";
+import MessageCard from "@/components/talk/message/MessageCard";
 import { useEffect, useRef, useState } from "react";
 import { useAppSelector } from "@/redux/store";
 import { fileMessageApi, getMessagesApi } from "@/services/operations/chatApi";
@@ -241,7 +241,7 @@ const Chat = () => {
             {...register("text", {
               required: true,
               minLength: 1,
-              maxLength: 50,
+              maxLength: 200,
             })}
             onFocus={() => startTyping()}
             onBlur={() => stopTyping()}
