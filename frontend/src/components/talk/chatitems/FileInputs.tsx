@@ -77,6 +77,7 @@ const FileInputs = (props: FileInputsProps) => {
       }
 
       props.fileHandler(file);
+      setFileMenu(false);
     }
   };
 
