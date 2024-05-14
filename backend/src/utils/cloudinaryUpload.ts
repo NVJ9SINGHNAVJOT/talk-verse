@@ -1,3 +1,4 @@
+import { logger } from '@/logger/logger';
 import { v2 as cloudinary, UploadApiErrorResponse, UploadApiResponse } from 'cloudinary';
 import fs from 'fs';
 
@@ -8,7 +9,8 @@ const uploadToCloudinary = async (file: Express.Multer.File): Promise<string | n
                 file.path,
                 {
                     folder: process.env.FOLDER_NAME,
-                    resource_type: "auto"
+                    resource_type: "auto",
+                    chunk_size: 2000000
                 },
                 (err: UploadApiErrorResponse | undefined, result: UploadApiResponse | undefined) => {
                     if (err) {
@@ -25,6 +27,7 @@ const uploadToCloudinary = async (file: Express.Multer.File): Promise<string | n
         return secureUrl;
 
     } catch (error) {
+        logger.error('error while uploading file to cloudinary', error);
         if (fs.existsSync(file.path)) {
             fs.unlinkSync(file.path);
         }

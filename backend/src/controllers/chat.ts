@@ -184,7 +184,7 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
             if (fs.existsSync(req.file.path)) {
                 fs.unlinkSync(req.file.path);
             }
-            return errRes(res, 500, "error while uploading user image");
+            return errRes(res, 500, "error while uploading filemessage to cloudinary");
         }
 
         if (data.isGroup === "1") {
