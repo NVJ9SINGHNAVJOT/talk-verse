@@ -77,7 +77,7 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
                 logger.error('channel not present for groupId', { data: data });
                 return;
             }
-            const memData = getMultiSockets(members);
+            const memData = getMultiSockets(members, userId);
             memData.online.push(socket.id);
 
             // message through channel

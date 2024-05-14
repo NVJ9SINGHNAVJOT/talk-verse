@@ -1,6 +1,5 @@
 import OtherMessageCard from "@/lib/cards/othermessagecard/OtherMessageCard";
 import MessageCard from "@/lib/cards/messagecard/MessageCard";
-import { MdAttachFile } from "react-icons/md";
 import { useEffect, useRef, useState } from "react";
 import { useAppSelector } from "@/redux/store";
 import { fileMessageApi, getMessagesApi } from "@/services/operations/chatApi";
@@ -25,9 +24,9 @@ import {
   stopTypingEvent,
 } from "@/socket/emitEvents/emitNotificationEvents";
 import { setFriendToFirst } from "@/redux/slices/chatSlice";
-import { CommonRs } from "@/types/apis/common";
 import { setWorkModal } from "@/redux/slices/loadingSlice";
 import WorkModal from "@/lib/modals/workmodal/WorkModal";
+import FileInputs from "./chatItems/FileInputs";
 
 const Chat = () => {
   const currFriendId = useAppSelector((state) => state.messages.currFriendId);
@@ -37,7 +36,6 @@ const Chat = () => {
   const currUser = useAppSelector((state) => state.user.user);
   const workModal = useAppSelector((state) => state.loading.workModal);
   const dispatch = useDispatch();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const { socket } = useSocketContext();
   const navigate = useNavigate();
 
@@ -45,8 +43,7 @@ const Chat = () => {
   const { chatId } = useParams();
   const [loading, setLoading] = useState<boolean>(true);
   const [stop, setStop] = useState<boolean>(false);
-  const [trigger, setTrigger] = useState<number>(0);
-  const [trigAssist, setTrigAssist] = useState<boolean>(false);
+  const [trigger, setTrigger] = useState<boolean>(false);
   const isMountingRef = useRef(true);
   const [lastCreatedAt, setLastCreateAt] = useState<string | undefined>(
     undefined
@@ -63,6 +60,7 @@ const Chat = () => {
       dispatch(setPMessages([]));
       setLoading(true), setStop(false);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -77,11 +75,8 @@ const Chat = () => {
     setLastCreateAt(undefined);
     dispatch(setPMessages([]));
     setLoading(true), setStop(false);
-    if (trigger === 0) {
-      setTrigAssist((prev) => !prev);
-    } else {
-      setTrigger(0);
-    }
+    setTrigger((prev) => !prev);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatId]);
 
   // fetch data as per scroll
@@ -125,21 +120,13 @@ const Chat = () => {
       }
     };
     getMessages();
-  }, [trigger, trigAssist]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trigger]);
   /* ===== infinite loading of messages |end| ===== */
 
-  const handleFileTagRefClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const fileType = file.type;
-
-      const validTypes = ["image/jpeg", "image/jpg", "image/png"];
-      if (validTypes.includes(fileType) && chatId && currFriendId) {
-        /* for reference form data type required for api call
+  const sendFileMessg = async (file: File) => {
+    if (chatId && currFriendId) {
+      /* for reference form data type required for api call
             FileData = {
             isGroup: string;  "0"  ,  "1"  0 is false and 1 is true for api call
             mainId: string         
@@ -150,22 +137,25 @@ const Chat = () => {
             imageUrl?: string;
           };
         */
-        const sendFile = new FormData();
-        sendFile.append("fileMessg", file);
-        sendFile.append("isGroup", "0");
-        sendFile.append("mainId", chatId);
-        sendFile.append("to", currFriendId);
+      dispatch(setWorkModal(true));
+      const sendFile = new FormData();
+      sendFile.append("fileMessg", file);
+      sendFile.append("isGroup", "0");
+      sendFile.append("mainId", chatId);
+      sendFile.append("to", currFriendId);
 
-        dispatch(setWorkModal(true));
-        const response: CommonRs = await fileMessageApi(sendFile);
-        if (!response || response.success === false) {
-          toast.error("Error while uploading file");
-        }
-        dispatch(setWorkModal(false));
+      const response = await fileMessageApi(sendFile);
+      if (!response) {
+        toast.error("Error while uploading file");
       } else {
-        toast.error("Select .jpg/.jpeg/.png type file");
+        if (!lastMainId || lastMainId !== chatId) {
+          dispatch(setFriendToFirst(chatId));
+        }
       }
+    } else {
+      toast.error("Invalid chat");
     }
+    dispatch(setWorkModal(false));
   };
 
   const { register, handleSubmit, reset } = useForm<MessageText>();
@@ -236,17 +226,9 @@ const Chat = () => {
         onSubmit={handleSubmit(sendMessage)}
         className=" relative w-full h-[10%] flex justify-center items-center gap-x-4"
       >
-        <MdAttachFile
-          onClick={handleFileTagRefClick}
-          className=" fill-snow-800 hover:fill-white cursor-pointer size-10"
-        />
-        <input
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          className=" absolute w-0 h-0"
-          type="file"
-          accept=".jpg , .jpeg, .png"
-        />
+        {/* file inputs */}
+        <FileInputs fileHandler={sendFileMessg} />
+        {/* text input */}
         <div className="relative w-7/12 h-4/5">
           <button type="submit" className=" w-0 h-0 absolute -z-10 ">
             Submit
@@ -266,7 +248,7 @@ const Chat = () => {
           />
         </div>
       </form>
-      {workModal && <WorkModal title="Uploading file" />}
+      {workModal && <WorkModal title={"Uploading File"} />}
     </div>
   );
 };

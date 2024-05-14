@@ -19,10 +19,12 @@ import { GetGroupMessagesRs } from "@/types/apis/chatApiRs";
 import { MessageText } from "@/types/common";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { MdAttachFile } from "react-icons/md";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import FileInputs from "./chatItems/FileInputs";
+import { setWorkModal } from "@/redux/slices/loadingSlice";
+import WorkModal from "@/lib/modals/workmodal/WorkModal";
 
 const Group = () => {
   const { register, handleSubmit, reset } = useForm<MessageText>();
@@ -30,8 +32,8 @@ const Group = () => {
   const gpMessages = useAppSelector((state) => state.messages.gpMess);
   const lastMainId = useAppSelector((state) => state.chat.lastMainId);
   const currUser = useAppSelector((state) => state.user.user);
+  const workModal = useAppSelector((state) => state.loading.workModal);
   const dispatch = useDispatch();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const { socket } = useSocketContext();
   const navigate = useNavigate();
 
@@ -39,8 +41,7 @@ const Group = () => {
   const { groupId } = useParams();
   const [loading, setLoading] = useState<boolean>(true);
   const [stop, setStop] = useState<boolean>(false);
-  const [trigger, setTrigger] = useState<number>(0);
-  const [trigAssist, setTrigAssist] = useState<boolean>(false);
+  const [trigger, setTrigger] = useState<boolean>(false);
   const isMountingRef = useRef(true);
   const [lastCreatedAt, setLastCreateAt] = useState<string | undefined>(
     undefined
@@ -56,6 +57,7 @@ const Group = () => {
       dispatch(setGpMessages([]));
       setLoading(true), setStop(false);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -70,11 +72,8 @@ const Group = () => {
     setLastCreateAt(undefined);
     dispatch(setGpMessages([]));
     setLoading(true), setStop(false);
-    if (trigger === 0) {
-      setTrigAssist((prev) => !prev);
-    } else {
-      setTrigger(0);
-    }
+    setTrigger((prev) => !prev);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupId]);
 
   // fetch data as per scroll
@@ -118,26 +117,18 @@ const Group = () => {
       }
     };
     getMessages();
-  }, [trigger, trigAssist]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trigger]);
   /* ===== infinite loading of messages |end| ===== */
 
-  const handleFileTagRefClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const sendFileMssg = async (file: File) => {
     if (!currUser) {
       toast.error("User not present for message");
       return;
     }
-
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const fileType = file.type;
-
-      const validTypes = ["image/jpeg", "image/jpg", "image/png"];
-      if (validTypes.includes(fileType) && groupId) {
-        /* for reference form data type required for api call
+    if (groupId) {
+      dispatch(setWorkModal(true));
+      /* for reference form data type required for api call
             FileData = {
             isGroup: string;  "0"  ,  "1"  0 is false and 1 is true for api call
             mainId: string         
@@ -148,22 +139,29 @@ const Group = () => {
             imageUrl?: string;
           };
         */
-        const sendFile = new FormData();
-        sendFile.append("fileMessg", file);
-        sendFile.append("isGroup", "1");
-        sendFile.append("mainId", groupId);
-        sendFile.append("to", groupId);
-        sendFile.append("firstName", currUser.firstName);
-        sendFile.append("lastName", currUser.lastName);
-        if (currUser.imageUrl) {
-          sendFile.append("imageUrl", currUser.imageUrl);
-        }
-
-        fileMessageApi(sendFile);
-      } else {
-        toast.error("Select .jpg/.jpeg/.png type file");
+      const sendFile = new FormData();
+      sendFile.append("fileMessg", file);
+      sendFile.append("isGroup", "1");
+      sendFile.append("mainId", groupId);
+      sendFile.append("to", groupId);
+      sendFile.append("firstName", currUser.firstName);
+      sendFile.append("lastName", currUser.lastName);
+      if (currUser.imageUrl) {
+        sendFile.append("imageUrl", currUser.imageUrl);
       }
+
+      const response = await fileMessageApi(sendFile);
+      if (!response) {
+        toast.error("Error while uploading file");
+      } else {
+        if (!lastMainId || lastMainId !== groupId) {
+          dispatch(setGroupToFirst(groupId));
+        }
+      }
+    } else {
+      toast.error("Invalid chat");
     }
+    dispatch(setWorkModal(false));
   };
 
   const sendGroupMessage = (data: MessageText) => {
@@ -177,24 +175,15 @@ const Group = () => {
       return;
     }
 
-    if (currUser.imageUrl) {
-      sendGroupMessageEvent(
-        socket,
-        groupId,
-        data.text,
-        currUser.firstName,
-        currUser.lastName,
-        currUser.imageUrl
-      );
-    } else {
-      sendGroupMessageEvent(
-        socket,
-        groupId,
-        data.text,
-        currUser.firstName,
-        currUser.lastName
-      );
-    }
+    sendGroupMessageEvent(
+      socket,
+      groupId,
+      data.text,
+      currUser.firstName,
+      currUser.lastName,
+      currUser.imageUrl ? currUser.imageUrl : ""
+    );
+
     if (!lastMainId || lastMainId !== groupId) {
       dispatch(setGroupToFirst(groupId));
     }
@@ -225,17 +214,7 @@ const Group = () => {
         onSubmit={handleSubmit(sendGroupMessage)}
         className=" relative w-full h-[10%] flex justify-center items-center gap-x-4"
       >
-        <MdAttachFile
-          onClick={handleFileTagRefClick}
-          className=" fill-snow-800 hover:fill-white cursor-pointer size-10"
-        />
-        <input
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          className=" absolute w-0 h-0"
-          type="file"
-          accept=".jpg , .jpeg, .png"
-        />
+        <FileInputs fileHandler={sendFileMssg} />
         <div className="relative w-7/12 h-4/5">
           <button type="submit" className=" w-0 h-0 absolute -z-10 ">
             Submit
@@ -253,6 +232,7 @@ const Group = () => {
           />
         </div>
       </form>
+      {workModal && <WorkModal title={"Uploading File"} />}
     </div>
   );
 };

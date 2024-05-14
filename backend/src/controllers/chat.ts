@@ -201,42 +201,41 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
             if (!channel) {
                 return errRes(res, 500, 'no channel for group');
             }
-            const memData = getMultiSockets(members, userId);
-            if (members.length > 0) {
-                // message through channel
-                await channel.lock();
-                const uuId = uuidv4();
-                const createdAt = new Date();
-                const sdata: SoGroupMessageRecieved = {
-                    uuId: uuId,
-                    isFile: true,
-                    from: userId,
-                    to: data.to,
-                    text: secUrl,
-                    createdAt: createdAt.toISOString(),
-                    firstName: data.firstName,
-                    lastName: data.lastName,
-                    imageUrl: data.imageUrl,
-                };
-                if (memData.online.length > 0) {
-                    emitSocketEvent(req, clientE.GROUP_MESSAGE_RECIEVED, sdata, null, memData.online);
-                }
-                // release channel
-                channel.unlock();
+            const memData = getMultiSockets(members);
 
-                // increase unseen count for offline members of group
-                try {
-                    await GpMessage.create({ uuId: uuId, isFile: true, from: userId, to: data.to, text: secUrl, createdAt: createdAt });
-                    // offline users dont include userId of current user
-                    if (memData.offline.length > 0) {
-                        await UnseenCount.updateMany(
-                            { userId: { $in: memData.offline }, mainId: data.mainId },
-                            { $inc: { count: 1 } }
-                        );
-                    }
-                } catch (error) {
-                    return errRes(res, 500, "error while updating unseen count for group members", { error, sdata });
+            // message through channel
+            await channel.lock();
+            const uuId = uuidv4();
+            const createdAt = new Date();
+            const sdata: SoGroupMessageRecieved = {
+                uuId: uuId,
+                isFile: true,
+                from: userId,
+                to: data.to,
+                text: secUrl,
+                createdAt: createdAt.toISOString(),
+                firstName: data.firstName,
+                lastName: data.lastName,
+                imageUrl: data.imageUrl,
+            };
+            if (memData.online.length > 0) {
+                emitSocketEvent(req, clientE.GROUP_MESSAGE_RECIEVED, sdata, null, memData.online);
+            }
+            // release channel
+            channel.unlock();
+
+            // increase unseen count for offline members of group
+            try {
+                await GpMessage.create({ uuId: uuId, isFile: true, from: userId, to: data.to, text: secUrl, createdAt: createdAt });
+                // offline users dont include userId of current user
+                if (memData.offline.length > 0) {
+                    await UnseenCount.updateMany(
+                        { userId: { $in: memData.offline }, mainId: data.mainId },
+                        { $inc: { count: 1 } }
+                    );
                 }
+            } catch (error) {
+                return errRes(res, 500, "error while updating unseen count for group members", { error, sdata });
             }
         }
         else {

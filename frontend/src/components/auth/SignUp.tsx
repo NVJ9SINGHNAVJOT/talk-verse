@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { RxAvatar } from "react-icons/rx";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { maxFileSize, validFiles } from "@/utils/constants";
 
 type SignUpData = {
   firstName: string;
@@ -36,10 +37,13 @@ const SignUp = (props: SignInProps) => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const fileType = file.type;
 
-      const validTypes = ["image/jpeg", "image/jpg", "image/png"];
-      if (validTypes.includes(fileType)) {
+      if (file.size > maxFileSize) {
+        toast.info("Max 5mb image file allowed");
+        return;
+      }
+      const fileType = file.type;
+      if (validFiles.image.includes(fileType)) {
         setSelectedFile(file);
       } else {
         toast.error("Select .jpg/.jpeg/.png type file");

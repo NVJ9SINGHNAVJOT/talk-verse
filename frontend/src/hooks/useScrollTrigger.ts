@@ -4,7 +4,7 @@ const useScrollTrigger = (
   ref: React.RefObject<HTMLDivElement>,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
   loading: boolean,
-  setTrigger: React.Dispatch<React.SetStateAction<number>>,
+  setTrigger: React.Dispatch<React.SetStateAction<boolean>>,
   stop: boolean) => {
 
   useEffect(() => {
@@ -21,7 +21,7 @@ const useScrollTrigger = (
       if (scrollPercentage > 85 && !loading && !stop) {
         setLoading(() => true);
         setTimeout(() => {
-          setTrigger((prev) => prev + 1);
+          setTrigger((prev) => !prev);
         }, 1000);
       }
     }

@@ -14,21 +14,14 @@ const storage = multer.diskStorage({
   }
 });
 
-const multerUploadImage = multer({
+const multerUpload = multer({
   storage: storage,
   limits: {
     fileSize: 1024 * 1024 * 5, // Set the limit to 5 MB (5 * 1024 * 1024 bytes)
   },
 });
 
-const multerUploadVideo = multer({
-  storage: storage,
-  limits: {
-    fileSize: 1024 * 1024 * 10, // Set the limit to 10 MB (10 * 1024 * 1024 bytes)
-  },
-});
-
-const imageFile = multerUploadImage.single("imageFile");
-const fileMessg = multerUploadVideo.single("fileMessg");
+const imageFile = multerUpload.single("imageFile");
+const fileMessg = multerUpload.single("fileMessg");
 
 export { imageFile, fileMessg };

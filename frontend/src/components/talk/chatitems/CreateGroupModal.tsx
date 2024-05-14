@@ -9,6 +9,7 @@ import { addNewUnseen } from "@/redux/slices/messagesSlice";
 import { useAppSelector } from "@/redux/store";
 import { createGroupApi } from "@/services/operations/notificationApi";
 import { CreateGroupRs } from "@/types/apis/chatApiRs";
+import { maxFileSize, validFiles } from "@/utils/constants";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { CiCirclePlus, CiImageOn, CiCircleMinus } from "react-icons/ci";
@@ -46,13 +47,16 @@ const CreateGroupModal = (props: CreateGroupModalProps) => {
       );
     }
   };
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      if (file.size > maxFileSize) {
+        toast.info("Max 5mb image file allowed");
+        return;
+      }
       const fileType = file.type;
-
-      const validTypes = ["image/jpeg", "image/jpg", "image/png"];
-      if (validTypes.includes(fileType)) {
+      if (validFiles.image.includes(fileType)) {
         setSelectedFile(file);
       } else {
         toast.error("Select .jpg/.jpeg/.png type file");

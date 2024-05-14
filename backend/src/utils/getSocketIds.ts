@@ -28,11 +28,6 @@ export const getMultiSockets = (users: string[], currUserId?: string): Members =
                 }
             }
         });
-        const membersData: Members = {
-            online: online,
-            offline: offline
-        };
-        return membersData;
     }
     else {
         users.forEach((user) => {
@@ -45,10 +40,10 @@ export const getMultiSockets = (users: string[], currUserId?: string): Members =
             }
 
         });
-        const membersData: Members = {
-            online: online,
-            offline: offline
-        };
-        return membersData;
     }
+    const membersData: Members = {
+        online: online,
+        offline: offline
+    };
+    return membersData;
 };
