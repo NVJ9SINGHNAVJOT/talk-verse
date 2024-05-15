@@ -1,26 +1,16 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import mainLogo from "@/assets/images/mainLogo.png";
 import SignInButton from "@/lib/buttons/signinbutton/SignInButton";
 import { useAppSelector } from "@/redux/store";
 import UserMenu from "@/components/common/UserMenu";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
-import { checkUserApi } from "@/services/operations/authApi";
-import { CheckUserRs } from "@/types/apis/authApiRs";
-import { setUser } from "@/redux/slices/userSlice";
-import { useDispatch } from "react-redux";
-import { setAuthUser } from "@/redux/slices/authSlice";
-import SiteLoadingModal from "./SiteLoadingModal";
 
 const MainNavbar = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const dispatch = useDispatch();
-
   const user = useAppSelector((state) => state.user.user);
   const authUser = useAppSelector((state) => state.auth.authUser);
-  const [checkUser, setCheckUser] = useState<boolean>(true);
   const [menu, setMenu] = useState<boolean>(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuRefExclude = useRef<HTMLDivElement>(null);
@@ -47,29 +37,7 @@ const MainNavbar = () => {
     }
   };
 
-  useEffect(() => {
-    const currentPathname = location.pathname;
-
-    const checkDefaultLogin = async () => {
-      const response: CheckUserRs = await checkUserApi();
-
-      if (response && response.success === true) {
-        dispatch(setUser(response.user));
-        dispatch(setAuthUser(true));
-      }
-
-      setTimeout(() => {
-        setCheckUser(false);
-        navigate(currentPathname);
-      }, 500);
-    };
-
-    checkDefaultLogin();
-  }, []);
-
-  return checkUser ? (
-     <SiteLoadingModal />
-  ) : (
+  return (
     <div
       className="relative bg-[radial-gradient(circle_at_24.1%_68.8%,_rgb(50,_50,_50)_0%,_rgb(0,_0,_0)_99.4%)]
         h-[4rem] flex justify-between items-center w-full"
@@ -92,7 +60,7 @@ const MainNavbar = () => {
       </div>
 
       {/* navbar menu */}
-      <div className="hidden md:flex justify-evenly items-center md:gap-2 lg:gap-5">
+      <div className="hidden md:flex justify-evenly items-center md:gap-4 lm:gap-6 lg:gap-8">
         <div
           className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]"
           onClick={homeHandler}
@@ -108,9 +76,6 @@ const MainNavbar = () => {
         <div className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">
           Contact
         </div>
-        <div className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">
-          Dashboard
-        </div>
         <div
           className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]"
           onClick={talkHandler}
@@ -125,9 +90,7 @@ const MainNavbar = () => {
       {/* sign in buttons or user logo */}
       {user ? (
         <div
-          className={`${
-            checkUser ? "opacity-0" : "opacity-100"
-          } sm:flex justify-evenly items-center md:gap-2 sm:gap-x-2 mr-8 `}
+          className={`sm:flex justify-evenly items-center md:gap-2 sm:gap-x-2 mr-8 `}
         >
           <UserMenu />
           <div ref={menuRefExclude} onClick={toogleMenu} className="md:hidden">
@@ -136,9 +99,7 @@ const MainNavbar = () => {
         </div>
       ) : (
         <div
-          className={`${
-            checkUser ? "opacity-0" : "opacity-100"
-          } flex justify-evenly items-center sm:gap-3 lg:gap-5 mr-8`}
+          className={`flex justify-evenly items-center sm:gap-3 lg:gap-5 mr-8`}
         >
           <SignInButton title={"Log In"} />
           <SignInButton title={"Sign Up"} />
@@ -171,9 +132,6 @@ const MainNavbar = () => {
           </div>
           <div className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">
             Contact
-          </div>
-          <div className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">
-            Dashboard
           </div>
           <div
             className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]"

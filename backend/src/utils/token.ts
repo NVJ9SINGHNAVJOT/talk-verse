@@ -5,8 +5,8 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 
 export const jwtVerify = async (token: string): Promise<string | null> => {
     // check token exist in database or expired or invalid token
-    const checkToken = await Token.find({ tokenValue: token }).exec();
-    if (checkToken.length !== 1) {
+    const checkToken = await Token.findOne({ tokenValue: token }).exec();
+    if (!checkToken) {
         return null;
     }
 
@@ -18,10 +18,10 @@ export const jwtVerify = async (token: string): Promise<string | null> => {
     }
 
     // check user again with decode token data (decoded data contain userid)
-    const checkUser = await User.find({ _id: decoded.userId }).select({ userToken: true })
+    const checkUser = await User.findById({ _id: decoded.userId }).select({ userToken: true })
         .populate({ path: "userToken", select: "tokenValue" }).exec();
 
-    if (checkUser.length !== 1 || checkUser[0]?.userToken?.tokenValue !== token) {
+    if (!checkUser || !checkUser?.userToken || checkUser.userToken.tokenValue !== token) {
         return null;
     }
 

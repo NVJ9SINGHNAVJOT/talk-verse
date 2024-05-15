@@ -98,7 +98,7 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
 
         const myDetails = await User.findById({ _id: userId }).select({ userName: true, imageUrl: true, _id: false }).exec();
         if (!myDetails) {
-            return errRes(res, 401, 'could not found user details');
+            return errRes(res, 400, 'could not found user details');
         }
 
         // update user with req

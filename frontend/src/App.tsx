@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import PrivateRoute from "@/components/auth/PrivateRoute";
 import OpenRoute from "@/components/auth/OpenRoute";
 import MainNavbar from "@/components/common/MainNavbar";
@@ -12,14 +12,42 @@ import Error from "@/pages/Error";
 import Talk from "@/pages/Talk";
 import Welcome from "@/components/talk/Welcome";
 import SocketProvider from "@/context/SocketContext";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import useScrollOnTop from "@/hooks/useScrollOnTop";
+import { checkUserApi } from "@/services/operations/authApi";
+import { CheckUserRs } from "@/types/apis/authApiRs";
+import { setUser } from "@/redux/slices/userSlice";
+import { useDispatch } from "react-redux";
+import { setAuthUser } from "@/redux/slices/authSlice";
+import SiteLoadingModal from "@/components/common/SiteLoadingModal";
 
 function App() {
   const pageRenderDivRef = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
+  const [checkUser, setCheckUser] = useState<boolean>(true);
+
   useScrollOnTop(pageRenderDivRef);
 
-  return (
+  useEffect(() => {
+    const checkDefaultLogin = async () => {
+      const response: CheckUserRs = await checkUserApi();
+
+      if (response && response.success === true) {
+        dispatch(setUser(response.user));
+        dispatch(setAuthUser(true));
+      }
+
+      setTimeout(() => {
+        setCheckUser(false);
+      }, 500);
+    };
+
+    checkDefaultLogin();
+  }, []);
+
+  return checkUser ? (
+    <SiteLoadingModal />
+  ) : (
     <div className="w-screen h-screen overflow-y-auto overflow-x-hidden max-w-maxContent min-w-minContent">
       {/* main nav bar */}
       <MainNavbar />

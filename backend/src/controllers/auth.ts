@@ -9,7 +9,7 @@ import jwt from 'jsonwebtoken';
 import { configDotenv } from 'dotenv';
 import Token from '@/db/mongodb/models/Token';
 import Notification from '@/db/mongodb/models/Notification';
-import { jwtVerify } from '@/utils/token';
+import { CustomRequest } from '@/types/custom';
 configDotenv();
 
 // create user | user signup
@@ -74,7 +74,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
       return errRes(res, 500, "error while creating user");
     }
   } catch (error) {
-    return errRes(res, 500, "error while creating user");
+    return errRes(res, 500, "error while creating user", error);
   }
 };
 
@@ -158,28 +158,15 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
     }
 
   } catch (error) {
-    return errRes(res, 500, "error while user login");
+    return errRes(res, 500, "error while user login", error);
   }
 };
 
 // check user
 export const checkUser = async (req: Request, res: Response): Promise<Response> => {
   try {
-    // Extracting JWT from request cookies or header
-    const token =
-      req.cookies[process.env.TOKEN_NAME as string] ||
-      req.header("Authorization")?.replace("Bearer ", "");
+    const userId = (req as CustomRequest).userId;
 
-    if (!token) {
-      return res.status(200).json({
-        success: false,
-        message: "token not present"
-      });
-    }
-
-    const userId = await jwtVerify(token);
-
-    // If JWT token present and userId invalid or null
     if (!userId) {
       return errRes(res, 401, "user authorization failed");
     }
@@ -204,6 +191,25 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
     });
   }
   catch (error) {
-    return errRes(res, 500, "error while user check");
+    return errRes(res, 500, "error while user check", error);
+  }
+};
+
+export const logOut = async (_req: Request, res: Response): Promise<Response> => {
+  try {
+    res.cookie(process.env.TOKEN_NAME as string, "", {
+      expires: new Date(0), // Set an immediate expiration date (in the past)
+      httpOnly: true,
+      secure: true,
+    });
+
+    // Redirect the user to the login page
+    return res.status(200).json({
+      success: true,
+      message: 'User logged out successfully',
+    });
+
+  } catch (error) {
+    return errRes(res, 500, "error while user log out", error);
   }
 };
