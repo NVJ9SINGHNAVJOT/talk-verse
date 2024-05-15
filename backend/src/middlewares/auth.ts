@@ -16,7 +16,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
 
         // If JWT is missing, return 401 Unauthorized response
         if (!token) {
-            return errRes(res, 401, "user authorization failed");
+            return errRes(res, 401, "user authorization failed, no token present");
         }
 
         const userId = await jwtVerify(token);

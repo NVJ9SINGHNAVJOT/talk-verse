@@ -9,7 +9,7 @@ import jwt from 'jsonwebtoken';
 import { configDotenv } from 'dotenv';
 import Token from '@/db/mongodb/models/Token';
 import Notification from '@/db/mongodb/models/Notification';
-import { CustomRequest } from '@/types/custom';
+import { jwtVerify } from '@/utils/token';
 configDotenv();
 
 // create user | user signup
@@ -165,8 +165,21 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
 // check user
 export const checkUser = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const userId = (req as CustomRequest).userId;
+    // Extracting JWT from request cookies or header
+    const token =
+      req.cookies[process.env.TOKEN_NAME as string] ||
+      req.header("Authorization")?.replace("Bearer ", "");
 
+    if (!token) {
+      return res.status(200).json({
+        success: false,
+        message: "token not present"
+      });
+    }
+
+    const userId = await jwtVerify(token);
+
+    // If JWT token present and userId invalid or null
     if (!userId) {
       return errRes(res, 401, "user authorization failed");
     }
@@ -176,7 +189,7 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
     }).exec();
 
     if (!user) {
-      return errRes(res, 401, "user authorization failed");
+      return errRes(res, 401, "user authorization failed, no user found for userId");
     }
 
     return res.status(200).json({
@@ -195,8 +208,29 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
   }
 };
 
-export const logOut = async (_req: Request, res: Response): Promise<Response> => {
+export const logOut = async (req: Request, res: Response): Promise<Response> => {
   try {
+    const token =
+      req.cookies[process.env.TOKEN_NAME as string] ||
+      req.header("Authorization")?.replace("Bearer ", "");
+
+    if (!token) {
+      return res.status(200).json({
+        success: false,
+        message: "token not present"
+      });
+    }
+
+    const userId = await jwtVerify(token);
+
+    // If JWT token present and userId invalid or null
+    if (!userId) {
+      return errRes(res, 401, "user authorization failed");
+    }
+
+    await Token.findOneAndDelete({ tokenValue: token });
+    await User.findByIdAndUpdate({ _id: userId }, { $unset: { userToken: true } });
+
     res.cookie(process.env.TOKEN_NAME as string, "", {
       expires: new Date(0), // Set an immediate expiration date (in the past)
       httpOnly: true,

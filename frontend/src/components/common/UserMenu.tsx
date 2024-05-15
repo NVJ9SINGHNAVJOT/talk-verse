@@ -69,7 +69,9 @@ const UserMenu = () => {
           Log Out
         </div>
       </div>
-      {togLogO && <LogOutModal setTogLogO={setTogLogO} />}
+      {togLogO && (
+        <LogOutModal setTogLogO={setTogLogO} setMenuOpen={setMenuOpen} />
+      )}
     </div>
   );
 };

@@ -7,6 +7,7 @@ const {
     SIGNUP,
     LOGIN,
     CHECK_USER,
+    LOGOUT
 } = authEndPoints;
 
 export const signUpApi = async (data: FormData): Promise<boolean> => {
@@ -42,6 +43,18 @@ export const checkUserApi = async (): Promise<CheckUserRs> => {
         return {} as CheckUserRs;
     } catch (error) {
         return {} as CheckUserRs;
+    }
+};
+
+export const logOutApi = async (): Promise<boolean> => {
+    try {
+        const resData: CommonRs = await fetchApi('DELETE', LOGOUT);
+        if (resData && resData.success === true) {
+            return true;
+        }
+        return false;
+    } catch (error) {
+        return false;
     }
 };
 

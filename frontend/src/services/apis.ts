@@ -4,7 +4,8 @@ const BASE_URL_SERVER = process.env.REACT_APP_BASE_URL_SERVER as string;
 export const authEndPoints = {
   SIGNUP: BASE_URL_SERVER + "/auth/signup",
   LOGIN: BASE_URL_SERVER + "/auth/login",
-  CHECK_USER: BASE_URL_SERVER + "/auth/checkUser"
+  CHECK_USER: BASE_URL_SERVER + "/auth/checkUser",
+  LOGOUT: BASE_URL_SERVER + "/auth/logout"
 };
 
 export const notificationEndPoints = {
