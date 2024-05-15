@@ -1,6 +1,7 @@
 import { SoMessageRecieved } from "@/types/socket/eventTypes";
 import { getDTimeStamp } from "@/utils/getTime";
 import FileItem from "@/components/talk/message/FileItem";
+import { memo } from "react";
 
 type MessageCardProps = {
   message: SoMessageRecieved;
@@ -23,4 +24,4 @@ const MessageCard = (props: MessageCardProps) => {
   );
 };
 
-export default MessageCard;
+export default memo(MessageCard);

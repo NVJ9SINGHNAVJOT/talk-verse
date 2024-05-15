@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 
 export type FriendBarItemsProps = {
   friend: Friend;
+  inChat: string;
+  setInChat: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const FriendBarItem = (props: FriendBarItemsProps) => {
@@ -19,6 +21,7 @@ const FriendBarItem = (props: FriendBarItemsProps) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const goToChat = () => {
+    props.setInChat(friend.chatId);
     dispatch(setCurrFriendId(friend._id));
     dispatch(setMainChatId(friend.chatId));
     navigate(`/talk/chat/${friend.chatId}`);
@@ -27,8 +30,11 @@ const FriendBarItem = (props: FriendBarItemsProps) => {
   return (
     <div
       onClick={() => goToChat()}
-      className=" relative w-full h-[3.8rem] flex justify-between items-center px-4 cursor-pointer
-      transition-all duration-100 ease-in-out delay-0 hover:bg-[#21262C]"
+      className={` ${
+        props.inChat === friend.chatId ? "bg-[#21262C]" : "hover:bg-[#21262C]"
+      }
+      relative w-full h-[3.8rem] flex justify-between items-center px-4 cursor-pointer
+      transition-all duration-100 ease-in-out delay-0 `}
     >
       <div className="flex items-center">
         {friend.imageUrl ? (

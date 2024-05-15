@@ -32,6 +32,7 @@ import { SoAddedInGroup } from "@/types/socket/eventTypes";
 import FriendBarItem from "@/components/talk/chatItems/FriendBarItem";
 
 const UserChatBar = () => {
+  const [inChat, setInChat] = useState<string>("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
   const [seeNotif, setSeeNotif] = useState(false);
@@ -152,9 +153,17 @@ const UserChatBar = () => {
         {chatBarData?.map((data, index) => (
           <div key={index}>
             {data.chatId !== undefined ? (
-              <FriendBarItem friend={data as Friend} />
+              <FriendBarItem
+                friend={data as Friend}
+                inChat={inChat}
+                setInChat={setInChat}
+              />
             ) : (
-              <GroupBarItem group={data as SoAddedInGroup} />
+              <GroupBarItem
+                group={data as SoAddedInGroup}
+                inChat={inChat}
+                setInChat={setInChat}
+              />
             )}
           </div>
         ))}

@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 
 export type GroupBarItemsProps = {
   group: SoAddedInGroup;
+  inChat: string;
+  setInChat: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const GroupBarItem = (props: GroupBarItemsProps) => {
@@ -17,6 +19,7 @@ const GroupBarItem = (props: GroupBarItemsProps) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const goToGroup = () => {
+    props.setInChat(group._id);
     dispatch(setMainGroupId(group._id));
     navigate(`/talk/group/${group._id}`);
   };
@@ -24,8 +27,11 @@ const GroupBarItem = (props: GroupBarItemsProps) => {
   return (
     <div
       onClick={() => goToGroup()}
-      className=" relative w-full h-[3.8rem] flex justify-between items-center px-4 cursor-pointer
-      transition-all duration-100 ease-in-out delay-0 hover:bg-[#21262C]"
+      className={` ${
+        props.inChat === group._id ? "bg-[#21262C]" : "hover:bg-[#21262C]"
+      }
+      relative w-full h-[3.8rem] flex justify-between items-center px-4 cursor-pointer
+      transition-all duration-100 ease-in-out delay-0`}
     >
       <div className="flex items-center">
         {group.gpImageUrl ? (

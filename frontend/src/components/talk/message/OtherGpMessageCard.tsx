@@ -2,6 +2,7 @@ import { GroupMessages } from "@/redux/slices/messagesSlice";
 import { getDTimeStamp } from "@/utils/getTime";
 import { RxAvatar } from "react-icons/rx";
 import FileItem from "@/components/talk/message/FileItem";
+import { memo } from "react";
 
 type OtherGpMessageCardProps = {
   message: GroupMessages;
@@ -11,17 +12,17 @@ const OtherGpMessageCard = (props: OtherGpMessageCardProps) => {
   const imageUrl = props.message.from.imageUrl;
 
   return (
-    <div className=" flex self-start gap-x-1 max-w-[75%]">
+    <div className=" relative self-start flex flex-col ml-6 max-w-[75%]">
       {imageUrl ? (
         <img
           src={imageUrl}
           alt="Loading..."
-          className=" size-6 rounded-full mt-4 z-50"
+          className="absolute -left-8 size-8 rounded-full mt-4 z-50"
         />
       ) : (
-        <RxAvatar className=" size-6 rounded-full fill-slate-500 mt-4 z-50" />
+        <RxAvatar className="absolute -left-8 size-8 rounded-full bg-snow-400 mt-4 z-50" />
       )}
-      <div className="ct-othermessage self-start flex flex-col w-full">
+      <div className="ct-othermessage self-start flex flex-col max-w-full ">
         <p className=" text-[0.7rem] text-purple-400">
           {props.message.from.firstName + " " + props.message.from.lastName}
         </p>
@@ -40,4 +41,14 @@ const OtherGpMessageCard = (props: OtherGpMessageCardProps) => {
   );
 };
 
-export default OtherGpMessageCard;
+export default memo(OtherGpMessageCard);
+
+// {imageUrl ? (
+//   <img
+//     src={imageUrl}
+//     alt="Loading..."
+//     className=" size-6 rounded-full mt-4 z-50"
+//   />
+// ) : (
+//   <RxAvatar className=" size-6 rounded-full fill-slate-500 mt-4 z-50" />
+// )}

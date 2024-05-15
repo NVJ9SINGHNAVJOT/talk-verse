@@ -68,12 +68,7 @@ const MainNavbar = () => {
   }, []);
 
   return checkUser ? (
-    <div
-      className="relative bg-[radial-gradient(circle_at_24.1%_68.8%,_rgb(50,_50,_50)_0%,_rgb(0,_0,_0)_99.4%)]
-    h-[4rem] flex justify-between items-center w-full"
-    >
-      <SiteLoadingModal />
-    </div>
+     <SiteLoadingModal />
   ) : (
     <div
       className="relative bg-[radial-gradient(circle_at_24.1%_68.8%,_rgb(50,_50,_50)_0%,_rgb(0,_0,_0)_99.4%)]
