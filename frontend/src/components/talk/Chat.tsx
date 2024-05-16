@@ -27,6 +27,7 @@ import { setFriendToFirst } from "@/redux/slices/chatSlice";
 import { setWorkModal } from "@/redux/slices/loadingSlice";
 import WorkModal from "@/lib/modals/workmodal/WorkModal";
 import FileInputs from "./chatItems/FileInputs";
+import { Skeleton } from "@/lib/shadcn-ui/components/ui/skeleton";
 
 const Chat = () => {
   const currFriendId = useAppSelector((state) => state.messages.currFriendId);
@@ -45,6 +46,7 @@ const Chat = () => {
   const [stop, setStop] = useState<boolean>(false);
   const [trigger, setTrigger] = useState<boolean>(false);
   const isMountingRef = useRef(true);
+  const [initialLoad, setInitialLoad] = useState<boolean>(true);
   const [lastCreatedAt, setLastCreateAt] = useState<string | undefined>(
     undefined
   );
@@ -64,6 +66,7 @@ const Chat = () => {
   }, []);
 
   useEffect(() => {
+    setInitialLoad(true);
     if (!chatId || !currFriendId || !mainChatId || mainChatId !== chatId) {
       navigate("/talk");
     }
@@ -87,6 +90,7 @@ const Chat = () => {
         // initial call for getting messages
         if (lastCreatedAt === undefined) {
           response = await getMessagesApi(chatId);
+          setInitialLoad(false);
           // setCount api call to set count 0
           if (response && response.messages && response.messages.length > 0) {
             dispatch(resetUnseenMessage(chatId));
@@ -222,32 +226,39 @@ const Chat = () => {
         )}
       </div>
       {/* message input */}
-      <form
-        onSubmit={handleSubmit(sendMessage)}
-        className=" relative w-full h-[10%] flex justify-center items-center gap-x-4"
-      >
-        {/* file inputs */}
-        <FileInputs fileHandler={sendFileMessg} />
-        {/* text input */}
-        <div className="relative w-7/12 h-4/5">
-          <button type="submit" className=" w-0 h-0 absolute -z-10 ">
-            Submit
-          </button>
-          <input
-            type="text"
-            className="w-full h-full  bg-black rounded-2xl text-white px-4 focus:outline-none 
-            focus:bg-transparent border-b-2 border-transparent focus:border-emerald-800"
-            placeholder="Message"
-            {...register("text", {
-              required: true,
-              minLength: 1,
-              maxLength: 200,
-            })}
-            onFocus={() => startTyping()}
-            onBlur={() => stopTyping()}
-          />
+      {initialLoad ? (
+        <div className="relative w-full h-[10%] ">
+          <Skeleton className=" w-10/12 h-[90%] mx-auto bg-[linear-gradient(315deg,_rgba(255,255,255,1)_0%,_rgba(36,106,120,1)_0%,_rgba(8,27,52,1)_100%,_rgba(37,181,16,1)_100%)]" />
         </div>
-      </form>
+      ) : (
+        <form
+          onSubmit={handleSubmit(sendMessage)}
+          className=" relative w-full h-[10%] flex justify-center items-center gap-x-4"
+        >
+          {/* file inputs */}
+          <FileInputs fileHandler={sendFileMessg} />
+          {/* text input */}
+          <div className="relative w-7/12 h-4/5">
+            <button type="submit" className=" w-0 h-0 absolute -z-10 ">
+              Submit
+            </button>
+            <input
+              type="text"
+              className="w-full h-full  bg-black rounded-2xl text-white px-4 focus:outline-none 
+            focus:bg-transparent border-b-2 border-transparent focus:border-emerald-800"
+              placeholder="Message"
+              {...register("text", {
+                required: true,
+                minLength: 1,
+                maxLength: 200,
+              })}
+              onFocus={() => startTyping()}
+              onBlur={() => stopTyping()}
+            />
+          </div>
+        </form>
+      )}
+
       {workModal && <WorkModal title={"Uploading File"} />}
     </div>
   );

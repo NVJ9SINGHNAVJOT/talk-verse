@@ -5,7 +5,7 @@ const LoginRightSide = () => {
     <div className=" w-1/2 h-full]">
       <div className="loginSidePage">
         <strong className="strongForLoginPage">
-          <div className=" text-center text-4xl text-white pl-8 pr-8">
+          <div className=" text-center sm:text-2xl lm:text-4xl text-white pl-8 pr-8">
             Welcome to{" "}
             <span className=" blinkingHeading  text-richblack-400">
               TalkVerse!{" "}

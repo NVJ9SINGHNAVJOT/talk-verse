@@ -38,12 +38,14 @@ const GroupBarItem = (props: GroupBarItemsProps) => {
           <img
             src={group.gpImageUrl}
             alt="Loading..."
-            className=" size-11 aspect-square rounded-2xl ring-2 ring-slate-400"
+            className="  sm:size-8 lg:size-11 aspect-square rounded-2xl ring-1 ring-slate-400"
           />
         ) : (
-          <CiImageOn className="  size-11 aspect-square text-white rounded-full  ring-2 ring-slate-400" />
+          <CiImageOn className="  sm:size-8 lg:size-11 aspect-square text-white rounded-full  ring-1 ring-slate-400" />
         )}
-        <p className=" pl-4 text-white text-[1rem] pb-2">{group.groupName}</p>
+        <p className=" pl-4 text-white sm:text-[0.9rem] lg:text-[1rem] pb-2">
+          {group.groupName}
+        </p>
       </div>
       <div className=" flex gap-x-2 justify-center items-center">
         <div
@@ -51,7 +53,7 @@ const GroupBarItem = (props: GroupBarItemsProps) => {
             unseenMessages[group._id] === 0
               ? " bg-transparent "
               : "bg-orange-500"
-          } rounded-full text-white w-7 h-7 text-center`}
+          } rounded-full text-white sm:size-6 lg:size-7 text-center sm:text-sm pt-[0.15rem]`}
         >
           {unseenMessages[group._id] === 0 ? "" : unseenMessages[group._id]}
         </div>

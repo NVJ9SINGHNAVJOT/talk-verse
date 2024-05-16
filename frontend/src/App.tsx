@@ -1,9 +1,8 @@
-import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import PrivateRoute from "@/components/auth/PrivateRoute";
 import OpenRoute from "@/components/auth/OpenRoute";
 import MainNavbar from "@/components/common/MainNavbar";
 import Home from "@/pages/Home";
-import Dashboard from "@/pages/Dashboard";
 import About from "@/pages/About";
 import Login from "@/pages/Login";
 import Chat from "@/components/talk/Chat";
@@ -20,6 +19,9 @@ import { setUser } from "@/redux/slices/userSlice";
 import { useDispatch } from "react-redux";
 import { setAuthUser } from "@/redux/slices/authSlice";
 import SiteLoadingModal from "@/components/common/SiteLoadingModal";
+import Profile from "@/pages/Profile";
+import Dashboard from "@/components/profile/Dashboard";
+import Settings from "@/components/profile/Settings";
 
 function App() {
   const pageRenderDivRef = useRef<HTMLDivElement>(null);
@@ -81,13 +83,16 @@ function App() {
             <Route path="/talk/group/:groupId?" element={<Group />} />
           </Route>
           <Route
-            path="/dashboard"
             element={
               <PrivateRoute>
-                <Dashboard />
+                <Profile />
               </PrivateRoute>
             }
-          />
+          >
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile/dashboard" element={<Dashboard />} />
+            <Route path="/profile/settings" element={<Settings />} />
+          </Route>
 
           {/* error routes */}
           <Route path="/error" element={<Error />} />
