@@ -2,9 +2,11 @@ import useOnClickOutside from "@/hooks/useOnClickOutside";
 import { useAppSelector } from "@/redux/store";
 import { useRef, useState } from "react";
 import LogOutModal from "../auth/LogOutModal";
+import { useNavigate } from "react-router-dom";
 
 const UserMenu = () => {
   const user = useAppSelector((state) => state.user.user);
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [togLogO, setTogLogO] = useState<boolean>(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -54,10 +56,18 @@ const UserMenu = () => {
         } gap-1 absolute top-16 -left-[6rem] flex flex-col justify-start 
           z-[500] text-white w-36 bg-black py-2 rounded-sm`}
       >
-        <div className=" cursor-pointer bg-black hover:bg-grayblack py-1 px-6">
+        <div
+          onClick={() => {
+            navigate("/profile");
+          }}
+          className=" cursor-pointer bg-black hover:bg-grayblack py-1 px-6"
+        >
           Profile
         </div>
-        <div className=" cursor-pointer bg-black hover:bg-grayblack py-1 px-6">
+        <div
+          onClick={() => navigate("/profile/settings")}
+          className=" cursor-pointer bg-black hover:bg-grayblack py-1 px-6"
+        >
           Settings
         </div>
         <div

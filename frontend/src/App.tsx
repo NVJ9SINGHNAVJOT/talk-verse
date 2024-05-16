@@ -22,6 +22,7 @@ import SiteLoadingModal from "@/components/common/SiteLoadingModal";
 import Profile from "@/pages/Profile";
 import Dashboard from "@/components/profile/Dashboard";
 import Settings from "@/components/profile/Settings";
+import UserInfo from "@/components/profile/UserInfo";
 
 function App() {
   const pageRenderDivRef = useRef<HTMLDivElement>(null);
@@ -89,7 +90,7 @@ function App() {
               </PrivateRoute>
             }
           >
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile" element={<UserInfo />} />
             <Route path="/profile/dashboard" element={<Dashboard />} />
             <Route path="/profile/settings" element={<Settings />} />
           </Route>
