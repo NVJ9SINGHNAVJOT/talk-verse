@@ -4,7 +4,7 @@ const Profile = () => {
   return (
     <div className="w-full flex bg-grayblack h-[calc(100vh-4rem)]">
       {/* left bar chat list section*/}
-      <section className="sm:w-5/12 md:w-4/12 lg:w-3/12 h-full">
+      <section className="sm:w-5/12 md:w-4/12 lg:w-3/12 h-full bg-teal-950">
         
       </section>
 

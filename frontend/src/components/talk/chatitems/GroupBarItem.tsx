@@ -30,7 +30,7 @@ const GroupBarItem = (props: GroupBarItemsProps) => {
       className={` ${
         props.inChat === group._id ? "bg-[#21262C]" : "hover:bg-[#21262C]"
       }
-      relative w-full h-[3.8rem] flex justify-between items-center px-4 cursor-pointer
+      relative w-full h-[3.8rem] flex justify-between items-center sm:px-2 lg:px-4 cursor-pointer
       transition-all duration-100 ease-in-out delay-0`}
     >
       <div className="flex items-center">
@@ -53,11 +53,13 @@ const GroupBarItem = (props: GroupBarItemsProps) => {
             unseenMessages[group._id] === 0
               ? " bg-transparent "
               : "bg-orange-500"
-          } rounded-full text-white sm:size-6 lg:size-7 text-center sm:text-sm pt-[0.15rem]`}
+          } rounded-full text-white sm:size-6 lg:size-7 text-center sm:text-sm flex justify-center items-center`}
         >
-          {unseenMessages[group._id] === 0 ? "" : unseenMessages[group._id]}
+          <div className=" pb-[0.15rem]">
+            {unseenMessages[group._id] === 0 ? "" : unseenMessages[group._id]}
+          </div>
         </div>
-        <div className="bg-transparent rounded-full  size-3"></div>
+        <div className="bg-transparent rounded-full  sm:size-2  lg:size-3"></div>
       </div>
     </div>
   );

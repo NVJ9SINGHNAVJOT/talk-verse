@@ -34,6 +34,8 @@ const FileInputs = (props: FileInputsProps) => {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+
     if (!fileTyp) {
       toast.error("Error while selecting file");
       return;
@@ -51,24 +53,32 @@ const FileInputs = (props: FileInputsProps) => {
           if (!validFiles.image.includes(currFileType)) {
             toast.info("only .jpeg, .jpg, .png allowed");
             return;
+          } else if (imageInputRef.current) {
+            imageInputRef.current.value = "";
           }
           break;
         case "video":
           if (!validFiles.video.includes(currFileType)) {
             toast.info("only .mp4, .webm, .ogg allowed");
             return;
+          } else if (videoInputRef.current) {
+            videoInputRef.current.value = "";
           }
           break;
         case "audio":
           if (!validFiles.audio.includes(currFileType)) {
             toast.info("only .mp3, .mpeg, .wav allowed");
             return;
+          } else if (audioInputRef.current) {
+            audioInputRef.current.value = "";
           }
           break;
         case "pdf":
           if (validFiles.pdf !== currFileType) {
             toast.info("only pdf allowed");
             return;
+          } else if (pdfInputRef.current) {
+            pdfInputRef.current.value = "";
           }
           break;
         default:
@@ -77,6 +87,7 @@ const FileInputs = (props: FileInputsProps) => {
       }
 
       props.fileHandler(file);
+
       setFileMenu(false);
     }
   };

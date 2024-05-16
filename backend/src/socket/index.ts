@@ -24,7 +24,7 @@ export const groupOffline = new Map<string, Set<string>>();
 // create a map to store channels for mainID   chatId/_id  ->   chatId is for two users and _id is of group
 export const channels: Map<string, Channel> = new Map();
 
-export const setupSocketIO = (app: Application): HTTPServer => {
+export const setupWebSocket = (app: Application): HTTPServer => {
     const httpServer: HTTPServer = createServer(app);
     const io: Server = new Server(httpServer, {
         cors: corsOptions

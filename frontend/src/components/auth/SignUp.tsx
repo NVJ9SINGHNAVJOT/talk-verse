@@ -49,6 +49,10 @@ const SignUp = (props: SignInProps) => {
         toast.error("Select .jpg/.jpeg/.png type file");
         setSelectedFile(null);
       }
+      
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   };
 

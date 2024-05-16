@@ -56,11 +56,13 @@ const FriendBarItem = (props: FriendBarItemsProps) => {
             unseenMessages[friend.chatId] === 0
               ? " bg-transparent "
               : "bg-orange-500"
-          } rounded-full text-white sm:size-6 lg:size-7 text-center sm:text-sm pt-[0.15rem] `}
+          } rounded-full text-white sm:size-6 lg:size-7 text-center sm:text-sm flex justify-center items-center `}
         >
-          {unseenMessages[friend.chatId] === 0
-            ? ""
-            : unseenMessages[friend.chatId]}
+          <div className=" pb-[0.15rem]">
+            {unseenMessages[friend.chatId] === 0
+              ? ""
+              : unseenMessages[friend.chatId]}
+          </div>
         </div>
         <div
           className={` ${
