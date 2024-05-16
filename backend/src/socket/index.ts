@@ -10,9 +10,16 @@ import Channel from '@/types/channel';
 import { showOnline } from '@/utils/onlineStatus';
 
 // store userIds with their current socketIds
+// userId -> socketId
 export const userSocketIDs = new Map<string, string>();
+
 // store group members with groupId
+// groupId -> members
 export const groupIds = new Map<string, string[]>();
+
+// offline members for each group
+// groupId -> offline members
+export const groupOffline = new Map<string, Set<string>>();
 
 // create a map to store channels for mainID   chatId/_id  ->   chatId is for two users and _id is of group
 export const channels: Map<string, Channel> = new Map();
@@ -46,7 +53,7 @@ export const setupSocketIO = (app: Application): HTTPServer => {
         console.log("a user connected id: ", userId, ": ", socket.id);
         // set userId in userSocketIds and show friends that user in online
         userSocketIDs.set(userId, socket.id);
-        showOnline(userId, true, socket);
+        showOnline(io, userId, true, socket);
 
         // register events
         registerNotificationEvents(socket, userId);
@@ -57,7 +64,7 @@ export const setupSocketIO = (app: Application): HTTPServer => {
             // delete userId in userSocketIds and show friends that user if offline
             // eslint-disable-next-line drizzle/enforce-delete-with-where
             userSocketIDs.delete(userId);
-            showOnline(userId, false, socket);
+            showOnline(io, userId, false, socket);
         });
     });
 

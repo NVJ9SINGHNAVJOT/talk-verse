@@ -3,7 +3,7 @@ import Notification from '@/db/mongodb/models/Notification';
 import UnseenCount from '@/db/mongodb/models/UnseenCount';
 import User from '@/db/mongodb/models/User';
 import { clientE } from '@/socket/events';
-import { channels, groupIds, userSocketIDs } from '@/socket/index';
+import { channels, groupIds, groupOffline, userSocketIDs } from '@/socket/index';
 import { AcceptRequestBody, SendRequestBody, SetOrderBody, SetUnseenCountBody } from '@/types/controllers/notificationReq';
 import { CustomRequest } from '@/types/custom';
 import Channel from '@/types/channel';
@@ -308,8 +308,20 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
         }));
 
         const memData = getMultiSockets(memebers, userId);
-        // in online users of group, event is emitted only except for creater, as creater get group in response
+        const mySocketId = getSingleSocket(userId);
+
+        // set offline member for group
+        groupOffline.set(newGroup._id.toString(), new Set(memData.offline));
+
+        // join groupId room with all online members
+        if (mySocketId) {
+            req.app.get("io").in(mySocketId).socketsJoin(newGroup._id.toString());
+        }
+
         if (memData.online.length > 0) {
+            req.app.get("io").in(memData.online).socketsJoin(newGroup._id.toString());
+
+            // in online users of group, event is emitted only except for creater, as creater get group in response
             const sdata: SoAddedInGroup = {
                 _id: newGroup._id,
                 groupName: data.groupName,

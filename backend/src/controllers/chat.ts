@@ -3,7 +3,7 @@ import Group from "@/db/mongodb/models/Group";
 import Message from "@/db/mongodb/models/Message";
 import UnseenCount from "@/db/mongodb/models/UnseenCount";
 import User from "@/db/mongodb/models/User";
-import { channels, groupIds } from "@/socket";
+import { channels, groupIds, groupOffline } from "@/socket";
 import { clientE } from "@/socket/events";
 import { FileMessageBody } from "@/types/controllers/chatReq";
 import { CustomRequest } from "@/types/custom";
@@ -201,7 +201,6 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
             if (!channel) {
                 return errRes(res, 500, 'no channel for group');
             }
-            const memData = getMultiSockets(members);
 
             // message through channel
             await channel.lock();
@@ -218,21 +217,29 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
                 lastName: data.lastName,
                 imageUrl: data.imageUrl,
             };
-            if (memData.online.length > 0) {
-                emitSocketEvent(req, clientE.GROUP_MESSAGE_RECIEVED, sdata, null, memData.online);
-            }
+
+            emitSocketEvent(req, clientE.GROUP_MESSAGE_RECIEVED, sdata, data.mainId);
+
             // release channel
             channel.unlock();
 
             // increase unseen count for offline members of group
             try {
                 await GpMessage.create({ uuId: uuId, isFile: true, from: userId, to: data.to, text: secUrl, createdAt: createdAt });
+
                 // offline users dont include userId of current user
-                if (memData.offline.length > 0) {
-                    await UnseenCount.updateMany(
-                        { userId: { $in: memData.offline }, mainId: data.mainId },
-                        { $inc: { count: 1 } }
-                    );
+                const offlineMem = groupOffline.get(data.mainId);
+                if (offlineMem) {
+                    const newOfline = Array.from(offlineMem);
+                    if (newOfline.length > 0) {
+                        await UnseenCount.updateMany(
+                            { userId: { $in: newOfline }, mainId: data.mainId },
+                            { $inc: { count: 1 } }
+                        );
+                    }
+                }
+                else {
+                    return errRes(res, 400, "no offline set present for groupId");
                 }
             } catch (error) {
                 return errRes(res, 500, "error while updating unseen count for group members", { error, sdata });

@@ -1,6 +1,6 @@
 import Chat from "@/db/mongodb/models/Chat";
 import Group from "@/db/mongodb/models/Group";
-import { channels, groupIds } from "@/socket/index";
+import { channels, groupIds, groupOffline } from "@/socket/index";
 import Channel from "@/types/channel";
 
 
@@ -32,6 +32,7 @@ const setup = async () => {
             });
 
             groupIds.set(grpId, memeberIds);
+            groupOffline.set(grpId, new Set(memeberIds));
         });
     }
 };

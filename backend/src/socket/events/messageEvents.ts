@@ -1,8 +1,8 @@
 import { Server, Socket } from 'socket.io';
 import { clientE, serverE } from '@/socket/events';
-import { getMultiSockets, getSingleSocket } from '@/utils/getSocketIds';
+import { getSingleSocket } from '@/utils/getSocketIds';
 import { SoGroupMessageRecieved, SoMessageRecieved, SoSendGroupMessage, SoSendMessage } from '@/types/socket/eventTypes';
-import { channels, groupIds } from '@/socket/index';
+import { channels, groupIds, groupOffline } from '@/socket/index';
 import { logger } from '@/logger/logger';
 import { v4 as uuidv4 } from "uuid";
 import Message from '@/db/mongodb/models/Message';
@@ -77,14 +77,11 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
                 logger.error('channel not present for groupId', { data: data });
                 return;
             }
-            const memData = getMultiSockets(members, userId);
-            memData.online.push(socket.id);
 
             // message through channel
             await channel.lock();
             const uuId = uuidv4();
             const createdAt = new Date();
-
             const newGpMessage: SoGroupMessageRecieved = {
                 uuId: uuId,
                 isFile: false,
@@ -96,17 +93,24 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
                 lastName: data.lastName,
                 imageUrl: data.imageUrl
             };
-            io.to(memData.online).emit(clientE.GROUP_MESSAGE_RECIEVED, newGpMessage);
+            io.to(data._id).emit(clientE.GROUP_MESSAGE_RECIEVED, newGpMessage);
             // release channel
             channel.unlock();
 
             try {
                 await GpMessage.create({ uuId: uuId, from: userId, to: data._id, text: data.text, createdAt: createdAt });
-                if (memData.offline.length > 0) {
-                    await UnseenCount.updateMany(
-                        { userId: { $in: memData.offline }, mainId: data._id },
-                        { $inc: { count: 1 } }
-                    );
+                const offlineMem = groupOffline.get(data._id);
+                if (offlineMem) {
+                    const newOfline = Array.from(offlineMem);
+                    if (newOfline.length > 0) {
+                        await UnseenCount.updateMany(
+                            { userId: { $in: newOfline }, mainId: data._id },
+                            { $inc: { count: 1 } }
+                        );
+                    }
+                }
+                else {
+                    logger.error("no offline set present for groupId", { data: data, newGpMessage: newGpMessage });
                 }
             } catch (error) {
                 logger.error('error while creating goupMessage', { error: error, data: data, newGpMessage: newGpMessage });
