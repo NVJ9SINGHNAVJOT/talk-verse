@@ -1,10 +1,7 @@
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import WorkModal from "@/lib/modals/workmodal/WorkModal";
 import { addChatBarData, addGroup } from "@/redux/slices/chatSlice";
-import {
-  setCreateGroupLoading,
-  setWorkModal,
-} from "@/redux/slices/loadingSlice";
+import { setCreateGroupLoading } from "@/redux/slices/loadingSlice";
 import { addNewUnseen } from "@/redux/slices/messagesSlice";
 import { useAppSelector } from "@/redux/store";
 import { createGroupApi } from "@/services/operations/notificationApi";
@@ -34,7 +31,6 @@ const CreateGroupModal = (props: CreateGroupModalProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const refModal = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const createGroupLd = useAppSelector((state) => state.loading.createGroupLd);
 
   useOnClickOutside(refModal, toggelCreateGroupModal);
 
@@ -73,7 +69,6 @@ const CreateGroupModal = (props: CreateGroupModalProps) => {
       return;
     }
     dispatch(setCreateGroupLoading(true));
-    dispatch(setWorkModal(true));
     reset();
     const newFormData = new FormData();
     if (selectedFile) {
@@ -93,7 +88,6 @@ const CreateGroupModal = (props: CreateGroupModalProps) => {
       toast.error("Error while creating group");
     }
     toggelCreateGroupModal();
-    dispatch(setWorkModal(false));
   };
 
   const handleimgTagRefClick = () => {
@@ -156,7 +150,7 @@ const CreateGroupModal = (props: CreateGroupModalProps) => {
             })}
           />
           <button
-            disabled={createGroupLd}
+            disabled={creatingGroup}
             type="submit"
             className="relative inline-flex h-[3rem] w-fit items-center justify-center rounded-md
          bg-white px-4 font-medium text-gray-950 transition-colors focus:outline-none focus:ring-2

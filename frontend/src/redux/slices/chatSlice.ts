@@ -121,9 +121,9 @@ const chatSlice = createSlice({
             state.onlineFriends.push(action.payload);
         },
         removeOnlineFriend(state, action: PayloadAction<string>) {
-            state.onlineFriends = state.onlineFriends.filter((userId) => userId !== action.payload);
+            state.onlineFriends = state.onlineFriends.filter((friendId) => friendId !== action.payload);
             if (state.userTyping.includes(action.payload)) {
-                state.userTyping = state.userTyping.filter((userId) => userId !== action.payload);
+                state.userTyping = state.userTyping.filter((friendId) => friendId !== action.payload);
             }
         },
 

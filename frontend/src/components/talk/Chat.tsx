@@ -24,7 +24,6 @@ import {
   stopTypingEvent,
 } from "@/socket/emitEvents/emitNotificationEvents";
 import { setFriendToFirst } from "@/redux/slices/chatSlice";
-import { setWorkModal } from "@/redux/slices/loadingSlice";
 import WorkModal from "@/lib/modals/workmodal/WorkModal";
 import FileInputs from "./chatItems/FileInputs";
 import { Skeleton } from "@/lib/shadcn-ui/components/ui/skeleton";
@@ -35,7 +34,7 @@ const Chat = () => {
   const lastMainId = useAppSelector((state) => state.chat.lastMainId);
   const pmessages = useAppSelector((state) => state.messages.pMess);
   const currUser = useAppSelector((state) => state.user.user);
-  const workModal = useAppSelector((state) => state.loading.workModal);
+  const [workModal, setWorkModal] = useState<boolean>(false);
   const dispatch = useDispatch();
   const { socket } = useSocketContext();
   const navigate = useNavigate();
@@ -141,7 +140,7 @@ const Chat = () => {
             imageUrl?: string;
           };
         */
-      dispatch(setWorkModal(true));
+      setWorkModal(true);
       const sendFile = new FormData();
       sendFile.append("fileMessg", file);
       sendFile.append("isGroup", "0");
@@ -159,7 +158,7 @@ const Chat = () => {
     } else {
       toast.error("Invalid chat");
     }
-    dispatch(setWorkModal(false));
+    setWorkModal(false);
   };
 
   const { register, handleSubmit, reset } = useForm<MessageText>();

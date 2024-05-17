@@ -23,7 +23,6 @@ import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import FileInputs from "./chatItems/FileInputs";
-import { setWorkModal } from "@/redux/slices/loadingSlice";
 import WorkModal from "@/lib/modals/workmodal/WorkModal";
 import { Skeleton } from "@/lib/shadcn-ui/components/ui/skeleton";
 
@@ -33,7 +32,7 @@ const Group = () => {
   const gpMessages = useAppSelector((state) => state.messages.gpMess);
   const lastMainId = useAppSelector((state) => state.chat.lastMainId);
   const currUser = useAppSelector((state) => state.user.user);
-  const workModal = useAppSelector((state) => state.loading.workModal);
+  const [workModal, setWorkModal] = useState<boolean>(false);
   const dispatch = useDispatch();
   const { socket } = useSocketContext();
   const navigate = useNavigate();
@@ -131,7 +130,7 @@ const Group = () => {
       return;
     }
     if (groupId) {
-      dispatch(setWorkModal(true));
+      setWorkModal(true);
       /* for reference form data type required for api call
             FileData = {
             isGroup: string;  "0"  ,  "1"  0 is false and 1 is true for api call
@@ -165,7 +164,7 @@ const Group = () => {
     } else {
       toast.error("Invalid chat");
     }
-    dispatch(setWorkModal(false));
+    setWorkModal(false);
   };
 
   const sendGroupMessage = (data: MessageText) => {
