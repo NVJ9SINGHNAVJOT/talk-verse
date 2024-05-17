@@ -10,6 +10,7 @@ import { configDotenv } from 'dotenv';
 import Token from '@/db/mongodb/models/Token';
 import Notification from '@/db/mongodb/models/Notification';
 import { jwtVerify } from '@/utils/token';
+import fs from 'fs';
 configDotenv();
 
 // create user | user signup
@@ -44,6 +45,9 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     if (req.file) {
       secUrl = await uploadToCloudinary(req.file);
       if (secUrl === null) {
+        if (fs.existsSync(req.file.path)) {
+          await fs.promises.unlink(req.file.path);
+        }
         return errRes(res, 500, "error while uploading user image");
       }
     }
@@ -74,6 +78,9 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
       return errRes(res, 500, "error while creating user");
     }
   } catch (error) {
+    if (req.file && fs.existsSync(req.file.path)) {
+      await fs.promises.unlink(req.file.path);
+    }
     return errRes(res, 500, "error while creating user", error);
   }
 };

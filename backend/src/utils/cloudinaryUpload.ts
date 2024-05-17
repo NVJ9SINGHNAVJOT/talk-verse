@@ -23,13 +23,13 @@ const uploadToCloudinary = async (file: Express.Multer.File): Promise<string | n
                 }
             );
         });
-        fs.unlinkSync(file.path);
+        await fs.promises.unlink(file.path);
         return secureUrl;
 
     } catch (error) {
         logger.error('error while uploading file to cloudinary', error);
         if (fs.existsSync(file.path)) {
-            fs.unlinkSync(file.path);
+            await fs.promises.unlink(file.path);
         }
         return null;
     }
