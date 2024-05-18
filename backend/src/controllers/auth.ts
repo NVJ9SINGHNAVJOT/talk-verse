@@ -97,22 +97,20 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
       return errRes(res, 401, "invalid data");
     }
 
-    const checkUser = await User.find({ email: data.email }).select({
+    const checkUser = await User.findOne({ email: data.email }).select({
       email: true, password: true,
       firstName: true, lastName: true, imageUrl: true, userToken: true
     }).exec();
 
-    if (checkUser.length !== 1) {
+    if (!checkUser) {
       return errRes(res, 401, "user in not signed up");
     }
 
-    const user = checkUser[0];
-
     // check password and generate token
     let newUserToken: string;
-    if (await bcrypt.compare(data.password, user?.password as string)) {
+    if (await bcrypt.compare(data.password, checkUser.password as string)) {
       newUserToken = jwt.sign(
-        { userId: user?._id },
+        { userId: checkUser._id },
         process.env.JWT_SECRET as string,
         {
           expiresIn: "24h",
@@ -127,14 +125,14 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
     if (newUserToken) {
 
       // delete previous token 
-      if (user?.userToken) {
-        await Token.findByIdAndDelete(user?.userToken).exec();
+      if (checkUser.userToken) {
+        await Token.findByIdAndDelete(checkUser.userToken).exec();
       }
 
       const newToken = await Token.create({ tokenValue: newUserToken });
 
       // create token and add in user
-      const userToken = await User.findByIdAndUpdate({ _id: user?._id },
+      const userToken = await User.findByIdAndUpdate({ _id: checkUser?._id },
         { $set: { userToken: newToken._id } },
         { new: true }).select({ userToken: true }).exec();
 
@@ -149,10 +147,10 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
           success: true,
           message: "user login successfull",
           user: {
-            _id: user?._id,
-            firstName: user?.firstName,
-            lastName: user?.lastName,
-            imageUrl: user?.imageUrl
+            _id: checkUser._id,
+            firstName: checkUser.firstName,
+            lastName: checkUser.lastName,
+            imageUrl: checkUser.imageUrl
           }
         });
       }
