@@ -3,6 +3,7 @@ export type SignUpBody = {
     lastName: string,
     userName: string,
     email: string,
+    otp: string,
     password: string,
     confirmPassword: string,
 };
@@ -12,3 +13,7 @@ export type LogInBody = {
     password: string,
     confirmPassword: string,
 };
+
+export type SendOtpBody = {
+    email: string
+}

@@ -9,7 +9,8 @@ export interface IMessage extends Document {
     chatId: mongoose.Types.ObjectId & IChat;
     from: mongoose.Types.ObjectId & IUser;
     to: mongoose.Types.ObjectId & IUser;
-    text: string;
+    fromText: string;
+    toText: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -40,7 +41,12 @@ const messageSchema = new Schema<IMessage>({
         ref: 'User',
         required: true,
     },
-    text: {
+    fromText: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    toText: {
         type: String,
         required: true,
         trim: true,

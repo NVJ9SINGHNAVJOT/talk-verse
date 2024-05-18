@@ -5,6 +5,7 @@ import { CommonRs } from "@/types/apis/common";
 
 const {
     SIGNUP,
+    OTP,
     LOGIN,
     CHECK_USER,
     LOGOUT
@@ -13,6 +14,18 @@ const {
 export const signUpApi = async (data: FormData): Promise<boolean> => {
     try {
         const resData: CommonRs = await fetchApi('POST', SIGNUP, data);
+        if (resData && resData.success === true) {
+            return true;
+        }
+        return false;
+    } catch (error) {
+        return false;
+    }
+};
+
+export const sendOtpApi = async (email: string): Promise<boolean> => {
+    try {
+        const resData: CommonRs = await fetchApi('POST', OTP, { email: email }, { 'Content-Type': 'application/json' });
         if (resData && resData.success === true) {
             return true;
         }

@@ -1,5 +1,5 @@
 import User from '@/db/mongodb/models/User';
-import { LogInBody, SignUpBody } from '@/types/controllers/authReq';
+import { LogInBody, SendOtpBody, SignUpBody } from '@/types/controllers/authReq';
 import { Request, Response } from 'express';
 import uploadToCloudinary from '@/utils/cloudinaryUpload';
 import { errRes } from '@/utils/error';
@@ -11,6 +11,11 @@ import Token from '@/db/mongodb/models/Token';
 import Notification from '@/db/mongodb/models/Notification';
 import { jwtVerify } from '@/utils/token';
 import fs from 'fs';
+import { generateOTP } from '@/utils/generateOtp';
+import Otp from '@/db/mongodb/models/Otp';
+import { sendPrivateKeyMail, sendVerficationMail } from '@/utils/sendMail';
+import * as forge from 'node-forge';
+
 configDotenv();
 
 // create user | user signup
@@ -24,14 +29,21 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
       !valid.isName(data.firstName) ||
       !valid.isName(data.lastName) ||
       !valid.isUserName(data.userName) ||
-      !valid.isPassword(data.confirmPassword, data.confirmPassword)
+      !valid.isPassword(data.confirmPassword, data.confirmPassword) ||
+      !data.otp
     ) {
       return errRes(res, 400, "invalid data");
     }
 
-    const response = await User.find({ email: data.email }).select({ email: true }).exec();
+    const checkOtp = await Otp.findOne({ email: data.email, otpValue: data.otp });
 
-    if (response.length !== 0) {
+    if (!checkOtp) {
+      return errRes(res, 400, 'Invalid otp or otp has expired');
+    }
+
+    const response = await User.findOne({ email: data.email }).select({ email: true }).exec();
+
+    if (response) {
       return errRes(res, 400, "user already present");
     }
 
@@ -55,9 +67,15 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     // encrypt password
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
+    /* ===== Caution: create key pair for user ===== */
+    // Generate a key pair (public and private keys)
+    const keypair = forge.pki.rsa.generateKeyPair({ bits: 2048 });
+    const publicKeyPem = forge.pki.publicKeyToPem(keypair.publicKey);
+    const privateKeyPem = forge.pki.privateKeyToPem(keypair.privateKey);
+
     const newUser = await User.create({
       firstName: data.firstName, lastName: data.lastName, userName: data.userName, password: hashedPassword,
-      email: data.email, imageUrl: secUrl ? secUrl : ""
+      publicKey: publicKeyPem, email: data.email, imageUrl: secUrl ? secUrl : ""
     });
 
     // create notification model for user
@@ -69,6 +87,9 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     }
 
     if (newUser) {
+      /* ===== Caution: only for development purpose, remove comment in production ===== */
+      // await sendPrivateKeyMail(data.email, privateKeyPem);
+
       return res.status(200).json({
         success: true,
         message: "user registered successfully"
@@ -82,6 +103,29 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
       await fs.promises.unlink(req.file.path);
     }
     return errRes(res, 500, "error while creating user", error);
+  }
+};
+
+export const sendOtp = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const data: SendOtpBody = req.body;
+    if (!data.email || !valid.isEmail(data.email)) {
+      return errRes(res, 400, 'invalid email id');
+    }
+
+    const newOtp = generateOTP();
+    await Otp.create({ email: data.email, otpValue: newOtp });
+
+    /* ===== Caution: only for development purpose, remove comment in production ===== */
+    // await sendVerficationMail(data.email, newOtp);
+
+    return res.status(200).json({
+      success: true,
+      message: 'otp send successfully'
+    });
+
+  } catch (error) {
+    return errRes(res, 500, "error while sending otp", error);
   }
 };
 

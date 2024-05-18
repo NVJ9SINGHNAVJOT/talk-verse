@@ -1,4 +1,4 @@
-import { signUpApi } from "@/services/operations/authApi";
+import { sendOtpApi, signUpApi } from "@/services/operations/authApi";
 import { setIsLogin, setLoading } from "@/redux/slices/authSlice";
 import { useAppSelector } from "@/redux/store";
 import { useRef, useState } from "react";
@@ -7,6 +7,8 @@ import { RxAvatar } from "react-icons/rx";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { maxFileSize, validFiles } from "@/utils/constants";
+import OtpInput from "./OtpInput";
+import WorkModal from "@/lib/modals/workmodal/WorkModal";
 
 type SignUpData = {
   firstName: string;
@@ -22,6 +24,9 @@ type SignInProps = {
 };
 
 const SignUp = (props: SignInProps) => {
+  const [signingUp, setSigningUp] = useState<boolean>(false);
+  const [signUp, setSignUp] = useState<FormData>();
+  const [toggleOtp, setToggleOtp] = useState<boolean>(false);
   const isLogin = useAppSelector((state) => state.auth.loading);
   const dispatch = useDispatch();
 
@@ -49,7 +54,7 @@ const SignUp = (props: SignInProps) => {
         toast.error("Select .jpg/.jpeg/.png type file");
         setSelectedFile(null);
       }
-      
+
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -63,7 +68,29 @@ const SignUp = (props: SignInProps) => {
     formState: { errors },
   } = useForm<SignUpData>();
 
-  const onSubmitForm = async (data: SignUpData): Promise<void> => {
+  const signUpUser = async (otp: string) => {
+    setToggleOtp(false);
+    setSigningUp(true);
+
+    if (!signUp || !otp) {
+      toast.error("Signup Failed, try again");
+      return;
+    }
+    signUp.append("otp", otp);
+
+    const response: boolean = await signUpApi(signUp);
+
+    if (response === true) {
+      toast.success("Sign Up completed");
+      dispatch(setIsLogin(true));
+    } else {
+      toast.error("Error while Signig Up, Try again");
+    }
+    dispatch(setLoading(false));
+    setSigningUp(false);
+  };
+
+  const sendOtp = async (data: SignUpData): Promise<void> => {
     dispatch(setLoading(true));
     const tid = toast.loading("Loading...");
 
@@ -82,23 +109,24 @@ const SignUp = (props: SignInProps) => {
     reset();
     setSelectedFile(null);
 
-    const response: boolean = await signUpApi(newSignUpData);
+    setSignUp(newSignUpData);
 
+    const response = await sendOtpApi(data.email);
+    setToggleOtp(true);
     toast.dismiss(tid);
-    dispatch(setLoading(false));
-
-    if (response === true) {
-      toast.success("Sign Up completed");
-      dispatch(setIsLogin(true));
+    if (response) {
+      toast.info("Check your mail for otp");
     } else {
-      toast.error("Error while Signig Up, Try again");
+      toast.error("Error while sending otp");
     }
   };
 
-  return (
+  return toggleOtp ? (
+    <OtpInput submitOtp={signUpUser} />
+  ) : (
     <div className=" w-full flex flex-col justify-evenly items-center">
       <form
-        onSubmit={handleSubmit(onSubmitForm)}
+        onSubmit={handleSubmit(sendOtp)}
         className="flex sm:w-10/12 lm:w-7/12 flex-col justify-evenly items-center gap-2"
       >
         <h2 className=" text-center text-base text-white font-sans font-semibold">
@@ -337,6 +365,7 @@ const SignUp = (props: SignInProps) => {
           Log In
         </button>
       </div>
+      {signingUp && <WorkModal title="Signing Up" />}
     </div>
   );
 };

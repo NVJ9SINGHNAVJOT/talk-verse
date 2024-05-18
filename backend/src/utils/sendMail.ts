@@ -30,6 +30,7 @@ const sendMail = async (email: string, title: string, body: string): Promise<nod
 
     } catch (error) {
         logger.error('error while sending mail', { error: error });
+        throw error;
     }
 };
 
@@ -37,7 +38,8 @@ export const sendVerficationMail = async (email: string, otp: string) => {
     try {
         await sendMail(email, "Verification Email", verificationTemplate(otp));
     } catch (error) {
-        logger.error('error while sending verification mail', { error: error });
+        logger.error('error while sending verification mail', { error: error, email: email });
+        throw error;
     }
 };
 
@@ -45,7 +47,8 @@ export const sendPasswordUpdatedMail = async (userName: string, email: string) =
     try {
         await sendMail(email, "Password Updated", passwordUpdatedTemplate(userName, email));
     } catch (error) {
-        logger.error('error while sending password updated mail', { error: error });
+        logger.error('error while sending password updated mail', { error: error, email: email });
+        throw error;
     }
 };
 
@@ -53,6 +56,7 @@ export const sendPrivateKeyMail = async (email: string, privateKey: string) => {
     try {
         await sendMail(email, "Private Key - TalkVerse", privateKeyTemplate(email, privateKey));
     } catch (error) {
-        logger.error('error while sending private key mail', { error: error });
+        logger.error('error while sending private key mail', { error: error, email: email });
+        throw error;
     }
 };
