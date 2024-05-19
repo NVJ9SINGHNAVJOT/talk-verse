@@ -321,3 +321,26 @@
     hsl(104deg 100% 95%) 99%
   );
 }
+
+/* userInfo background */
+.ct-userInfoBack {
+  background-image: linear-gradient(
+    210deg,
+    hsl(0deg 0% 0%) 0%,
+    hsl(0deg 0% 0%) 11%,
+    hsl(0deg 0% 0%) 13%,
+    hsl(0deg 0% 0%) 15%,
+    hsl(0deg 1% 4%) 16%,
+    hsl(0deg 4% 11%) 17%,
+    hsl(0deg 8% 18%) 19%,
+    hsl(0deg 11% 25%) 20%,
+    hsl(10deg 9% 35%) 22%,
+    hsl(19deg 8% 46%) 25%,
+    hsl(29deg 8% 56%) 28%,
+    hsl(36deg 11% 66%) 33%,
+    hsl(41deg 20% 74%) 39%,
+    hsl(46deg 38% 82%) 49%,
+    hsl(50deg 84% 90%) 74%
+  );
+  background-attachment: fixed;
+}
