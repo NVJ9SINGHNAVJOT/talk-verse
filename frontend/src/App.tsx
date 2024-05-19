@@ -23,6 +23,7 @@ import Profile from "@/pages/Profile";
 import Dashboard from "@/components/profile/Dashboard";
 import Settings from "@/components/profile/Settings";
 import UserInfo from "@/components/profile/UserInfo";
+import ChekKey from "./pages/ChekKey";
 
 function App() {
   const pageRenderDivRef = useRef<HTMLDivElement>(null);
@@ -94,6 +95,14 @@ function App() {
             <Route path="/profile/dashboard" element={<Dashboard />} />
             <Route path="/profile/settings" element={<Settings />} />
           </Route>
+          <Route
+            path="/checkKey"
+            element={
+              <PrivateRoute>
+                <ChekKey />
+              </PrivateRoute>
+            }
+          />
 
           {/* error routes */}
           <Route path="/error" element={<Error />} />

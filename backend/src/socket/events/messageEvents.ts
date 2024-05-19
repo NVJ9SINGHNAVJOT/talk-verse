@@ -13,7 +13,7 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
 
     socket.on(serverE.SEND_MESSAGE, async (data: SoSendMessage) => {
         try {
-            if (!data.chatId || !data.text || !data.to) {
+            if (!data.chatId || !data.fromText || !data.toText || !data.to) {
                 logger.error('invalid data in socket send message event', { data: data });
                 return;
             }
@@ -33,21 +33,25 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
                 isFile: false,
                 chatId: data.chatId,
                 from: userId,
-                text: data.text,
+                text: data.fromText,
                 createdAt: createdAt.toISOString()
             };
+            /* ===== Caution: fromText for currUser and toText for friend ===== */
             const sId = getSingleSocket(data.to);
+            io.to(socket.id).emit(clientE.MESSAGE_RECIEVED, newMessage);
             if (sId) {
-                io.to([sId, socket.id]).emit(clientE.MESSAGE_RECIEVED, newMessage);
-            }
-            else {
-                io.to(socket.id).emit(clientE.MESSAGE_RECIEVED, newMessage);
+                // now send message to friend, text to changed to toText
+                newMessage.text = data.toText;
+                io.to(sId).emit(clientE.MESSAGE_RECIEVED, newMessage);
             }
             // release channel
             channel.unlock();
 
             try {
-                await Message.create({ uuId: uuId, chatId: data.chatId, from: userId, to: data.to, text: data.text, createdAt: createdAt });
+                await Message.create({
+                    uuId: uuId, chatId: data.chatId, from: userId, to: data.to,
+                    fromText: data.fromText, toText: data.toText, createdAt: createdAt
+                });
                 if (sId === undefined) {
                     await UnseenCount.findOneAndUpdate({ userId: data.to, mainId: data.chatId }, { $inc: { count: 1 } });
                 }

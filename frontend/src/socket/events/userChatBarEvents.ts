@@ -15,7 +15,7 @@ import {
 } from "@/redux/slices/chatSlice";
 import { toast } from "react-toastify";
 import { SoAddedInGroup, SoGroupMessageRecieved, SoMessageRecieved, SoRequestAccepted, SoUserRequest } from "@/types/socket/eventTypes";
-import { addLiveGpMessage, addLivePMessage, addNewUnseen, GroupMessages } from "@/redux/slices/messagesSlice";
+import { addLiveGpMessage, addLivePMessage, addNewUnseen, addPublicKey, GroupMessages, PublicKey } from "@/redux/slices/messagesSlice";
 
 // Custom hook to manage socket event listeners
 const useSocketEvents = (socket: Socket | null): void => {
@@ -44,6 +44,10 @@ const useSocketEvents = (socket: Socket | null): void => {
             (
                 data: SoRequestAccepted
             ) => {
+                dispatch(addPublicKey({
+                    userId: data._id,
+                    publicKey: data.publicKey
+                } as PublicKey));
                 dispatch(
                     addFriend({
                         _id: data._id,

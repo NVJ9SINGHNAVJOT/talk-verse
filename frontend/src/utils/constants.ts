@@ -6,3 +6,5 @@ export const validFiles = {
 };
 
 export const maxFileSize = 5 * 1024 * 1024;
+
+export const errMessage = process.env.ERROR_MESSAGE;

@@ -89,6 +89,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     if (newUser) {
       /* ===== Caution: only for development purpose, remove comment in production ===== */
       // await sendPrivateKeyMail(data.email, privateKeyPem);
+      console.log('pKey', privateKeyPem);
 
       return res.status(200).json({
         success: true,
@@ -143,7 +144,7 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
 
     const checkUser = await User.findOne({ email: data.email }).select({
       email: true, password: true,
-      firstName: true, lastName: true, imageUrl: true, userToken: true
+      firstName: true, lastName: true, imageUrl: true, userToken: true, publicKey: true
     }).exec();
 
     if (!checkUser) {
@@ -194,8 +195,9 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
             _id: checkUser._id,
             firstName: checkUser.firstName,
             lastName: checkUser.lastName,
-            imageUrl: checkUser.imageUrl
-          }
+            imageUrl: checkUser.imageUrl,
+            publicKey: checkUser.publicKey
+          },
         });
       }
       else {
@@ -234,7 +236,7 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
     }
 
     const user = await User.findById({ _id: userId }).select({
-      firstName: true, lastName: true, imageUrl: true
+      firstName: true, lastName: true, imageUrl: true, publicKey: true
     }).exec();
 
     if (!user) {
@@ -244,12 +246,7 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
     return res.status(200).json({
       success: true,
       message: "user check successfull",
-      user: {
-        _id: user?._id,
-        firstName: user?.firstName,
-        lastName: user?.lastName,
-        imageUrl: user?.imageUrl
-      }
+      user: user
     });
   }
   catch (error) {

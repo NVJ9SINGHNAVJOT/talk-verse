@@ -25,7 +25,8 @@ export type AcceptRequestRs = {
         lastName: string,
         imageUrl?: string
     },
-    newChatId: string
+    newChatId: string,
+    newFriendPublicKey: string
 }
 
 export type CheckOnlineFriendsRs = {

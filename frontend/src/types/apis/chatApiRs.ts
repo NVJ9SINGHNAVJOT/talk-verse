@@ -7,7 +7,11 @@ export type ChatBarDataRs = {
     message: string,
     friends?: Friend[],
     groups?: SoAddedInGroup[],
-    chatBarData?: ChatBarData[]
+    chatBarData?: ChatBarData[],
+    friendPublicKeys?: {
+        friendId: string,
+        publicKey: string
+    }[]
 }
 
 export type GetChatMessagesRs = {

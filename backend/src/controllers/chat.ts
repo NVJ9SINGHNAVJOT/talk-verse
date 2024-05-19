@@ -30,6 +30,12 @@ type BarData = {
     groupName?: string,
     gpImageUrl?: string
 }
+
+type FriendPublicKey = {
+    friendId: string,
+    publicKey: string
+}
+
 export const chatBarData = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = (req as CustomRequest).userId;
@@ -42,7 +48,7 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
             .select({ friends: true, chatBarOrder: true })
             .populate({
                 path: 'friends.friendId',
-                select: 'firstName lastName imageUrl',
+                select: 'firstName lastName imageUrl publicKey',
             })
             .exec();
 
@@ -59,8 +65,9 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
             });
         }
 
-        // sort as per chatBar
-        const chatBar: (BarData)[] = [];
+        // chatBar data and friends public key pairs
+        const chatBar: BarData[] = [];
+        const friendPublicKeys: FriendPublicKey[] = [];
 
         // combine user friends and their chatId in array and push in chatbar 
         const friends = userFriends?.friends?.map((item) => {
@@ -69,9 +76,10 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
                 firstName: item.friendId.firstName,
                 lastName: item.friendId.lastName,
                 imageUrl: item.friendId.imageUrl,
-                chatId: item.chatId.toString(),
+                chatId: item.chatId._id.toString(),
             };
             chatBar.push(newValue);
+            friendPublicKeys.push({ friendId: item.friendId._id, publicKey: item.friendId.publicKey })
             return newValue;
         }
         );
@@ -98,7 +106,8 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
             message: 'chat bar data send successfully',
             friends: friends,
             groups: groups,
-            chatBarData: sortedBarData
+            chatBarData: sortedBarData,
+            friendPublicKeys: friendPublicKeys
         });
 
     } catch (error) {
@@ -137,8 +146,8 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
 
         const messages = await Message.find(query)
             .sort({ createdAt: -1 })
-            .limit(20)
-            .select({ uuId: true, isFile: true, chatId: true, from: true, text: true, createdAt: true, _id: false })
+            .limit(15)
+            .select({ uuId: true, isFile: true, chatId: true, from: true, fromText: true, toText: true, createdAt: true, _id: false })
             .lean()
             .exec();
 
@@ -154,6 +163,19 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
                 message: 'no messages yet for this chatId'
             });
         }
+
+        const newMessages: SoMessageRecieved[] = [];
+
+        messages.forEach((message) => {
+            newMessages.push({
+                uuId: message.uuId,
+                isFile: message.isFile,
+                chatId: message.chatId._id.toString(),
+                from: message.from._id.toString(),
+                text: message.from._id.toString() === userId ? message.fromText : message.toText,
+                createdAt: message.createdAt.toUTCString()
+            } as SoMessageRecieved);
+        });
 
         return res.status(200).json({
             success: true,
@@ -272,7 +294,7 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
             try {
                 await Message.create({
                     uuId: uuId, isFile: true, chatId: data.mainId, from: userId,
-                    to: data.to, text: secUrl, createdAt: createdAt
+                    to: data.to, fromText: secUrl, toText: secUrl, createdAt: createdAt
                 });
                 if (twoUser.offline.length === 1) {
                     await UnseenCount.updateOne({ userId: twoUser.offline[0], mainId: data.mainId }, { $inc: { count: 1 } });
@@ -325,7 +347,7 @@ export const groupMessages = async (req: Request, res: Response): Promise<Respon
 
         const gpMessages = await GpMessage.find(query)
             .sort({ createdAt: -1 })
-            .limit(20)
+            .limit(15)
             .select({ uuId: true, isFile: true, from: true, to: true, text: true, createdAt: true, _id: false })
             .populate({
                 path: "from",

@@ -11,6 +11,7 @@ const MainNavbar = () => {
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.user.user);
   const authUser = useAppSelector((state) => state.auth.authUser);
+  const myPrivateKey = useAppSelector((state) => state.messages.myPrivateKey);
   const [menu, setMenu] = useState<boolean>(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuRefExclude = useRef<HTMLDivElement>(null);
@@ -31,7 +32,11 @@ const MainNavbar = () => {
 
   const talkHandler = () => {
     if (authUser) {
-      navigate("/talk");
+      if (myPrivateKey !== undefined) {
+        navigate("/talk");
+      } else {
+        navigate("/checkKey");
+      }
     } else {
       navigate("/login");
     }

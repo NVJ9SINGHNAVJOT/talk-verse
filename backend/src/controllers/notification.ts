@@ -180,7 +180,8 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
         }
 
         // check user exist or not for req id
-        const otherUser = await User.findById({ _id: data.acceptUserId }).select({ firstName: true, lastName: true, imageUrl: true }).exec();
+        const otherUser = await User.findById({ _id: data.acceptUserId }).
+            select({ firstName: true, lastName: true, imageUrl: true, publicKey: true }).exec();
 
         if (!otherUser) {
             return errRes(res, 400, 'user not present for given id');
@@ -209,7 +210,7 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
         // now add acceptUserId in friend list of user
         const user2 = await User.findByIdAndUpdate({ _id: userId }, { $push: { friends: { friendId: data.acceptUserId, chatId: chat?._id } } },
             { new: true })
-            .select({ chatBarOrder: true, firstName: true, lastName: true, imageUrl: true }).exec();
+            .select({ chatBarOrder: true, firstName: true, lastName: true, imageUrl: true, publicKey: true }).exec();
 
         user1?.chatBarOrder.unshift(chat._id);
         await user1?.save();
@@ -231,7 +232,8 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
                 chatId: chat._id,
                 firstName: user2.firstName,
                 lastName: user2.lastName,
-                imageUrl: user2.imageUrl
+                imageUrl: user2.imageUrl,
+                publicKey: user2.publicKey
             };
             emitSocketEvent(req, clientE.REQUEST_ACCEPTED, sdata, socketId);
             emitSocketEvent(req, clientE.SET_USER_ONLINE, user2._id.toString(), socketId);
@@ -248,7 +250,8 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
             success: true,
             message: 'request accepted successfully',
             newFriend: otherUser,
-            newChatId: chat._id
+            newChatId: chat._id,
+            newFriendPublicKey: otherUser.publicKey
         });
 
     } catch (error) {

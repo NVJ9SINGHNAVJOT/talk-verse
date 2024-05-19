@@ -12,6 +12,7 @@ export type SoRequestAccepted = {
     firstName: string,
     lastName: string,
     imageUrl?: string,
+    publicKey: string
 }
 export type SoAddedInGroup = {
     _id: string,
@@ -42,7 +43,8 @@ export type SoGroupMessageRecieved = {
 export type SoSendMessage = {
     chatId: string,
     to: string,
-    text: string
+    fromText: string,
+    toText: string
 }
 export type SoSendGroupMessage = {
     _id: string,

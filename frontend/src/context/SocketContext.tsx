@@ -6,7 +6,9 @@ import {
   setUserRequests,
 } from "@/redux/slices/chatSlice";
 import {
+  PublicKeys,
   setMyId,
+  setPublicKeys,
   setUnseenMessages,
   UnseenMessages,
 } from "@/redux/slices/messagesSlice";
@@ -117,6 +119,13 @@ export default function SocketProvider({ children }: ContextProviderProps) {
             if (res2.friends) dispatch(setFriends(res2.friends));
             if (res2.groups) dispatch(setGroups(res2.groups));
             if (res2.chatBarData) dispatch(setChatBarData(res2.chatBarData));
+            if (res2.friendPublicKeys) {
+              const newFriendKeys: PublicKeys = {};
+              res2.friendPublicKeys.forEach((data) => {
+                newFriendKeys[data.friendId] = data.publicKey;
+              });
+              dispatch(setPublicKeys(newFriendKeys));
+            }
           }
 
           if (res3.success === true && res3.onlineFriends) {

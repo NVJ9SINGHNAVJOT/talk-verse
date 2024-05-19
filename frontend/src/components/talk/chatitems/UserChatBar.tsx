@@ -28,7 +28,11 @@ import {
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import GroupBarItem from "@/components/talk/chatItems/GroupBarItem";
-import { addNewUnseen } from "@/redux/slices/messagesSlice";
+import {
+  addNewUnseen,
+  addPublicKey,
+  PublicKey,
+} from "@/redux/slices/messagesSlice";
 import { SoAddedInGroup } from "@/types/socket/eventTypes";
 import FriendBarItem from "@/components/talk/chatItems/FriendBarItem";
 
@@ -58,6 +62,12 @@ const UserChatBar = () => {
         imageUrl: response.newFriend.imageUrl,
         chatId: response.newChatId,
       };
+      dispatch(
+        addPublicKey({
+          userId: response.newFriend._id,
+          publicKey: response.newFriendPublicKey,
+        } as PublicKey)
+      );
       dispatch(addFriend(newData));
       dispatch(addNewUnseen(response.newChatId));
       dispatch(addChatBarData(newData));

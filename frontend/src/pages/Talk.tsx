@@ -9,6 +9,7 @@ import { setTalkPageLoading } from "@/redux/slices/loadingSlice";
 import { useDispatch } from "react-redux";
 
 const Talk = () => {
+  const myPrivateKey = useAppSelector((state) => state.messages.myPrivateKey);
   const { setupSocketConnection, disconnectSocket } = useSocketContext();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -18,10 +19,13 @@ const Talk = () => {
     dispatch(setTalkPageLoading(true));
     const getSocket = async () => {
       try {
-        await setupSocketConnection();
+        if (myPrivateKey !== undefined) {
+          await setupSocketConnection();
+        } else {
+          navigate("/checkKey");
+        }
       } catch (error) {
         toast.error("Error while connecting");
-        navigate("/error");
       }
     };
     getSocket();

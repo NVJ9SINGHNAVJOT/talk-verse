@@ -34,6 +34,8 @@ const Chat = () => {
   const lastMainId = useAppSelector((state) => state.chat.lastMainId);
   const pmessages = useAppSelector((state) => state.messages.pMess);
   const currUser = useAppSelector((state) => state.user.user);
+  const myPublicKey = useAppSelector((state) => state.user.user?.myPublicKey);
+  const publicKeys = useAppSelector((state) => state.messages.publicKeys);
   const [workModal, setWorkModal] = useState<boolean>(false);
   const dispatch = useDispatch();
   const { socket } = useSocketContext();
@@ -173,8 +175,19 @@ const Chat = () => {
       toast.error("Invalid chat");
       return;
     }
+    if (!myPublicKey || !publicKeys[currFriendId]) {
+      toast.error("Encryption keys not present for chat");
+      return;
+    }
 
-    sendMessageEvent(socket, chatId, currFriendId, data.text);
+    sendMessageEvent(
+      socket,
+      chatId,
+      currFriendId,
+      data.text,
+      myPublicKey,
+      publicKeys[currFriendId]
+    );
     if (!lastMainId || lastMainId !== chatId) {
       dispatch(setFriendToFirst(chatId));
     }
