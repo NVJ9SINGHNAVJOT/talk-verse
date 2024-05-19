@@ -13,7 +13,6 @@ export default defineConfig(({ command, mode }) => {
       "process.env.REACT_APP_ENVIRONMENT": JSON.stringify(env.REACT_APP_ENVIRONMENT),
       "process.env.GROUP_IV": JSON.stringify(env.GROUP_IV),
       "process.env.GROUP_KEY": JSON.stringify(env.GROUP_KEY),
-      "process.env.G_ALGORITHM": JSON.stringify(env.G_ALGORITHM),
       "process.env.TEST_P_KEY": JSON.stringify(env.TEST_P_KEY),
       "process.env.ERROR_MESSAGE": JSON.stringify(env.ERROR_MESSAGE),
       "process.env.SERVER_KEY": JSON.stringify(env.SERVER_KEY),

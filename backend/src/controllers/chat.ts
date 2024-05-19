@@ -180,7 +180,7 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
         return res.status(200).json({
             success: true,
             message: 'messages for chatid successfull',
-            messages: messages
+            messages: newMessages
         });
 
     } catch (error) {

@@ -7,9 +7,9 @@ configDotenv();
 // check authentication for socket
 export const checkUserSocket = async (socket: Socket): Promise<boolean> => {
     try {
-        const api_key = socket.handshake.headers.authorization?.replace("Bearer ", "");
+        const serverKey = socket.handshake.headers.authorization?.replace("Bearer ", "");
 
-        if (!api_key || api_key !== process.env.SERVER_KEY) {
+        if (!serverKey || serverKey !== process.env.SERVER_KEY) {
             return false;
         }
 

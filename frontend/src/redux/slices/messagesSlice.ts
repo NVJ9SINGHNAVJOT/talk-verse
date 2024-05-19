@@ -102,8 +102,8 @@ const messagesSlice = createSlice({
                     else {
                         action.payload.text = errorMessage;
                     }
-                    state.pMess.unshift(action.payload);
                 }
+                state.pMess.unshift(action.payload);
             }
             else if (action.payload.from !== state.myId) {
                 const key = action.payload.chatId;

@@ -17,8 +17,8 @@ export async function fetchApi
             Object.entries(headers ?? {}).forEach(([key, value]) => requestHeaders.append(key, value));
         }
 
-        // Backend servers can be accessed with apikey only
-        requestHeaders.append("Api_Key", process.env.SERVER_KEY as string);
+        // Backend servers can be accessed with server key only
+        requestHeaders.append("Authorization", process.env.SERVER_KEY as string);
 
         // parameters added to url
         if (params) {

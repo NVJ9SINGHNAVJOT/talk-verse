@@ -6,7 +6,7 @@ import { cloudinaryConnect } from '@/config/cloudinary';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { configDotenv } from 'dotenv';
-import apiKey from "@/middlewares/apiKey";
+import serverKey from "@/middlewares/apiKey";
 import authRoutes from '@/routes/authRoutes';
 import notificationRoutes from '@/routes/notificationRoutes';
 import chatRoutes from '@/routes/chatRoutes';
@@ -25,8 +25,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-// server only accessible with key
-app.use(apiKey);
+// server only accessible with serverKey
+app.use(serverKey);
 
 // connect cloudinary
 cloudinaryConnect();

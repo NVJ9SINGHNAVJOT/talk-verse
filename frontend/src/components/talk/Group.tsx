@@ -103,7 +103,7 @@ const Group = () => {
             setStop(true);
           } else if (response.messages && response.messages.length > 0) {
             // no further messages for this group
-            if (response.messages.length < 20) {
+            if (response.messages.length < 15) {
               setStop(true);
             }
             dispatch(addGpMessages(response.messages));

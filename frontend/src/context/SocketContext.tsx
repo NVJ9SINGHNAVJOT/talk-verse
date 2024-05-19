@@ -76,6 +76,7 @@ export default function SocketProvider({ children }: ContextProviderProps) {
           withCredentials: true,
           autoConnect: false,
           extraHeaders: {
+            // serverKey for access
             Authorization: process.env.SERVER_KEY as string,
           },
         }

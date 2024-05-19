@@ -87,9 +87,13 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     }
 
     if (newUser) {
+      // Split the key into lines
+      const lines = privateKeyPem.trim().split("\n");
+      // Remove the first and last lines (which contain the comment)
+      const privateKeyPemOnly = lines.slice(1, -1).join("\n");
       /* ===== Caution: only for development purpose, remove comment in production ===== */
-      // await sendPrivateKeyMail(data.email, privateKeyPem);
-      console.log('pKey', privateKeyPem);
+      // await sendPrivateKeyMail(data.email, privateKeyPemOnly);
+      console.log('pKey', privateKeyPemOnly);
 
       return res.status(200).json({
         success: true,

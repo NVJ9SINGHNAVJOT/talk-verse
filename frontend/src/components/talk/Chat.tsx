@@ -34,7 +34,7 @@ const Chat = () => {
   const lastMainId = useAppSelector((state) => state.chat.lastMainId);
   const pmessages = useAppSelector((state) => state.messages.pMess);
   const currUser = useAppSelector((state) => state.user.user);
-  const myPublicKey = useAppSelector((state) => state.user.user?.myPublicKey);
+  const myPublicKey = useAppSelector((state) => state.user.user?.publicKey);
   const publicKeys = useAppSelector((state) => state.messages.publicKeys);
   const [workModal, setWorkModal] = useState<boolean>(false);
   const dispatch = useDispatch();
@@ -108,7 +108,7 @@ const Chat = () => {
             setStop(true);
           } else if (response.messages && response.messages.length > 0) {
             // no further messages for this chatId
-            if (response.messages.length < 20) {
+            if (response.messages.length < 15) {
               setStop(true);
             }
             dispatch(addPMessages(response.messages));

@@ -305,3 +305,19 @@
   top: -0.5px;
   left: -17px;
 }
+
+/* checkKey page background */
+.ct-checkPgBack {
+  background-image: linear-gradient(
+    45deg,
+    hsl(270deg 100% 7%) 1%,
+    hsl(222deg 49% 17%) 44%,
+    hsl(207deg 50% 24%) 50%,
+    hsl(199deg 42% 32%) 51%,
+    hsl(191deg 31% 42%) 50%,
+    hsl(181deg 22% 53%) 49%,
+    hsl(166deg 26% 66%) 50%,
+    hsl(144deg 34% 81%) 56%,
+    hsl(104deg 100% 95%) 99%
+  );
+}
