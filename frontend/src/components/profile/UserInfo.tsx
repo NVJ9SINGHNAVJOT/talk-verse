@@ -145,7 +145,7 @@ const UserInfo = () => {
                 className=" w-full h-64 aspect-auto "
               />
             ) : (
-              <RxAvatar className=" w-full aspect-auto" />
+              <RxAvatar className=" w-full h-64 aspect-auto text-white" />
             )}
           </div>
           {selectedFile && !uploading ? (
