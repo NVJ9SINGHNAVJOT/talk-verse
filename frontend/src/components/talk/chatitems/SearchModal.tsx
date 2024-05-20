@@ -95,7 +95,7 @@ const SearchModal = (props: SearchModalProps) => {
                     ) : (
                       <RxAvatar className="w-10 h-10 aspect-auto" />
                     )}
-                    <div>{user.userName}</div>
+                    <div className=" truncate">{user.userName}</div>
                     <CiCirclePlus
                       onClick={() => sendRequest(user._id)}
                       className=" text-white w-8 h-8 aspect-auto cursor-pointer hover:bg-white hover:text-black rounded-full"

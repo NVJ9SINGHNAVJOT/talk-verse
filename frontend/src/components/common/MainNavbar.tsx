@@ -23,14 +23,23 @@ const MainNavbar = () => {
   };
 
   const homeHandler = () => {
+    if (menu) {
+      setMenu(false);
+    }
     navigate("/");
   };
 
   const aboutHandler = () => {
+    if (menu) {
+      setMenu(false);
+    }
     navigate("/about");
   };
 
   const talkHandler = () => {
+    if (menu) {
+      setMenu(false);
+    }
     if (authUser) {
       if (myPrivateKey !== undefined) {
         navigate("/talk");

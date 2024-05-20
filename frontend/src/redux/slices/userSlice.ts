@@ -9,12 +9,22 @@ export type User = {
     publicKey: string
 }
 
+export type Profile = {
+    email: string,
+    userName: string,
+    gender: string,
+    contactNumber: number,
+    bio: string
+}
+
 interface UserState {
     user: User | null,
+    profile: Profile | null
 }
 
 const initialState = {
     user: null,
+    profile: null
 } satisfies UserState as UserState;
 
 const userSlice = createSlice({
@@ -24,8 +34,16 @@ const userSlice = createSlice({
         setUser(state, action: PayloadAction<User | null>) {
             state.user = action.payload;
         },
+        setProfile(state, action: PayloadAction<Profile | null>) {
+            state.profile = action.payload;
+        },
+        setProfileImage(state, action: PayloadAction<string>) {
+            if (state.user) {
+                state.user.imageUrl = action.payload;
+            }
+        }
     },
 });
 
-export const { setUser } = userSlice.actions;
+export const { setUser, setProfile, setProfileImage } = userSlice.actions;
 export default userSlice.reducer;

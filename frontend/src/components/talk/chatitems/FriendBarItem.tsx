@@ -46,7 +46,7 @@ const FriendBarItem = (props: FriendBarItemsProps) => {
         ) : (
           <RxAvatar className=" sm:size-8 lg:size-11 aspect-square text-white rounded-full  ring-1 ring-slate-400" />
         )}
-        <p className=" pl-4 text-white sm:text-[0.9rem] lg:text-[1rem] pb-2">
+        <p className=" pl-4 text-white sm:text-[0.9rem] lg:text-[1rem] pb-2 truncate ">
           {friend.firstName + " " + friend.lastName}
         </p>
       </div>

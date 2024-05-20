@@ -1,6 +1,6 @@
 const BASE_URL_SERVER = process.env.REACT_APP_BASE_URL_SERVER as string;
 
-// AUTH ENDPOINTS
+// auth endpoints
 export const authEndPoints = {
   SIGNUP: BASE_URL_SERVER + "/auth/signup",
   OTP: BASE_URL_SERVER + "/auth/sendOtp",
@@ -9,6 +9,13 @@ export const authEndPoints = {
   LOGOUT: BASE_URL_SERVER + "/auth/logout"
 };
 
+export const profileEndPoints = {
+  PROFILE_DETAILS: BASE_URL_SERVER + "/profile/getDetails",
+  SET_PROFILE_IMAGE: BASE_URL_SERVER + "/profile/updateProfileImage",
+  SET_PROFILE_DETAILS: BASE_URL_SERVER + "/profile/updateUserDetails"
+};
+
+// notification endpoints
 export const notificationEndPoints = {
   GET_USERS: BASE_URL_SERVER + "/notification/getUsers",
   SEND_REQUEST: BASE_URL_SERVER + "/notification/sendRequest",
@@ -20,6 +27,7 @@ export const notificationEndPoints = {
   SET_ORDER: BASE_URL_SERVER + "/notification/setOrder"
 };
 
+// chat endpoints
 export const chatEndPoints = {
   CHAT_BAR_DATA: BASE_URL_SERVER + "/chat/chatBarData",
   CHAT_MESSAGES: BASE_URL_SERVER + "/chat/chatMessages",

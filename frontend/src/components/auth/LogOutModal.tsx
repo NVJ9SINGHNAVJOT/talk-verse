@@ -1,5 +1,5 @@
 import { setAuthUser } from "@/redux/slices/authSlice";
-import { setUser } from "@/redux/slices/userSlice";
+import { setProfile, setUser } from "@/redux/slices/userSlice";
 import { logOutApi } from "@/services/operations/authApi";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +16,7 @@ const LogOutModal = (props: LogOutModalPros) => {
   const logOut = async () => {
     props.setMenuOpen(false);
     navigate("/");
+    dispatch(setProfile(null));
     dispatch(setUser(null));
     dispatch(setAuthUser(false));
     const response = await logOutApi();

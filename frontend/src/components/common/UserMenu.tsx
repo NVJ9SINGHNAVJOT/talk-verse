@@ -58,6 +58,7 @@ const UserMenu = () => {
       >
         <div
           onClick={() => {
+            setMenuOpen(false);
             navigate("/profile");
           }}
           className=" cursor-pointer bg-black hover:bg-grayblack py-1 px-6"
@@ -65,13 +66,17 @@ const UserMenu = () => {
           Profile
         </div>
         <div
-          onClick={() => navigate("/profile/settings")}
+          onClick={() => {
+            setMenuOpen(false);
+            navigate("/profile/settings");
+          }}
           className=" cursor-pointer bg-black hover:bg-grayblack py-1 px-6"
         >
           Settings
         </div>
         <div
           onClick={() => {
+            setMenuOpen(false);
             setTogLogO(true);
           }}
           className=" cursor-pointer bg-black hover:bg-grayblack py-1 px-6"

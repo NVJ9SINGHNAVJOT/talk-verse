@@ -5,7 +5,7 @@ import SearchModal from "@/components/talk/chatItems/SearchModal";
 import CreateGroup from "@/components/talk/chatItems/CreateGroupModal";
 import { useSocketContext } from "@/context/SocketContext";
 import userChatBarEvents from "@/socket/events/userChatBarEvents";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import { useAppSelector } from "@/redux/store";
 import { acceptRequestApi } from "@/services/operations/notificationApi";
@@ -17,13 +17,6 @@ import {
   ChatBarData,
   deleteUserRequest,
   Friend,
-  resetTyping,
-  setChatBarData,
-  setFriends,
-  setGroups,
-  setLastMainId,
-  setOnlineFriend,
-  setUserRequests,
 } from "@/redux/slices/chatSlice";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
@@ -85,18 +78,6 @@ const UserChatBar = () => {
     setIsCreateGroupOpen(!isCreateGroupOpen);
   };
 
-  useEffect(() => {
-    return () => {
-      dispatch(setChatBarData([]));
-      dispatch(setFriends([]));
-      dispatch(setGroups([]));
-      dispatch(setOnlineFriend([]));
-      dispatch(resetTyping());
-      dispatch(setLastMainId(""));
-      dispatch(setUserRequests([]));
-    };
-  }, []);
-
   return (
     <div className="w-full h-full bg-[#0D1117]">
       {/* chat top bar */}
@@ -146,7 +127,7 @@ const UserChatBar = () => {
                       ) : (
                         <RxAvatar className="w-10 h-10 aspect-auto" />
                       )}
-                      <div>{user.userName}</div>
+                      <div className=" truncate">{user.userName}</div>
                       <CiCirclePlus
                         onClick={() => acceptReq(user._id)}
                         className=" text-white w-8 h-8 aspect-auto cursor-pointer hover:bg-white hover:text-black rounded-full"

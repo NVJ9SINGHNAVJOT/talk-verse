@@ -260,9 +260,7 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
 
 export const logOut = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const token =
-      req.cookies[process.env.TOKEN_NAME as string] ||
-      req.header("Authorization")?.replace("Bearer ", "");
+    const token = req.cookies[process.env.TOKEN_NAME as string];
 
     if (!token) {
       return res.status(200).json({

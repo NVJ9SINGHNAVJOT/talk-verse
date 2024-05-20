@@ -17,7 +17,7 @@ export interface IUser extends Document {
     publicKey: string;
     gender?: string;
     dateOfBirth?: string;
-    about?: string;
+    bio?: string;
     contactNumber?: number;
     imageUrl?: string;
     userToken?: mongoose.Types.ObjectId & IToken;
@@ -61,19 +61,19 @@ const userSchema = new Schema<IUser>({
     },
     gender: {
         type: String,
+        enum: ['Male', 'Female', 'Other'],
         trim: true
     },
     dateOfBirth: {
         type: String,
         trim: true
     },
-    about: {
+    bio: {
         type: String,
         trim: true
     },
     contactNumber: {
         type: Number,
-        trim: true
     },
     imageUrl: {
         type: String,

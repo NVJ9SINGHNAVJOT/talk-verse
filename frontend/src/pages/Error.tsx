@@ -1,4 +1,7 @@
+import { useNavigate } from "react-router-dom";
+
 const Error = () => {
+  const navigate = useNavigate();
   return (
     <div className="w-full flex sm:flex-col md:flex-row bg-grayblack h-[calc(100vh-4rem)] justify-around items-center gap-x-4">
       <p className="text-[10rem] lg:text-[12rem] font-bold tracking-wider text-white mx-4">
@@ -16,6 +19,7 @@ const Error = () => {
         <button
           className="w-auto mt-16 border rounded md py-4 px-8 text-center
           hover:text-black hover:bg-white transition-all ease-in-out"
+          onClick={() => navigate("/")}
         >
           Take me there!
         </button>

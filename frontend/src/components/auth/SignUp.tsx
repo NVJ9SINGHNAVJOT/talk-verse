@@ -33,10 +33,10 @@ const SignUp = (props: SignInProps) => {
   const { toggleSignIn } = props;
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   const handleimgTagRefClick = () => {
-    fileInputRef.current?.click();
+    imageInputRef.current?.click();
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,8 +55,8 @@ const SignUp = (props: SignInProps) => {
         setSelectedFile(null);
       }
 
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+      if (imageInputRef.current) {
+        imageInputRef.current.value = "";
       }
     }
   };
@@ -142,7 +142,7 @@ const SignUp = (props: SignInProps) => {
           <input
             id="imgInput"
             name="imageInput"
-            ref={fileInputRef}
+            ref={imageInputRef}
             className="absolute w-5 h-5  hidden"
             type="file"
             accept=".jpg ,.jpeg, .png"

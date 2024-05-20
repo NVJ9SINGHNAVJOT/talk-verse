@@ -10,6 +10,7 @@ import serverKey from "@/middlewares/apiKey";
 import authRoutes from '@/routes/authRoutes';
 import notificationRoutes from '@/routes/notificationRoutes';
 import chatRoutes from '@/routes/chatRoutes';
+import profileRoutes from "@/routes/profileRoutes";
 import corsOptions from "@/config/corsOptions";
 
 configDotenv();
@@ -35,6 +36,7 @@ cloudinaryConnect();
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/notification', notificationRoutes);
 app.use('/api/v1/chat', chatRoutes);
+app.use('/api/v1/profile', profileRoutes);
 
 app.get('/', (_req: Request, res: Response) => {
     res.json({
