@@ -30,9 +30,12 @@ export type PublicKey = {
     publicKey: string
 }
 
+type PMessages = Record<string, SoMessageRecieved[]>
+type GpMessages = Record<string, GroupMessages[]>
+
 interface messagesState {
-    pMess: SoMessageRecieved[],
-    gpMess: GroupMessages[],
+    pMess: PMessages,
+    gpMess: GpMessages,
     currFriendId: string | undefined,
     mainChatId: string | undefined,
     mainGroupId: string | undefined,
@@ -43,8 +46,8 @@ interface messagesState {
 }
 
 const initialState = {
-    pMess: [],
-    gpMess: [],
+    pMess: {},
+    gpMess: {},
     currFriendId: undefined,
     mainChatId: undefined,
     mainGroupId: undefined,
@@ -59,23 +62,6 @@ const messagesSlice = createSlice({
     initialState,
     reducers: {
         // two users chat messages
-        setPMessages(state, action: PayloadAction<SoMessageRecieved[]>) {
-            if (state.myPrivateKey !== undefined) {
-                for (let index = 0; index < action.payload.length; index++) {
-                    if (action.payload[index].isFile === false) {
-                        const newText = decryptPMessage(action.payload[index].text, state.myPrivateKey);
-                        if (newText) {
-                            action.payload[index].text = newText;
-                        }
-                        else {
-                            action.payload[index].text = errorMessage;
-                        }
-                    }
-                }
-                state.pMess = action.payload;
-            }
-
-        },
         addPMessages(state, action: PayloadAction<SoMessageRecieved[]>) {
             if (state.myPrivateKey !== undefined) {
                 for (let index = 0; index < action.payload.length; index++) {
@@ -89,23 +75,35 @@ const messagesSlice = createSlice({
                         }
                     }
                 }
-                state.pMess = state.pMess.concat(action.payload);
+                if (state.pMess[action.payload[0].chatId] === undefined) {
+                    state.pMess[action.payload[0].chatId] = action.payload;
+                }
+                else {
+                    state.pMess[action.payload[0].chatId] = state.pMess[action.payload[0].chatId].concat(action.payload);
+                }
             }
         },
         addLivePMessage(state, action: PayloadAction<SoMessageRecieved>) {
-            if (state.mainChatId && action.payload.chatId === state.mainChatId) {
-                if (state.myPrivateKey && action.payload.isFile === false) {
-                    const newText = decryptPMessage(action.payload.text, state.myPrivateKey);
-                    if (newText) {
-                        action.payload.text = newText;
-                    }
-                    else {
-                        action.payload.text = errorMessage;
-                    }
+            if (state.myPrivateKey && action.payload.isFile === false) {
+                const newText = decryptPMessage(action.payload.text, state.myPrivateKey);
+                if (newText) {
+                    action.payload.text = newText;
                 }
-                state.pMess.unshift(action.payload);
+                else {
+                    action.payload.text = errorMessage;
+                }
             }
-            else if (action.payload.from !== state.myId) {
+
+            // if no messages for chat then, this is first message
+            if (state.pMess[action.payload.chatId] === undefined) {
+                state.pMess[action.payload.chatId] = [action.payload];
+            }
+            else {
+                state.pMess[action.payload.chatId].unshift(action.payload);
+            }
+
+            // update unseen count if current chat is not active on display
+            if (state.mainChatId && action.payload.chatId !== state.mainChatId && action.payload.from !== state.myId) {
                 const key = action.payload.chatId;
                 setUnseenCount(key, state.unseenMessages[key] + 1);
                 if (state.unseenMessages && key in state.unseenMessages) {
@@ -115,20 +113,6 @@ const messagesSlice = createSlice({
         },
 
         // group chat messages
-        setGpMessages(state, action: PayloadAction<GroupMessages[]>) {
-            for (let index = 0; index < action.payload.length; index++) {
-                if (action.payload[index].isFile === false) {
-                    const newText = decryptGMessage(action.payload[index].text);
-                    if (newText) {
-                        action.payload[index].text = newText;
-                    }
-                    else {
-                        action.payload[index].text = errorMessage;
-                    }
-                }
-            }
-            state.gpMess = action.payload;
-        },
         addGpMessages(state, action: PayloadAction<GroupMessages[]>) {
             for (let index = 0; index < action.payload.length; index++) {
                 if (action.payload[index].isFile === false) {
@@ -141,22 +125,35 @@ const messagesSlice = createSlice({
                     }
                 }
             }
-            state.gpMess = state.gpMess.concat(action.payload);
+
+            if (state.gpMess[action.payload[0].to] === undefined) {
+                state.gpMess[action.payload[0].to] = action.payload;
+            }
+            else {
+                state.gpMess[action.payload[0].to] = state.gpMess[action.payload[0].to].concat(action.payload);
+            }
         },
         addLiveGpMessage(state, action: PayloadAction<GroupMessages>) {
-            if (state.mainGroupId && action.payload.to === state.mainGroupId) {
-                if (action.payload.isFile === false) {
-                    const newText = decryptGMessage(action.payload.text);
-                    if (newText) {
-                        action.payload.text = newText;
-                    }
-                    else {
-                        action.payload.text = errorMessage;
-                    }
+            if (action.payload.isFile === false) {
+                const newText = decryptGMessage(action.payload.text);
+                if (newText) {
+                    action.payload.text = newText;
                 }
-                state.gpMess.unshift(action.payload);
+                else {
+                    action.payload.text = errorMessage;
+                }
             }
-            else if (action.payload.from._id !== state.myId) {
+
+            // if no messages for group then, this is first message
+            if (state.gpMess[action.payload.to] === undefined) {
+                state.gpMess[action.payload.to] = [action.payload];
+            }
+            else {
+                state.gpMess[action.payload.to].unshift(action.payload);
+            }
+
+            // update unseen count if current group is not active on display
+            if (action.payload.from._id !== state.myId) {
                 const key = action.payload.to;
                 setUnseenCount(key, state.unseenMessages[key] + 1);
                 if (state.unseenMessages && key in state.unseenMessages) {
@@ -208,8 +205,8 @@ const messagesSlice = createSlice({
     },
 });
 
-export const { setPMessages, addPMessages, addLivePMessage,
-    setGpMessages, addGpMessages, addLiveGpMessage,
+export const { addPMessages, addLivePMessage,
+    addGpMessages, addLiveGpMessage,
     setCurrFriendId, setMainChatId, setMainGroupId, setMyId,
     setUnseenMessages, addNewUnseen, resetUnseenMessage,
     setPublicKeys, addPublicKey, setMyPrivateKey

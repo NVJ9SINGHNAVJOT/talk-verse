@@ -26,11 +26,9 @@ const loadingSlice = createSlice({
             state.createGroupLd = action.payload;
         },
         setApiCall(state, action: PayloadAction<string>) {
-             console.log('true')
             state.apiCalls[action.payload] = true;
         },
         removeApiCall(state, action: PayloadAction<string>) {
-            console.log('falase')
             state.apiCalls[action.payload] = false;
         }
     },
