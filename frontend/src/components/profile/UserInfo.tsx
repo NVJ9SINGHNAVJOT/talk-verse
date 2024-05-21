@@ -46,6 +46,9 @@ const UserInfo = () => {
   };
   const uploadProfileImage = async () => {
     setUploading(true);
+    const tId = toast.loading("Uploading Profile photo", {
+      position: "top-center",
+    });
     if (selectedFile) {
       const newForm = new FormData();
       newForm.append("imageFile", selectedFile);
@@ -62,6 +65,7 @@ const UserInfo = () => {
       toast.error("Error while uploading file");
     }
     setSelectedFile(null);
+    toast.dismiss(tId);
     setUploading(false);
   };
 
