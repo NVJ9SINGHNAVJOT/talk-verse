@@ -7,6 +7,16 @@ import { useAppSelector } from "@/redux/store";
 import { Skeleton } from "@/lib/shadcn-ui/components/ui/skeleton";
 import { setTalkPageLoading } from "@/redux/slices/loadingSlice";
 import { useDispatch } from "react-redux";
+import {
+  setChatBarData,
+  setFriends,
+  setGroups,
+  setOnlineFriend,
+  resetTyping,
+  setLastMainId,
+  setUserRequests,
+} from "@/redux/slices/chatSlice";
+import { setPublicKeys } from "@/redux/slices/messagesSlice";
 
 const Talk = () => {
   const myPrivateKey = useAppSelector((state) => state.messages.myPrivateKey);
@@ -29,10 +39,24 @@ const Talk = () => {
       }
     };
     getSocket();
-
+    
     return () => {
       disconnectSocket();
       dispatch(setTalkPageLoading(true));
+    };
+  }, []);
+  
+  // clean up for talk page
+  useEffect(() => {
+    return () => {
+      dispatch(setChatBarData([]));
+      dispatch(setFriends([]));
+      dispatch(setGroups([]));
+      dispatch(setOnlineFriend([]));
+      dispatch(resetTyping());
+      dispatch(setLastMainId(""));
+      dispatch(setUserRequests([]));
+      dispatch(setPublicKeys({}));
     };
   }, []);
 
