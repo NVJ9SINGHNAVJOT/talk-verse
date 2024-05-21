@@ -23,7 +23,8 @@ import Profile from "@/pages/Profile";
 import Dashboard from "@/components/profile/Dashboard";
 import Settings from "@/components/profile/Settings";
 import UserInfo from "@/components/profile/UserInfo";
-import ChekKey from "./pages/ChekKey";
+import ChekKey from "@/pages/ChekKey";
+import Contact from "@/pages/Contact";
 
 function App() {
   const pageRenderDivRef = useRef<HTMLDivElement>(null);
@@ -64,6 +65,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
 
           {/* open routes */}
           <Route element={<OpenRoute />}>
