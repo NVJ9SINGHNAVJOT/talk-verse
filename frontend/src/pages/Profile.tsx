@@ -1,4 +1,6 @@
+import { removeApiCall, setApiCall } from "@/redux/slices/loadingSlice";
 import { setProfile } from "@/redux/slices/userSlice";
+import { useAppSelector } from "@/redux/store";
 import { getProfileApi } from "@/services/operations/profileApi";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -6,7 +8,9 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const proifleMenu = ["Profile", "Dashboard", "Settings"];
+
 const Profile = () => {
+  const apiCalls = useAppSelector((state) => state.loading.apiCalls);
   const [loading, setLoading] = useState<boolean>(true);
   const [title, setTitle] = useState<string>();
   const navigate = useNavigate();
@@ -21,7 +25,13 @@ const Profile = () => {
 
   useEffect(() => {
     const getProfile = async () => {
+      if (apiCalls["getProfileApi"] === true) {
+        return;
+      }
+      /* ===== Caution: getProfileApi api call state management ===== */
+      dispacth(setApiCall("getProfileApi"));
       const response = await getProfileApi();
+      dispacth(removeApiCall("getProfileApi"));
       if (response && response.success === true) {
         dispacth(setProfile(response.userData));
         setLoading(false);

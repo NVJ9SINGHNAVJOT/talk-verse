@@ -1,15 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
+export type ApiCalls = Record<string, boolean>;
 
 interface LoadingState {
     talkPageLd: boolean,
     createGroupLd: boolean,
+    apiCalls: ApiCalls
 }
 
 const initialState = {
     talkPageLd: true,
     createGroupLd: false,
+    apiCalls: {}
 } satisfies LoadingState as LoadingState;
 
 const loadingSlice = createSlice({
@@ -22,8 +25,19 @@ const loadingSlice = createSlice({
         setCreateGroupLoading(state, action: PayloadAction<boolean>) {
             state.createGroupLd = action.payload;
         },
+        setApiCall(state, action: PayloadAction<string>) {
+             console.log('true')
+            state.apiCalls[action.payload] = true;
+        },
+        removeApiCall(state, action: PayloadAction<string>) {
+            console.log('falase')
+            state.apiCalls[action.payload] = false;
+        }
     },
 });
 
-export const { setTalkPageLoading, setCreateGroupLoading } = loadingSlice.actions;
+export const {
+    setTalkPageLoading, setCreateGroupLoading,
+    setApiCall, removeApiCall
+} = loadingSlice.actions;
 export default loadingSlice.reducer;
