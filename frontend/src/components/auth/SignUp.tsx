@@ -236,6 +236,8 @@ const SignUp = (props: SignInProps) => {
             {...register("userName", {
               required: true,
               pattern: /^[a-zA-Z][a-zA-Z0-9_-]{2,}$/,
+              maxLength: 10,
+              minLength: 3,
             })}
           />
           {errors.userName && (

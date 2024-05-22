@@ -1,6 +1,8 @@
 import { Profile } from "@/redux/slices/userSlice";
 import { useAppSelector } from "@/redux/store";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { FaEdit } from "react-icons/fa";
 
 export type NewProfileData = {
   userName: string;
@@ -10,14 +12,18 @@ export type NewProfileData = {
 };
 
 const Settings = () => {
+  const [disabled, setDisabled] = useState<string[]>([]);
   const profile = useAppSelector((state) => state.user.profile);
   const { register, handleSubmit } = useForm<Profile>({
     defaultValues: profile ? profile : {},
   });
 
-  // You can also set default values asynchronously (e.g., fetching from an API)
-  // Just make sure to handle any async operations before rendering the form.
-
+  const updateDisable = (value: string) => {
+    if (disabled.includes(value)) {
+      return;
+    }
+    setDisabled((prev) => [...prev, value]);
+  };
   const onSubmit = (data: Profile) => {
     // Handle form submission
     console.log(data);
@@ -32,18 +38,36 @@ const Settings = () => {
           <label className=" font-semibold">User Name</label>
           <input
             className=" bg-black text-white rounded-lg px-4 py-2 outline-none"
-            {...register("userName")}
+            {...register("userName", {
+              required: true,
+              pattern: /^[a-zA-Z][a-zA-Z0-9_-]{2,}$/,
+              maxLength: 10,
+              minLength: 3,
+            })}
             placeholder="Username"
-            disabled={true}
+            disabled={!disabled.includes("userName")}
+          />
+          <FaEdit
+            onClick={() => updateDisable("userName")}
+            className=" cursor-pointer size-4 fill-black"
           />
         </div>
 
         <div className=" flex gap-4">
           <label className=" self-start font-semibold">Bio</label>
           <textarea
-            className=" w-1/2  bg-black text-white rounded-lg px-4 py-2 outline-none"
-            {...register("bio")}
+            className=" w-1/2  bg-black text-white rounded-lg px-4 py-2 outline-none max-h-32"
+            {...register("bio", {
+              maxLength: 150,
+              minLength: 1,
+            })}
             placeholder="About Me"
+            disabled={!disabled.includes("bio")}
+            maxLength={100}
+          />
+          <FaEdit
+            onClick={() => updateDisable("bio")}
+            className=" cursor-pointer size-4 fill-black self-start"
           />
         </div>
 
@@ -53,6 +77,11 @@ const Settings = () => {
             className=" bg-black text-white rounded-lg px-4 py-2 outline-none"
             {...register("gender")}
             placeholder="Gender"
+            disabled={!disabled.includes("gender")}
+          />
+          <FaEdit
+            onClick={() => updateDisable("gender")}
+            className=" cursor-pointer size-4 fill-black"
           />
         </div>
 
@@ -62,6 +91,11 @@ const Settings = () => {
             className=" bg-black text-white rounded-lg px-4 py-2 outline-none"
             {...register("contactNumber")}
             placeholder="Contact Number"
+            disabled={!disabled.includes("contactNumber")}
+          />
+          <FaEdit
+            onClick={() => updateDisable("contactNumber")}
+            className=" cursor-pointer size-4 fill-black"
           />
         </div>
 
