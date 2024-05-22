@@ -1,5 +1,5 @@
-import OtherMessageCard from "@/components/talk/message/OtherMessageCard";
-import MessageCard from "@/components/talk/message/MessageCard";
+import OtherMessageCard from "@/components/core/talk/message/OtherMessageCard";
+import MessageCard from "@/components/core/talk/message/MessageCard";
 import { useEffect, useRef, useState } from "react";
 import { useAppSelector } from "@/redux/store";
 import { fileMessageApi, getMessagesApi } from "@/services/operations/chatApi";

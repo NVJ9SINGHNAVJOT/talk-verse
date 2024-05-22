@@ -1,8 +1,8 @@
 import { IoSearchOutline } from "react-icons/io5";
 import { FiPlus } from "react-icons/fi";
 import { FaRegBell } from "react-icons/fa";
-import SearchModal from "@/components/talk/chatItems/SearchModal";
-import CreateGroup from "@/components/talk/chatItems/CreateGroupModal";
+import SearchModal from "@/components/core/talk/chatItems/SearchModal";
+import CreateGroup from "@/components/core/talk/chatItems/CreateGroupModal";
 import { useSocketContext } from "@/context/SocketContext";
 import userChatBarEvents from "@/socket/events/userChatBarEvents";
 import { useRef, useState } from "react";
@@ -20,14 +20,14 @@ import {
 } from "@/redux/slices/chatSlice";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-import GroupBarItem from "@/components/talk/chatItems/GroupBarItem";
+import GroupBarItem from "@/components/core/talk/chatItems/GroupBarItem";
 import {
   addNewUnseen,
   addPublicKey,
   PublicKey,
 } from "@/redux/slices/messagesSlice";
 import { SoAddedInGroup } from "@/types/socket/eventTypes";
-import FriendBarItem from "@/components/talk/chatItems/FriendBarItem";
+import FriendBarItem from "@/components/core/talk/chatItems/FriendBarItem";
 
 const UserChatBar = () => {
   const [inChat, setInChat] = useState<string>("");

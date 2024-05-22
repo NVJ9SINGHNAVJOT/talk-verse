@@ -1,7 +1,7 @@
 import { useSocketContext } from "@/context/SocketContext";
 import useScrollTrigger from "@/hooks/useScrollTrigger";
-import GpMessageCard from "@/components/talk/message/GpMessageCard";
-import OtherGpMessageCard from "@/components/talk/message/OtherGpMessageCard";
+import GpMessageCard from "@/components/core/talk/message/GpMessageCard";
+import OtherGpMessageCard from "@/components/core/talk/message/OtherGpMessageCard";
 import { setGroupToFirst } from "@/redux/slices/chatSlice";
 import {
   addGpMessages,

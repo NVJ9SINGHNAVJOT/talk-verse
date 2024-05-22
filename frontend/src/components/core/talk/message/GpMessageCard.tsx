@@ -1,4 +1,4 @@
-import FileItem from "@/components/talk/message/FileItem";
+import FileItem from "@/components/core/talk/message/FileItem";
 import { GroupMessages } from "@/redux/slices/messagesSlice";
 import { getDTimeStamp } from "@/utils/getTime";
 import { memo } from "react";
