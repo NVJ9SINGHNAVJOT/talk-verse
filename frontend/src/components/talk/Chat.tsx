@@ -29,6 +29,7 @@ import WorkModal from "@/lib/modals/workmodal/WorkModal";
 import FileInputs from "./chatItems/FileInputs";
 import { Skeleton } from "@/lib/shadcn-ui/components/ui/skeleton";
 import { setApiCall } from "@/redux/slices/loadingSlice";
+import useScrollOnTop from "@/hooks/useScrollOnTop";
 
 const Chat = () => {
   const apiCalls = useAppSelector((state) => state.loading.apiCalls);
@@ -37,30 +38,32 @@ const Chat = () => {
   const currFriendId = useAppSelector((state) => state.messages.currFriendId);
   const mainChatId = useAppSelector((state) => state.messages.mainChatId);
   const lastMainId = useAppSelector((state) => state.chat.lastMainId);
-  const pmessages = useAppSelector((state) => state.messages.pMess);
+  const pMessages = useAppSelector((state) => state.messages.pMess);
   const currUser = useAppSelector((state) => state.user.user);
   const myPublicKey = useAppSelector((state) => state.user.user?.publicKey);
   const publicKeys = useAppSelector((state) => state.messages.publicKeys);
   const [workModal, setWorkModal] = useState<boolean>(false);
+  const [stop, setStop] = useState<boolean>(false);
+  const [trigger, setTrigger] = useState<boolean>(true);
+  const [toggleTrigger, setToggleTrigger] = useState<boolean>(true);
+  const [firstMounting, setFirstMounting] = useState(true);
+  const scrollableDivRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const { socket } = useSocketContext();
   const navigate = useNavigate();
   const { chatId } = useParams();
-  const [loading, setLoading] = useState<boolean>(true);
-  const [stop, setStop] = useState<boolean>(false);
-  const [trigger, setTrigger] = useState<boolean>(false);
-  const [initialLoad, setInitialLoad] = useState<boolean>(true);
-  const scrollableDivRef = useRef<HTMLDivElement>(null);
-  const stopFirstRender = useRef(true);
 
-  useScrollTrigger(scrollableDivRef, setLoading, loading, setTrigger, stop);
+  // initialLoad is for text input disable while messages re-render or render when chatId is changed
+  const [initialLoad, setInitialLoad] = useState<boolean>(true);
+
+  useScrollTrigger(scrollableDivRef, setTrigger, stop, toggleTrigger);
+  useScrollOnTop(scrollableDivRef);
 
   // clean up for chat page
   useEffect(() => {
     return () => {
       dispatch(setCurrFriendId(""));
       dispatch(setMainChatId(""));
-      setLoading(true), setStop(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -72,49 +75,52 @@ const Chat = () => {
       return;
     }
 
-    // this fucntion will only work once for every chatId
     const getInitialChat = async () => {
-      // save chatId from state
-      const staticChatId = chatId;
       // reset unseenCount for chatId
-      dispatch(resetUnseenMessage(staticChatId));
-      if (
-        chatIdStart[staticChatId] !== true &&
-        apiCalls[`getMessagesApi-${staticChatId}`] !== true
-      ) {
-        // api is getting called for first time for staticChatId
-        /* ===== Caution: getMessagesApi api call state management ===== */
-        dispatch(
-          setApiCall({ api: `getMessagesApi-${staticChatId}`, status: true })
-        );
-        dispatch(setChatIdStart(staticChatId));
+      dispatch(resetUnseenMessage(chatId));
 
-        // getLastCreatedAt if present in chatId messages and if not then create new date for current time
-        // and get messages
+      // this fucntion will only call api for a chatId messasges once
+      if (
+        chatIdStart[chatId] !== true &&
+        apiCalls[`getMessagesApi-${chatId}`] !== true
+      ) {
+        // api is getting called for first time for chatId and this hook will call this api only once
+        /* ===== Caution: getMessagesApi api call state management ===== */
+        dispatch(setApiCall({ api: `getMessagesApi-${chatId}`, status: true }));
+        dispatch(setChatIdStart(chatId));
+
+        /*
+          getLastCreatedAt if present in chatId messages and if not then create 
+          new date for current time and get messages
+        */
         let lastCreateAt;
-        if (pmessages[staticChatId] !== undefined) {
+        if (pMessages[chatId] !== undefined) {
           lastCreateAt =
-            pmessages[staticChatId][pmessages[staticChatId].length - 1]
-              .createdAt;
+            pMessages[chatId][pMessages[chatId].length - 1].createdAt;
         } else {
           lastCreateAt = new Date().toISOString();
         }
 
         // get messages for chatId
         const response: GetChatMessagesRs = await getMessagesApi(
-          staticChatId,
+          chatId,
           lastCreateAt
         );
 
-        // check response
+        // check response from api
         if (response) {
-          // no messages for chatId yet
-          if (!response.messages || response.messages.length < 15) {
-            dispatch(setChatIdEnd(staticChatId));
+          // no messages for chatId yet if lastCreated in not present in pMessages
+          // and if present then their are no futher messages for current chatId
+          if (
+            response.success === false ||
+            (response.messages && response.messages.length < 15)
+          ) {
+            dispatch(setChatIdEnd(chatId));
+            setStop(true);
           }
 
           // check if their is any overlapping for messages for chatId
-          if (pmessages[staticChatId] !== undefined && response.messages) {
+          if (response.messages && pMessages[chatId] !== undefined) {
             while (
               response.messages.length > 0 &&
               response.messages[0].createdAt > lastCreateAt
@@ -130,62 +136,89 @@ const Chat = () => {
         } else {
           toast.error("Error while getting messages for chat");
         }
-        setApiCall({ api: `getMessagesApi-${staticChatId}`, status: false });
+        dispatch(
+          setApiCall({ api: `getMessagesApi-${chatId}`, status: false })
+        );
       }
       setInitialLoad(false);
     };
     getInitialChat();
 
     return () => {
-      setInitialLoad(true);
+      setInitialLoad(true), setFirstMounting(true);
+      setStop(false), setToggleTrigger((prev) => !prev);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatId]);
 
   /* ===== infinite loading of messages ===== */
-  // useEffect(() => {
-  //   if (stopFirstRender.current === true) {
-  //     stopFirstRender.current = false;
-  //     return;
-  //   }
-  //   const getMessages = async () => {
-  //     if (chatId && currFriendId && chatId === mainChatId) {
-  //       if (response) {
-  //         // no messages yet for this chatId
-  //         if (response.success === false && !response.messages) {
-  //           setStop(true);
-  //         } else if (response.messages && response.messages.length > 0) {
-  //           // no further messages for this chatId
+  useEffect(() => {
+    if (!chatId || !currFriendId || !mainChatId || mainChatId !== chatId) {
+      navigate("/talk");
+      return;
+    }
 
-  //           if (response.messages.length < 15) {
-  //             setStop(true);
-  //           }
-  //         }
-  //       } else {
-  //         toast.error("Error while getting messages for chat");
-  //       }
-  //       setTimeout(() => {
-  //         setLoading(false);
-  //       }, 2000);
-  //     }
-  //   };
-  //   getMessages();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [trigger]);
+    if (firstMounting) {
+      setFirstMounting(false);
+      return;
+    }
+
+    const getMessages = async () => {
+      if (
+        apiCalls[`getMessagesApi-${chatId}`] !== true &&
+        chatIdStart[chatId] === true &&
+        chatIdEnd[chatId] !== true
+      ) {
+        /* ===== Caution: getMessagesApi api call state management ===== */
+        dispatch(setApiCall({ api: `getMessagesApi-${chatId}`, status: true }));
+
+        const response: GetChatMessagesRs = await getMessagesApi(
+          chatId,
+          pMessages[chatId][pMessages[chatId].length - 1].createdAt
+        );
+
+        if (response) {
+          // no futher messages for this chatId
+          if (
+            response.success === false ||
+            (response.messages && response.messages.length < 15)
+          ) {
+            dispatch(setChatIdEnd(chatId));
+            setStop(true);
+          }
+          if (response.messages) {
+            dispatch(addPMessages(response.messages));
+          }
+        } else {
+          toast.error("Error while getting messages for chat");
+        }
+
+        setTimeout(() => {
+          dispatch(
+            setApiCall({ api: `getMessagesApi-${chatId}`, status: false })
+          );
+        }, 2500);
+      }
+    };
+    getMessages();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trigger]);
 
   const sendFileMessg = async (file: File) => {
     if (chatId && currFriendId) {
-      /* for reference form data type required for api call
-            FileData = {
-            isGroup: string;  "0"  ,  "1"  0 is false and 1 is true for api call
-            mainId: string         
-  
-            to: string;
-            firstName?: string;
-            lastName?: string;
-            imageUrl?: string;
-          };
-        */
+      /* 
+        for reference form data type required for api call
+          FileData = {
+          isGroup: string;  "0"  ,  "1"  0 is false and 1 is true for api call
+          mainId: string         
+
+          to: string;
+          firstName?: string;
+          lastName?: string;
+          imageUrl?: string;
+        };
+      */
       setWorkModal(true);
       const sendFile = new FormData();
       sendFile.append("fileMessg", file);
@@ -265,16 +298,16 @@ const Chat = () => {
     <div className="w-full h-full">
       <div
         ref={scrollableDivRef}
-        className="w-full h-[90%] px-8 overflow-y-scroll flex flex-col-reverse scroll-smooth "
+        className="w-full h-[90%] px-8 overflow-y-scroll flex flex-col-reverse"
       >
         {/* messages for chat */}
-        {chatId !== undefined && pmessages[chatId] === undefined ? (
+        {chatId !== undefined && pMessages[chatId] === undefined ? (
           <div className=" w-5/6 text-white font-be-veitnam-pro text-2xl p-7 text-center mx-auto my-auto">
             Let's talk chill thrill!
           </div>
         ) : (
           chatId !== undefined &&
-          pmessages[chatId].map((message, index) => {
+          pMessages[chatId].map((message, index) => {
             if (message.from === currUser?._id) {
               return <MessageCard key={index} message={message} />;
             }

@@ -22,7 +22,7 @@ export const chatBarDataApi = async (): Promise<ChatBarDataRs> => {
     }
 };
 
-export const getMessagesApi = async (chatId: string, createdAt?: string): Promise<GetChatMessagesRs> => {
+export const getMessagesApi = async (chatId: string, createdAt: string): Promise<GetChatMessagesRs> => {
     try {
         const resData: GetChatMessagesRs = await fetchApi('GET', CHAT_MESSAGES, null, null,
             { 'chatId': chatId, 'createdAt': createdAt ? createdAt : "" });
@@ -48,7 +48,7 @@ export const fileMessageApi = async (data: FormData): Promise<boolean> => {
     }
 };
 
-export const getGroupMessagesApi = async (groupId: string, createdAt?: string): Promise<GetGroupMessagesRs> => {
+export const getGroupMessagesApi = async (groupId: string, createdAt: string): Promise<GetGroupMessagesRs> => {
     try {
         const resData: GetGroupMessagesRs = await fetchApi('GET', GROUP_MESSAGES, null, null,
             { 'groupId': groupId, 'createdAt': createdAt ? createdAt : "" });

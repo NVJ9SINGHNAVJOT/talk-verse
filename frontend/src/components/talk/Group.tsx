@@ -6,7 +6,8 @@ import { setGroupToFirst } from "@/redux/slices/chatSlice";
 import {
   addGpMessages,
   resetUnseenMessage,
-  setGpMessages,
+  setGroupIdEnd,
+  setGroupIdStart,
   setMainGroupId,
 } from "@/redux/slices/messagesSlice";
 import { useAppSelector } from "@/redux/store";
@@ -25,6 +26,8 @@ import { toast } from "react-toastify";
 import FileInputs from "./chatItems/FileInputs";
 import WorkModal from "@/lib/modals/workmodal/WorkModal";
 import { Skeleton } from "@/lib/shadcn-ui/components/ui/skeleton";
+import useScrollOnTop from "@/hooks/useScrollOnTop";
+import { setApiCall } from "@/redux/slices/loadingSlice";
 
 const Group = () => {
   const { register, handleSubmit, reset } = useForm<MessageText>();
@@ -32,31 +35,30 @@ const Group = () => {
   const gpMessages = useAppSelector((state) => state.messages.gpMess);
   const lastMainId = useAppSelector((state) => state.chat.lastMainId);
   const currUser = useAppSelector((state) => state.user.user);
+  const groupIdStart = useAppSelector((state) => state.messages.groupIdStart);
+  const groupIdEnd = useAppSelector((state) => state.messages.groupIdEnd);
+  const apiCalls = useAppSelector((state) => state.loading.apiCalls);
   const [workModal, setWorkModal] = useState<boolean>(false);
+  const [stop, setStop] = useState<boolean>(false);
+  const [trigger, setTrigger] = useState<boolean>(true);
+  const [toggleTrigger, setToggleTrigger] = useState<boolean>(true);
+  const [firstMounting, setFirstMounting] = useState(true);
   const dispatch = useDispatch();
   const { socket } = useSocketContext();
   const navigate = useNavigate();
-
-  /* ===== infinite loading of messages |start| ===== */
   const { groupId } = useParams();
-  const [loading, setLoading] = useState<boolean>(true);
-  const [stop, setStop] = useState<boolean>(false);
-  const [trigger, setTrigger] = useState<boolean>(false);
-  const isMountingRef = useRef(true);
-  const [initialLoad, setInitialLoad] = useState<boolean>(true);
-  const [lastCreatedAt, setLastCreateAt] = useState<string | undefined>(
-    undefined
-  );
   const scrollableDivRef = useRef<HTMLDivElement>(null);
-  useScrollTrigger(scrollableDivRef, setLoading, loading, setTrigger, stop);
+
+  // initialLoad is for text input disable while messages re-render or render when groupId is changed
+  const [initialLoad, setInitialLoad] = useState<boolean>(true);
+
+  useScrollTrigger(scrollableDivRef, setTrigger, stop, toggleTrigger);
+  useScrollOnTop(scrollableDivRef);
 
   // clean up for group page
   useEffect(() => {
     return () => {
       dispatch(setMainGroupId(""));
-      setLastCreateAt(undefined);
-      dispatch(setGpMessages([]));
-      setLoading(true), setStop(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -65,64 +67,143 @@ const Group = () => {
     setInitialLoad(true);
     if (!groupId || !mainGroupId || mainGroupId !== groupId) {
       navigate("/talk");
-    }
-
-    if (isMountingRef.current) {
-      isMountingRef.current = false;
       return;
     }
-    setLastCreateAt(undefined);
-    dispatch(setGpMessages([]));
-    setLoading(true), setStop(false);
-    setTrigger((prev) => !prev);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groupId]);
 
-  // fetch data as per scroll
-  useEffect(() => {
-    const getMessages = async () => {
-      if (groupId && groupId === mainGroupId) {
-        let response: GetGroupMessagesRs;
-        // initial call for getting messages
-        if (lastCreatedAt === undefined) {
-          response = await getGroupMessagesApi(groupId);
-          setInitialLoad(false);
-          // setCount api call to set count 0
-          if (response && response.messages && response.messages.length > 0) {
-            dispatch(resetUnseenMessage(groupId));
-          }
-        } else if (lastCreatedAt !== undefined) {
-          response = await getGroupMessagesApi(groupId, lastCreatedAt);
+    const getInitialGroup = async () => {
+      // reset unseenCount for groupId
+      dispatch(resetUnseenMessage(groupId));
+      // this fucntion will only call api for a groupId messasges once
+      if (
+        groupIdStart[groupId] !== true &&
+        apiCalls[`getGroupMessagesApi-${groupId}`]
+      ) {
+        // api is getting called for first time for groupId and this hook will call this api only once
+        /* ===== Caution: getGroupMessagesApi api call state management ===== */
+        dispatch(
+          setApiCall({ api: `getGroupMessagesApi-${groupId}`, status: true })
+        );
+        dispatch(setGroupIdStart(groupId));
+
+        /*
+          getLastCreatedAt if present in groupId messages and if not then create 
+          new date for current time and get messages
+        */
+
+        let lastCreateAt;
+        if (gpMessages[groupId] !== undefined) {
+          lastCreateAt =
+            gpMessages[groupId][gpMessages[groupId].length - 1].createdAt;
         } else {
-          return;
+          lastCreateAt = new Date().toISOString();
         }
 
+        // get messages for groupId
+        const response: GetGroupMessagesRs = await getGroupMessagesApi(
+          groupId,
+          lastCreateAt
+        );
+
+        // check response from api
         if (response) {
-          // no messages yet for this group
-          if (response.success === false && !response.messages) {
+          // no messages for groupId yet if lastCreated in not present in gpMessages
+          // and if present then their are no futher messages for current groupId
+          if (
+            response.success === false ||
+            (response.messages && response.messages.length < 15)
+          ) {
+            dispatch(setGroupIdEnd(groupId));
             setStop(true);
-          } else if (response.messages && response.messages.length > 0) {
-            // no further messages for this group
-            if (response.messages.length < 15) {
-              setStop(true);
+          }
+
+          // check if their is any overlapping for messages for groupId
+          if (response.messages && gpMessages[groupId] !== undefined) {
+            while (
+              response.messages.length > 0 &&
+              response.messages[0].createdAt > lastCreateAt
+            ) {
+              response.messages.splice(0, 1);
             }
+          }
+
+          // if any messages is present then dispatch
+          if (response.messages && response.messages.length > 0) {
             dispatch(addGpMessages(response.messages));
-            setLastCreateAt(
-              response.messages[response.messages.length - 1].createdAt
-            );
           }
         } else {
           toast.error("Error while getting messages for group");
         }
+        dispatch(
+          setApiCall({ api: `getGroupMessagesApi-${groupId}`, status: false })
+        );
+      }
+      setInitialLoad(false);
+    };
+    getInitialGroup();
+
+    return () => {
+      setInitialLoad(true), setFirstMounting(true), setStop(false);
+      setToggleTrigger((prev) => !prev);
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [groupId]);
+
+  /* ===== infinite loading of messages ===== */
+  useEffect(() => {
+    if (!groupId || !mainGroupId || mainGroupId !== groupId) {
+      navigate("/talk");
+      return;
+    }
+
+    if (firstMounting) {
+      setFirstMounting(false);
+      return;
+    }
+
+    const getMessages = async () => {
+      if (
+        apiCalls[`getGroupMessagesApi-${groupId}`] !== true &&
+        groupIdStart[groupId] === true &&
+        groupIdEnd[groupId] !== true
+      ) {
+        /* ===== Caution: getMessagesApi api call state management ===== */
+        dispatch(
+          setApiCall({ api: `getMessagesApi-${groupId}`, status: true })
+        );
+
+        const response: GetGroupMessagesRs = await getGroupMessagesApi(
+          groupId,
+          gpMessages[groupId][gpMessages[groupId].length - 1].createdAt
+        );
+
+        if (response) {
+          // no futher messages for this groupId
+          if (
+            response.success === false ||
+            (response.messages && response.messages.length < 15)
+          ) {
+            dispatch(setGroupIdEnd(groupId));
+            setStop(true);
+          }
+          if (response.messages) {
+            dispatch(addGpMessages(response.messages));
+          }
+        } else {
+          toast.error("Error while getting messages for group");
+        }
+
         setTimeout(() => {
-          setLoading(false);
-        }, 2000);
+          dispatch(
+            setApiCall({ api: `getMessagesApi-${groupId}`, status: false })
+          );
+        }, 2500);
       }
     };
     getMessages();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trigger]);
-  /* ===== infinite loading of messages |end| ===== */
 
   const sendFileMssg = async (file: File) => {
     if (!currUser) {
@@ -162,7 +243,7 @@ const Group = () => {
         }
       }
     } else {
-      toast.error("Invalid chat");
+      toast.error("Invalid group");
     }
     setWorkModal(false);
   };
@@ -198,13 +279,14 @@ const Group = () => {
         ref={scrollableDivRef}
         className="w-full h-[90%] px-8 overflow-y-scroll flex flex-col-reverse scroll-smooth "
       >
-        {/* messages for chat */}
-        {gpMessages?.length === 0 ? (
+        {/* messages for group */}
+        {groupId !== undefined && gpMessages[groupId] === undefined ? (
           <div className=" w-5/6 text-white font-be-veitnam-pro text-2xl p-7 text-center mx-auto my-auto">
             Let's talk chill thrill!
           </div>
         ) : (
-          gpMessages?.map((message, index) => {
+          groupId !== undefined &&
+          gpMessages[groupId].map((message, index) => {
             if (message.from._id === currUser?._id) {
               return <GpMessageCard key={index} message={message} />;
             }

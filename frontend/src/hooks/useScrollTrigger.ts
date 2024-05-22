@@ -2,27 +2,26 @@ import { useEffect } from "react";
 
 const useScrollTrigger = (
   ref: React.RefObject<HTMLDivElement>,
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-  loading: boolean,
   setTrigger: React.Dispatch<React.SetStateAction<boolean>>,
-  stop: boolean) => {
+  stop: boolean,
+  resetTrigger: boolean) => {
 
   useEffect(() => {
     if (!ref.current) {
       return;
     }
     const currReft = ref.current;
+
     function handleScrollTrig() {
-      if (!ref.current) return;
+      if (!ref.current) {
+        return;
+      }
 
       const { scrollTop, clientHeight, scrollHeight } = ref.current;
       const scrollPercentage = Math.floor(((clientHeight - scrollTop) / (scrollHeight)) * 100);
 
-      if (scrollPercentage > 85 && !loading && !stop) {
-        setLoading(() => true);
-        setTimeout(() => {
-          setTrigger((prev) => !prev);
-        }, 1000);
+      if (scrollPercentage > 85 && !stop) {
+        setTrigger((prev) => !prev);
       }
     }
 
@@ -34,7 +33,8 @@ const useScrollTrigger = (
       currReft.removeEventListener('scroll', handleScrollTrig);
     };
 
-  }, [ref, loading, stop]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ref, stop, resetTrigger]);
 };
 
 export default useScrollTrigger;
