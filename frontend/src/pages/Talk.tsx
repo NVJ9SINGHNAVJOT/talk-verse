@@ -16,7 +16,16 @@ import {
   setLastMainId,
   setUserRequests,
 } from "@/redux/slices/chatSlice";
-import { setPublicKeys } from "@/redux/slices/messagesSlice";
+import {
+  resetChatIdEnd,
+  resetChatIdStart,
+  resetGpMess,
+  resetGroupIdEnd,
+  resetGroupIdStart,
+  resetPMess,
+  setMyId,
+  setPublicKeys,
+} from "@/redux/slices/messagesSlice";
 
 const Talk = () => {
   const myPrivateKey = useAppSelector((state) => state.messages.myPrivateKey);
@@ -39,16 +48,17 @@ const Talk = () => {
       }
     };
     getSocket();
-    
+
     return () => {
       disconnectSocket();
       dispatch(setTalkPageLoading(true));
     };
   }, []);
-  
+
   // clean up for talk page
   useEffect(() => {
     return () => {
+      // chatSlice
       dispatch(setChatBarData([]));
       dispatch(setFriends([]));
       dispatch(setGroups([]));
@@ -56,7 +66,15 @@ const Talk = () => {
       dispatch(resetTyping());
       dispatch(setLastMainId(""));
       dispatch(setUserRequests([]));
+      // messagesSlice
       dispatch(setPublicKeys({}));
+      dispatch(setMyId(""));
+      dispatch(resetPMess());
+      dispatch(resetGpMess());
+      dispatch(resetChatIdStart());
+      dispatch(resetChatIdEnd());
+      dispatch(resetGroupIdStart());
+      dispatch(resetGroupIdEnd());
     };
   }, []);
 

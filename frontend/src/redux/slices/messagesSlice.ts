@@ -76,6 +76,9 @@ const messagesSlice = createSlice({
     initialState,
     reducers: {
         // two users chat messages
+        resetPMess(state) {
+            state.pMess = {};
+        },
         addPMessages(state, action: PayloadAction<SoMessageRecieved[]>) {
             if (state.myPrivateKey !== undefined) {
                 for (let index = 0; index < action.payload.length; index++) {
@@ -127,6 +130,9 @@ const messagesSlice = createSlice({
         },
 
         // group chat messages
+        resetGpMess(state) {
+            state.gpMess = {};
+        },
         addGpMessages(state, action: PayloadAction<GroupMessages[]>) {
             for (let index = 0; index < action.payload.length; index++) {
                 if (action.payload[index].isFile === false) {
@@ -218,6 +224,12 @@ const messagesSlice = createSlice({
         },
 
         // start and end points of chatId
+        resetChatIdStart(state) {
+            state.chatIdStart = {};
+        },
+        resetChatIdEnd(state) {
+            state.chatIdEnd = {};
+        },
         setChatIdStart(state, action: PayloadAction<string>) {
             state.chatIdStart[action.payload] = true;
         },
@@ -226,6 +238,12 @@ const messagesSlice = createSlice({
         },
 
         // start and end points of groupId
+        resetGroupIdStart(state) {
+            state.groupIdStart = {};
+        },
+        resetGroupIdEnd(state) {
+            state.groupIdEnd = {};
+        },
         setGroupIdStart(state, action: PayloadAction<string>) {
             state.groupIdEnd[action.payload] = true;
         },
@@ -235,12 +253,12 @@ const messagesSlice = createSlice({
     },
 });
 
-export const { addPMessages, addLivePMessage,
-    addGpMessages, addLiveGpMessage,
+export const { resetPMess, addPMessages, addLivePMessage,
+    resetGpMess, addGpMessages, addLiveGpMessage,
     setCurrFriendId, setMainChatId, setMainGroupId, setMyId,
     setUnseenMessages, addNewUnseen, resetUnseenMessage,
     setPublicKeys, addPublicKey, setMyPrivateKey,
-    setChatIdStart, setChatIdEnd,
-    setGroupIdStart, setGroupIdEnd
+    setChatIdStart, setChatIdEnd, resetChatIdStart, resetChatIdEnd,
+    setGroupIdStart, setGroupIdEnd, resetGroupIdStart, resetGroupIdEnd
 } = messagesSlice.actions;
 export default messagesSlice.reducer;

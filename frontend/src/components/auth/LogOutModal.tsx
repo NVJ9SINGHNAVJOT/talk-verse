@@ -1,4 +1,5 @@
 import { setAuthUser } from "@/redux/slices/authSlice";
+import { setMyPrivateKey } from "@/redux/slices/messagesSlice";
 import { setProfile, setUser } from "@/redux/slices/userSlice";
 import { logOutApi } from "@/services/operations/authApi";
 import { useDispatch } from "react-redux";
@@ -16,9 +17,12 @@ const LogOutModal = (props: LogOutModalPros) => {
   const logOut = async () => {
     props.setMenuOpen(false);
     navigate("/");
+    // clean up for log out
     dispatch(setProfile(null));
     dispatch(setUser(null));
     dispatch(setAuthUser(false));
+    dispatch(setMyPrivateKey(""));
+
     const response = await logOutApi();
     if (!response) {
       toast.error("Error while logging out");
