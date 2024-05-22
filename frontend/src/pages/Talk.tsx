@@ -25,6 +25,7 @@ import {
   resetPMess,
   setMyId,
   setPublicKeys,
+  setUnseenMessages,
 } from "@/redux/slices/messagesSlice";
 
 const Talk = () => {
@@ -63,6 +64,7 @@ const Talk = () => {
       dispatch(setFriends([]));
       dispatch(setGroups([]));
       dispatch(setOnlineFriend([]));
+      dispatch(setUnseenMessages({}));
       dispatch(resetTyping());
       dispatch(setLastMainId(""));
       dispatch(setUserRequests([]));

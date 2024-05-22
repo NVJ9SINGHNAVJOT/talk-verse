@@ -77,7 +77,7 @@ const messagesSlice = createSlice({
     reducers: {
         // two users chat messages
         resetPMess(state) {
-            state.pMess = {};
+            state.pMess = {} as PMessages;
         },
         addPMessages(state, action: PayloadAction<SoMessageRecieved[]>) {
             if (state.myPrivateKey !== undefined) {
@@ -120,7 +120,7 @@ const messagesSlice = createSlice({
             }
 
             // update unseen count if current chat is not active on display
-            if (state.mainChatId && action.payload.chatId !== state.mainChatId && action.payload.from !== state.myId) {
+            if (!state.mainChatId || (action.payload.chatId !== state.mainChatId && action.payload.from !== state.myId)) {
                 const key = action.payload.chatId;
                 setUnseenCount(key, state.unseenMessages[key] + 1);
                 if (state.unseenMessages && key in state.unseenMessages) {
@@ -131,7 +131,7 @@ const messagesSlice = createSlice({
 
         // group chat messages
         resetGpMess(state) {
-            state.gpMess = {};
+            state.gpMess = {} as GpMessages;
         },
         addGpMessages(state, action: PayloadAction<GroupMessages[]>) {
             for (let index = 0; index < action.payload.length; index++) {
@@ -173,7 +173,7 @@ const messagesSlice = createSlice({
             }
 
             // update unseen count if current group is not active on display
-            if (action.payload.from._id !== state.myId) {
+            if (!state.mainGroupId || (state.mainGroupId !== action.payload.to && action.payload.from._id !== state.myId)) {
                 const key = action.payload.to;
                 setUnseenCount(key, state.unseenMessages[key] + 1);
                 if (state.unseenMessages && key in state.unseenMessages) {
@@ -225,10 +225,10 @@ const messagesSlice = createSlice({
 
         // start and end points of chatId
         resetChatIdStart(state) {
-            state.chatIdStart = {};
+            state.chatIdStart = {} as ChatIdStart;
         },
         resetChatIdEnd(state) {
-            state.chatIdEnd = {};
+            state.chatIdEnd = {} as ChatIdEnd;
         },
         setChatIdStart(state, action: PayloadAction<string>) {
             state.chatIdStart[action.payload] = true;
@@ -239,10 +239,10 @@ const messagesSlice = createSlice({
 
         // start and end points of groupId
         resetGroupIdStart(state) {
-            state.groupIdStart = {};
+            state.groupIdStart = {} as GroupIdStart;
         },
         resetGroupIdEnd(state) {
-            state.groupIdEnd = {};
+            state.groupIdEnd = {} as GroupIdEnd;
         },
         setGroupIdStart(state, action: PayloadAction<string>) {
             state.groupIdEnd[action.payload] = true;
