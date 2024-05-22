@@ -25,17 +25,14 @@ const loadingSlice = createSlice({
         setCreateGroupLoading(state, action: PayloadAction<boolean>) {
             state.createGroupLd = action.payload;
         },
-        setApiCall(state, action: PayloadAction<string>) {
-            state.apiCalls[action.payload] = true;
+        setApiCall(state, action: PayloadAction<{ api: string, status: boolean }>) {
+            state.apiCalls[action.payload.api] = action.payload.status;
         },
-        removeApiCall(state, action: PayloadAction<string>) {
-            state.apiCalls[action.payload] = false;
-        }
     },
 });
 
 export const {
     setTalkPageLoading, setCreateGroupLoading,
-    setApiCall, removeApiCall
+    setApiCall,
 } = loadingSlice.actions;
 export default loadingSlice.reducer;

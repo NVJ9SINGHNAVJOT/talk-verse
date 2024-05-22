@@ -1,4 +1,4 @@
-import { removeApiCall, setApiCall } from "@/redux/slices/loadingSlice";
+import { setApiCall } from "@/redux/slices/loadingSlice";
 import { setProfile } from "@/redux/slices/userSlice";
 import { useAppSelector } from "@/redux/store";
 import { getProfileApi } from "@/services/operations/profileApi";
@@ -14,7 +14,7 @@ const Profile = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [title, setTitle] = useState<string>();
   const navigate = useNavigate();
-  const dispacth = useDispatch();
+  const dispatch = useDispatch();
   const goMenu = (menu: string) => {
     if (menu === "Profile") {
       navigate("/profile");
@@ -29,16 +29,16 @@ const Profile = () => {
         return;
       }
       /* ===== Caution: getProfileApi api call state management ===== */
-      dispacth(setApiCall("getProfileApi"));
+      dispatch(setApiCall({ api: "getProfileApi", status: true }));
       const response = await getProfileApi();
-      dispacth(removeApiCall("getProfileApi"));
       if (response && response.success === true) {
-        dispacth(setProfile(response.userData));
+        dispatch(setProfile(response.userData));
         setLoading(false);
       } else {
         toast.error("Error while getting profile data");
         navigate("/error");
       }
+      dispatch(setApiCall({ api: "getProfileApi", status: false }));
     };
     getProfile();
   }, []);

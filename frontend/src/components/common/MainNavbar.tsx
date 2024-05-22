@@ -36,6 +36,13 @@ const MainNavbar = () => {
     navigate("/about");
   };
 
+  const contactHandler = () => {
+    if (menu) {
+      setMenu(false);
+    }
+    navigate("/contact");
+  };
+
   const talkHandler = () => {
     if (menu) {
       setMenu(false);
@@ -87,7 +94,10 @@ const MainNavbar = () => {
         >
           About
         </div>
-        <div className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">
+        <div
+          className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]"
+          onClick={contactHandler}
+        >
           Contact
         </div>
         <div
@@ -144,7 +154,10 @@ const MainNavbar = () => {
           >
             About
           </div>
-          <div className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">
+          <div
+            className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]"
+            onClick={contactHandler}
+          >
             Contact
           </div>
           <div

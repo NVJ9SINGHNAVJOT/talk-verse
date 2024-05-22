@@ -30,8 +30,14 @@ export type PublicKey = {
     publicKey: string
 }
 
-type PMessages = Record<string, SoMessageRecieved[]>
-type GpMessages = Record<string, GroupMessages[]>
+type PMessages = Record<string, SoMessageRecieved[]>;
+type GpMessages = Record<string, GroupMessages[]>;
+
+type ChatIdStart = Record<string, boolean>;
+type GroupIdStart = Record<string, boolean>;
+
+type ChatIdEnd = Record<string, boolean>;
+type GroupIdEnd = Record<string, boolean>;
 
 interface messagesState {
     pMess: PMessages,
@@ -43,6 +49,10 @@ interface messagesState {
     myId: string | undefined,
     publicKeys: PublicKeys,
     myPrivateKey: string | undefined,
+    chatIdStart: ChatIdStart,
+    groupIdStart: GroupIdStart,
+    chatIdEnd: ChatIdEnd,
+    groupIdEnd: GroupIdEnd,
 }
 
 const initialState = {
@@ -55,6 +65,10 @@ const initialState = {
     myId: undefined,
     publicKeys: {},
     myPrivateKey: undefined,
+    chatIdStart: {},
+    groupIdStart: {},
+    chatIdEnd: {},
+    groupIdEnd: {},
 } satisfies messagesState as messagesState;
 
 const messagesSlice = createSlice({
@@ -202,6 +216,22 @@ const messagesSlice = createSlice({
         setMyPrivateKey(state, action: PayloadAction<string>) {
             state.myPrivateKey = action.payload;
         },
+
+        // start and end points of chatId
+        setChatIdStart(state, action: PayloadAction<string>) {
+            state.chatIdStart[action.payload] = true;
+        },
+        setChatIdEnd(state, action: PayloadAction<string>) {
+            state.chatIdEnd[action.payload] = true;
+        },
+
+        // start and end points of groupId
+        setGroupIdStart(state, action: PayloadAction<string>) {
+            state.groupIdEnd[action.payload] = true;
+        },
+        setGroupIdEnd(state, action: PayloadAction<string>) {
+            state.groupIdEnd[action.payload] = true;
+        }
     },
 });
 
@@ -209,6 +239,8 @@ export const { addPMessages, addLivePMessage,
     addGpMessages, addLiveGpMessage,
     setCurrFriendId, setMainChatId, setMainGroupId, setMyId,
     setUnseenMessages, addNewUnseen, resetUnseenMessage,
-    setPublicKeys, addPublicKey, setMyPrivateKey
+    setPublicKeys, addPublicKey, setMyPrivateKey,
+    setChatIdStart, setChatIdEnd,
+    setGroupIdStart, setGroupIdEnd
 } = messagesSlice.actions;
 export default messagesSlice.reducer;

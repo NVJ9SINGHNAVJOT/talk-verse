@@ -51,7 +51,6 @@ const ChekKey = () => {
         dispatch(setMyPrivateKey(completeKey));
         toast.dismiss(tId);
         navigate("/talk");
-        return;
       }
     } catch (error) {
       toast.error("Invalid Key, please enter correct private key");

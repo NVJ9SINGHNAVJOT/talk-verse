@@ -181,8 +181,8 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
         }
 
         // check user exist or not for req id
-        const otherUser = await User.findById({ _id: data.acceptUserId }).
-            select({ firstName: true, lastName: true, imageUrl: true, publicKey: true }).exec();
+        const otherUser = await User.findById({ _id: data.acceptUserId })
+            .select({ firstName: true, lastName: true, imageUrl: true, publicKey: true }).exec();
 
         if (!otherUser) {
             return errRes(res, 400, 'user not present for given id');
