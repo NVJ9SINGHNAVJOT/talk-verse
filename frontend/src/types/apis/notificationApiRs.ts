@@ -4,7 +4,7 @@ export type GetUsersRs = {
     success: boolean,
     message: string,
     users: UserRequest[],
-}
+} | null
 
 export type GetAllNotificationsRs = {
     success: boolean,
@@ -14,7 +14,7 @@ export type GetAllNotificationsRs = {
         mainId: string,
         count: number
     }[]
-}
+} | null
 
 export type AcceptRequestRs = {
     success: boolean,
@@ -27,10 +27,10 @@ export type AcceptRequestRs = {
     },
     newChatId: string,
     newFriendPublicKey: string
-}
+} | null
 
 export type CheckOnlineFriendsRs = {
     success: boolean,
     message: string,
     onlineFriends?: string[]
-}
+} | null

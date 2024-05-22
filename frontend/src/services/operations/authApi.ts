@@ -41,9 +41,9 @@ export const logInApi = async (data: object): Promise<CheckUserRs> => {
         if (resData && resData.success === true) {
             return resData;
         }
-        return {} as CheckUserRs;
+        return null;
     } catch (error) {
-        return {} as CheckUserRs;
+        return null;
     }
 };
 
@@ -53,9 +53,9 @@ export const checkUserApi = async (): Promise<CheckUserRs> => {
         if (resData && resData.success === true) {
             return resData;
         }
-        return {} as CheckUserRs;
+        return null;
     } catch (error) {
-        return {} as CheckUserRs;
+        return null;
     }
 };
 

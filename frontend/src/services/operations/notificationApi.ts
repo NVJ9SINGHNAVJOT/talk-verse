@@ -23,9 +23,9 @@ export const getUsersApi = async (userName: string): Promise<GetUsersRs> => {
         if (resData) {
             return resData;
         }
-        return {} as GetUsersRs;
+        return null;
     } catch (error) {
-        return {} as GetUsersRs;
+        return null;
     }
 };
 
@@ -47,9 +47,9 @@ export const getAllNotificationsApi = async (): Promise<GetAllNotificationsRs> =
         if (resData) {
             return resData;
         }
-        return {} as GetAllNotificationsRs;
+        return null;
     } catch (error) {
-        return {} as GetAllNotificationsRs;
+        return null;
     }
 };
 
@@ -59,9 +59,9 @@ export const acceptRequestApi = async (userId: string): Promise<AcceptRequestRs>
         if (resData && resData.success === true) {
             return resData;
         }
-        return {} as AcceptRequestRs;
+        return null;
     } catch (error) {
-        return {} as AcceptRequestRs;
+        return null;
     }
 };
 
@@ -71,9 +71,9 @@ export const createGroupApi = async (data: FormData): Promise<CreateGroupRs> => 
         if (resData && resData.success === true) {
             return resData;
         }
-        return {} as CreateGroupRs;
+        return null;
     } catch (error) {
-        return {} as CreateGroupRs;
+        return null;
     }
 };
 
@@ -84,9 +84,9 @@ export const checkOnlineFriendsApi = async (): Promise<CheckOnlineFriendsRs> => 
         if (resData) {
             return resData;
         }
-        return {} as CheckOnlineFriendsRs;
+        return null;
     } catch (error) {
-        return {} as CheckOnlineFriendsRs;
+        return null;
     }
 };
 

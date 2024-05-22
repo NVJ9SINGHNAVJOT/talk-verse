@@ -68,6 +68,7 @@ const Talk = () => {
       dispatch(resetTyping());
       dispatch(setLastMainId(""));
       dispatch(setUserRequests([]));
+
       // messagesSlice
       dispatch(setPublicKeys({}));
       dispatch(setMyId(""));

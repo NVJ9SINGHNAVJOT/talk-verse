@@ -4,4 +4,4 @@ export type CheckUserRs = {
     success: boolean,
     message: string,
     user: User
-}
+} | null

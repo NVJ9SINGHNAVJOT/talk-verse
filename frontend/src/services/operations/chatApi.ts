@@ -16,9 +16,9 @@ export const chatBarDataApi = async (): Promise<ChatBarDataRs> => {
         if (resData) {
             return resData;
         }
-        return {} as ChatBarDataRs;
+        return null;
     } catch (error) {
-        return {} as ChatBarDataRs;
+        return null;
     }
 };
 
@@ -30,9 +30,9 @@ export const getMessagesApi = async (chatId: string, createdAt?: string): Promis
         if (resData) {
             return resData;
         }
-        return {} as GetChatMessagesRs;
+        return null;
     } catch (error) {
-        return {} as GetChatMessagesRs;
+        return null;
     }
 };
 
@@ -56,8 +56,8 @@ export const getGroupMessagesApi = async (groupId: string, createdAt?: string): 
         if (resData) {
             return resData;
         }
-        return {} as GetGroupMessagesRs;
+        return null;
     } catch (error) {
-        return {} as GetGroupMessagesRs;
+        return null;
     }
 };

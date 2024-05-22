@@ -15,9 +15,9 @@ export const getProfileApi = async (): Promise<GetProfileRs> => {
         if (resData && resData.success === true) {
             return resData;
         }
-        return {} as GetProfileRs;
+        return null;
     } catch (error) {
-        return {} as GetProfileRs;
+        return null;
     }
 };
 
@@ -27,9 +27,9 @@ export const setProfileImageApi = async (data: FormData): Promise<SetProfileImag
         if (resData && resData.success === true) {
             return resData;
         }
-        return {} as SetProfileImageRs;
+        return null;
     } catch (error) {
-        return {} as SetProfileImageRs;
+        return null;
     }
 };
 

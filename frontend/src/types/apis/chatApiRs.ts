@@ -12,22 +12,22 @@ export type ChatBarDataRs = {
         friendId: string,
         publicKey: string
     }[]
-}
+} | null
 
 export type GetChatMessagesRs = {
     success: boolean,
     message: string,
     messages?: SoMessageRecieved[]
-}
+} | null
 
 export type GetGroupMessagesRs = {
     success: boolean,
     message: string,
     messages?: GroupMessages[]
-}
+} | null
 
 export type CreateGroupRs = {
     success: boolean,
     message: string,
     newGroup: SoAddedInGroup
-}
+} | null
