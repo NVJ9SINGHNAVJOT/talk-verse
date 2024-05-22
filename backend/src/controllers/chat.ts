@@ -173,7 +173,7 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
                 chatId: message.chatId._id.toString(),
                 from: message.from._id.toString(),
                 text: message.from._id.toString() === userId ? message.fromText : message.toText,
-                createdAt: message.createdAt.toUTCString()
+                createdAt: message.createdAt.toISOString()
             } as SoMessageRecieved);
         });
 
