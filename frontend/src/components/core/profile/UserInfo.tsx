@@ -111,7 +111,7 @@ const UserInfo = () => {
           <p className=" text-xl font-semibold  mt-2">Contact No.</p>
           {profile?.contactNumber ? (
             <p className=" text-[0.9rem] sm:mb-8 md:mb-0">
-              {profile.contactNumber}
+              {profile.contactNumber + " " + profile.contactNumber}
             </p>
           ) : (
             <p

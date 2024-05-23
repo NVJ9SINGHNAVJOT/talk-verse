@@ -2,12 +2,26 @@ import { GetProfileRs, SetProfileImageRs } from "@/types/apis/profileApiRs";
 import { profileEndPoints } from "../apis";
 import { fetchApi } from "../fetchApi";
 import { CommonRs } from "@/types/apis/common";
+import { NewProfileData } from "@/components/core/profile/Settings";
 
 const {
+    CHECK_USERNAME,
     PROFILE_DETAILS,
     SET_PROFILE_IMAGE,
     SET_PROFILE_DETAILS,
 } = profileEndPoints;
+
+export const checkUserNameApi = async (userName: string): Promise<CommonRs> => {
+    try {
+        const resData: CommonRs = await fetchApi('GET', CHECK_USERNAME, null, null, { 'userName': userName });
+        if (resData) {
+            return resData;
+        }
+        return null;
+    } catch (error) {
+        return null;
+    }
+};
 
 export const getProfileApi = async (): Promise<GetProfileRs> => {
     try {
@@ -33,9 +47,9 @@ export const setProfileImageApi = async (data: FormData): Promise<SetProfileImag
     }
 };
 
-export const setProfileDetailsApi = async (): Promise<boolean> => {
+export const setProfileDetailsApi = async (data: NewProfileData): Promise<boolean> => {
     try {
-        const resData: CommonRs = await fetchApi('POST', SET_PROFILE_DETAILS);
+        const resData: CommonRs = await fetchApi('POST', SET_PROFILE_DETAILS, data, { 'Content-Type': 'application/json' });
         if (resData && resData.success === true) {
             return true;
         }

@@ -10,6 +10,7 @@ export const authEndPoints = {
 };
 
 export const profileEndPoints = {
+  CHECK_USERNAME: BASE_URL_SERVER + "/profile/checkUserName",
   PROFILE_DETAILS: BASE_URL_SERVER + "/profile/getDetails",
   SET_PROFILE_IMAGE: BASE_URL_SERVER + "/profile/updateProfileImage",
   SET_PROFILE_DETAILS: BASE_URL_SERVER + "/profile/updateUserDetails"

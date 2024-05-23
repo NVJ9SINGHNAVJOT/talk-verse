@@ -13,6 +13,7 @@ export type Profile = {
     email: string,
     userName: string,
     gender: string,
+    countryCode: string,
     contactNumber: number,
     bio: string
 }

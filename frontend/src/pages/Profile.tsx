@@ -52,7 +52,7 @@ const Profile = () => {
 
   return (
     <div className="w-full flex h-[calc(100vh-4rem)]">
-      {/* left bar chat list section*/}
+      {/* left bar profile menu section*/}
       <section
         className=" w-[9rem] md:w-[11rem] lg:w-[14rem] h-full bg-[#A69F96] max-w-maxContent
        hover:bg-[#FBF4D0] transition-all ease-in-out"

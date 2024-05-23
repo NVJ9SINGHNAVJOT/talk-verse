@@ -4,5 +4,6 @@ export type UpdateUserDetailsBody = {
     gender?: string,
     dateOfBirth?: string,
     bio?: string,
+    countryCode: string,
     contactNumber?: number
 };

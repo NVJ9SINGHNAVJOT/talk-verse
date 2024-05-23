@@ -3,8 +3,46 @@ import { UpdateUserDetailsBody } from '@/types/controllers/profileReq';
 import { CustomRequest } from '@/types/custom';
 import uploadToCloudinary from '@/utils/cloudinaryUpload';
 import { errRes } from '@/utils/error';
+import valid from '@/validators/validator';
 import { Request, Response } from 'express';
 import fs from 'fs';
+
+export const checkUserName = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const userId = (req as CustomRequest).userId;
+
+        if (!userId) {
+            return errRes(res, 400, "invalid data, userId not present");
+        }
+
+        const { userName } = req.query;
+
+        // validation
+        if (!userName) {
+            return res.status(400).json({
+                success: false,
+                message: 'invalid username input'
+            });
+        }
+
+        const checkUserName = await User.countDocuments({ userName: userName });
+
+        if (checkUserName !== 0) {
+            return res.status(200).json({
+                success: false,
+                message: "userName already exits"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "userName doesn't exits"
+        });
+
+    } catch (error) {
+        return errRes(res, 500, "error while checking userName", error);
+    }
+};
 
 export const getUserDetails = async (req: Request, res: Response): Promise<Response> => {
     try {
@@ -18,6 +56,7 @@ export const getUserDetails = async (req: Request, res: Response): Promise<Respo
             email: true,
             userName: true,
             gender: true,
+            countryCode: true,
             contactNumber: true,
             about: true,
             _id: false
@@ -86,6 +125,9 @@ export const updateUserDetails = async (req: Request, res: Response): Promise<Re
             if (data.bio) {
                 user.bio = data.bio;
             }
+            if (data.countryCode) {
+                user.countryCode = data.countryCode;
+            }
             if (data.contactNumber) {
                 user.contactNumber = data.contactNumber;
             }
@@ -97,8 +139,12 @@ export const updateUserDetails = async (req: Request, res: Response): Promise<Re
             }
             // check whether userName exist or not
             if (data.userName) {
-                const checkUsers = await User.find({ userName: data.userName });
-                if (checkUsers.length === 0) {
+                if (!valid.isUserName(data.userName)) {
+                    await user?.save();
+                    return errRes(res, 400, "userName is invalid for profile update");
+                }
+                const checkUsers = await User.countDocuments({ userName: data.userName });
+                if (checkUsers === 0) {
                     user.userName = data.userName;
                     await user?.save();
                     return res.status(200).json({
