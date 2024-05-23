@@ -25,7 +25,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import FileInputs from "./chatItems/FileInputs";
 import WorkModal from "@/lib/modals/workmodal/WorkModal";
-import { Skeleton } from "@/lib/shadcn-ui/components/ui/skeleton";
 import useScrollOnTop from "@/hooks/useScrollOnTop";
 import { setApiCall } from "@/redux/slices/loadingSlice";
 
@@ -296,8 +295,9 @@ const Group = () => {
       </div>
       {/* message input */}
       {initialLoad ? (
+        // skeleton
         <div className="relative w-full h-[10%] ">
-          <Skeleton className=" w-10/12 h-[90%] mx-auto bg-[linear-gradient(315deg,_rgba(255,255,255,1)_0%,_rgba(36,106,120,1)_0%,_rgba(8,27,52,1)_100%,_rgba(37,181,16,1)_100%)]" />
+          <div className=" w-10/12 h-[90%] mx-auto bg-[linear-gradient(315deg,_rgba(255,255,255,1)_0%,_rgba(36,106,120,1)_0%,_rgba(8,27,52,1)_100%,_rgba(37,181,16,1)_100%)]" />
         </div>
       ) : (
         <form
