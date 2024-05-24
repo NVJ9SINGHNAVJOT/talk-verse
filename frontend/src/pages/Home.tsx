@@ -3,6 +3,7 @@ import TrackingCard from "@/lib/cards/trackingcard/TrackingCard";
 import MainFooter from "@/components/common/MainFooter";
 import { FcConferenceCall } from "react-icons/fc";
 import RainbowSection from "@/lib/sections/rainbowsection/RainbowSection";
+import StarsSection from "@/lib/sections/starssection/StarsSection";
 
 const Home = () => {
   return (
@@ -35,6 +36,10 @@ const Home = () => {
       </section>
       <section className="w-full flex justify-evenly items-center pt-8 py-36">
         <TrackingCard />
+      </section>
+      {/* stars */}
+      <section className=" w-full">
+        <StarsSection />
       </section>
       {/* footer */}
       <MainFooter />

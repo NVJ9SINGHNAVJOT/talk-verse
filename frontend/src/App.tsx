@@ -60,7 +60,7 @@ function App() {
       {/* all pages will be rendered below */}
       <div
         ref={pageRenderDivRef}
-        className="w-screen h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden max-w-maxContent min-w-minContent"
+        className="w-screen h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden max-w-maxContent min-w-minContent scroll-smooth"
       >
         <Routes>
           <Route path="/" element={<Home />} />

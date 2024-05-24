@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import mainLogo from "@/assets/images/mainLogo.png";
 import SignInButton from "@/lib/buttons/signinbutton/SignInButton";
 import { useAppSelector } from "@/redux/store";
@@ -8,6 +8,7 @@ import { useRef, useState } from "react";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 
 const MainNavbar = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.user.user);
   const authUser = useAppSelector((state) => state.auth.authUser);
@@ -136,35 +137,37 @@ const MainNavbar = () => {
       {menu && (
         <div
           ref={menuRef}
-          className=" flex flex-col z-[1000] md:hidden absolute top-[4rem] right-0 backdrop-blur-md
-            justify-start h-[calc(100vh-4rem)] items-center w-4/12 gap-y-4"
+          className={`${
+            location.pathname.includes("about") ? "text-black" : "text-white"
+          }  flex flex-col z-[1000] md:hidden absolute top-[4rem] right-0 backdrop-blur-md
+            justify-start h-[calc(100vh-4rem)] items-center w-4/12 gap-y-4`}
         >
           <div
-            className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed] 
+            className="cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed] 
               mt-4 "
             onClick={homeHandler}
           >
             Home
           </div>
           <div
-            className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]"
+            className="cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]"
             onClick={aboutHandler}
           >
             About
           </div>
           <div
-            className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]"
+            className="cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]"
             onClick={contactHandler}
           >
             Contact
           </div>
           <div
-            className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]"
+            className="cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]"
             onClick={talkHandler}
           >
             Talk
           </div>
-          <div className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">
+          <div className="cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">
             Blog
           </div>
         </div>
