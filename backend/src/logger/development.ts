@@ -29,7 +29,7 @@ const developmentLogger = () => {
                     format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
                     format.json(),
                     format.printf(({ timestamp, level, message, ...args }) => {
-                        return `[${timestamp}] ${level}: ${message}. ${JSON.stringify(args) === "{}" ? "" : "data: " + JSON.stringify(args)}`;
+                        return `[${timestamp}] ${level}: ${message}. ${args ? "data: " + JSON.stringify(args) : ""}}`;
                     })
                 ),
             }),

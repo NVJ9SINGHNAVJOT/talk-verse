@@ -55,6 +55,7 @@ export const getUserDetails = async (req: Request, res: Response): Promise<Respo
         const userData = await User.findById({ _id: userId }).select({
             email: true,
             userName: true,
+            bio: true,
             gender: true,
             countryCode: true,
             contactNumber: true,
@@ -120,7 +121,16 @@ export const updateUserDetails = async (req: Request, res: Response): Promise<Re
         }
         const data: UpdateUserDetailsBody = req.body;
 
-        const user = await User.findById({ _id: userId });
+        const user = await User.findById({ _id: userId }).select({
+            email: true,
+            userName: true,
+            bio: true,
+            gender: true,
+            countryCode: true,
+            contactNumber: true,
+            about: true,
+        }).exec();
+
         if (user) {
             if (data.bio) {
                 user.bio = data.bio;
@@ -149,7 +159,8 @@ export const updateUserDetails = async (req: Request, res: Response): Promise<Re
                     await user?.save();
                     return res.status(200).json({
                         success: true,
-                        message: 'user details updated successfully'
+                        message: 'user details updated successfully',
+                        userData: user
                     });
                 }
                 else {
@@ -165,7 +176,8 @@ export const updateUserDetails = async (req: Request, res: Response): Promise<Re
             await user.save();
             return res.status(200).json({
                 success: true,
-                message: 'user details updated successfully'
+                message: 'user details updated successfully',
+                userData: user
             });
         }
 

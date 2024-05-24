@@ -12,10 +12,10 @@ export type User = {
 export type Profile = {
     email: string,
     userName: string,
+    bio: string,
     gender: string,
     countryCode: string,
     contactNumber: number,
-    bio: string
 }
 
 interface UserState {

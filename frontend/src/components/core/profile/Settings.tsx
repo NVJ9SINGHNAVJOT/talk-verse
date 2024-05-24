@@ -1,22 +1,31 @@
 import { countryCodes } from "@/assets/data/countryCodes";
-import { Profile } from "@/redux/slices/userSlice";
+import { Profile, setProfile } from "@/redux/slices/userSlice";
 import { useAppSelector } from "@/redux/store";
-import { checkUserNameApi } from "@/services/operations/profileApi";
+import {
+  checkUserNameApi,
+  setProfileDetailsApi,
+} from "@/services/operations/profileApi";
+import { CommonRs } from "@/types/apis/common";
+import { GetProfileRs } from "@/types/apis/profileApiRs";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaEdit } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 export type NewProfileData = {
-  userName: string;
-  gender: string;
-  contactNumber: number;
-  bio: string;
+  userName?: string;
+  gender?: string;
+  countryCode?: string;
+  contactNumber?: number;
+  bio?: string;
 };
 
 const Settings = () => {
+  const dispatch = useDispatch();
   const [disabled, setDisabled] = useState<string[]>([]);
   const profile = useAppSelector((state) => state.user.profile);
-
+  const [loading, setLoading] = useState<boolean>(false);
   const { register, handleSubmit } = useForm<Profile>({
     defaultValues: profile ? profile : {},
   });
@@ -27,13 +36,63 @@ const Settings = () => {
     }
     setDisabled((prev) => [...prev, value]);
   };
-  const onSubmit = async (data: Profile) => {
-    if (profile?.userName !== data.userName) {
-      const response = await checkUserNameApi(data.userName);
 
+  const onSubmit = async (data: Profile) => {
+    setLoading(true);
+
+    const newProfileData: NewProfileData = {};
+    let change = false;
+
+    if (profile?.userName !== data.userName) {
+      const response: CommonRs = await checkUserNameApi(data.userName);
+      if (response) {
+        if (response.success === false) {
+          toast.info("This userName is already in use");
+          return;
+        }
+        newProfileData.userName = data.userName;
+        change = true;
+      } else {
+        toast.error("Error while checking userName availability");
+        return;
+      }
     }
-    // Handle form submission
-    console.log(data);
+
+    setDisabled([]);
+
+    if (profile?.bio !== data.bio) {
+      newProfileData.bio = data.bio;
+      change = true;
+    }
+    if (profile?.gender !== data.gender) {
+      newProfileData.gender = data.gender;
+      change = true;
+    }
+    if (profile?.countryCode !== data.countryCode) {
+      newProfileData.countryCode = data.countryCode;
+      change = true;
+    }
+    if (profile?.contactNumber !== data.contactNumber) {
+      newProfileData.contactNumber = data.contactNumber;
+      change = true;
+    }
+
+    if (change) {
+      const response: GetProfileRs = await setProfileDetailsApi(newProfileData);
+
+      if (response) {
+        if (response.success === true) {
+          toast.success("Profile updated");
+        } else {
+          toast.error("userName is not got updated");
+        }
+        dispatch(setProfile(response.userData));
+      } else {
+        toast.error("Error while updating profile");
+      }
+    }
+
+    setLoading(false);
   };
   return (
     <div className=" w-full mt-14 ">
@@ -70,7 +129,6 @@ const Settings = () => {
             })}
             placeholder="About Me"
             disabled={!disabled.includes("bio")}
-            maxLength={100}
           />
           <FaEdit
             onClick={() => updateDisable("bio")}
@@ -172,6 +230,7 @@ const Settings = () => {
 
         <div className=" flex justify-center gap-8">
           <button
+            disabled={loading}
             className="[box-shadow:0px_0px_57px_9px_rgba(0,0,0,0.4)] hover:scale-110 transition-all ease-in-out
            bg-black  px-10 py-2 rounded-xl text-white mt-8
             text-center cursor-pointer"

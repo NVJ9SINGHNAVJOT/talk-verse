@@ -12,6 +12,7 @@ import notificationRoutes from '@/routes/notificationRoutes';
 import chatRoutes from '@/routes/chatRoutes';
 import profileRoutes from "@/routes/profileRoutes";
 import corsOptions from "@/config/corsOptions";
+import logging from "@/middlewares/logging";
 
 configDotenv();
 
@@ -26,11 +27,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-// server only accessible with serverKey
-app.use(serverKey);
-
 // connect cloudinary
 cloudinaryConnect();
+
+// logging details
+app.use(logging);
+
+// server only accessible with serverKey
+app.use(serverKey);
 
 // routes
 app.use('/api/v1/auth', authRoutes);

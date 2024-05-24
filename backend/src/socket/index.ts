@@ -8,6 +8,7 @@ import { CustomSocket } from '@/types/custom';
 import corsOptions from '@/config/corsOptions';
 import Channel from '@/types/channel';
 import { showOnline } from '@/utils/onlineStatus';
+import { logger } from '@/logger/logger';
 
 // store userIds with their current socketIds
 // userId -> socketId
@@ -38,9 +39,11 @@ export const setupWebSocket = (app: Application): HTTPServer => {
                 next();
             }
             else {
+                logger.error('socket authorization failed', { socketId: socket.id });
                 next(new Error("authorization invalid, access denied"));
             }
         } catch (error) {
+            logger.error('socket authorization failed', { socketId: socket.id });
             next(new Error("error which checking user authenticaton for socket connection"));
         }
     });

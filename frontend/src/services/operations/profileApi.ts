@@ -47,14 +47,14 @@ export const setProfileImageApi = async (data: FormData): Promise<SetProfileImag
     }
 };
 
-export const setProfileDetailsApi = async (data: NewProfileData): Promise<boolean> => {
+export const setProfileDetailsApi = async (data: NewProfileData): Promise<GetProfileRs> => {
     try {
-        const resData: CommonRs = await fetchApi('POST', SET_PROFILE_DETAILS, data, { 'Content-Type': 'application/json' });
-        if (resData && resData.success === true) {
-            return true;
+        const resData: GetProfileRs = await fetchApi('POST', SET_PROFILE_DETAILS, data, { 'Content-Type': 'application/json' });
+        if (resData) {
+            return resData;
         }
-        return false;
+        return null;
     } catch (error) {
-        return false;
+        return null;
     }
 };

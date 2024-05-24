@@ -2,11 +2,14 @@ import { Socket } from "socket.io";
 import { configDotenv } from "dotenv";
 import { CustomSocket } from "@/types/custom";
 import { jwtVerify } from "@/utils/token";
+import { logger } from "@/logger/logger";
 configDotenv();
 
 // check authentication for socket
 export const checkUserSocket = async (socket: Socket): Promise<boolean> => {
     try {
+        logger.info('socket req', { socketId: socket.id, method: socket.request.method, url: socket.request.url, headers: socket.request.headers });
+
         const serverKey = socket.handshake.headers.authorization?.replace("Bearer ", "");
 
         if (!serverKey || serverKey !== process.env.SERVER_KEY) {
