@@ -111,7 +111,7 @@ const UserInfo = () => {
           <p className=" text-xl font-semibold  mt-2">Contact No.</p>
           {profile?.contactNumber ? (
             <p className=" text-[0.9rem] mb-8 md:mb-0">
-              {profile.contactNumber + " " + profile.contactNumber}
+              {profile.countryCode + " " + profile.contactNumber}
             </p>
           ) : (
             <p
@@ -134,7 +134,7 @@ const UserInfo = () => {
           <div
             className=" bg-black  w-full rounded-xl flex justify-center items-center
         [box-shadow:0px_0px_57px_9px_rgba(0,0,0,0.4)] hover:scale-110 transition-all ease-in-out
-         mx-auto md: mx-0"
+         mx-auto"
           >
             {selectedFile ? (
               <img

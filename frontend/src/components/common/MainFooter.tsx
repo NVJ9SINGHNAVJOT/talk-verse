@@ -19,9 +19,9 @@ const MainFooter = () => {
       bg-[linear-gradient(315deg,_rgba(21,_0,_36,_1)_66%,_rgba(147,_147,_147,_1)_100%,_rgba(0,_212,_255,_1)_100%)]"
     >
       {/* main content */}
-      <div className="w-full grid grid-cols-3 grid-cols-4 md:grid-cols-5 xl:grid-cols-6 gap-x-4 gap-y-8 text-white">
+      <div className="w-full grid grid-cols-5 md:grid-cols-6 gap-x-4 lg:gap-0 gap-y-8 text-white mx-auto">
         {/* logo and main description */}
-        <div className="flex flex-col col-span-2 ">
+        <div className="flex flex-col col-span-3 lg:col-span-2 ">
           <div className="flex gap-5">
             <img
               src={mainLogo}
@@ -50,36 +50,38 @@ const MainFooter = () => {
 
         {/* headings and subheadings */}
         <div className="flex flex-col">
-          <div className="text-lg font-medium mb-6 cursor-pointer">
+          <div className="text-lg font-medium mb-6 cursor-pointer w-fit">
             About Us
           </div>
-          <p className="text-sm my-1 cursor-pointer">Company History</p>
-          <p className="text-sm my-1 cursor-pointer">Meet The Team</p>
-          <p className="text-sm my-1 cursor-pointer">Employee Handbook</p>
-          <p className="text-sm my-1 cursor-pointer">Careers</p>
+          <p className="text-sm my-1 cursor-pointer w-fit">Company History</p>
+          <p className="text-sm my-1 cursor-pointer w-fit">Meet The Team</p>
+          <p className="text-sm my-1 cursor-pointer w-fit">Employee Handbook</p>
+          <p className="text-sm my-1 cursor-pointer w-fit">Careers</p>
         </div>
 
         <div className="flex flex-col">
-          <div className="text-lg font-medium mb-6 cursor-pointer">
+          <div className="text-lg font-medium mb-6 cursor-pointer w-fit">
             Resources
           </div>
-          <p className="text-sm my-1 cursor-pointer">Development</p>
-          <p className="text-sm my-1 cursor-pointer">Design</p>
-          <p className="text-sm my-1 cursor-pointer">Adverstisment</p>
-          <p className="text-sm my-1 cursor-pointer">Documentation</p>
-          <p className="text-sm my-1 cursor-pointer">Downloads</p>
-          <p className="text-sm my-1 cursor-pointer">Events</p>
+          <p className="text-sm my-1 cursor-pointer w-fit">Development</p>
+          <p className="text-sm my-1 cursor-pointer w-fit">Design</p>
+          <p className="text-sm my-1 cursor-pointer w-fit">Adverstisment</p>
+          <p className="text-sm my-1 cursor-pointer w-fit">Documentation</p>
+          <p className="text-sm my-1 cursor-pointer w-fit">Downloads</p>
+          <p className="text-sm my-1 cursor-pointer w-fit">Events</p>
         </div>
 
         <div className="flex flex-col">
-          <div className="text-lg font-medium mb-6 cursor-pointer">Links</div>
-          <p className="text-sm my-1 cursor-pointer">FAQs</p>
-          <p className="text-sm my-1 cursor-pointer">Support</p>
-          <p className="text-sm my-1 cursor-pointer">Live Chat</p>
+          <div className="text-lg font-medium mb-6 cursor-pointer w-fit">
+            Links
+          </div>
+          <p className="text-sm my-1 cursor-pointer w-fit">FAQs</p>
+          <p className="text-sm my-1 cursor-pointer w-fit">Support</p>
+          <p className="text-sm my-1 cursor-pointer w-fit">Live Chat</p>
         </div>
 
         <div className="flex flex-col col-span-2 lg:col-span-1">
-          <div className="text-lg font-medium mb-6  cursor-pointer">
+          <div className="text-lg font-medium mb-6 cursor-pointer w-fit">
             Contact Us
           </div>
           <p className="text-sm my-1 flex">

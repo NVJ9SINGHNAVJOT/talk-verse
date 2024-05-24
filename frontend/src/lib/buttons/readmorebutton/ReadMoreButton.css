@@ -1,7 +1,7 @@
 .readMoreBtn {
-  width: 90px;
-  height: 40px;
-  font-size: 0.7rem;
+  width: 50px;
+  height: 28px;
+  font-size: 0.5rem;
   cursor: pointer;
   background-color: #171717;
   color: #fff;
@@ -22,14 +22,6 @@
   transform: translateY(-5px);
   box-shadow: 0 2px 0 -2px #f85959, 0 8px 0 -4px #39a2db,
     0 12px 10px -3px #39a2db;
-}
-
-@media (min-width: 640px) {
-  .readMoreBtn {
-    width: 50px;
-    height: 28px;
-    font-size: 0.5rem;
-  }
 }
 
 @media (min-width: 900px) {

@@ -141,7 +141,7 @@ const Settings = () => {
           <div className=" flex items-center gap-2">
             <span className=" text-richblack-700 text-sm">Male</span>
             <input
-              className=" mt-1"
+              className=" mt-1 text-black"
               type="radio"
               value="Male"
               {...register("gender")}
