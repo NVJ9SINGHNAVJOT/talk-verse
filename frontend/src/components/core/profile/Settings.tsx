@@ -26,7 +26,7 @@ const Settings = () => {
   const [disabled, setDisabled] = useState<string[]>([]);
   const profile = useAppSelector((state) => state.user.profile);
   const [loading, setLoading] = useState<boolean>(false);
-  const { register, handleSubmit } = useForm<Profile>({
+  const { register, handleSubmit, reset } = useForm<Profile>({
     defaultValues: profile ? profile : {},
   });
 
@@ -94,6 +94,14 @@ const Settings = () => {
 
     setLoading(false);
   };
+
+  const resetHandler = () => {
+    setDisabled([]);
+    if (profile) {
+      reset(profile);
+    }
+  };
+
   return (
     <div className=" w-full mt-14 ">
       <form
@@ -141,7 +149,7 @@ const Settings = () => {
           <div className=" flex items-center gap-2">
             <span className=" text-richblack-700 text-sm">Male</span>
             <input
-              className=" mt-1 text-black"
+              className=" mt-1  checked:after:bg-black visible "
               type="radio"
               value="Male"
               {...register("gender")}
@@ -230,15 +238,18 @@ const Settings = () => {
 
         <div className=" flex justify-center gap-8">
           <button
+            type="submit"
             disabled={loading}
             className="[box-shadow:0px_0px_57px_9px_rgba(0,0,0,0.4)] hover:scale-110 transition-all ease-in-out
            bg-black  px-10 py-2 rounded-xl text-white mt-8
             text-center cursor-pointer"
-            type="submit"
           >
             Update
           </button>
           <button
+            type="button"
+            onClick={() => resetHandler()}
+            disabled={loading}
             className="[box-shadow:0px_0px_57px_9px_rgba(0,0,0,0.4)] hover:scale-110 transition-all ease-in-out
            bg-white px-10 py-2 rounded-xl text-black mt-8
             text-center cursor-pointer"

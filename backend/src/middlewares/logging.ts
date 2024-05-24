@@ -11,7 +11,6 @@ function logging(req: Request, res: Response, next: NextFunction) {
             query: req.query,
             requestBody: req.body,
             requestHeaders: {
-                authorization: req.headers.authorization,
                 "content-type": req.headers["content-type"],
             },
             file: req.file && {
