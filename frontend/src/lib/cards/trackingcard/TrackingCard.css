@@ -17,7 +17,7 @@
   justify-content: center;
   align-items: center;
   border-radius: 20px;
-  transition: 700ms;
+  transition: 2000ms;
   background: linear-gradient(
     43deg,
     rgb(65, 88, 208) 0%,
@@ -184,127 +184,127 @@
 }
 
 .tr-1:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(20deg) rotateY(-10deg) rotateZ(0deg);
 }
 
 .tr-2:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(20deg) rotateY(-5deg) rotateZ(0deg);
 }
 
 .tr-3:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(20deg) rotateY(0deg) rotateZ(0deg);
 }
 
 .tr-4:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(20deg) rotateY(5deg) rotateZ(0deg);
 }
 
 .tr-5:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(20deg) rotateY(10deg) rotateZ(0deg);
 }
 
 .tr-6:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(10deg) rotateY(-10deg) rotateZ(0deg);
 }
 
 .tr-7:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(10deg) rotateY(-5deg) rotateZ(0deg);
 }
 
 .tr-8:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(10deg) rotateY(0deg) rotateZ(0deg);
 }
 
 .tr-9:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(10deg) rotateY(5deg) rotateZ(0deg);
 }
 
 .tr-10:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(10deg) rotateY(10deg) rotateZ(0deg);
 }
 
 .tr-11:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(0deg) rotateY(-10deg) rotateZ(0deg);
 }
 
 .tr-12:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(0deg) rotateY(-5deg) rotateZ(0deg);
 }
 
 .tr-13:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
 }
 
 .tr-14:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(0deg) rotateY(5deg) rotateZ(0deg);
 }
 
 .tr-15:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(0deg) rotateY(10deg) rotateZ(0deg);
 }
 
 .tr-16:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(-10deg) rotateY(-10deg) rotateZ(0deg);
 }
 
 .tr-17:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(-10deg) rotateY(-5deg) rotateZ(0deg);
 }
 
 .tr-18:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(-10deg) rotateY(0deg) rotateZ(0deg);
 }
 
 .tr-19:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(-10deg) rotateY(5deg) rotateZ(0deg);
 }
 
 .tr-20:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(-10deg) rotateY(10deg) rotateZ(0deg);
 }
 
 .tr-21:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(-20deg) rotateY(-10deg) rotateZ(0deg);
 }
 
 .tr-22:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(-20deg) rotateY(-5deg) rotateZ(0deg);
 }
 
 .tr-23:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(-20deg) rotateY(0deg) rotateZ(0deg);
 }
 
 .tr-24:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(-20deg) rotateY(5deg) rotateZ(0deg);
 }
 
 .tr-25:hover ~ #card {
-  transition: 125ms ease-in-out;
+  transition: 400ms linear;
   transform: rotateX(-20deg) rotateY(10deg) rotateZ(0deg);
 }
 
