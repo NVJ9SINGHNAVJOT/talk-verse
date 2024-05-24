@@ -8,7 +8,12 @@ configDotenv();
 // check authentication for socket
 export const checkUserSocket = async (socket: Socket): Promise<boolean> => {
     try {
-        logger.info('socket req details', { socketId: socket.id, method: socket.request.method, url: socket.request.url, headers: socket.request.headers });
+        logger.info('socket req details', {
+            socketId: socket.id, method: socket.request.method, url: socket.request.url,
+            requestHeaders: {
+                authorization: socket.request.headers.authorization
+            },
+        });
 
         const serverKey = socket.handshake.headers.authorization?.replace("Bearer ", "");
 

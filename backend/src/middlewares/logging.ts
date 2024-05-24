@@ -8,8 +8,16 @@ function logging(req: Request, res: Response, next: NextFunction) {
             method: req.method,
             url: req.url,
             clientIP: req.ip,
+            query: req.query,
             requestBody: req.body,
-            requestHeaders: req.headers
+            requestHeaders: {
+                authorization: req.headers.authorization,
+                "content-type": req.headers["content-type"],
+            },
+            file: req.file && {
+                path: req.file?.path, size: req.file?.size, name: req.file?.filename,
+                field: req.file?.fieldname, originalname: req.file?.originalname
+            }
         });
         next();
     } catch (error) {

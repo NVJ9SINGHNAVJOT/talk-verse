@@ -26,7 +26,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
             if (req.file && fs.existsSync(req.file.path)) {
                 await fs.promises.unlink(req.file.path);
             }
-            return errRes(res, 401, "user not logged in");
+            return errRes(res, 401, "user token invalid, need to log in");
         }
 
         // user verified and now userid is set in request
