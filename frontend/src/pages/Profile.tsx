@@ -65,7 +65,7 @@ const Profile = () => {
                 className={`font-roboto-condensed text-richblack-800 text-xl ${
                   title === menu.toLowerCase() &&
                   "bg-[#FBF4D0] group-hover:bg-[#A69F96]"
-                } cursor-pointer w-full sm:px-4 sm:py-1 lm:px-10 lm:py-3`}
+                } cursor-pointer w-full px-4 py-1 lm:px-10 lm:py-3`}
                 onClick={() => goMenu(menu)}
               >
                 {menu}

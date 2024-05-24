@@ -75,9 +75,9 @@ const UserInfo = () => {
   };
   return (
     <div className="w-full">
-      <section className=" w-full flex justify-around mt-14 sm:px-4 lm:px-10 sm:flex-col-reverse md:flex-row">
+      <section className=" w-full flex justify-around mt-14 px-4 lm:px-10 flex-col-reverse md:flex-row">
         {/* user Details */}
-        <div className=" w-7/12 flex flex-col sm:mt-10 md:mt-6 sm:ml-10 md:ml-6 ">
+        <div className=" w-7/12 flex flex-col mt-10 md:mt-6 ml-10 md:ml-6 ">
           <p className=" text-4xl font-semibold font-be-veitnam-pro  mb-14">
             {user?.firstName + " " + user?.lastName}
           </p>
@@ -110,12 +110,12 @@ const UserInfo = () => {
           )}
           <p className=" text-xl font-semibold  mt-2">Contact No.</p>
           {profile?.contactNumber ? (
-            <p className=" text-[0.9rem] sm:mb-8 md:mb-0">
+            <p className=" text-[0.9rem] mb-8 md:mb-0">
               {profile.contactNumber + " " + profile.contactNumber}
             </p>
           ) : (
             <p
-              className=" text-[0.9rem] cursor-pointer sm:mb-8 md:mb-0 w-fit"
+              className=" text-[0.9rem] cursor-pointer mb-8 md:mb-0 w-fit"
               onClick={goSetting}
             >
               set contact no.
@@ -134,7 +134,7 @@ const UserInfo = () => {
           <div
             className=" bg-black  w-full rounded-xl flex justify-center items-center
         [box-shadow:0px_0px_57px_9px_rgba(0,0,0,0.4)] hover:scale-110 transition-all ease-in-out
-         sm:mx-auto md: mx-0"
+         mx-auto md: mx-0"
           >
             {selectedFile ? (
               <img

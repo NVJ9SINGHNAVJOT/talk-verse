@@ -99,12 +99,12 @@ const Talk = () => {
       ) : (
         <div className="w-full flex bg-grayblack h-[calc(100vh-4rem)]">
           {/* left bar chat list section*/}
-          <section className="sm:w-4/12 lg:w-3/12 h-full">
+          <section className="w-4/12 lg:w-3/12 h-full">
             <ChatBar />
           </section>
 
           {/* right bar chat main section */}
-          <section className="sm:w-8/12 lg:w-9/12 h-full">
+          <section className="w-8/12 lg:w-9/12 h-full">
             <Outlet />
           </section>
         </div>

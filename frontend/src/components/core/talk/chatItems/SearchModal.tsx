@@ -77,7 +77,7 @@ const SearchModal = (props: SearchModalProps) => {
 
           {users.length > 0 && (
             <div
-              className=" absolute flex flex-wrap justify-center gap-7 top-36 sm:top-24 sm:w-[35rem]  max-w-[40rem] text-white 
+              className=" absolute flex flex-wrap justify-center gap-7 top-36 top-24 w-[35rem]  max-w-[40rem] text-white 
           max-h-[calc(100vh-62vh)] overflow-y-scroll"
             >
               {users.map((user, index) => {

@@ -114,7 +114,7 @@ const MainNavbar = () => {
       {/* sign in buttons or user logo */}
       {user ? (
         <div
-          className={`sm:flex justify-evenly items-center md:gap-2 sm:gap-x-2 mr-8 `}
+          className={`flex justify-evenly items-center md:gap-2 gap-x-2 mr-8 `}
         >
           <UserMenu />
           <div ref={menuRefExclude} onClick={toogleMenu} className="md:hidden">
@@ -122,9 +122,7 @@ const MainNavbar = () => {
           </div>
         </div>
       ) : (
-        <div
-          className={`flex justify-evenly items-center sm:gap-3 lg:gap-5 mr-8`}
-        >
+        <div className={`flex justify-evenly items-center gap-3 lg:gap-5 mr-8`}>
           <SignInButton title={"Log In"} />
           <SignInButton title={"Sign Up"} />
 
@@ -138,7 +136,7 @@ const MainNavbar = () => {
       {menu && (
         <div
           ref={menuRef}
-          className=" sm:flex flex-col z-[1000] md:hidden absolute top-[4rem] right-0 backdrop-blur-md
+          className=" flex flex-col z-[1000] md:hidden absolute top-[4rem] right-0 backdrop-blur-md
             justify-start h-[calc(100vh-4rem)] items-center w-4/12 gap-y-4"
         >
           <div

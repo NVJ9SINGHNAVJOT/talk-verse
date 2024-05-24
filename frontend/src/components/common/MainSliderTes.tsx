@@ -66,17 +66,17 @@ const MainSliderTes = () => {
         <SwiperSlide key={index}>
           <div className="w-full h-full flex flex-col justify-evenly items-center p-2">
             {/* only edit content in this div */}
-            <div className=" text-white sm:text-xs md:text-[1rem] ">
+            <div className=" text-white text-xs md:text-[1rem] ">
               {value.review}
             </div>
             <div className=" self-start flex items-center text-white gap-4">
               {value.imageUrl ? (
                 <img
-                  className="sm:w-10 sm:h-10 lm:w-16 lm:h-16 aspect-auto rounded-full"
+                  className="w-10 h-10 lm:w-16 lm:h-16 aspect-auto rounded-full"
                   alt="Loading..."
                 />
               ) : (
-                <RxAvatar className="sm:w-10 sm:h-10 lm:w-16 lm:h-16" />
+                <RxAvatar className="w-10 h-10 lm:w-16 lm:h-16" />
               )}
               <div>
                 <span>{value.firstName}</span> <span>{value.lastName}</span>

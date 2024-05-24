@@ -165,7 +165,7 @@ const CreateGroupModal = (props: CreateGroupModalProps) => {
         </form>
         {/* friends */}
         <div
-          className=" flex flex-wrap justify-center items-start gap-7 sm:w-[35rem]  max-w-[40rem] text-white 
+          className=" flex flex-wrap justify-center items-start gap-7 w-[35rem]  max-w-[40rem] text-white 
            max-h-[calc(100vh-50vh)] overflow-y-scroll"
         >
           {friends.map((friend, index) => {

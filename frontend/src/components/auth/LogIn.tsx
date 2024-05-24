@@ -59,7 +59,7 @@ const LogIn = (props: SignInProps) => {
     <div className=" w-full flex flex-col justify-evenly items-center">
       <form
         onSubmit={handleSubmit(onSubmitForm)}
-        className="flex sm:w-10/12 lm:w-7/12 flex-col justify-evenly items-center gap-4"
+        className="flex w-10/12 lm:w-7/12 flex-col justify-evenly items-center gap-4"
       >
         <h2 className=" text-center text-xl text-white font-sans font-semibold">
           Log In to TalkVerse

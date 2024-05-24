@@ -127,7 +127,7 @@ const SignUp = (props: SignInProps) => {
     <div className=" w-full flex flex-col justify-evenly items-center">
       <form
         onSubmit={handleSubmit(sendOtp)}
-        className="flex sm:w-10/12 lm:w-7/12 flex-col justify-evenly items-center gap-2"
+        className="flex w-10/12 lm:w-7/12 flex-col justify-evenly items-center gap-2"
       >
         <h2 className=" text-center text-base text-white font-sans font-semibold">
           Sign Up to TalkVerse

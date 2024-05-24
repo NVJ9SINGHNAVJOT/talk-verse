@@ -19,7 +19,7 @@ const MainFooter = () => {
       bg-[linear-gradient(315deg,_rgba(21,_0,_36,_1)_66%,_rgba(147,_147,_147,_1)_100%,_rgba(0,_212,_255,_1)_100%)]"
     >
       {/* main content */}
-      <div className="w-full grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 xl:grid-cols-6 gap-x-4 gap-y-8 text-white">
+      <div className="w-full grid grid-cols-3 grid-cols-4 md:grid-cols-5 xl:grid-cols-6 gap-x-4 gap-y-8 text-white">
         {/* logo and main description */}
         <div className="flex flex-col col-span-2 ">
           <div className="flex gap-5">
@@ -78,7 +78,7 @@ const MainFooter = () => {
           <p className="text-sm my-1 cursor-pointer">Live Chat</p>
         </div>
 
-        <div className="flex flex-col sm:col-span-2 lg:col-span-1">
+        <div className="flex flex-col col-span-2 lg:col-span-1">
           <div className="text-lg font-medium mb-6  cursor-pointer">
             Contact Us
           </div>

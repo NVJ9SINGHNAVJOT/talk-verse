@@ -20,11 +20,11 @@ const About = () => {
         {/* section 1 */}
         <section className=" w-full mt-8 flex flex-col items-center">
           <div className="h-[0.1rem] w-full bg-black"></div>
-          <div className="sm:text-7xl  lm:text-9xl font-be-veitnam-pro py-2 font-bold">
+          <div className="text-7xl  lm:text-9xl font-be-veitnam-pro py-2 font-bold">
             ABOUT US
           </div>
           <div className="h-[0.1rem] w-full bg-black"></div>
-          <div className="flex justify-between w-full mt-10 sm:gap-x-12 lm:gap-x-[5rem]">
+          <div className="flex justify-between w-full mt-10 gap-x-12 lm:gap-x-[5rem]">
             <div className=" font-roboto-condensed text-red-500 font-semibold text-nowrap text-xl">
               OUR VALUES
             </div>
@@ -45,7 +45,7 @@ const About = () => {
             className=" w-full rounded-[10px] p-10 bg-[lightgrey] flex justify-around mt-16
             [box-shadow:rgba(50,_50,_93,_0.25)_0px_30px_50px_-12px_inset,_rgba(0,_0,_0,_0.3)_0px_18px_26px_-18px_inset]
              hover:bg-[#e0e0e0] hover:[box-shadow:15px_15px_30px_#bebebe,_-15px_-15px_30px_#ffffff]
-            transition-all ease-in-out sm:py-10 lm:py-20"
+            transition-all ease-in-out py-10 lm:py-20"
           >
             <img
               src={aboutUs1}
@@ -61,7 +61,7 @@ const About = () => {
         </section>
         {/* section 2 */}
         <section className="w-full flex flex-col mt-28">
-          <div className="flex justify-between w-full sm:gap-x-12 lm:gap-x-[5rem]">
+          <div className="flex justify-between w-full gap-x-12 lm:gap-x-[5rem]">
             <div className=" font-roboto-condensed  text-red-500 font-semibold text-nowrap text-xl">
               OUR MISSION
             </div>
@@ -124,7 +124,7 @@ const About = () => {
         </section>
       </div>
       {/* section 3 */}
-      <div className="sm:text-7xl lm:text-9xl font-be-veitnam-pro text-center sm:-mb-2  lm:-mb-4 text-somke">
+      <div className="text-7xl lm:text-9xl font-be-veitnam-pro text-center -mb-2  lm:-mb-4 text-somke">
         Our Clients
       </div>
       <section className="w-full  bg-somke py-20">
@@ -132,8 +132,8 @@ const About = () => {
           {/* client 1 */}
           <div
             style={{ backgroundImage: `url(${client1})` }}
-            className=" self-start group relative sm:h-[20rem] lm:h-[25rem] lg:h-[28rem] xl:h-[30rem] w-9/12 flex flex-col justify-center 
-            items-center bg-cover bg-no-repeat shadow-[0px_0px_40px_#1f1f1f]
+            className=" self-start group relative h-[20rem] lm:h-[25rem] lg:h-[28rem] xl:h-[30rem] w-9/12 flex flex-col justify-center 
+            items-center [background-size:100%_100%] bg-no-repeat shadow-[0px_0px_40px_#1f1f1f]
             before:absolute before:top-[0] before:left-[0] before:right-[0] before:bottom-[0] 
             before:bg-[linear-gradient(45deg,_#343d68,_#343d68be,_#343d687c)] before:scale-x-0 before:origin-left
             before:transition-all before:duration-[0.4s] hover:before:scale-100"
@@ -154,7 +154,7 @@ const About = () => {
           {/* client 2 */}
           <div
             style={{ backgroundImage: `url(${client2})` }}
-            className=" self-end group relative sm:h-[20rem] lm:h-[25rem] lg:h-[28rem] xl:h-[30rem] w-9/12 flex flex-col 
+            className=" self-end group relative h-[20rem] lm:h-[25rem] lg:h-[28rem] xl:h-[30rem] w-9/12 flex flex-col 
             justify-center items-center [background-size:100%_100%] bg-no-repeat shadow-[0px_0px_40px_#1f1f1f]
             before:absolute before:top-[0] before:left-[0] before:right-[0] before:bottom-[0] 
             before:bg-[linear-gradient(45deg,_#343d68,_#343d68be,_#343d687c)] before:scale-x-0 before:origin-right
