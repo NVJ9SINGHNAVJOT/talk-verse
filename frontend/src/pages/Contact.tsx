@@ -1,33 +1,74 @@
+import MainFooter from "@/components/common/MainFooter";
 import LettersPull from "@/lib/cards/LettersPull";
 import {
   TextRevealCard,
   TextRevealCardDescription,
   TextRevealCardTitle,
 } from "@/lib/cards/TextRevealCard";
+import { BackgroundBeams } from "@/lib/sections/BackgroundBeams";
+import { FaFacebook, FaInstagram, FaXTwitter, FaGithub } from "react-icons/fa6";
 
 const Contact = () => {
   return (
-    <div className="w-full pt-10 bg-[#0E0E10] ">
+    <div className="w-full pt-10 bg-neutral-950  ">
       <LettersPull className="text-white" words={"Contact Us"} delay={0.05} />
-      <section className=" w-full flex items-center justify-center h-[28rem]">
-        <TextRevealCard
-          text="You know the business"
-          revealText="I know the chemistry "
+      {/* heading section */}
+      <section className=" w-full flex flex-col lm:flex-row items-center gap-y-16 justify-evenly mt-8">
+        <div className="">
+          <TextRevealCard
+            text="You know the business"
+            revealText="I know the chemistry "
+          >
+            <TextRevealCardTitle>
+              Sometimes, you just need to see it.
+            </TextRevealCardTitle>
+            <TextRevealCardDescription>
+              Get in Touch with Us At Talkverse, we value your feedback,
+              inquiries, and suggestions. Whether you have a question about our
+              services, want to collaborate, or simply want to say hello, we're
+              here to listen. Feel free to reach out to us through the contact
+              form below, or connect with us on social media. We appreciate your
+              interest in Talkverse and look forward to hearing from you!
+            </TextRevealCardDescription>
+          </TextRevealCard>
+        </div>
+        <div
+          className=" relative w-48 h-[20rem] group bg-[linear-gradient(163deg,_#00ff75_0%,_#3700ff_100%)] rounded-[20px] transition-all duration-300
+          hover:[box-shadow:0px_0px_30px_1px_rgba(0,_255,_117,_0.30)]"
         >
-          <TextRevealCardTitle>
-            Sometimes, you just need to see it.
-          </TextRevealCardTitle>
-          <TextRevealCardDescription>
-            Get in Touch with Us At Talkverse, we value your feedback,
-            inquiries, and suggestions. Whether you have a question about our
-            services, want to collaborate, or simply want to say hello, we're
-            here to listen. Feel free to reach out to us through the contact
-            form below, or connect with us on social media. We appreciate your
-            interest in Talkverse and look forward to hearing from you!
-          </TextRevealCardDescription>
-        </TextRevealCard>
+          <div className=" z-50 bg-transparent absolute w-full h-full flex gap-6 flex-col items-center justify-evenly ">
+            <FaFacebook className=" size-7 fill-white cursor-pointer" />
+            <FaInstagram className=" size-7 fill-white cursor-pointer" />
+            <FaXTwitter className=" size-7 fill-white cursor-pointer" />
+            <FaGithub className=" size-7 fill-white cursor-pointer" />
+          </div>
+          <div
+            className=" w-full h-full bg-[#1a1a1a] rounded-[18px] transition-all duration-300 group-hover:scale-[0.97]
+             group-hover:rounded-[20px]  "
+          ></div>
+        </div>
       </section>
-      <section className=" w-full h-96 bg-teal-950"></section>
+      {/* form section */}
+      <section className=" w-full h-[40rem]">
+        <div className="w-full h-full rounded-md relative flex flex-col items-center justify-center antialiased">
+          <div className="max-w-2xl mx-auto p-4">
+            <h1 className="relative z-10 text-lg md:text-7xl  bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600  text-center font-sans font-bold">
+              Send Your Querry
+            </h1>
+            <p></p>
+            <p className="text-neutral-500 max-w-lg mx-auto my-2 text-xl text-center relative z-10">
+              Our team will contact you asap
+            </p>
+            <input
+              type="text"
+              placeholder="hi@manuarora.in"
+              className="rounded-lg border border-neutral-800 focus:ring-2 focus:ring-teal-500  w-full relative z-10 mt-4  bg-neutral-950 placeholder:text-neutral-700"
+            />
+          </div>
+          <BackgroundBeams />
+        </div>
+      </section>
+      <MainFooter />
     </div>
   );
 };
