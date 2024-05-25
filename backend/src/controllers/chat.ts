@@ -5,7 +5,7 @@ import UnseenCount from "@/db/mongodb/models/UnseenCount";
 import User from "@/db/mongodb/models/User";
 import { channels, groupIds, groupOffline } from "@/socket";
 import { clientE } from "@/socket/events";
-import { FileMessageBody } from "@/types/controllers/chatReq";
+import { FileMessageReq } from "@/types/controllers/chatReq";
 import { CustomRequest } from "@/types/custom";
 import { SoGroupMessageRecieved, SoMessageRecieved } from "@/types/socket/eventTypes";
 import uploadToCloudinary from "@/utils/cloudinaryUpload";
@@ -191,7 +191,7 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
 export const fileMessage = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = (req as CustomRequest).userId;
-        const data: FileMessageBody = req.body;
+        const data: FileMessageReq = req.body;
 
         // validation
         if (!userId) {

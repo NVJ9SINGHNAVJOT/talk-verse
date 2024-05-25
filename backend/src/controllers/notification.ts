@@ -4,7 +4,7 @@ import UnseenCount from '@/db/mongodb/models/UnseenCount';
 import User from '@/db/mongodb/models/User';
 import { clientE } from '@/socket/events';
 import { channels, groupIds, groupOffline, userSocketIDs } from '@/socket/index';
-import { AcceptRequestBody, SendRequestBody, SetOrderBody, SetUnseenCountBody } from '@/types/controllers/notificationReq';
+import { OtherUserIdReq, SetOrderReq, SetUnseenCountReq } from '@/types/controllers/notificationReq';
 import { CustomRequest } from '@/types/custom';
 import Channel from '@/types/channel';
 import { SoAddedInGroup, SoRequestAccepted, SoUserRequest } from '@/types/socket/eventTypes';
@@ -12,7 +12,7 @@ import emitSocketEvent from '@/utils/emitSocketEvent';
 import { errRes } from '@/utils/error';
 import { getMultiSockets, getSingleSocket } from '@/utils/getSocketIds';
 import { Request, Response } from 'express';
-import { CreateGroupBody } from '@/types/controllers/chatReq';
+import { CreateGroupReq } from '@/types/controllers/chatReq';
 import uploadToCloudinary from '@/utils/cloudinaryUpload';
 import Group from '@/db/mongodb/models/Group';
 import fs from 'fs';
@@ -68,18 +68,19 @@ export const getUsers = async (req: Request, res: Response): Promise<Response> =
 export const sendRequest = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = (req as CustomRequest).userId;
-        const data: SendRequestBody = req.body;
+        const data: OtherUserIdReq = req.body;
+
 
         if (!userId) {
             return errRes(res, 400, 'user id not present');
         }
 
-        if (!data.reqUserId) {
+        if (!data.otherUserId) {
             return errRes(res, 400, 'invalid data');
         }
 
         // check user exist or not for req id
-        const checkUser = await User.findById({ _id: data.reqUserId }).select({ userName: true, imageUrl: true, friends: true }).exec();
+        const checkUser = await User.findById({ _id: data.otherUserId }).select({ userName: true, imageUrl: true, friends: true }).exec();
 
         let errCheck: boolean = false;
         checkUser?.friends?.forEach((item) => {
@@ -103,10 +104,10 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
         }
 
         // update user with req
-        await Notification.updateOne({ userId: data.reqUserId },
+        await Notification.updateOne({ userId: data.otherUserId },
             { $push: { friendRequests: userId } }).exec();
 
-        const socketId = getSingleSocket(data.reqUserId);
+        const socketId = getSingleSocket(data.otherUserId);
         if (socketId) {
             const sdata: SoUserRequest = {
                 _id: userId,
@@ -123,6 +124,127 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
     } catch (error) {
         return errRes(res, 500, "error while sending request", error);
     }
+};
+
+export const acceptRequest = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const userId = (req as CustomRequest).userId;
+        const data: OtherUserIdReq = req.body;
+
+        if (!userId) {
+            return errRes(res, 400, 'user id not present');
+        }
+
+        if (!data.otherUserId) {
+            return errRes(res, 400, 'invalid data');
+        }
+
+        // check user exist or not for req id
+        const otherUser = await User.findById({ _id: data.otherUserId })
+            .select({ firstName: true, lastName: true, imageUrl: true, publicKey: true }).exec();
+
+        if (!otherUser) {
+            return errRes(res, 400, 'user not present for given id');
+        }
+
+        // create chatId for both users
+        // user 1 is who initially sent request and user 2 is who accepted that request
+        const chat = await Chat.create({ user1: data.otherUserId, user2: userId });
+
+        // create unseen count for both users , set 0 for both users in their unseenMessages for chat._id as mainId
+        const ucotherUser = await UnseenCount.create({ userId: data.otherUserId, mainId: chat._id });
+        const ucUser = await UnseenCount.create({ userId: userId, mainId: chat._id });
+
+        // remove from notifications and set unseen messages count id
+        await Notification.findOneAndUpdate({ userId: userId },
+            { $pull: { friendRequests: data.otherUserId }, $push: { unseenMessages: ucUser._id } }).exec();
+
+        await Notification.findOneAndUpdate({ userId: data.otherUserId },
+            { $pull: { friendRequests: userId }, $push: { unseenMessages: ucotherUser._id } }).exec();
+
+        // now add userId in friend list of acceptUserId
+        const user1 = await User.findByIdAndUpdate({ _id: data.otherUserId }, { $push: { friends: { friendId: userId, chatId: chat?._id } } },
+            { new: true })
+            .select({ chatBarOrder: true }).exec();
+
+        // now add acceptUserId in friend list of user
+        const user2 = await User.findByIdAndUpdate({ _id: userId }, { $push: { friends: { friendId: data.otherUserId, chatId: chat?._id } } },
+            { new: true })
+            .select({ chatBarOrder: true, firstName: true, lastName: true, imageUrl: true, publicKey: true }).exec();
+
+        user1?.chatBarOrder.unshift(chat._id);
+        await user1?.save();
+
+        user2?.chatBarOrder.unshift(chat._id);
+        await user2?.save();
+
+        // Create a new mutex instance
+        const newChannel = new Channel();
+        // set newmutex for new chatid
+
+        channels.set(chat._id.toString(), newChannel);
+
+        const socketId = getSingleSocket(data.otherUserId);
+
+        if (socketId && user2) {
+            const sdata: SoRequestAccepted = {
+                _id: user2._id,
+                chatId: chat._id,
+                firstName: user2.firstName,
+                lastName: user2.lastName,
+                imageUrl: user2.imageUrl,
+                publicKey: user2.publicKey
+            };
+            emitSocketEvent(req, clientE.REQUEST_ACCEPTED, sdata, socketId);
+            emitSocketEvent(req, clientE.SET_USER_ONLINE, user2._id.toString(), socketId);
+
+            // socketId is of other user, now send useronline to myself as other user is online and socketId is present
+            // get mysocketId
+            const mySocketId = getSingleSocket(userId);
+            if (mySocketId && user1) {
+                emitSocketEvent(req, clientE.SET_USER_ONLINE, user1._id.toString(), mySocketId);
+            }
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: 'request accepted successfully',
+            newFriend: otherUser,
+            newChatId: chat._id,
+            newFriendPublicKey: otherUser.publicKey
+        });
+
+    } catch (error) {
+        return errRes(res, 500, "error while accept request", error);
+    }
+};
+
+export const deleteRequest = async (req: Request, res: Response) => {
+    try {
+        const userId = (req as CustomRequest).userId;
+
+        const data: OtherUserIdReq = req.body;
+
+        if (!userId) {
+            return errRes(res, 400, 'user id not present');
+        }
+
+        if (!data.otherUserId) {
+            return errRes(res, 400, 'invalid userId for deleting request');
+        }
+
+        await Notification.findOneAndUpdate({ userId: userId },
+            { $pull: { friendRequests: data.otherUserId } }).exec();
+
+        return res.status(200).json({
+            success: true,
+            message: "req deleted successfully"
+        });
+
+    } catch (error) {
+        return errRes(res, 500, "error while deleting request", error);
+    }
+
 };
 
 export const getAllNotifications = async (req: Request, res: Response): Promise<Response> => {
@@ -167,103 +289,10 @@ export const getAllNotifications = async (req: Request, res: Response): Promise<
     }
 };
 
-export const acceptRequest = async (req: Request, res: Response): Promise<Response> => {
-    try {
-        const userId = (req as CustomRequest).userId;
-        const data: AcceptRequestBody = req.body;
-
-        if (!userId) {
-            return errRes(res, 400, 'user id not present');
-        }
-
-        if (!data.acceptUserId) {
-            return errRes(res, 400, 'invalid data');
-        }
-
-        // check user exist or not for req id
-        const otherUser = await User.findById({ _id: data.acceptUserId })
-            .select({ firstName: true, lastName: true, imageUrl: true, publicKey: true }).exec();
-
-        if (!otherUser) {
-            return errRes(res, 400, 'user not present for given id');
-        }
-
-        // create chatId for both users
-        // user 1 is who initially sent request and user 2 is who accepted that request
-        const chat = await Chat.create({ user1: data.acceptUserId, user2: userId });
-
-        // create unseen count for both users , set 0 for both users in their unseenMessages for chat._id as mainId
-        const ucotherUser = await UnseenCount.create({ userId: data.acceptUserId, mainId: chat._id });
-        const ucUser = await UnseenCount.create({ userId: userId, mainId: chat._id });
-
-        // remove from notifications and set unseen messages count id
-        await Notification.findOneAndUpdate({ userId: userId },
-            { $pull: { friendRequests: data.acceptUserId }, $push: { unseenMessages: ucUser._id } }).exec();
-
-        await Notification.findOneAndUpdate({ userId: data.acceptUserId },
-            { $pull: { friendRequests: userId }, $push: { unseenMessages: ucotherUser._id } }).exec();
-
-        // now add userId in friend list of acceptUserId
-        const user1 = await User.findByIdAndUpdate({ _id: data.acceptUserId }, { $push: { friends: { friendId: userId, chatId: chat?._id } } },
-            { new: true })
-            .select({ chatBarOrder: true }).exec();
-
-        // now add acceptUserId in friend list of user
-        const user2 = await User.findByIdAndUpdate({ _id: userId }, { $push: { friends: { friendId: data.acceptUserId, chatId: chat?._id } } },
-            { new: true })
-            .select({ chatBarOrder: true, firstName: true, lastName: true, imageUrl: true, publicKey: true }).exec();
-
-        user1?.chatBarOrder.unshift(chat._id);
-        await user1?.save();
-
-        user2?.chatBarOrder.unshift(chat._id);
-        await user2?.save();
-
-        // Create a new mutex instance
-        const newChannel = new Channel();
-        // set newmutex for new chatid
-
-        channels.set(chat._id.toString(), newChannel);
-
-        const socketId = getSingleSocket(data.acceptUserId);
-
-        if (socketId && user2) {
-            const sdata: SoRequestAccepted = {
-                _id: user2._id,
-                chatId: chat._id,
-                firstName: user2.firstName,
-                lastName: user2.lastName,
-                imageUrl: user2.imageUrl,
-                publicKey: user2.publicKey
-            };
-            emitSocketEvent(req, clientE.REQUEST_ACCEPTED, sdata, socketId);
-            emitSocketEvent(req, clientE.SET_USER_ONLINE, user2._id.toString(), socketId);
-
-            // socketId is of other user, now send useronline to myself as other user is online and socketId is present
-            // get mysocketId
-            const mySocketId = getSingleSocket(userId);
-            if (mySocketId && user1) {
-                emitSocketEvent(req, clientE.SET_USER_ONLINE, user1._id.toString(), mySocketId);
-            }
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: 'request accepted successfully',
-            newFriend: otherUser,
-            newChatId: chat._id,
-            newFriendPublicKey: otherUser.publicKey
-        });
-
-    } catch (error) {
-        return errRes(res, 500, "error while accept request", error);
-    }
-};
-
 export const createGroup = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = (req as CustomRequest).userId;
-        const data: CreateGroupBody = req.body;
+        const data: CreateGroupReq = req.body;
 
         // validation
         if (!userId) {
@@ -410,7 +439,7 @@ export const checkOnlineFriends = async (req: Request, res: Response): Promise<R
 export const setUnseenCount = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = (req as CustomRequest).userId;
-        const data: SetUnseenCountBody = req.body;
+        const data: SetUnseenCountReq = req.body;
 
         if (!userId) {
             return errRes(res, 400, 'user id not present');
@@ -436,7 +465,7 @@ export const setUnseenCount = async (req: Request, res: Response): Promise<Respo
 export const setOrder = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = (req as CustomRequest).userId;
-        const data: SetOrderBody = req.body;
+        const data: SetOrderReq = req.body;
 
         if (!userId) {
             return errRes(res, 400, 'user id not present');

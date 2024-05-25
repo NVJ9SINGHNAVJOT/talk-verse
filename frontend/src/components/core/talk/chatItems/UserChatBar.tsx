@@ -8,7 +8,10 @@ import userChatBarEvents from "@/socket/events/userChatBarEvents";
 import { useRef, useState } from "react";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import { useAppSelector } from "@/redux/store";
-import { acceptRequestApi } from "@/services/operations/notificationApi";
+import {
+  acceptRequestApi,
+  deleteRequestApi,
+} from "@/services/operations/notificationApi";
 import { RxAvatar } from "react-icons/rx";
 import { CiCirclePlus } from "react-icons/ci";
 import {
@@ -67,6 +70,16 @@ const UserChatBar = () => {
       toast.success("New friend added");
     } else {
       toast.error("Error while adding friend");
+    }
+  };
+
+  const deleteReq = async (userId: string) => {
+    dispatch(deleteUserRequest(userId));
+    const response = await deleteRequestApi(userId);
+    if (response) {
+      toast.info("Request deleted");
+    } else {
+      toast.error("Error while deleting request");
     }
   };
 
@@ -131,6 +144,10 @@ const UserChatBar = () => {
                       <CiCirclePlus
                         onClick={() => acceptReq(user._id)}
                         className=" text-white w-8 h-8 aspect-auto cursor-pointer hover:bg-white hover:text-black rounded-full"
+                      />
+                      <CiCirclePlus
+                        onClick={() => deleteReq(user._id)}
+                        className=" text-white w-8 h-8 aspect-auto cursor-pointer rotate-45 hover:bg-white hover:text-black rounded-full"
                       />
                     </div>
                   );

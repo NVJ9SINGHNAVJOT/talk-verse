@@ -1,5 +1,5 @@
 import User from '@/db/mongodb/models/User';
-import { UpdateUserDetailsBody } from '@/types/controllers/profileReq';
+import { UpdateUserDetailsReq } from '@/types/controllers/profileReq';
 import { CustomRequest } from '@/types/custom';
 import uploadToCloudinary from '@/utils/cloudinaryUpload';
 import { errRes } from '@/utils/error';
@@ -119,7 +119,7 @@ export const updateUserDetails = async (req: Request, res: Response): Promise<Re
         if (!userId) {
             return errRes(res, 400, "invalid data, userId not present");
         }
-        const data: UpdateUserDetailsBody = req.body;
+        const data: UpdateUserDetailsReq = req.body;
 
         const user = await User.findById({ _id: userId }).select({
             email: true,

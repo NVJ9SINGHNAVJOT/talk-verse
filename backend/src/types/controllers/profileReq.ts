@@ -1,5 +1,5 @@
 
-export type UpdateUserDetailsBody = {
+export type UpdateUserDetailsReq = {
     userName?: string,
     gender?: string,
     dateOfBirth?: string,

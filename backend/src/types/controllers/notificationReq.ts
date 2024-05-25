@@ -1,16 +1,12 @@
-export type SendRequestBody = {
-    reqUserId: string,
+export type OtherUserIdReq = {
+    otherUserId: string,
 };
 
-export type AcceptRequestBody = {
-    acceptUserId: string,
-};
-
-export type SetUnseenCountBody = {
+export type SetUnseenCountReq = {
     mainId: string,
     count: number,
 }
 
-export type SetOrderBody = {
+export type SetOrderReq = {
     mainId: string
 }

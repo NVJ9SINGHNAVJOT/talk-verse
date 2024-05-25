@@ -1,5 +1,5 @@
 import User from '@/db/mongodb/models/User';
-import { LogInBody, SendOtpBody, SignUpBody } from '@/types/controllers/authReq';
+import { LogInReq, SendOtpReq, SignUpReq } from '@/types/controllers/authReq';
 import { Request, Response } from 'express';
 import uploadToCloudinary from '@/utils/cloudinaryUpload';
 import { errRes } from '@/utils/error';
@@ -21,7 +21,7 @@ configDotenv();
 // create user | user signup
 export const signUp = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const data: SignUpBody = req.body;
+    const data: SignUpReq = req.body;
 
     // validation
     if (
@@ -113,7 +113,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
 
 export const sendOtp = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const data: SendOtpBody = req.body;
+    const data: SendOtpReq = req.body;
     if (!data.email || !valid.isEmail(data.email)) {
       return errRes(res, 400, 'invalid email id');
     }
@@ -137,7 +137,7 @@ export const sendOtp = async (req: Request, res: Response): Promise<Response> =>
 // user login
 export const logIn = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const data: LogInBody = req.body;
+    const data: LogInReq = req.body;
 
     // validation
     if (!valid.isEmail(data.email) ||

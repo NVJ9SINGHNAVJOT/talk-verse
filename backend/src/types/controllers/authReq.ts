@@ -1,4 +1,4 @@
-export type SignUpBody = {
+export type SignUpReq = {
     firstName: string,
     lastName: string,
     userName: string,
@@ -8,12 +8,12 @@ export type SignUpBody = {
     confirmPassword: string,
 };
 
-export type LogInBody = {
+export type LogInReq = {
     email: string,
     password: string,
     confirmPassword: string,
 };
 
-export type SendOtpBody = {
+export type SendOtpReq = {
     email: string
 }

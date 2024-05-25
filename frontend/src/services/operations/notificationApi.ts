@@ -8,8 +8,9 @@ import { AcceptRequestRs, CheckOnlineFriendsRs, GetAllNotificationsRs, GetUsersR
 const {
     GET_USERS,
     SEND_REQUEST,
-    GET_ALL_NOTIFICATIONS,
     ACCEPT_REQUEST,
+    DELETE_REQUESET,
+    GET_ALL_NOTIFICATIONS,
     CREATE_GROUP,
     CHECK_ONLINE_FRIENDS,
     SET_UNSEEN_COUNT,
@@ -29,9 +30,33 @@ export const getUsersApi = async (userName: string): Promise<GetUsersRs> => {
     }
 };
 
-export const sendRequestApi = async (userId: string): Promise<boolean> => {
+export const sendRequestApi = async (otherUserId: string): Promise<boolean> => {
     try {
-        const resData: CommonRs = await fetchApi('POST', SEND_REQUEST, { reqUserId: userId }, { 'Content-Type': 'application/json' });
+        const resData: CommonRs = await fetchApi('POST', SEND_REQUEST, { otherUserId: otherUserId }, { 'Content-Type': 'application/json' });
+        if (resData && resData.success === true) {
+            return true;
+        }
+        return false;
+    } catch (error) {
+        return false;
+    }
+};
+
+export const acceptRequestApi = async (otherUserId: string): Promise<AcceptRequestRs> => {
+    try {
+        const resData: AcceptRequestRs = await fetchApi('POST', ACCEPT_REQUEST, { otherUserId: otherUserId }, { 'Content-Type': 'application/json' });
+        if (resData && resData.success === true) {
+            return resData;
+        }
+        return null;
+    } catch (error) {
+        return null;
+    }
+};
+
+export const deleteRequestApi = async (otherUserId: string): Promise<boolean> => {
+    try {
+        const resData: CommonRs = await fetchApi('DELETE', DELETE_REQUESET, { otherUserId: otherUserId }, { 'Content-Type': 'application/json' });
         if (resData && resData.success === true) {
             return true;
         }
@@ -53,17 +78,6 @@ export const getAllNotificationsApi = async (): Promise<GetAllNotificationsRs> =
     }
 };
 
-export const acceptRequestApi = async (userId: string): Promise<AcceptRequestRs> => {
-    try {
-        const resData: AcceptRequestRs = await fetchApi('POST', ACCEPT_REQUEST, { acceptUserId: userId }, { 'Content-Type': 'application/json' });
-        if (resData && resData.success === true) {
-            return resData;
-        }
-        return null;
-    } catch (error) {
-        return null;
-    }
-};
 
 export const createGroupApi = async (data: FormData): Promise<CreateGroupRs> => {
     try {

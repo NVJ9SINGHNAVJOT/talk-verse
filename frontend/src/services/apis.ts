@@ -20,8 +20,9 @@ export const profileEndPoints = {
 export const notificationEndPoints = {
   GET_USERS: BASE_URL_SERVER + "/notification/getUsers",
   SEND_REQUEST: BASE_URL_SERVER + "/notification/sendRequest",
-  GET_ALL_NOTIFICATIONS: BASE_URL_SERVER + "/notification/getAllNotifications",
   ACCEPT_REQUEST: BASE_URL_SERVER + "/notification/acceptRequest",
+  DELETE_REQUESET: BASE_URL_SERVER + "/notification/deleteRequest",
+  GET_ALL_NOTIFICATIONS: BASE_URL_SERVER + "/notification/getAllNotifications",
   CREATE_GROUP: BASE_URL_SERVER + "/notification/createGroup",
   CHECK_ONLINE_FRIENDS: BASE_URL_SERVER + "/notification/checkOnlineFriends",
   SET_UNSEEN_COUNT: BASE_URL_SERVER + "/notification/setUnseenCount",

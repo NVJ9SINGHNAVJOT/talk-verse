@@ -1,4 +1,4 @@
-export type FileMessageBody = {
+export type FileMessageReq = {
     isGroup: string,
     mainId: string,
 
@@ -8,7 +8,7 @@ export type FileMessageBody = {
     imageUrl?: string
 }
 
-export type CreateGroupBody = {
+export type CreateGroupReq = {
     groupName: string,
     userIdsInGroup: string // JSON.stringify
 }
