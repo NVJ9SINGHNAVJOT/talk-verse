@@ -78,6 +78,7 @@ const Talk = () => {
       dispatch(resetGroupIdStart());
       dispatch(resetGroupIdEnd());
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -87,13 +88,13 @@ const Talk = () => {
         <div className="w-full flex bg-grayblack h-[calc(100vh-4rem)]">
           {/* left bar chat list section*/}
           <section className="w-3/12 h-full flex justify-center items-center animate-pulse">
-            <div className=" w-10/12 h-[90%] bg-[linear-gradient(315deg,_rgba(255,255,255,1)_0%,_rgba(36,106,120,1)_0%,_rgba(8,27,52,1)_100%,_rgba(37,181,16,1)_100%)]" />
+            <div className=" w-10/12 h-[90%] rounded-xl bg-neutral-700" />
           </section>
 
           {/* right bar chat main section */}
           <section className="w-9/12 h-full flex gap-y-8 flex-col justify-evenly items-center animate-pulse">
-            <div className=" w-10/12 h-[70%] bg-[linear-gradient(315deg,_rgba(255,255,255,1)_0%,_rgba(36,106,120,1)_0%,_rgba(8,27,52,1)_100%,_rgba(37,181,16,1)_100%)]" />
-            <div className=" w-10/12 h-[10%] bg-[linear-gradient(315deg,_rgba(255,255,255,1)_0%,_rgba(36,106,120,1)_0%,_rgba(8,27,52,1)_100%,_rgba(37,181,16,1)_100%)]" />
+            <div className=" w-10/12 h-[70%] rounded-xl bg-neutral-700" />
+            <div className=" w-10/12 h-[10%] rounded-xl bg-neutral-700" />
           </section>
         </div>
       ) : (

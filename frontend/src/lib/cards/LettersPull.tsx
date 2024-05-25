@@ -36,7 +36,7 @@ export default function LettersPull({
           animate="animate"
           custom={i}
           className={cn(
-            "text-center font-display text-4xl font-bold tracking-[-0.02em] drop-shadow-sm md:text-4xl md:leading-[5rem]",
+            "text-center font-display text-6xl font-bold tracking-[-0.02em] drop-shadow-sm leading-[5rem]",
             className
           )}
         >
