@@ -1,14 +1,15 @@
 
 import { relations } from "drizzle-orm";
-import { pgTable, integer, serial, timestamp, text } from "drizzle-orm/pg-core";
+import { pgTable, serial, timestamp, text } from "drizzle-orm/pg-core";
 import { post } from "@/db/postgresql/schema/post";
 
 export const user = pgTable("user", {
-    id: serial("id").primaryKey(),
-    name: text("name").notNull(),
-    email: text("email").notNull(),
-    number: integer("number"),
+    // reference from mongodb
+    refId: text("ref_id").notNull(),
+    userName: text("user_name").notNull(),
     imageUrl: text("image_url"),
+
+    id: serial("id").primaryKey(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

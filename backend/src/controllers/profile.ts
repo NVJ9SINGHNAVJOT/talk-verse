@@ -1,7 +1,8 @@
 import User from '@/db/mongodb/models/User';
+import { logger } from '@/logger/logger';
 import { UpdateUserDetailsReq } from '@/types/controllers/profileReq';
 import { CustomRequest } from '@/types/custom';
-import uploadToCloudinary from '@/utils/cloudinaryUpload';
+import { deleteFromCloudinay, uploadToCloudinary } from '@/utils/cloudinaryHandler';
 import { errRes } from '@/utils/error';
 import valid from '@/validators/validator';
 import { Request, Response } from 'express';
@@ -83,7 +84,11 @@ export const updateProfileImage = async (req: Request, res: Response): Promise<R
 
         if (!userId) {
             if (req.file && fs.existsSync(req.file.path)) {
-                await fs.promises.unlink(req.file.path);
+                fs.unlink(req.file.path, (unlinkError) => {
+                    if (unlinkError) {
+                        logger.error('error deleting file from uploadStorage', { error: unlinkError });
+                    }
+                });
             }
             return errRes(res, 400, "invalid data, userId not present");
         }
@@ -92,22 +97,57 @@ export const updateProfileImage = async (req: Request, res: Response): Promise<R
             return errRes(res, 400, "invalid data, imageFile not present");
         }
 
+        const user = await User.findById({ _id: userId }).select({ imageUrl: true });
+
+        if (!user) {
+            if (req.file && fs.existsSync(req.file.path)) {
+                fs.unlink(req.file.path, (unlinkError) => {
+                    if (unlinkError) {
+                        logger.error('error deleting file from uploadStorage', { error: unlinkError });
+                    }
+                });
+            }
+            return errRes(res, 400, 'user not present for profile update');
+        }
+
+
         const secUrl = await uploadToCloudinary(req.file);
         if (secUrl === null) {
             if (fs.existsSync(req.file.path)) {
-                await fs.promises.unlink(req.file.path);
+                fs.unlink(req.file.path, (unlinkError) => {
+                    if (unlinkError) {
+                        logger.error('error deleting file from uploadStorage', { error: unlinkError });
+                    }
+                });
             }
             return errRes(res, 500, "error while uploading user profile image");
         }
 
-        await User.findByIdAndUpdate({ _id: userId }, { $set: { imageUrl: secUrl } });
+
+        if (user.imageUrl) {
+            const splitArray = user.imageUrl.split('/');
+            const resource_type = splitArray[5];
+            const publicId = process.env.FOLDER_NAME as string + "/" + splitArray.pop()?.split('.')[0];
+            // await deleteFromCloudinay(publicId, resource_type as string);
+        }
+
+        user.imageUrl = secUrl;
+        await user.save();
 
         return res.status(200).json({
             success: true,
             message: "user profile image uploaded successfully",
             imageUrl: secUrl
         });
+
     } catch (error) {
+        if (req.file && fs.existsSync(req.file.path)) {
+            fs.unlink(req.file.path, (unlinkError) => {
+                if (unlinkError) {
+                    logger.error('error deleting file from uploadStorage', { error: unlinkError });
+                }
+            });
+        }
         return errRes(res, 500, "error while uploading user profile image", error);
     }
 };

@@ -8,13 +8,14 @@ import { clientE } from "@/socket/events";
 import { FileMessageReq } from "@/types/controllers/chatReq";
 import { CustomRequest } from "@/types/custom";
 import { SoGroupMessageRecieved, SoMessageRecieved } from "@/types/socket/eventTypes";
-import uploadToCloudinary from "@/utils/cloudinaryUpload";
+import { uploadToCloudinary } from '@/utils/cloudinaryHandler';
 import emitSocketEvent from "@/utils/emitSocketEvent";
 import { errRes } from "@/utils/error";
 import { getMultiSockets } from "@/utils/getSocketIds";
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from "uuid";
 import fs from 'fs';
+import { logger } from "@/logger/logger";
 
 type BarData = {
     // common
@@ -129,22 +130,10 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
             return errRes(res, 400, 'invalid data in querry');
         }
 
-        let query;
-
-        if (createdAt) {
-            const before = new Date(createdAt as string);
-            query = {
-                chatId: chatId as string,
-                createdAt: { $lt: before }
-            };
-        }
-        else {
-            query = {
-                chatId: chatId as string
-            };
-        }
-
-        const messages = await Message.find(query)
+        const messages = await Message.find({
+            chatId: chatId as string,
+            createdAt: { $lt: createdAt }
+        })
             .sort({ createdAt: -1 })
             .limit(15)
             .select({ uuId: true, isFile: true, chatId: true, from: true, fromText: true, toText: true, createdAt: true, _id: false })
@@ -204,7 +193,11 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
         const secUrl = await uploadToCloudinary(req.file);
         if (secUrl === null) {
             if (fs.existsSync(req.file.path)) {
-                await fs.promises.unlink(req.file.path);
+                fs.unlink(req.file.path, (unlinkError) => {
+                    if (unlinkError) {
+                        logger.error('error deleting file from uploadStorage', { error: unlinkError });
+                    }
+                });
             }
             return errRes(res, 500, "error while uploading filemessage to cloudinary, url is null");
         }
@@ -311,7 +304,11 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
 
     } catch (error) {
         if (req.file && fs.existsSync(req.file.path)) {
-            await fs.promises.unlink(req.file.path);
+            fs.unlink(req.file.path, (unlinkError) => {
+                if (unlinkError) {
+                    logger.error('error deleting file from uploadStorage', { error: unlinkError });
+                }
+            });
         }
         return errRes(res, 500, 'error while uploading filemessage', error);
     }
@@ -331,21 +328,10 @@ export const groupMessages = async (req: Request, res: Response): Promise<Respon
             return errRes(res, 400, 'invalid data in querry');
         }
 
-        let query;
-        if (createdAt) {
-            const before = new Date(createdAt as string);
-            query = {
-                to: groupId as string,
-                createdAt: { $lt: before }
-            };
-        }
-        else {
-            query = {
-                to: groupId as string
-            };
-        }
-
-        const gpMessages = await GpMessage.find(query)
+        const gpMessages = await GpMessage.find({
+            to: groupId as string,
+            createdAt: { $lt: createdAt }
+        })
             .sort({ createdAt: -1 })
             .limit(15)
             .select({ uuId: true, isFile: true, from: true, to: true, text: true, createdAt: true, _id: false })

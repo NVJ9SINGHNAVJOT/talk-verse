@@ -1,7 +1,7 @@
 import User from '@/db/mongodb/models/User';
 import { LogInReq, SendOtpReq, SignUpReq } from '@/types/controllers/authReq';
 import { Request, Response } from 'express';
-import uploadToCloudinary from '@/utils/cloudinaryUpload';
+import { uploadToCloudinary } from '@/utils/cloudinaryHandler';
 import { errRes } from '@/utils/error';
 import valid from '@/validators/validator';
 import bcrypt from "bcrypt";
@@ -15,6 +15,7 @@ import { generateOTP } from '@/utils/generateOtp';
 import Otp from '@/db/mongodb/models/Otp';
 import { sendPrivateKeyMail, sendVerficationMail } from '@/utils/sendMail';
 import * as forge from 'node-forge';
+import { logger } from '@/logger/logger';
 
 configDotenv();
 
@@ -58,7 +59,11 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
       secUrl = await uploadToCloudinary(req.file);
       if (secUrl === null) {
         if (fs.existsSync(req.file.path)) {
-          await fs.promises.unlink(req.file.path);
+          fs.unlink(req.file.path, (unlinkError) => {
+            if (unlinkError) {
+              logger.error('error deleting file from uploadStorage', { error: unlinkError });
+            }
+          });
         }
         return errRes(res, 500, "error while uploading user image");
       }
@@ -105,7 +110,11 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     }
   } catch (error) {
     if (req.file && fs.existsSync(req.file.path)) {
-      await fs.promises.unlink(req.file.path);
+      fs.unlink(req.file.path, (unlinkError) => {
+        if (unlinkError) {
+            logger.error('error deleting file from uploadStorage', { error: unlinkError });
+        }
+    });
     }
     return errRes(res, 500, "error while creating user", error);
   }

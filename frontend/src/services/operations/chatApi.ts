@@ -51,7 +51,7 @@ export const fileMessageApi = async (data: FormData): Promise<boolean> => {
 export const getGroupMessagesApi = async (groupId: string, createdAt: string): Promise<GetGroupMessagesRs> => {
     try {
         const resData: GetGroupMessagesRs = await fetchApi('GET', GROUP_MESSAGES, null, null,
-            { 'groupId': groupId, 'createdAt': createdAt ? createdAt : "" });
+            { 'groupId': groupId, 'createdAt': createdAt });
         // success false is used in response
         if (resData) {
             return resData;

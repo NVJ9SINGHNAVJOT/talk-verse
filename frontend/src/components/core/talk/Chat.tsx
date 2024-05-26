@@ -92,18 +92,18 @@ const Chat = () => {
           getLastCreatedAt if present in chatId messages and if not then create 
           new date for current time and get messages
         */
-        let lastCreateAt;
+        let lastCreatedAt;
         if (pMessages[chatId] !== undefined) {
-          lastCreateAt =
+          lastCreatedAt =
             pMessages[chatId][pMessages[chatId].length - 1].createdAt;
         } else {
-          lastCreateAt = new Date().toISOString();
+          lastCreatedAt = new Date().toISOString();
         }
 
         // get messages for chatId
         const response: GetChatMessagesRs = await getMessagesApi(
           chatId,
-          lastCreateAt
+          lastCreatedAt
         );
 
         // check response from api
@@ -122,7 +122,7 @@ const Chat = () => {
           if (response.messages && pMessages[chatId] !== undefined) {
             while (
               response.messages.length > 0 &&
-              response.messages[0].createdAt > lastCreateAt
+              response.messages[0].createdAt > lastCreatedAt
             ) {
               response.messages.splice(0, 1);
             }

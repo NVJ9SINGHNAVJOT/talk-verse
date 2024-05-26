@@ -75,7 +75,7 @@ const Group = () => {
       // this fucntion will only call api for a groupId messasges once
       if (
         groupIdStart[groupId] !== true &&
-        apiCalls[`getGroupMessagesApi-${groupId}`]
+        apiCalls[`getGroupMessagesApi-${groupId}`] !== true
       ) {
         // api is getting called for first time for groupId and this hook will call this api only once
         /* ===== Caution: getGroupMessagesApi api call state management ===== */
@@ -89,18 +89,18 @@ const Group = () => {
           new date for current time and get messages
         */
 
-        let lastCreateAt;
+        let lastCreatedAt;
         if (gpMessages[groupId] !== undefined) {
-          lastCreateAt =
+          lastCreatedAt =
             gpMessages[groupId][gpMessages[groupId].length - 1].createdAt;
         } else {
-          lastCreateAt = new Date().toISOString();
+          lastCreatedAt = new Date().toISOString();
         }
 
         // get messages for groupId
         const response: GetGroupMessagesRs = await getGroupMessagesApi(
           groupId,
-          lastCreateAt
+          lastCreatedAt
         );
 
         // check response from api
@@ -119,7 +119,7 @@ const Group = () => {
           if (response.messages && gpMessages[groupId] !== undefined) {
             while (
               response.messages.length > 0 &&
-              response.messages[0].createdAt > lastCreateAt
+              response.messages[0].createdAt > lastCreatedAt
             ) {
               response.messages.splice(0, 1);
             }
@@ -168,7 +168,7 @@ const Group = () => {
       ) {
         /* ===== Caution: getMessagesApi api call state management ===== */
         dispatch(
-          setApiCall({ api: `getMessagesApi-${groupId}`, status: true })
+          setApiCall({ api: `getGroupMessagesApi-${groupId}`, status: true })
         );
 
         const response: GetGroupMessagesRs = await getGroupMessagesApi(
@@ -194,7 +194,7 @@ const Group = () => {
 
         setTimeout(() => {
           dispatch(
-            setApiCall({ api: `getMessagesApi-${groupId}`, status: false })
+            setApiCall({ api: `getGroupMessagesApi-${groupId}`, status: false })
           );
         }, 2500);
       }
