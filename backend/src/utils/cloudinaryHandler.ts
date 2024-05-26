@@ -44,10 +44,9 @@ export const uploadToCloudinary = async (file: Express.Multer.File): Promise<str
     }
 };
 
-export const deleteFromCloudinay = async (publicId: string, resource_type: string) => {
+export const deleteFromCloudinay = async (publicId: string) => {
     try {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-        await cloudinary.uploader.destroy(publicId, { type: 'upload', resource_type: resource_type });
+        cloudinary.api.delete_resources([publicId]);
     } catch (error) {
         logger.error('error while deleting file from cloudinary', { publicId: publicId, error: error });
     }

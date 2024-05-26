@@ -125,10 +125,8 @@ export const updateProfileImage = async (req: Request, res: Response): Promise<R
 
 
         if (user.imageUrl) {
-            const splitArray = user.imageUrl.split('/');
-            const resource_type = splitArray[5];
-            const publicId = process.env.FOLDER_NAME as string + "/" + splitArray.pop()?.split('.')[0];
-            // await deleteFromCloudinay(publicId, resource_type as string);
+            const publicId = process.env.FOLDER_NAME as string + "/" + user.imageUrl.split('/').pop()?.split('.')[0];
+            await deleteFromCloudinay(publicId);
         }
 
         user.imageUrl = secUrl;
