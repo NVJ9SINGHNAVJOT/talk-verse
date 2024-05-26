@@ -245,7 +245,7 @@ const messagesSlice = createSlice({
             state.groupIdEnd = {} as GroupIdEnd;
         },
         setGroupIdStart(state, action: PayloadAction<string>) {
-            state.groupIdEnd[action.payload] = true;
+            state.groupIdStart[action.payload] = true;
         },
         setGroupIdEnd(state, action: PayloadAction<string>) {
             state.groupIdEnd[action.payload] = true;
