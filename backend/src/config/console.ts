@@ -1,5 +1,3 @@
-import { configDotenv } from "dotenv";
-configDotenv();
 
 const consoleConfig = () => {
     if (process.env.ENVIRONMENT as string !== "development") {

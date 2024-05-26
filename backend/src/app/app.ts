@@ -13,13 +13,14 @@ import chatRoutes from '@/routes/chatRoutes';
 import profileRoutes from "@/routes/profileRoutes";
 import corsOptions from "@/config/corsOptions";
 import logging from "@/middlewares/logging";
+import { logger } from "@/logger/logger";
 
 configDotenv();
 
 const app: Express = express();
 
 mongodbdatabaseConnect().catch(() => {
-    console.log("mongodb connection failed");
+    logger.info("mongodb connection failed");
 });
 
 app.use(cors(corsOptions));

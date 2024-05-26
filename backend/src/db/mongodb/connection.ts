@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { configDotenv } from 'dotenv';
+import { logger } from '@/logger/logger';
 
 configDotenv();
 
@@ -9,16 +10,16 @@ export async function mongodbdatabaseConnect() {
     try {
         const mongodb_url: string | undefined = process.env.MONGODB_URL;
         if (mongodb_url === undefined) {
-            console.log("mongodb connection failed");
+            logger.info("mongodb connection failed");
             return;
         }
         // Create a Mongoose client with a MongoClientOptions object to set the Stable API version
         await mongoose.connect(mongodb_url, clientOptions);
         await mongoose.connection.db.admin().command({ ping: 1 });
-        console.log("mongodb database connected");
+        logger.info("mongodb database connected");
     } catch {
         // Ensures that the client will close when error
-        console.log("mongodb connection failed");
+        logger.info("mongodb connection failed");
         await mongoose.disconnect();
     }
 }

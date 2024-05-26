@@ -1,8 +1,7 @@
 import { Pool } from 'pg';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { NodePgDatabase, drizzle } from 'drizzle-orm/node-postgres';
-import { configDotenv } from "dotenv";
-configDotenv();
+import { logger } from '@/logger/logger';
 
 async function main() {
     const pool = new Pool({
@@ -14,11 +13,11 @@ async function main() {
     });
     const db: NodePgDatabase = drizzle(pool);
 
-    console.log('Running migrations...');
+    logger.info('Running migrations...');
 
     await migrate(db, { migrationsFolder: 'src/db/postgresql/migrations' });
 
-    console.log('All migrations have been done, exiting...');
+    logger.info('All migrations have been done, exiting...');
 
     await pool.end();
 }

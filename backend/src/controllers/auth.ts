@@ -10,12 +10,10 @@ import { configDotenv } from 'dotenv';
 import Token from '@/db/mongodb/models/Token';
 import Notification from '@/db/mongodb/models/Notification';
 import { jwtVerify } from '@/utils/token';
-import fs from 'fs';
 import { generateOTP } from '@/utils/generateOtp';
 import Otp from '@/db/mongodb/models/Otp';
 import { sendPrivateKeyMail, sendVerficationMail } from '@/utils/sendMail';
 import * as forge from 'node-forge';
-import { logger } from '@/logger/logger';
 import deleteFile from '@/utils/deleteFile';
 
 configDotenv();

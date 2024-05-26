@@ -1,9 +1,7 @@
 import { Socket } from "socket.io";
-import { configDotenv } from "dotenv";
 import { CustomSocket } from "@/types/custom";
 import { jwtVerify } from "@/utils/token";
 import { logger } from "@/logger/logger";
-configDotenv();
 
 // check authentication for socket
 export const checkUserSocket = async (socket: Socket): Promise<boolean> => {
