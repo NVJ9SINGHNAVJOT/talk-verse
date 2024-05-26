@@ -16,6 +16,7 @@ import Otp from '@/db/mongodb/models/Otp';
 import { sendPrivateKeyMail, sendVerficationMail } from '@/utils/sendMail';
 import * as forge from 'node-forge';
 import { logger } from '@/logger/logger';
+import deleteFile from '@/utils/deleteFile';
 
 configDotenv();
 
@@ -33,24 +34,36 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
       !valid.isPassword(data.confirmPassword, data.confirmPassword) ||
       !data.otp
     ) {
+      if (req.file) {
+        deleteFile(req.file);
+      }
       return errRes(res, 400, "invalid data");
     }
 
     const checkOtp = await Otp.findOne({ email: data.email, otpValue: data.otp });
 
     if (!checkOtp) {
+      if (req.file) {
+        deleteFile(req.file);
+      }
       return errRes(res, 400, 'Invalid otp or otp has expired');
     }
 
     const response = await User.findOne({ email: data.email }).select({ email: true }).exec();
 
     if (response) {
+      if (req.file) {
+        deleteFile(req.file);
+      }
       return errRes(res, 400, "user already present");
     }
 
     const checkUserName = await User.find({ userName: data.userName }).select({ userName: true }).exec();
 
     if (checkUserName.length !== 0) {
+      if (req.file) {
+        deleteFile(req.file);
+      }
       return errRes(res, 400, "user name already in use");
     }
 
@@ -58,13 +71,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     if (req.file) {
       secUrl = await uploadToCloudinary(req.file);
       if (secUrl === null) {
-        if (fs.existsSync(req.file.path)) {
-          fs.unlink(req.file.path, (unlinkError) => {
-            if (unlinkError) {
-              logger.error('error deleting file from uploadStorage', { error: unlinkError });
-            }
-          });
-        }
+        deleteFile(req.file);
         return errRes(res, 500, "error while uploading user image");
       }
     }
@@ -109,12 +116,8 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
       return errRes(res, 500, "error while creating user");
     }
   } catch (error) {
-    if (req.file && fs.existsSync(req.file.path)) {
-      fs.unlink(req.file.path, (unlinkError) => {
-        if (unlinkError) {
-            logger.error('error deleting file from uploadStorage', { error: unlinkError });
-        }
-    });
+    if (req.file) {
+      deleteFile(req.file);
     }
     return errRes(res, 500, "error while creating user", error);
   }

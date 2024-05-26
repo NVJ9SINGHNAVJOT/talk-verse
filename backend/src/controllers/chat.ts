@@ -16,6 +16,7 @@ import { Request, Response } from 'express';
 import { v4 as uuidv4 } from "uuid";
 import fs from 'fs';
 import { logger } from "@/logger/logger";
+import deleteFile from "@/utils/deleteFile";
 
 type BarData = {
     // common
@@ -184,21 +185,21 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
 
         // validation
         if (!userId) {
+            if (req.file) {
+                deleteFile(req.file);
+            }
             return errRes(res, 400, 'user id not present');
         }
         if (!data.to || !data.mainId || !req.file) {
+            if (req.file) {
+                deleteFile(req.file);
+            }
             return errRes(res, 400, 'invalid data for filemessage');
         }
 
         const secUrl = await uploadToCloudinary(req.file);
         if (secUrl === null) {
-            if (fs.existsSync(req.file.path)) {
-                fs.unlink(req.file.path, (unlinkError) => {
-                    if (unlinkError) {
-                        logger.error('error deleting file from uploadStorage', { error: unlinkError });
-                    }
-                });
-            }
+            deleteFile(req.file);
             return errRes(res, 500, "error while uploading filemessage to cloudinary, url is null");
         }
 
@@ -303,12 +304,8 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
         });
 
     } catch (error) {
-        if (req.file && fs.existsSync(req.file.path)) {
-            fs.unlink(req.file.path, (unlinkError) => {
-                if (unlinkError) {
-                    logger.error('error deleting file from uploadStorage', { error: unlinkError });
-                }
-            });
+        if (req.file) {
+            deleteFile(req.file);
         }
         return errRes(res, 500, 'error while uploading filemessage', error);
     }

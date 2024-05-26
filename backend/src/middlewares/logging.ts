@@ -12,11 +12,7 @@ function logging(req: Request, res: Response, next: NextFunction) {
             requestBody: req.body,
             requestHeaders: {
                 "content-type": req.headers["content-type"],
-            },
-            file: req.file ? {
-                path: req.file.path, size: req.file.size, name: req.file.filename,
-                field: req.file.fieldname, originalname: req.file.originalname
-            } : ""
+            }
         });
         next();
     } catch (error) {

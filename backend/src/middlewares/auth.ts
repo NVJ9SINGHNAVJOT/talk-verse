@@ -1,11 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { configDotenv } from "dotenv";
 import { errRes } from "@/utils/error";
 import { CustomRequest } from "@/types/custom";
 import { jwtVerify } from "@/utils/token";
-import fs from 'fs';
-import { logger } from "@/logger/logger";
-configDotenv();
 
 // user token authorization and checked with database
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
@@ -15,26 +11,12 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
 
         // If JWT is missing, return 401 Unauthorized response
         if (!token) {
-            if (req.file && fs.existsSync(req.file.path)) {
-                fs.unlink(req.file.path, (unlinkError) => {
-                    if (unlinkError) {
-                        logger.error('error deleting file from uploadStorage', { error: unlinkError });
-                    }
-                });
-            }
             return errRes(res, 401, "user authorization failed, no token present");
         }
 
         const userId = await jwtVerify(token);
 
         if (!userId) {
-            if (req.file && fs.existsSync(req.file.path)) {
-                fs.unlink(req.file.path, (unlinkError) => {
-                    if (unlinkError) {
-                        logger.error('error deleting file from uploadStorage', { error: unlinkError });
-                    }
-                });
-            }
             return errRes(res, 401, "user token invalid, need to log in");
         }
 
@@ -42,13 +24,6 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
         (req as CustomRequest).userId = userId;
         next();
     } catch (error) {
-        if (req.file && fs.existsSync(req.file.path)) {
-            fs.unlink(req.file.path, (unlinkError) => {
-                if (unlinkError) {
-                    logger.error('error deleting file from uploadStorage', { error: unlinkError });
-                }
-            });
-        }
         return errRes(res, 500, "user authorization failed");
     }
 };

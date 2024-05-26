@@ -3,6 +3,7 @@ import { logger } from '@/logger/logger';
 import { UpdateUserDetailsReq } from '@/types/controllers/profileReq';
 import { CustomRequest } from '@/types/custom';
 import { deleteFromCloudinay, uploadToCloudinary } from '@/utils/cloudinaryHandler';
+import deleteFile from '@/utils/deleteFile';
 import { errRes } from '@/utils/error';
 import valid from '@/validators/validator';
 import { Request, Response } from 'express';
@@ -83,12 +84,8 @@ export const updateProfileImage = async (req: Request, res: Response): Promise<R
         const userId = (req as CustomRequest).userId;
 
         if (!userId) {
-            if (req.file && fs.existsSync(req.file.path)) {
-                fs.unlink(req.file.path, (unlinkError) => {
-                    if (unlinkError) {
-                        logger.error('error deleting file from uploadStorage', { error: unlinkError });
-                    }
-                });
+            if (req.file) {
+                deleteFile(req.file);
             }
             return errRes(res, 400, "invalid data, userId not present");
         }
@@ -100,25 +97,16 @@ export const updateProfileImage = async (req: Request, res: Response): Promise<R
         const user = await User.findById({ _id: userId }).select({ imageUrl: true });
 
         if (!user) {
-            if (req.file && fs.existsSync(req.file.path)) {
-                fs.unlink(req.file.path, (unlinkError) => {
-                    if (unlinkError) {
-                        logger.error('error deleting file from uploadStorage', { error: unlinkError });
-                    }
-                });
+            if (req.file) {
+                deleteFile(req.file);
             }
             return errRes(res, 400, 'user not present for profile update');
         }
 
-
         const secUrl = await uploadToCloudinary(req.file);
         if (secUrl === null) {
-            if (fs.existsSync(req.file.path)) {
-                fs.unlink(req.file.path, (unlinkError) => {
-                    if (unlinkError) {
-                        logger.error('error deleting file from uploadStorage', { error: unlinkError });
-                    }
-                });
+            if (req.file) {
+                deleteFile(req.file);
             }
             return errRes(res, 500, "error while uploading user profile image");
         }
@@ -139,12 +127,8 @@ export const updateProfileImage = async (req: Request, res: Response): Promise<R
         });
 
     } catch (error) {
-        if (req.file && fs.existsSync(req.file.path)) {
-            fs.unlink(req.file.path, (unlinkError) => {
-                if (unlinkError) {
-                    logger.error('error deleting file from uploadStorage', { error: unlinkError });
-                }
-            });
+        if (req.file) {
+            deleteFile(req.file);
         }
         return errRes(res, 500, "error while uploading user profile image", error);
     }

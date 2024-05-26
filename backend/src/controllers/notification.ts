@@ -17,6 +17,7 @@ import { uploadToCloudinary } from '@/utils/cloudinaryHandler';
 import Group from '@/db/mongodb/models/Group';
 import fs from 'fs';
 import { logger } from '@/logger/logger';
+import deleteFile from '@/utils/deleteFile';
 
 export const getUsers = async (req: Request, res: Response): Promise<Response> => {
     try {
@@ -297,34 +298,22 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
 
         // validation
         if (!userId) {
-            if (req.file && fs.existsSync(req.file.path)) {
-                fs.unlink(req.file.path, (unlinkError) => {
-                    if (unlinkError) {
-                        logger.error('error deleting file from uploadStorage', { error: unlinkError });
-                    }
-                });
+            if (req.file) {
+                deleteFile(req.file);
             }
             return errRes(res, 400, 'user id not present');
         }
         if (!data.groupName || !data.userIdsInGroup) {
-            if (req.file && fs.existsSync(req.file.path)) {
-                fs.unlink(req.file.path, (unlinkError) => {
-                    if (unlinkError) {
-                        logger.error('error deleting file from uploadStorage', { error: unlinkError });
-                    }
-                });
+            if (req.file) {
+                deleteFile(req.file);
             }
             return errRes(res, 400, 'invalid data for creating group');
         }
 
         const memebers: string[] = JSON.parse(data.userIdsInGroup);
         if (memebers?.length < 1) {
-            if (req.file && fs.existsSync(req.file.path)) {
-                fs.unlink(req.file.path, (unlinkError) => {
-                    if (unlinkError) {
-                        logger.error('error deleting file from uploadStorage', { error: unlinkError });
-                    }
-                });
+            if (req.file) {
+                deleteFile(req.file);
             }
             return errRes(res, 400, 'invalid data for creating group');
         }
@@ -334,12 +323,8 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
         if (req.file) {
             secUrl = await uploadToCloudinary(req.file);
             if (secUrl === null) {
-                if (fs.existsSync(req.file.path)) {
-                    fs.unlink(req.file.path, (unlinkError) => {
-                        if (unlinkError) {
-                            logger.error('error deleting file from uploadStorage', { error: unlinkError });
-                        }
-                    });
+                if (req.file) {
+                    deleteFile(req.file);
                 }
                 return errRes(res, 500, "error while uploading user image");
             }
@@ -403,12 +388,8 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
         });
 
     } catch (error) {
-        if (req.file && fs.existsSync(req.file.path)) {
-            fs.unlink(req.file.path, (unlinkError) => {
-                if (unlinkError) {
-                    logger.error('error deleting file from uploadStorage', { error: unlinkError });
-                }
-            });
+        if (req.file) {
+            deleteFile(req.file);
         }
         return errRes(res, 500, 'error while creating group', error);
     }
