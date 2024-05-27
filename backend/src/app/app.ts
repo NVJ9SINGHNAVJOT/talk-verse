@@ -5,7 +5,6 @@ import '@/db/postgresql/connection';
 import { cloudinaryConnect } from '@/config/cloudinary';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import { configDotenv } from 'dotenv';
 import serverKey from "@/middlewares/serverKey";
 import authRoutes from '@/routes/authRoutes';
 import notificationRoutes from '@/routes/notificationRoutes';
@@ -16,8 +15,6 @@ import blogDataRoutes from "@/routes/blogDataRoutes";
 import corsOptions from "@/config/corsOptions";
 import logging from "@/middlewares/logging";
 import { logger } from "@/logger/logger";
-
-configDotenv();
 
 const app: Express = express();
 

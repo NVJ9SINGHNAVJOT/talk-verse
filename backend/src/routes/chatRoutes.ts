@@ -6,8 +6,8 @@ import express, { Router } from 'express';
 const router: Router = express.Router();
 
 router.get('/chatBarData', auth, chatBarData);
-router.get('/chatMessages', auth, chatMessages); // parameters: chatId, createdAt
 router.post('/fileMessage', fileMessg, auth, fileMessage);
+router.get('/chatMessages', auth, chatMessages); // parameters: chatId, createdAt
 router.get('/groupMessages', auth, groupMessages); // parameters: groupId, createdAt
 
 export default router;

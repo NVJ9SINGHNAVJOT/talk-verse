@@ -115,67 +115,6 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
     }
 };
 
-export const chatMessages = async (req: Request, res: Response): Promise<Response> => {
-    try {
-        const userId = (req as CustomRequest).userId;
-
-        if (!userId) {
-            return errRes(res, 400, 'user id not present');
-        }
-
-        const { chatId, createdAt } = req.query;
-
-        if (!chatId) {
-            return errRes(res, 400, 'invalid data in querry');
-        }
-
-        const messages = await Message.find({
-            chatId: chatId as string,
-            createdAt: { $lt: createdAt }
-        })
-            .sort({ createdAt: -1 })
-            .limit(15)
-            .select({ uuId: true, isFile: true, chatId: true, from: true, fromText: true, toText: true, createdAt: true, _id: false })
-            .lean()
-            .exec();
-
-        if (messages.length === 0) {
-            if (createdAt) {
-                return res.status(200).json({
-                    success: false,
-                    message: 'no further messages for this chatId'
-                });
-            }
-            return res.status(200).json({
-                success: false,
-                message: 'no messages yet for this chatId'
-            });
-        }
-
-        const newMessages: SoMessageRecieved[] = [];
-
-        messages.forEach((message) => {
-            newMessages.push({
-                uuId: message.uuId,
-                isFile: message.isFile,
-                chatId: message.chatId._id.toString(),
-                from: message.from._id.toString(),
-                text: message.from._id.toString() === userId ? message.fromText : message.toText,
-                createdAt: message.createdAt.toISOString()
-            } as SoMessageRecieved);
-        });
-
-        return res.status(200).json({
-            success: true,
-            message: 'messages for chatid successfull',
-            messages: newMessages
-        });
-
-    } catch (error) {
-        return errRes(res, 500, "error while getting chat messages", error);
-    }
-};
-
 export const fileMessage = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = (req as CustomRequest).userId;
@@ -306,6 +245,67 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
             deleteFile(req.file);
         }
         return errRes(res, 500, 'error while uploading filemessage', error);
+    }
+};
+
+export const chatMessages = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const userId = (req as CustomRequest).userId;
+
+        if (!userId) {
+            return errRes(res, 400, 'user id not present');
+        }
+
+        const { chatId, createdAt } = req.query;
+
+        if (!chatId) {
+            return errRes(res, 400, 'invalid data in querry');
+        }
+
+        const messages = await Message.find({
+            chatId: chatId as string,
+            createdAt: { $lt: createdAt }
+        })
+            .sort({ createdAt: -1 })
+            .limit(15)
+            .select({ uuId: true, isFile: true, chatId: true, from: true, fromText: true, toText: true, createdAt: true, _id: false })
+            .lean()
+            .exec();
+
+        if (messages.length === 0) {
+            if (createdAt) {
+                return res.status(200).json({
+                    success: false,
+                    message: 'no further messages for this chatId'
+                });
+            }
+            return res.status(200).json({
+                success: false,
+                message: 'no messages yet for this chatId'
+            });
+        }
+
+        const newMessages: SoMessageRecieved[] = [];
+
+        messages.forEach((message) => {
+            newMessages.push({
+                uuId: message.uuId,
+                isFile: message.isFile,
+                chatId: message.chatId._id.toString(),
+                from: message.from._id.toString(),
+                text: message.from._id.toString() === userId ? message.fromText : message.toText,
+                createdAt: message.createdAt.toISOString()
+            } as SoMessageRecieved);
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: 'messages for chatid successfull',
+            messages: newMessages
+        });
+
+    } catch (error) {
+        return errRes(res, 500, "error while getting chat messages", error);
     }
 };
 
