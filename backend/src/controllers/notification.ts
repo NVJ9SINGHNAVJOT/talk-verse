@@ -12,10 +12,10 @@ import emitSocketEvent from '@/utils/emitSocketEvent';
 import { errRes } from '@/utils/error';
 import { getMultiSockets, getSingleSocket } from '@/utils/getSocketIds';
 import { Request, Response } from 'express';
-import { CreateGroupReq } from '@/types/controllers/chatReq';
+import { CreateGroupReq } from '@/types/controllers/notificationReq';
 import { uploadToCloudinary } from '@/utils/cloudinaryHandler';
 import Group from '@/db/mongodb/models/Group';
-import deleteFile from '@/utils/deleteFile';
+import { deleteFile } from '@/utils/deleteFile';
 
 export const getUsers = async (req: Request, res: Response): Promise<Response> => {
     try {
@@ -308,14 +308,14 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
             return errRes(res, 400, 'invalid data for creating group');
         }
 
-        const memebers: string[] = JSON.parse(data.userIdsInGroup);
-        if (memebers?.length < 1) {
+        const members: string[] = JSON.parse(data.userIdsInGroup);
+        if (!members || members.length < 1) {
             if (req.file) {
                 deleteFile(req.file);
             }
             return errRes(res, 400, 'invalid data for creating group');
         }
-        memebers.push(userId);
+        members.push(userId);
 
         let secUrl;
         if (req.file) {
@@ -333,7 +333,7 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
 
         const newGroup = await Group.create({
             groupName: data.groupName, gpCreater: userId,
-            gpImageUrl: secUrl, members: memebers
+            gpImageUrl: secUrl, members: members
         });
 
         // Create a new mutex instance
@@ -342,9 +342,9 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
         channels.set(newGroup._id.toString(), newChannel);
 
         // set members with groupId
-        groupIds.set(newGroup._id.toString(), memebers);
+        groupIds.set(newGroup._id.toString(), members);
 
-        await Promise.all(memebers.map(async (userId) => {
+        await Promise.all(members.map(async (userId) => {
             const ucOfGroupMem = await UnseenCount.create({ userId: userId, mainId: newGroup._id });
             await Notification.findOneAndUpdate({ userId: userId }, { $push: { unseenMessages: ucOfGroupMem._id } }).exec();
             const groupUser = await User.findById({ _id: userId });
@@ -352,7 +352,7 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
             await groupUser?.save();
         }));
 
-        const memData = getMultiSockets(memebers, userId);
+        const memData = getMultiSockets(members, userId);
         const mySocketId = getSingleSocket(userId);
 
         // set offline member for group

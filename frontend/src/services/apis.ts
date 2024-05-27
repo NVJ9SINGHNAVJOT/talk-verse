@@ -38,21 +38,21 @@ export const chatEndPoints = {
   FILE_MESSAGE: BASE_URL_SERVER + "/chat/fileMessage",
 };
 
-// userBlog endpoints
-export const userBlogEndPoints = {
+// userPost endpoints
+export const userPostEndPoints = {
   USER_BLOG_PROFILE: BASE_URL_SERVER + "/blog/userBlogProfile",
-  CREATE_BLOG: BASE_URL_SERVER + "/blog/createBlog",
-  DELETE_BLOG: BASE_URL_SERVER + "/blog/deleteBlog",
-  CREATE_STORY: BASE_URL_SERVER + "/blog/createStory",
-  DELETE_STORY: BASE_URL_SERVER + "/blog/deleteStory",
+  CREATE_POST: BASE_URL_SERVER + "/post/createPost",
+  DELETE_POST: BASE_URL_SERVER + "/post/deletePost",
+  CREATE_STORY: BASE_URL_SERVER + "/post/createStory",
+  DELETE_STORY: BASE_URL_SERVER + "/post/deleteStory",
 };
 
-// blogData endpoints
-export const blogDataEndPoints = {
-  RECENT_POSTS: BASE_URL_SERVER + "/blogData/recentPosts",
-  TRENDING_POSTS_: BASE_URL_SERVER + "/blogData/trendingPosts",
-  CATEGORY_POSTS: BASE_URL_SERVER + "/blogData/categoryPosts", // parameters: category
-  UPDATE_LIKE: BASE_URL_SERVER + "/blogData/updateLike", // parameters: like
-  ADD_COMMENT: BASE_URL_SERVER + "/blogData/addComment",
-  DELETE_COMMENT: BASE_URL_SERVER + "/blogData/deleteComment",
+// postData endpoints
+export const postDataEndPoints = {
+  RECENT_POSTS: BASE_URL_SERVER + "/postData/recentPosts",
+  TRENDING_POSTS_: BASE_URL_SERVER + "/postData/trendingPosts",
+  CATEGORY_POSTS: BASE_URL_SERVER + "/postData/categoryPosts", // parameters: category
+  UPDATE_LIKE: BASE_URL_SERVER + "/postData/updateLike", // parameters: like
+  ADD_COMMENT: BASE_URL_SERVER + "/postData/addComment",
+  DELETE_COMMENT: BASE_URL_SERVER + "/postData/deleteComment",
 };

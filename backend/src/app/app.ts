@@ -10,8 +10,8 @@ import authRoutes from '@/routes/authRoutes';
 import notificationRoutes from '@/routes/notificationRoutes';
 import chatRoutes from '@/routes/chatRoutes';
 import profileRoutes from "@/routes/profileRoutes";
-import blogRoutes from "@/routes/blogRoutes";
-import blogDataRoutes from "@/routes/blogDataRoutes";
+import postRoutes from "@/routes/postRoutes";
+import postDataRoutes from "@/routes/postDataRoutes";
 import corsOptions from "@/config/corsOptions";
 import logging from "@/middlewares/logging";
 import { logger } from "@/logger/logger";
@@ -41,8 +41,8 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/notification', notificationRoutes);
 app.use('/api/v1/chat', chatRoutes);
 app.use('/api/v1/profile', profileRoutes);
-app.use('/api/v1/blog', blogRoutes);
-app.use('/api/v1/blogData', blogDataRoutes);
+app.use('/api/v1/post', postRoutes);
+app.use('/api/v1/postData', postDataRoutes);
 
 app.get('/', (_req: Request, res: Response) => {
     res.json({

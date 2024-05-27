@@ -1,36 +1,26 @@
 import { logger } from '@/logger/logger';
-import { v2 as cloudinary, UploadApiErrorResponse, UploadApiResponse } from 'cloudinary';
+import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
+import { deleteFiles } from '@/utils/deleteFile';
 
 export const uploadToCloudinary = async (file: Express.Multer.File): Promise<string | null> => {
     try {
-        const secureUrl = await new Promise<string>((resolve, reject) => {
-            cloudinary.uploader.upload(
-                file.path,
-                {
-                    folder: process.env.FOLDER_NAME as string,
-                    resource_type: "auto",
-                    chunk_size: 2000000,
-                    timeout: 10000
-                },
-                (err: UploadApiErrorResponse | undefined, result: UploadApiResponse | undefined) => {
-                    if (err) {
-                        reject(err);
-                    }
-                    if (!result) {
-                        reject(new Error('Cloudinary upload result is undefined'));
-                    }
-                    resolve(result?.secure_url as string);
-                }
-            );
-        });
+        const secureUrl = await cloudinary.uploader.upload(
+            file.path,
+            {
+                folder: process.env.FOLDER_NAME as string,
+                resource_type: "auto",
+                chunk_size: 2000000, // 2mb
+            }
+        );
 
         fs.unlink(file.path, (unlinkError) => {
             if (unlinkError) {
                 logger.error('error deleting file from uploadStorage', { error: unlinkError });
             }
         });
-        return secureUrl;
+
+        return secureUrl.secure_url;
     } catch (error) {
         logger.error('error while uploading file to cloudinary', error);
         if (fs.existsSync(file.path)) {
@@ -41,6 +31,28 @@ export const uploadToCloudinary = async (file: Express.Multer.File): Promise<str
             });
         }
         return null;
+    }
+};
+
+export const uploadMultiplesToCloudinary = async (files: Express.Multer.File[]): Promise<(string | null)[]> => {
+    try {
+        const uploadPromises = files.map((file) =>
+            uploadToCloudinary(file)
+        );
+
+        const secUrls = await Promise.all(uploadPromises);
+
+        if (!secUrls || secUrls.length < 1) {
+            return [];
+        }
+
+        return secUrls;
+    } catch (error) {
+        if (files) {
+            deleteFiles(files);
+        }
+        logger.error("error uploading multiple files to cloudinary", error);
+        return [];
     }
 };
 

@@ -1,13 +1,13 @@
-import { userBlogProfile } from '@/controllers/blog';
+import { createPost, userBlogProfile } from '@/controllers/post';
 import { auth, auth2 } from '@/middlewares/auth';
-import { blogFiles, storyFile } from '@/middlewares/multer';
+import { postFiles, storyFile } from '@/middlewares/multer';
 import express, { Router } from 'express';
 
 const router: Router = express.Router();
 
 router.get('/userBlogProfile', auth, auth2, userBlogProfile);
-router.post('/createBlog', blogFiles, auth, auth2);
-router.post('/deleteBlog', auth, auth2);
+router.post('/createPost', postFiles, auth, auth2, createPost);
+router.post('/deletePost', auth, auth2);
 router.post('/createStory', storyFile, auth, auth2);
 router.post('/deleteStory', auth, auth2);
 

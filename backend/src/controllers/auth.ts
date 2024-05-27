@@ -14,7 +14,7 @@ import { generateOTP } from '@/utils/generateOtp';
 import Otp from '@/db/mongodb/models/Otp';
 import { sendPrivateKeyMail, sendVerficationMail } from '@/utils/sendMail';
 import * as forge from 'node-forge';
-import deleteFile from '@/utils/deleteFile';
+import { deleteFile } from '@/utils/deleteFile';
 import { db } from '@/db/postgresql/connection';
 import { user } from '@/db/postgresql/schema/user';
 

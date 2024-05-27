@@ -7,8 +7,3 @@ export type FileMessageReq = {
     lastName?: string,
     imageUrl?: string
 }
-
-export type CreateGroupReq = {
-    groupName: string,
-    userIdsInGroup: string // JSON.stringify
-}

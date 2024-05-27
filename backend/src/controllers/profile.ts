@@ -2,7 +2,7 @@ import User from '@/db/mongodb/models/User';
 import { UpdateUserDetailsReq } from '@/types/controllers/profileReq';
 import { CustomRequest } from '@/types/custom';
 import { deleteFromCloudinay, uploadToCloudinary } from '@/utils/cloudinaryHandler';
-import deleteFile from '@/utils/deleteFile';
+import { deleteFile } from '@/utils/deleteFile';
 import { errRes } from '@/utils/error';
 import valid from '@/validators/validator';
 import { Request, Response } from 'express';
