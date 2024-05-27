@@ -1,5 +1,4 @@
 import User from '@/db/mongodb/models/User';
-import { logger } from '@/logger/logger';
 import { UpdateUserDetailsReq } from '@/types/controllers/profileReq';
 import { CustomRequest } from '@/types/custom';
 import { deleteFromCloudinay, uploadToCloudinary } from '@/utils/cloudinaryHandler';
@@ -7,7 +6,6 @@ import deleteFile from '@/utils/deleteFile';
 import { errRes } from '@/utils/error';
 import valid from '@/validators/validator';
 import { Request, Response } from 'express';
-import fs from 'fs';
 
 export const checkUserName = async (req: Request, res: Response): Promise<Response> => {
     try {

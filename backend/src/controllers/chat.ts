@@ -14,8 +14,6 @@ import { errRes } from "@/utils/error";
 import { getMultiSockets } from "@/utils/getSocketIds";
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from "uuid";
-import fs from 'fs';
-import { logger } from "@/logger/logger";
 import deleteFile from "@/utils/deleteFile";
 
 type BarData = {

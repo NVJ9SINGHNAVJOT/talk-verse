@@ -9,8 +9,9 @@ export const authEndPoints = {
   LOGOUT: BASE_URL_SERVER + "/auth/logout"
 };
 
+// profile endpoints
 export const profileEndPoints = {
-  CHECK_USERNAME: BASE_URL_SERVER + "/profile/checkUserName",
+  CHECK_USERNAME: BASE_URL_SERVER + "/profile/checkUserName", // parameters: userName
   PROFILE_DETAILS: BASE_URL_SERVER + "/profile/getDetails",
   SET_PROFILE_IMAGE: BASE_URL_SERVER + "/profile/updateProfileImage",
   SET_PROFILE_DETAILS: BASE_URL_SERVER + "/profile/updateUserDetails"
@@ -18,7 +19,7 @@ export const profileEndPoints = {
 
 // notification endpoints
 export const notificationEndPoints = {
-  GET_USERS: BASE_URL_SERVER + "/notification/getUsers",
+  GET_USERS: BASE_URL_SERVER + "/notification/getUsers", // parameters: userName
   SEND_REQUEST: BASE_URL_SERVER + "/notification/sendRequest",
   ACCEPT_REQUEST: BASE_URL_SERVER + "/notification/acceptRequest",
   DELETE_REQUESET: BASE_URL_SERVER + "/notification/deleteRequest",
@@ -32,7 +33,26 @@ export const notificationEndPoints = {
 // chat endpoints
 export const chatEndPoints = {
   CHAT_BAR_DATA: BASE_URL_SERVER + "/chat/chatBarData",
-  CHAT_MESSAGES: BASE_URL_SERVER + "/chat/chatMessages",
-  GROUP_MESSAGES: BASE_URL_SERVER + "/chat/groupMessages",
+  CHAT_MESSAGES: BASE_URL_SERVER + "/chat/chatMessages", // parameters: chatId, createdAt
+  GROUP_MESSAGES: BASE_URL_SERVER + "/chat/groupMessages", // parameters: groupId, createdAt
   FILE_MESSAGE: BASE_URL_SERVER + "/chat/fileMessage",
+};
+
+// userBlog endpoints
+export const userBlogEndPoints = {
+  USER_BLOG_PROFILE: BASE_URL_SERVER + "/blog/userBlogProfile",
+  CREATE_BLOG: BASE_URL_SERVER + "/blog/createBlog",
+  DELETE_BLOG: BASE_URL_SERVER + "/blog/deleteBlog",
+  CREATE_STORY: BASE_URL_SERVER + "/blog/createStory",
+  DELETE_STORY: BASE_URL_SERVER + "/blog/deleteStory",
+};
+
+// blogData endpoints
+export const blogDataEndPoints = {
+  RECENT_POSTS: BASE_URL_SERVER + "/blogData/recentPosts",
+  TRENDING_POSTS_: BASE_URL_SERVER + "/blogData/trendingPosts",
+  CATEGORY_POSTS: BASE_URL_SERVER + "/blogData/categoryPosts", // parameters: category
+  UPDATE_LIKE: BASE_URL_SERVER + "/blogData/updateLike", // parameters: like
+  ADD_COMMENT: BASE_URL_SERVER + "/blogData/addComment",
+  DELETE_COMMENT: BASE_URL_SERVER + "/blogData/deleteComment",
 };

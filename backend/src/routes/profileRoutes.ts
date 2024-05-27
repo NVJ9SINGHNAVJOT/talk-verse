@@ -5,7 +5,7 @@ import { checkUserName, getUserDetails, updateProfileImage, updateUserDetails } 
 
 const router: Router = express.Router();
 
-router.get('/checkUserName', auth, checkUserName);
+router.get('/checkUserName', auth, checkUserName); // parameters: userName
 router.get('/getDetails', auth, getUserDetails);
 router.post('/updateProfileImage', imageFile, auth, updateProfileImage);
 router.post('/updateUserDetails', auth, updateUserDetails);

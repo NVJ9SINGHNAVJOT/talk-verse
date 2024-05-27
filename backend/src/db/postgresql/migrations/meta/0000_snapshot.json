@@ -1,5 +1,5 @@
 {
-  "id": "2a19a1f0-3660-4a67-9e53-dbfb6dc6322e",
+  "id": "d799f0e0-de5a-434d-b3bb-4021efe1f530",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -14,14 +14,14 @@
           "primaryKey": true,
           "notNull": true
         },
-        "post_id": {
-          "name": "post_id",
+        "user_id": {
+          "name": "user_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
-        "user_id": {
-          "name": "user_id",
+        "post_id": {
+          "name": "post_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -49,12 +49,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "comment_post_id_post_id_fk": {
-          "name": "comment_post_id_post_id_fk",
+        "comment_user_id_user_id_fk": {
+          "name": "comment_user_id_user_id_fk",
           "tableFrom": "comment",
-          "tableTo": "post",
+          "tableTo": "user",
           "columnsFrom": [
-            "post_id"
+            "user_id"
           ],
           "columnsTo": [
             "id"
@@ -62,12 +62,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "comment_user_id_user_id_fk": {
-          "name": "comment_user_id_user_id_fk",
+        "comment_post_id_post_id_fk": {
+          "name": "comment_post_id_post_id_fk",
           "tableFrom": "comment",
-          "tableTo": "user",
+          "tableTo": "post",
           "columnsFrom": [
-            "user_id"
+            "post_id"
           ],
           "columnsTo": [
             "id"
@@ -148,8 +148,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "like": {
-      "name": "like",
+    "likes": {
+      "name": "likes",
       "schema": "",
       "columns": {
         "id": {
@@ -158,14 +158,14 @@
           "primaryKey": true,
           "notNull": true
         },
-        "post_id": {
-          "name": "post_id",
+        "user_id": {
+          "name": "user_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
-        "user_id": {
-          "name": "user_id",
+        "post_id": {
+          "name": "post_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -187,12 +187,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "like_post_id_post_id_fk": {
-          "name": "like_post_id_post_id_fk",
-          "tableFrom": "like",
-          "tableTo": "post",
+        "likes_user_id_user_id_fk": {
+          "name": "likes_user_id_user_id_fk",
+          "tableFrom": "likes",
+          "tableTo": "user",
           "columnsFrom": [
-            "post_id"
+            "user_id"
           ],
           "columnsTo": [
             "id"
@@ -200,12 +200,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "like_user_id_user_id_fk": {
-          "name": "like_user_id_user_id_fk",
-          "tableFrom": "like",
-          "tableTo": "user",
+        "likes_post_id_post_id_fk": {
+          "name": "likes_post_id_post_id_fk",
+          "tableFrom": "likes",
+          "tableTo": "post",
           "columnsFrom": [
-            "user_id"
+            "post_id"
           ],
           "columnsTo": [
             "id"
@@ -227,17 +227,23 @@
           "primaryKey": true,
           "notNull": true
         },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
         "media_urls": {
           "name": "media_urls",
           "type": "varchar[]",
           "primaryKey": false,
           "notNull": false
         },
-        "title": {
-          "name": "title",
+        "category": {
+          "name": "category",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "tags": {
           "name": "tags",
@@ -251,18 +257,12 @@
           "primaryKey": false,
           "notNull": false
         },
-        "likes": {
-          "name": "likes",
+        "likes_count": {
+          "name": "likes_count",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "default": 0
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -308,14 +308,14 @@
           "primaryKey": true,
           "notNull": true
         },
-        "post_id": {
-          "name": "post_id",
+        "user_id": {
+          "name": "user_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
-        "user_id": {
-          "name": "user_id",
+        "post_id": {
+          "name": "post_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
@@ -337,12 +337,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "save_post_id_post_id_fk": {
-          "name": "save_post_id_post_id_fk",
+        "save_user_id_user_id_fk": {
+          "name": "save_user_id_user_id_fk",
           "tableFrom": "save",
-          "tableTo": "post",
+          "tableTo": "user",
           "columnsFrom": [
-            "post_id"
+            "user_id"
           ],
           "columnsTo": [
             "id"
@@ -350,12 +350,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "save_user_id_user_id_fk": {
-          "name": "save_user_id_user_id_fk",
+        "save_post_id_post_id_fk": {
+          "name": "save_post_id_post_id_fk",
           "tableFrom": "save",
-          "tableTo": "user",
+          "tableTo": "post",
           "columnsFrom": [
-            "user_id"
+            "post_id"
           ],
           "columnsTo": [
             "id"
@@ -377,15 +377,15 @@
           "primaryKey": true,
           "notNull": true
         },
-        "media_url": {
-          "name": "media_url",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
         "user_id": {
           "name": "user_id",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "media_url": {
+          "name": "media_url",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": true
         },
@@ -427,6 +427,12 @@
       "name": "user",
       "schema": "",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
         "ref_id": {
           "name": "ref_id",
           "type": "varchar",
@@ -444,12 +450,6 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
-        },
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
         },
         "following_count": {
           "name": "following_count",

@@ -23,5 +23,7 @@ const multerUpload = multer({
 
 const imageFile = multerUpload.single("imageFile");
 const fileMessg = multerUpload.single("fileMessg");
+const storyFile = multerUpload.single("storyFile");
+const blogFiles = multerUpload.array("blogFiles");
 
-export { imageFile, fileMessg };
+export { imageFile, fileMessg, storyFile, blogFiles };

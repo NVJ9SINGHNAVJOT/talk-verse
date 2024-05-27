@@ -5,13 +5,13 @@ import { user } from "@/db/postgresql/schema/user";
 
 export const save = pgTable("save", {
     id: serial("id").primaryKey(),
-    postId: integer("post_id").references(() => post.id),
     userId: integer("user_id").references(() => user.id),
+    postId: integer("post_id").references(() => post.id),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const commentsRelations = relations(save, ({ one }) => ({
-    post: one(post, { fields: [save.postId], references: [post.id] }),
     user: one(user, { fields: [save.userId], references: [user.id] }),
+    post: one(post, { fields: [save.postId], references: [post.id] }),
 }));

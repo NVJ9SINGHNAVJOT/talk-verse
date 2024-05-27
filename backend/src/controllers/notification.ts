@@ -15,8 +15,6 @@ import { Request, Response } from 'express';
 import { CreateGroupReq } from '@/types/controllers/chatReq';
 import { uploadToCloudinary } from '@/utils/cloudinaryHandler';
 import Group from '@/db/mongodb/models/Group';
-import fs from 'fs';
-import { logger } from '@/logger/logger';
 import deleteFile from '@/utils/deleteFile';
 
 export const getUsers = async (req: Request, res: Response): Promise<Response> => {

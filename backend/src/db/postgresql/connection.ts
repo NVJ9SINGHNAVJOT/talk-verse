@@ -5,7 +5,7 @@ import * as user from "@/db/postgresql/schema/user";
 import * as post from "@/db/postgresql/schema/post";
 import * as comment from "@/db/postgresql/schema/comment";
 import * as follow from "@/db/postgresql/schema/follow";
-import * as like from "@/db/postgresql/schema/like";
+import * as likes from "@/db/postgresql/schema/likes";
 import * as save from "@/db/postgresql/schema/save";
 import * as story from "@/db/postgresql/schema/story";
 
@@ -27,4 +27,4 @@ const pool = new Pool({
 
 logger.info("postgresql database connected");
 
-export const db = drizzle(pool, { schema: { ...user, ...post, ...like, ...follow, ...story, ...save, ...comment } });
+export const db = drizzle(pool, { schema: { ...user, ...post, ...likes, ...follow, ...story, ...save, ...comment } });

@@ -15,6 +15,8 @@ import Otp from '@/db/mongodb/models/Otp';
 import { sendPrivateKeyMail, sendVerficationMail } from '@/utils/sendMail';
 import * as forge from 'node-forge';
 import deleteFile from '@/utils/deleteFile';
+import { db } from '@/db/postgresql/connection';
+import { user } from '@/db/postgresql/schema/user';
 
 configDotenv();
 
@@ -46,7 +48,10 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
       }
       return errRes(res, 400, 'Invalid otp or otp has expired');
     }
+    // delete otp after verification
+    await Otp.deleteOne({ otpValue: data.otp });
 
+    // now create user
     const response = await User.findOne({ email: data.email }).select({ email: true }).exec();
 
     if (response) {
@@ -97,6 +102,10 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     }
 
     if (newUser) {
+      // create user in postgreSQL database
+      await db.insert(user).values({ refId: newUser._id.toString(), userName: data.userName, imageUrl: secUrl });
+
+      // now generate pair of public and private keys for user
       // Split the key into lines
       const lines = privateKeyPem.trim().split("\n");
       // Remove the first and last lines (which contain the comment)

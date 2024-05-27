@@ -4,10 +4,10 @@ import { user } from "@/db/postgresql/schema/user";
 
 export const story = pgTable("story", {
     id: serial("id").primaryKey(),
-    mediaUrl: varchar("media_url").notNull(),
     userId: integer("user_id")
         .notNull()
         .references(() => user.id),
+    mediaUrl: varchar("media_url").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

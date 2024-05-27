@@ -6,6 +6,7 @@ import {
 import { auth } from '@/middlewares/auth';
 import { imageFile } from '@/middlewares/multer';
 import express, { Router } from 'express';
+
 const router: Router = express.Router();
 
 router.get('/getUsers', auth, getUsers); // parameters: userName
