@@ -41,14 +41,14 @@ export const checkUserSocket = async (socket: Socket): Promise<boolean> => {
             return false;
         }
 
-        const userId = await jwtVerify(token);
+        const userIds = await jwtVerify(token);
 
-        if (!userId) {
+        if (!userIds || userIds.length !== 2) {
             return false;
         }
 
         // user verified and now userid is set in request
-        (socket as CustomSocket).userId = userId;
+        (socket as CustomSocket).userId = userIds[0] as string;
 
         return true;
 

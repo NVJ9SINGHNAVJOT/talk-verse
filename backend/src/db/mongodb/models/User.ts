@@ -9,6 +9,7 @@ interface CombineChatId {
 
 // Define interfaces for each model to represent the document structure
 export interface IUser extends Document {
+    userId2: number;
     firstName: string;
     lastName: string;
     userName: string;
@@ -28,6 +29,9 @@ export interface IUser extends Document {
 
 // Define the User schema
 const userSchema = new Schema<IUser>({
+    userId2: {
+        type: Number,
+    },
     firstName: {
         type: String,
         required: true,

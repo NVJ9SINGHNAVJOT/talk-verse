@@ -8,7 +8,7 @@ export interface CustomPayload extends JwtPayload {
 
 export interface CustomRequest extends Request {
     userId: string;
-    userId2?: number;
+    userId2: number;
 }
 
 export interface CustomSocket extends Socket {

@@ -6,7 +6,6 @@ import { errRes } from '@/utils/error';
 import valid from '@/validators/validator';
 import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
-import { configDotenv } from 'dotenv';
 import Token from '@/db/mongodb/models/Token';
 import Notification from '@/db/mongodb/models/Notification';
 import { jwtVerify } from '@/utils/token';
@@ -18,9 +17,6 @@ import { deleteFile } from '@/utils/deleteFile';
 import { db } from '@/db/postgresql/connection';
 import { user } from '@/db/postgresql/schema/user';
 
-configDotenv();
-
-// create user | user signup
 export const signUp = async (req: Request, res: Response): Promise<Response> => {
   try {
     const data: SignUpReq = req.body;
@@ -51,9 +47,8 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     // delete otp after verification
     await Otp.deleteOne({ otpValue: data.otp });
 
-    // now create user
+    // now check if user is already registered
     const response = await User.findOne({ email: data.email }).select({ email: true }).exec();
-
     if (response) {
       if (req.file) {
         deleteFile(req.file);
@@ -61,15 +56,17 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
       return errRes(res, 400, "user already present");
     }
 
-    const checkUserName = await User.find({ userName: data.userName }).select({ userName: true }).exec();
+    // check if userName is already in use
+    const checkUserName = await User.findOne({ userName: data.userName }).select({ userName: true }).exec();
 
-    if (checkUserName.length !== 0) {
+    if (checkUserName) {
       if (req.file) {
         deleteFile(req.file);
       }
       return errRes(res, 400, "user name already in use");
     }
 
+    /* all verification done, now create user */
     let secUrl;
     if (req.file) {
       secUrl = await uploadToCloudinary(req.file);
@@ -94,34 +91,36 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     });
 
     // create notification model for user
-    const createNotification = await Notification.create({ userId: newUser?._id });
+    await Notification.create({ userId: newUser?._id });
 
-    if (!createNotification) {
-      await User.deleteOne({ _id: newUser._id }).exec();
-      return errRes(res, 500, "error while creating notification");
+    // create user in postgreSQL database
+    const newUser2 = await db.insert(user).values({ refId: newUser._id.toString(), userName: data.userName, imageUrl: secUrl }).returning({ id: user.id });
+    if (newUser2.length !== 1 || !newUser2[0]) {
+      await Notification.deleteOne({ userId: newUser.id });
+      await User.deleteOne({ _id: newUser.id });
+      return errRes(res, 500, "error while creating user in other database");
     }
 
-    if (newUser) {
-      // create user in postgreSQL database
-      await db.insert(user).values({ refId: newUser._id.toString(), userName: data.userName, imageUrl: secUrl });
+    // save user's id from postgreSQL 
+    newUser.userId2 = newUser2[0].id;
+    await newUser.save();
 
-      // now generate pair of public and private keys for user
-      // Split the key into lines
-      const lines = privateKeyPem.trim().split("\n");
-      // Remove the first and last lines (which contain the comment)
-      const privateKeyPemOnly = lines.slice(1, -1).join("\n");
-      /* ===== Caution: only for development purpose, remove comment in production ===== */
-      // await sendPrivateKeyMail(data.email, privateKeyPemOnly);
-      console.log('pKey', privateKeyPemOnly);
+    // now generate pair of public and private keys for user
+    // Split the key into lines
+    const lines = privateKeyPem.trim().split("\n");
 
-      return res.status(200).json({
-        success: true,
-        message: "user registered successfully"
-      });
-    }
-    else {
-      return errRes(res, 500, "error while creating user");
-    }
+    // Remove the first and last lines (which contain the comment)
+    const privateKeyPemOnly = lines.slice(1, -1).join("\n");
+
+    /* ===== Caution: only for development purpose, remove comment in production ===== */
+    // await sendPrivateKeyMail(data.email, privateKeyPemOnly);
+    console.log('pKey', privateKeyPemOnly);
+
+    return res.status(200).json({
+      success: true,
+      message: "user registered successfully"
+    });
+
   } catch (error) {
     if (req.file) {
       deleteFile(req.file);
@@ -153,7 +152,6 @@ export const sendOtp = async (req: Request, res: Response): Promise<Response> =>
   }
 };
 
-// user login
 export const logIn = async (req: Request, res: Response): Promise<Response> => {
   try {
     const data: LogInReq = req.body;
@@ -236,7 +234,6 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
   }
 };
 
-// check user
 export const checkUser = async (req: Request, res: Response): Promise<Response> => {
   try {
     // Extracting JWT from request cookies or header
@@ -249,14 +246,14 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
       });
     }
 
-    const userId = await jwtVerify(token);
+    const userIds = await jwtVerify(token);
 
     // If JWT token present and userId invalid or null
-    if (!userId) {
+    if (!userIds || userIds.length !== 2) {
       return errRes(res, 401, "user authorization failed");
     }
 
-    const user = await User.findById({ _id: userId }).select({
+    const user = await User.findById({ _id: userIds[0] as string }).select({
       firstName: true, lastName: true, imageUrl: true, publicKey: true
     }).exec();
 
@@ -286,15 +283,15 @@ export const logOut = async (req: Request, res: Response): Promise<Response> => 
       });
     }
 
-    const userId = await jwtVerify(token);
+    const userIds = await jwtVerify(token);
 
     // If JWT token present and userId invalid or null
-    if (!userId) {
+    if (!userIds || userIds.length !== 2) {
       return errRes(res, 401, "user authorization failed");
     }
 
     await Token.findOneAndDelete({ tokenValue: token });
-    await User.findByIdAndUpdate({ _id: userId }, { $unset: { userToken: true } });
+    await User.findByIdAndUpdate({ _id: userIds[0] as string }, { $unset: { userToken: true } });
 
     res.cookie(process.env.TOKEN_NAME as string, "", {
       expires: new Date(0), // Set an immediate expiration date (in the past)

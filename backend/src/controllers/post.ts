@@ -124,3 +124,18 @@ export const createPost = async (req: Request, res: Response): Promise<Response>
         return errRes(res, 500, "error while creating post", error);
     }
 };
+
+export const deletePost = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const userId2 = (req as CustomRequest).userId2;
+
+        if (!userId2) {
+            return errRes(res, 400, "invalid data, userId2 not present");
+        }
+
+        return errRes(res, 400, "invalid data, userId2 not present");
+
+    } catch (error) {
+        return errRes(res, 500, "error while deleting post", error);
+    }
+};
