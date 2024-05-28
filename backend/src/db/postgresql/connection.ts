@@ -9,33 +9,6 @@ import { story, storysRelations } from "@/db/postgresql/schema/story";
 import { follow, followsRelations } from "@/db/postgresql/schema/follow";
 import { save, savessRelations } from "@/db/postgresql/schema/save";
 
-export async function postgresqlDatabaseConnect() {
-    try {
-        if (
-            !process.env.POSTGRESQL_HOST ||
-            !process.env.POSTGRESQL_PORT ||
-            !process.env.POSTGRESQL_USER ||
-            !process.env.POSTGRESQL_PASSWORD ||
-            !process.env.POSTGRESQL_DATABASE_NAME) {
-            logger.info("postgresql connection failed");
-            process.exit();
-        }
-        const pool = new Pool({
-            host: process.env.POSTGRESQL_HOST,
-            port: parseInt(process.env.POSTGRESQL_PORT as string),
-            user: process.env.POSTGRESQL_USER,
-            password: process.env.POSTGRESQL_PASSWORD,
-            database: process.env.POSTGRESQL_DATABASE_NAME,
-        });
-
-        await pool.connect();
-        logger.info("postgresql database connected");
-    } catch (error) {
-        logger.error('error while connecting postgresql database', { error: error });
-        process.exit();
-    }
-}
-
 const pool = new Pool({
     host: process.env.POSTGRESQL_HOST,
     port: parseInt(process.env.POSTGRESQL_PORT as string),
@@ -43,6 +16,16 @@ const pool = new Pool({
     password: process.env.POSTGRESQL_PASSWORD,
     database: process.env.POSTGRESQL_DATABASE_NAME,
 });
+
+export async function postgresqlDatabaseConnect() {
+    try {
+        await pool.connect();
+        logger.info("postgresql database connected");
+    } catch (error) {
+        logger.error('error while connecting postgresql database', { error: error });
+        process.exit();
+    }
+}
 
 export const db = drizzle(pool, {
     schema: {

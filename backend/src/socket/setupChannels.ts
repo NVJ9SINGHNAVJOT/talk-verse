@@ -3,8 +3,7 @@ import Group from "@/db/mongodb/models/Group";
 import { channels, groupIds, groupOffline } from "@/socket/index";
 import Channel from "@/types/channel";
 
-
-const setup = async () => {
+const setupChannels = async () => {
     const allChats = await Chat.find().select({ _id: true }).exec();
     const allGroups = await Group.find().select({ _id: true, members: true }).exec();
 
@@ -37,4 +36,4 @@ const setup = async () => {
     }
 };
 
-export default setup;
+export default setupChannels;

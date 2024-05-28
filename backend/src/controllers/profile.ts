@@ -1,10 +1,13 @@
 import User from '@/db/mongodb/models/User';
+import { db } from '@/db/postgresql/connection';
+import { user } from '@/db/postgresql/schema/user';
 import { UpdateUserDetailsReq } from '@/types/controllers/profileReq';
 import { CustomRequest } from '@/types/custom';
 import { deleteFromCloudinay, uploadToCloudinary } from '@/utils/cloudinaryHandler';
 import { deleteFile } from '@/utils/deleteFile';
 import { errRes } from '@/utils/error';
 import valid from '@/validators/validator';
+import { eq } from 'drizzle-orm';
 import { Request, Response } from 'express';
 
 export const checkUserName = async (req: Request, res: Response): Promise<Response> => {
@@ -80,21 +83,22 @@ export const getUserDetails = async (req: Request, res: Response): Promise<Respo
 export const updateProfileImage = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = (req as CustomRequest).userId;
+        const userId2 = (req as CustomRequest).userId2;
 
-        if (!userId) {
+        if (!userId || !userId2) {
             if (req.file) {
                 deleteFile(req.file);
             }
-            return errRes(res, 400, "invalid data, userId not present");
+            return errRes(res, 400, "invalid data, userIds not present");
         }
 
         if (!req.file) {
             return errRes(res, 400, "invalid data, imageFile not present");
         }
 
-        const user = await User.findById({ _id: userId }).select({ imageUrl: true });
+        const getUser = await User.findById({ _id: userId }).select({ imageUrl: true });
 
-        if (!user) {
+        if (!getUser) {
             if (req.file) {
                 deleteFile(req.file);
             }
@@ -110,13 +114,14 @@ export const updateProfileImage = async (req: Request, res: Response): Promise<R
         }
 
 
-        if (user.imageUrl) {
-            const publicId = process.env.FOLDER_NAME as string + "/" + user.imageUrl.split('/').pop()?.split('.')[0];
+        if (getUser.imageUrl) {
+            const publicId = process.env.FOLDER_NAME as string + "/" + getUser.imageUrl.split('/').pop()?.split('.')[0];
             await deleteFromCloudinay(publicId);
         }
 
-        user.imageUrl = secUrl;
-        await user.save();
+        getUser.imageUrl = secUrl;
+        await getUser.save();
+        await db.update(user).set({ imageUrl: secUrl }).where(eq(user.id, userId2)).execute();
 
         return res.status(200).json({
             success: true,
