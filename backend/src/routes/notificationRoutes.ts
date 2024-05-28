@@ -1,3 +1,4 @@
+/* eslint-disable drizzle/enforce-delete-with-where */
 import {
     acceptRequest, checkOnlineFriends, createGroup, deleteRequest,
     getAllNotifications, getUsers, sendRequest, setOrder,
@@ -12,7 +13,6 @@ const router: Router = express.Router();
 router.get('/getUsers', auth, getUsers); // parameters: userName
 router.post('/sendRequest', auth, sendRequest);
 router.post('/acceptRequest', auth, acceptRequest);
-// eslint-disable-next-line drizzle/enforce-delete-with-where
 router.delete('/deleteRequest', auth, deleteRequest);
 router.get('/getAllNotifications', auth, getAllNotifications);
 router.post('/createGroup', imageFile, auth, createGroup);

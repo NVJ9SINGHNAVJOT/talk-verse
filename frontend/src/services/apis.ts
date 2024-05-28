@@ -55,4 +55,5 @@ export const postDataEndPoints = {
   UPDATE_LIKE: BASE_URL_SERVER + "/postData/updateLike", // parameters: like
   ADD_COMMENT: BASE_URL_SERVER + "/postData/addComment",
   DELETE_COMMENT: BASE_URL_SERVER + "/postData/deleteComment",
+  GET_STORIES: BASE_URL_SERVER + "/postData/getStories"
 };

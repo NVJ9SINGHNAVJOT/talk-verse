@@ -1,7 +1,5 @@
 import { Request, Response } from "express"
 import express, { Express } from 'express';
-import { mongodbDatabaseConnect } from '@/db/mongodb/connection';
-import '@/db/postgresql/connection';
 import { cloudinaryConnect } from '@/config/cloudinary';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -14,13 +12,8 @@ import postRoutes from "@/routes/postRoutes";
 import postDataRoutes from "@/routes/postDataRoutes";
 import corsOptions from "@/config/corsOptions";
 import logging from "@/middlewares/logging";
-import { postgresqlDatabaseConnect } from "@/db/postgresql/connection";
 
 const app: Express = express();
-
-// connect databases
-mongodbDatabaseConnect();
-postgresqlDatabaseConnect();
 
 app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));

@@ -1,10 +1,11 @@
 import { db } from '@/db/postgresql/connection';
 import { post } from '@/db/postgresql/schema/post';
+import { story } from '@/db/postgresql/schema/story';
 import { user } from '@/db/postgresql/schema/user';
 import { CreatePostReq } from '@/types/controllers/postReq';
 import { CustomRequest } from '@/types/custom';
-import { uploadMultiplesToCloudinary } from '@/utils/cloudinaryHandler';
-import { deleteFiles } from '@/utils/deleteFile';
+import { uploadMultiplesToCloudinary, uploadToCloudinary } from '@/utils/cloudinaryHandler';
+import { deleteFile, deleteFiles } from '@/utils/deleteFile';
 import { errRes } from '@/utils/error';
 import valid from '@/validators/validator';
 import { eq } from 'drizzle-orm';
@@ -101,6 +102,7 @@ export const createPost = async (req: Request, res: Response): Promise<Response>
             tags: tags,
             content: content
         }).returning({
+            id: post.id,
             userId: post.userId,
             category: post.category,
             title: post.title,
@@ -133,9 +135,83 @@ export const deletePost = async (req: Request, res: Response): Promise<Response>
             return errRes(res, 400, "invalid data, userId2 not present");
         }
 
-        return errRes(res, 400, "invalid data, userId2 not present");
+        const { postId } = req.query;
+        if (!postId) {
+            return errRes(res, 400, "postId not present in querry");
+        }
+
+        const intPostId = parseInt(postId as string);
+        await db.delete(post).where(eq(post.id, intPostId));
+
+        return res.status(200).json({
+            success: true,
+            message: "post deleted successfully"
+        });
 
     } catch (error) {
         return errRes(res, 500, "error while deleting post", error);
+    }
+};
+
+export const createStory = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const userId2 = (req as CustomRequest).userId2;
+
+        if (!userId2) {
+            return errRes(res, 400, "invalid data, userId2 not present");
+        }
+
+        if (!req.file) {
+            return errRes(res, 400, "media file not present for story");
+        }
+
+        const secUrl = await uploadToCloudinary(req.file);
+        if (secUrl === null) {
+            if (req.file) {
+                deleteFile(req.file);
+            }
+            return errRes(res, 500, "error while uploading media file to cloudinary");
+        }
+
+        const newStory = await db.insert(story).values({ userId: userId2, storyUrl: secUrl }).
+            returning({ id: story.id }).execute();
+
+        return res.status(200).json({
+            success: true,
+            message: "story created successfully",
+            id: newStory[0]?.id
+        });
+
+    } catch (error) {
+        if (req.file) {
+            deleteFile(req.file);
+        }
+        return errRes(res, 500, "error while creating story", error);
+    }
+};
+
+export const deleteStory = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const userId2 = (req as CustomRequest).userId2;
+
+        if (!userId2) {
+            return errRes(res, 400, "invalid data, userId2 not present");
+        }
+
+        const { storyId } = req.query;
+        if (!storyId) {
+            return errRes(res, 400, "storyId not present in querry");
+        }
+
+        const intStoryId = parseInt(storyId as string);
+        await db.delete(story).where(eq(story.id, intStoryId));
+
+        return res.status(200).json({
+            success: true,
+            message: "story deleted successfully"
+
+        });
+    } catch (error) {
+        return errRes(res, 500, "error while deleting story", error);
     }
 };

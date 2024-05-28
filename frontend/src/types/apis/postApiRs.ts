@@ -22,3 +22,9 @@ export type CreatePostRs = {
         createdAt: Date
     }
 } | null
+
+export type CreateStoryRs = {
+    success: boolean,
+    message: string,
+    id: number
+} | null

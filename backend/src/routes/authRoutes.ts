@@ -1,3 +1,4 @@
+/* eslint-disable drizzle/enforce-delete-with-where */
 import express, { Router } from 'express';
 import { imageFile } from '@/middlewares/multer';
 import { checkUser, logIn, logOut, sendOtp, signUp } from "@/controllers/auth";
@@ -8,7 +9,6 @@ router.post('/signup', imageFile, signUp);
 router.post('/sendOtp', sendOtp);
 router.post('/login', logIn);
 router.get('/checkUser', checkUser);
-// eslint-disable-next-line drizzle/enforce-delete-with-where
 router.delete('/logout', logOut);
 
 export default router;

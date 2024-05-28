@@ -7,7 +7,7 @@ export const story = pgTable("story", {
     userId: integer("user_id")
         .notNull()
         .references(() => user.id),
-    mediaUrl: varchar("media_url").notNull(),
+    storyUrl: varchar("story_url").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

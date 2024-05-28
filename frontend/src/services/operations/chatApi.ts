@@ -22,20 +22,6 @@ export const chatBarDataApi = async (): Promise<ChatBarDataRs> => {
     }
 };
 
-export const getMessagesApi = async (chatId: string, createdAt: string): Promise<GetChatMessagesRs> => {
-    try {
-        const resData: GetChatMessagesRs = await fetchApi('GET', CHAT_MESSAGES, null, null,
-            { 'chatId': chatId, 'createdAt': createdAt ? createdAt : "" });
-        // success false is used in response
-        if (resData) {
-            return resData;
-        }
-        return null;
-    } catch (error) {
-        return null;
-    }
-};
-
 export const fileMessageApi = async (data: FormData): Promise<boolean> => {
     try {
         const resData: CommonRs = await fetchApi('POST', FILE_MESSAGE, data);
@@ -45,6 +31,20 @@ export const fileMessageApi = async (data: FormData): Promise<boolean> => {
         return false;
     } catch (error) {
         return false;
+    }
+};
+
+export const getMessagesApi = async (chatId: string, createdAt: string): Promise<GetChatMessagesRs> => {
+    try {
+        const resData: GetChatMessagesRs = await fetchApi('GET', CHAT_MESSAGES, null, null,
+            { 'chatId': chatId, 'createdAt': createdAt });
+        // success false is used in response
+        if (resData) {
+            return resData;
+        }
+        return null;
+    } catch (error) {
+        return null;
     }
 };
 

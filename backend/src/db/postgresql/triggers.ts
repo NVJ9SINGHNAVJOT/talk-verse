@@ -5,8 +5,8 @@ import { Pool } from 'pg';
 configDotenv();
 
 const tables = ["user", "story", "save", "post", "likes", "follow", "comment"];
-// Function to create the function and trigger
 
+// Function to create the trigger function 
 async function setupPostgreSQLTriggers() {
     try {
         const pool = new Pool({
@@ -30,11 +30,10 @@ async function setupPostgreSQLTriggers() {
             $$ LANGUAGE plpgsql;
         `));
 
-
         // Loop through each table and create a trigger
         for (const table of tables) {
             await db.execute(sql.raw(`
-                CREATE TRIGGER update_${table}_updated_at
+                CREATE OR REPLACE TRIGGER update_${table}_updated_at
                 BEFORE UPDATE ON "${table}"
                 FOR EACH ROW
                 EXECUTE FUNCTION update_updated_at_column();
