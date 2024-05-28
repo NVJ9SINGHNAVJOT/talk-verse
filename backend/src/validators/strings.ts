@@ -44,3 +44,10 @@ export function isPassword(password: string, confirmPassword?: string): boolean 
     return true;
 }
 
+const categories = ["Technology", "Lifestyle", "Blog", "Nature", "Music",
+    "Sports", "Health", "Finance", "Art", "History",
+    "Literature", "Science", "Business", "Other"];
+
+export function isCategory(category: string): boolean {
+    return categories.includes(category);
+}

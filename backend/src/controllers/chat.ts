@@ -11,7 +11,7 @@ import { SoGroupMessageRecieved, SoMessageRecieved } from "@/types/socket/eventT
 import { uploadToCloudinary } from '@/utils/cloudinaryHandler';
 import emitSocketEvent from "@/utils/emitSocketEvent";
 import { errRes } from "@/utils/error";
-import { getMultiSockets } from "@/utils/getSocketIds";
+import { getSingleSocket } from "@/utils/getSocketIds";
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from "uuid";
 import { deleteFile } from "@/utils/deleteFile";
@@ -199,13 +199,23 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
             }
         }
         else {
-            const twoUser = getMultiSockets([userId, data.to]);
             const channel = channels.get(data.mainId);
             if (!channel) {
                 return errRes(res, 500, 'no channel for two user chat');
             }
             // message through channel
             await channel.lock();
+            const combineSocketIds: string[] = []
+            const mySocketId = getSingleSocket(userId);
+            const friendSocketId = getSingleSocket(data.to);
+
+            if (mySocketId) {
+                combineSocketIds.push(mySocketId);
+            }
+            if (friendSocketId) {
+                combineSocketIds.push(friendSocketId);
+            }
+
             const uuId = uuidv4();
             const createdAt = new Date();
             const sdata: SoMessageRecieved = {
@@ -216,8 +226,8 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
                 text: secUrl,
                 createdAt: createdAt.toISOString(),
             };
-            if (twoUser.online.length > 0) {
-                emitSocketEvent(req, clientE.MESSAGE_RECIEVED, sdata, null, twoUser.online);
+            if (combineSocketIds.length > 0) {
+                emitSocketEvent(req, clientE.MESSAGE_RECIEVED, sdata, null, combineSocketIds);
             }
             // release channel
             channel.unlock();
@@ -227,8 +237,8 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
                     uuId: uuId, isFile: true, chatId: data.mainId, from: userId,
                     to: data.to, fromText: secUrl, toText: secUrl, createdAt: createdAt
                 });
-                if (twoUser.offline.length === 1) {
-                    await UnseenCount.updateOne({ userId: twoUser.offline[0], mainId: data.mainId }, { $inc: { count: 1 } });
+                if (!friendSocketId) {
+                    await UnseenCount.updateOne({ userId: data.to, mainId: data.mainId }, { $inc: { count: 1 } });
                 }
             } catch (error) {
                 errRes(res, 500, 'error while updating unseen count for chat', error);
@@ -258,7 +268,7 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
 
         const { chatId, createdAt } = req.query;
 
-        if (!chatId) {
+        if (!chatId || !createdAt) {
             return errRes(res, 400, 'invalid data in querry');
         }
 
@@ -319,7 +329,7 @@ export const groupMessages = async (req: Request, res: Response): Promise<Respon
 
         const { groupId, createdAt } = req.query;
 
-        if (!groupId) {
+        if (!groupId || !createdAt) {
             return errRes(res, 400, 'invalid data in querry');
         }
 

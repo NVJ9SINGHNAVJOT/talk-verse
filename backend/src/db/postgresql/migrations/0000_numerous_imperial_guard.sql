@@ -26,10 +26,11 @@ CREATE TABLE IF NOT EXISTS "likes" (
 CREATE TABLE IF NOT EXISTS "post" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" integer NOT NULL,
-	"media_urls" varchar[],
 	"category" varchar NOT NULL,
-	"tags" varchar[],
-	"content" varchar[],
+	"title" varchar,
+	"media_urls" varchar[] DEFAULT ARRAY[]::text[] NOT NULL,
+	"tags" varchar[] DEFAULT ARRAY[]::text[] NOT NULL,
+	"content" varchar[] DEFAULT ARRAY[]::text[] NOT NULL,
 	"likes_count" integer DEFAULT 0 NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL

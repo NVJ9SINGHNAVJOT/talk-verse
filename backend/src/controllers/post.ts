@@ -3,9 +3,10 @@ import { post } from '@/db/postgresql/schema/post';
 import { user } from '@/db/postgresql/schema/user';
 import { CreatePostReq } from '@/types/controllers/postReq';
 import { CustomRequest } from '@/types/custom';
-import { uploadMultiplesToCloudinary, uploadToCloudinary } from '@/utils/cloudinaryHandler';
+import { uploadMultiplesToCloudinary } from '@/utils/cloudinaryHandler';
 import { deleteFiles } from '@/utils/deleteFile';
 import { errRes } from '@/utils/error';
+import valid from '@/validators/validator';
 import { eq } from 'drizzle-orm';
 import { Request, Response } from 'express';
 
@@ -40,31 +41,26 @@ export const createPost = async (req: Request, res: Response): Promise<Response>
         const userId2 = (req as CustomRequest).userId2;
 
         if (!userId2) {
+            if (req.files?.length) {
+                deleteFiles(req.files);
+            }
             return errRes(res, 400, "invalid data, userId2 not present");
-        }
-
-        if (!req.files) {
-            return errRes(res, 400, "invalid request for post create, no media files present");
-        }
-
-        if ((Array.isArray(req.files) && req.files.length < 1) || (Object.values(req.files).flat().length < 1)) {
-            return errRes(res, 400, "invalid request for post create, no media files present");
         }
 
         const data: CreatePostReq = req.body;
 
-        if (!data.category) {
-            if (req.files) {
+        if (!data.category || !valid.isCategory(data.category) || (!req.files?.length && !data.content)) {
+            if (req.files?.length) {
                 deleteFiles(req.files);
             }
-            return errRes(res, 400, "category not present in data");
+            return errRes(res, 400, "invalid data for post creation");
         }
 
         const tags: string[] = [];
         if (data.tags) {
             const checkTags: string[] = JSON.parse(data.tags);
-            if (!checkTags || checkTags.length < 1) {
-                if (req.files) {
+            if (!checkTags || checkTags.length === 0 || checkTags.includes("")) {
+                if (req.files?.length) {
                     deleteFiles(req.files);
                 }
                 return errRes(res, 400, "tags present in req, but invalid data in after parsing");
@@ -75,8 +71,8 @@ export const createPost = async (req: Request, res: Response): Promise<Response>
         const content: string[] = [];
         if (data.tags) {
             const checkContent: string[] = JSON.parse(data.tags);
-            if (!checkContent || checkContent.length < 1) {
-                if (req.files) {
+            if (!checkContent || checkContent.length === 0, checkContent.includes("")) {
+                if (req.files?.length) {
                     deleteFiles(req.files);
                 }
                 return errRes(res, 400, "content present in req, but invalid data in after parsing");
@@ -84,32 +80,47 @@ export const createPost = async (req: Request, res: Response): Promise<Response>
             content.concat(checkContent);
         }
 
-        const files: Express.Multer.File[] = req.files as Express.Multer.File[];
-        const checkUpload = files.length;
-        const secUrls = await uploadMultiplesToCloudinary(files);
-
-        if (secUrls.length < 1 || checkUpload !== secUrls.length) {
-            if (req.file) {
-                deleteFiles(req.files);
+        let secUrls;
+        if (req.files?.length) {
+            const files: Express.Multer.File[] = req.files as Express.Multer.File[];
+            const checkUpload = files.length;
+            secUrls = await uploadMultiplesToCloudinary(files);
+            if (secUrls.length < 1 || checkUpload !== secUrls.length) {
+                if (req.files?.length) {
+                    deleteFiles(req.files);
+                }
+                return errRes(res, 500, "error while uploading files to cloudinay");
             }
-            return errRes(res, 500, "error while uploading files to cloudinay");
         }
-
-        const test = ["sdfsdef"]
 
         const newPost = await db.insert(post).values({
             userId: userId2,
-            mediaUrls: test, // Assuming secUrls is an array of media URLs
             category: data.category,
-        }).returning();
+            title: data.title,
+            mediaUrls: secUrls,
+            tags: tags,
+            content: content
+        }).returning({
+            userId: post.userId,
+            category: post.category,
+            title: post.title,
+            mediaUrls: post.mediaUrls,
+            tags: post.tags,
+            content: post.content,
+            likesCount: post.likesCount,
+            createdAt: post.createdAt
+        });
 
         return res.status(200).json({
             success: true,
             message: "post created",
-            post: newPost
+            post: newPost[0]
         });
 
     } catch (error) {
+        if (req.files?.length) {
+            deleteFiles(req.files);
+        }
         return errRes(res, 500, "error while creating post", error);
     }
 };

@@ -14,6 +14,6 @@ export const follow = pgTable("follow", {
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const postsRelations = relations(follow, ({ one }) => ({
+export const followsRelations = relations(follow, ({ one }) => ({
     user: one(user, { fields: [follow.followerId, follow.followingId], references: [user.id, user.id] }),
 }));

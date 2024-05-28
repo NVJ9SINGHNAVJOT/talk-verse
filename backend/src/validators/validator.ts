@@ -1,12 +1,12 @@
-import { isEmail, isName, isPassword, isUserName } from "@/validators/strings";
+import { isCategory, isEmail, isName, isPassword, isUserName } from "@/validators/strings";
 
 const valid = {
-
     // strings
     isEmail,
     isUserName,
     isName,
-    isPassword
+    isPassword,
+    isCategory
 };
 
 export default valid;

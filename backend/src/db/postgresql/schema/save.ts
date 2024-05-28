@@ -11,7 +11,7 @@ export const save = pgTable("save", {
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const commentsRelations = relations(save, ({ one }) => ({
+export const savessRelations = relations(save, ({ one }) => ({
     user: one(user, { fields: [save.userId], references: [user.id] }),
     post: one(post, { fields: [save.postId], references: [post.id] }),
 }));

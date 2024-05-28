@@ -34,7 +34,7 @@ export const uploadToCloudinary = async (file: Express.Multer.File): Promise<str
     }
 };
 
-export const uploadMultiplesToCloudinary = async (files: Express.Multer.File[]): Promise<(string | null)[]> => {
+export const uploadMultiplesToCloudinary = async (files: Express.Multer.File[]): Promise<string[]> => {
     try {
         const uploadPromises = files.map((file) =>
             uploadToCloudinary(file)
@@ -42,11 +42,19 @@ export const uploadMultiplesToCloudinary = async (files: Express.Multer.File[]):
 
         const secUrls = await Promise.all(uploadPromises);
 
+        const confirmUrls: string[] = [];
+
+        secUrls.forEach((url) => {
+            if (url !== null) {
+                confirmUrls.push(url);
+            }
+        });
+
         if (!secUrls || secUrls.length < 1) {
             return [];
         }
 
-        return secUrls;
+        return confirmUrls;
     } catch (error) {
         if (files) {
             deleteFiles(files);

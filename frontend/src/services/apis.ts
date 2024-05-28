@@ -39,8 +39,8 @@ export const chatEndPoints = {
 };
 
 // userPost endpoints
-export const userPostEndPoints = {
-  USER_BLOG_PROFILE: BASE_URL_SERVER + "/blog/userBlogProfile",
+export const postEndPoints = {
+  USER_BLOG_PROFILE: BASE_URL_SERVER + "/post/userBlogProfile",
   CREATE_POST: BASE_URL_SERVER + "/post/createPost",
   DELETE_POST: BASE_URL_SERVER + "/post/deletePost",
   CREATE_STORY: BASE_URL_SERVER + "/post/createStory",

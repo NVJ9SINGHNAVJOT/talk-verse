@@ -1,12 +1,9 @@
 import mongoose from 'mongoose';
-import { configDotenv } from 'dotenv';
 import { logger } from '@/logger/logger';
-
-configDotenv();
 
 const clientOptions: mongoose.ConnectOptions = { serverApi: { version: '1', strict: true, deprecationErrors: true } };
 
-export async function mongodbdatabaseConnect() {
+export async function mongodbDatabaseConnect() {
     try {
         const mongodb_url: string | undefined = process.env.MONGODB_URL;
         if (mongodb_url === undefined) {
@@ -21,5 +18,6 @@ export async function mongodbdatabaseConnect() {
         // Ensures that the client will close when error
         logger.info("mongodb connection failed");
         await mongoose.disconnect();
+        process.exit();
     }
 }

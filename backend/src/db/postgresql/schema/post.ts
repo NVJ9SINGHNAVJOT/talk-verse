@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { pgTable, integer, serial, timestamp, varchar } from "drizzle-orm/pg-core";
 import { comment } from "@/db/postgresql/schema/comment";
 import { user } from "@/db/postgresql/schema/user";
@@ -10,11 +10,11 @@ export const post = pgTable("post", {
     userId: integer("user_id")
         .notNull()
         .references(() => user.id),
-    category: varchar("category").notNull(),
-    title: varchar("title").notNull().default(""),
-    mediaUrls: varchar("media_urls").notNull().array(),
-    tags: varchar("tags").array().notNull().default([]),
-    content: varchar("content").array().notNull().default([]),
+    category: varchar('category').notNull(),
+    title: varchar("title"),
+    mediaUrls: varchar("media_urls").array().notNull().default(sql`ARRAY[]::text[]`),
+    tags: varchar("tags").array().notNull().default(sql`ARRAY[]::text[]`),
+    content: varchar("content").array().notNull().default(sql`ARRAY[]::text[]`),
     likesCount: integer("likes_count").notNull().default(0),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),

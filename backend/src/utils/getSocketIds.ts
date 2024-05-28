@@ -9,9 +9,12 @@ export const getSingleSocket = (userId: string) => {
 };
 
 export type Members = {
+    // online contains socketIds only
     online: string[],
+    // offline contains userIds only
     offline: string[]
 }
+
 export const getMultiSockets = (users: string[], currUserId?: string): Members => {
     const online: string[] = [];
     const offline: string[] = [];
