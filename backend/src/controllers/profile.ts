@@ -55,7 +55,7 @@ export const getUserDetails = async (req: Request, res: Response): Promise<Respo
             return errRes(res, 400, "invalid data, userId not present");
         }
 
-        const userData = await User.findById({ _id: userId }).select({
+        const userData = await User.findById({ id: userId }).select({
             email: true,
             userName: true,
             bio: true,
@@ -63,7 +63,7 @@ export const getUserDetails = async (req: Request, res: Response): Promise<Respo
             countryCode: true,
             contactNumber: true,
             about: true,
-            _id: false
+            id: false
         }).exec();
 
         if (!userData) {
@@ -96,7 +96,7 @@ export const updateProfileImage = async (req: Request, res: Response): Promise<R
             return errRes(res, 400, "invalid data, imageFile not present");
         }
 
-        const getUser = await User.findById({ _id: userId }).select({ imageUrl: true });
+        const getUser = await User.findById({ id: userId }).select({ imageUrl: true });
 
         if (!getUser) {
             if (req.file) {
@@ -115,7 +115,7 @@ export const updateProfileImage = async (req: Request, res: Response): Promise<R
 
 
         if (getUser.imageUrl) {
-            const publicId = process.env.FOLDER_NAME as string + "/" + getUser.imageUrl.split('/').pop()?.split('.')[0];
+            const publicId = process.env['FOLDER_NAME'] as string + "/" + getUser.imageUrl.split('/').pop()?.split('.')[0];
             await deleteFromCloudinay(publicId);
         }
 
@@ -146,7 +146,7 @@ export const updateUserDetails = async (req: Request, res: Response): Promise<Re
         }
         const data: UpdateUserDetailsReq = req.body;
 
-        const user = await User.findById({ _id: userId }).select({
+        const user = await User.findById({ id: userId }).select({
             email: true,
             userName: true,
             bio: true,

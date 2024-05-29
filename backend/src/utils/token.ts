@@ -11,14 +11,14 @@ export const jwtVerify = async (token: string): Promise<(string | number)[] | nu
     }
 
     // decode token
-    const decoded: CustomPayload = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
+    const decoded: CustomPayload = jwt.verify(token, process.env['JWT_SECRET'] as string) as JwtPayload;
 
     if (!decoded.userId) {
         return null;
     }
 
     // check user again with decode token data (decoded data contain userid)
-    const checkUser = await User.findById({ _id: decoded.userId }).select({ userToken: true, userId2: true })
+    const checkUser = await User.findById({ id: decoded.userId }).select({ userToken: true, userId2: true })
         .populate({ path: "userToken", select: "tokenValue" }).exec();
 
     if (!checkUser || !checkUser?.userToken || checkUser.userToken.tokenValue !== token) {

@@ -91,13 +91,13 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     });
 
     // create notification model for user
-    await Notification.create({ userId: newUser?._id });
+    await Notification.create({ userId: newUser?.id });
 
     // create user in postgreSQL database
-    const newUser2 = await db.insert(user).values({ refId: newUser._id.toString(), userName: data.userName, imageUrl: secUrl }).returning({ id: user.id });
+    const newUser2 = await db.insert(user).values({ refId: newUser.id, userName: data.userName, imageUrl: secUrl as string }).returning({ id: user.id });
     if (newUser2.length !== 1 || !newUser2[0]) {
       await Notification.deleteOne({ userId: newUser.id });
-      await User.deleteOne({ _id: newUser.id });
+      await User.deleteOne({ id: newUser.id });
       return errRes(res, 500, "error while creating user in other database");
     }
 
@@ -164,7 +164,7 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
     }
 
     const checkUser = await User.findOne({ email: data.email }).select({
-      email: true, password: true,
+      id: true, email: true, password: true,
       firstName: true, lastName: true, imageUrl: true, userToken: true, publicKey: true
     }).exec();
 
@@ -176,8 +176,8 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
     let newUserToken: string;
     if (await bcrypt.compare(data.password, checkUser.password as string)) {
       newUserToken = jwt.sign(
-        { userId: checkUser._id },
-        process.env.JWT_SECRET as string,
+        { userId: checkUser.id },
+        process.env['JWT_SECRET'] as string,
         {
           expiresIn: "24h",
         }
@@ -198,8 +198,8 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
       const newToken = await Token.create({ tokenValue: newUserToken });
 
       // create token and add in user
-      const userToken = await User.findByIdAndUpdate({ _id: checkUser?._id },
-        { $set: { userToken: newToken._id } },
+      const userToken = await User.findByIdAndUpdate({ id: checkUser?.id },
+        { $set: { userToken: newToken.id } },
         { new: true }).select({ userToken: true }).exec();
 
       // set token in cookie and select httponly: true
@@ -209,11 +209,11 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
           httpOnly: true,
           secure: true,
         };
-        return res.cookie(process.env.TOKEN_NAME as string, newUserToken, options).status(200).json({
+        return res.cookie(process.env['TOKEN_NAME'] as string, newUserToken, options).status(200).json({
           success: true,
           message: "user login successfull",
           user: {
-            _id: checkUser._id,
+            id: checkUser.id,
             firstName: checkUser.firstName,
             lastName: checkUser.lastName,
             imageUrl: checkUser.imageUrl,
@@ -237,7 +237,7 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
 export const checkUser = async (req: Request, res: Response): Promise<Response> => {
   try {
     // Extracting JWT from request cookies or header
-    const token = req.cookies[process.env.TOKEN_NAME as string];
+    const token = req.cookies[process.env['TOKEN_NAME'] as string];
 
     if (!token) {
       return res.status(200).json({
@@ -253,8 +253,8 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
       return errRes(res, 401, "user authorization failed");
     }
 
-    const user = await User.findById({ _id: userIds[0] as string }).select({
-      firstName: true, lastName: true, imageUrl: true, publicKey: true
+    const user = await User.findById({ id: userIds[0] as string }).select({
+      id: true, firstName: true, lastName: true, imageUrl: true, publicKey: true
     }).exec();
 
     if (!user) {
@@ -274,7 +274,7 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
 
 export const logOut = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const token = req.cookies[process.env.TOKEN_NAME as string];
+    const token = req.cookies[process.env['TOKEN_NAME'] as string];
 
     if (!token) {
       return res.status(200).json({
@@ -291,9 +291,9 @@ export const logOut = async (req: Request, res: Response): Promise<Response> => 
     }
 
     await Token.findOneAndDelete({ tokenValue: token });
-    await User.findByIdAndUpdate({ _id: userIds[0] as string }, { $unset: { userToken: true } });
+    await User.findByIdAndUpdate({ id: userIds[0] as string }, { $unset: { userToken: true } });
 
-    res.cookie(process.env.TOKEN_NAME as string, "", {
+    res.cookie(process.env['TOKEN_NAME'] as string, "", {
       expires: new Date(0), // Set an immediate expiration date (in the past)
       httpOnly: true,
       secure: true,

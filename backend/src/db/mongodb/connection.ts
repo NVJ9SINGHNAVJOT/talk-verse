@@ -5,9 +5,10 @@ const clientOptions: mongoose.ConnectOptions = { serverApi: { version: '1', stri
 
 export async function mongodbDatabaseConnect() {
     try {
-        const mongodb_url: string | undefined = process.env.MONGODB_URL;
+        const mongodb_url: string | undefined = process.env['MONGODB_URL'];
         if (mongodb_url === undefined) {
             logger.info("mongodb connection failed");
+            process.exit();
             return;
         }
         // Create a Mongoose client with a MongoClientOptions object to set the Stable API version

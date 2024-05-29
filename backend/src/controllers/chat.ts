@@ -18,17 +18,19 @@ import { deleteFile } from "@/utils/deleteFile";
 
 type BarData = {
     // common
-    _id: string,
+    id: string,
 
     // friend
-    chatId?: string
-    firstName?: string,
-    lastName?: string,
+    chatId?: string | undefined
+    firstName?: string | undefined,
+    lastName?: string | undefined,
     imageUrl?: string
+    // group
+    | undefined
 
     // group
-    groupName?: string,
-    gpImageUrl?: string
+    groupName?: string | undefined,
+    gpImageUrl?: string | undefined
 }
 
 type FriendPublicKey = {
@@ -44,16 +46,16 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
             return errRes(res, 400, 'user id not present');
         }
 
-        const userFriends = await User.findById({ _id: userId })
+        const userFriends = await User.findById({ id: userId })
             .select({ friends: true, chatBarOrder: true })
             .populate({
                 path: 'friends.friendId',
-                select: 'firstName lastName imageUrl publicKey',
+                select: 'id firstName lastName imageUrl publicKey',
             })
             .exec();
 
         const groups = await Group.find({ members: { $in: [userId] } })
-            .select({ groupName: true, gpImageUrl: true }).exec();
+            .select({ id: true, groupName: true, gpImageUrl: true }).exec();
 
         if (userFriends?.friends?.length !== undefined &&
             userFriends?.friends?.length < 1 &&
@@ -72,27 +74,27 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
         // combine user friends and their chatId in array and push in chatbar 
         const friends = userFriends?.friends?.map((item) => {
             const newValue: BarData = {
-                _id: item.friendId._id,
+                id: item.friendId.id,
                 firstName: item.friendId.firstName,
                 lastName: item.friendId.lastName,
                 imageUrl: item.friendId.imageUrl,
-                chatId: item.chatId._id.toString(),
+                chatId: item.chatId.id,
             };
             chatBar.push(newValue);
-            friendPublicKeys.push({ friendId: item.friendId._id, publicKey: item.friendId.publicKey })
+            friendPublicKeys.push({ friendId: item.friendId.id, publicKey: item.friendId.publicKey })
             return newValue;
         }
         );
 
         // push groups in chatbar
         groups.forEach((group) => {
-            chatBar.push(group);
+            chatBar.push(group as BarData);
         });
 
         // sort chatbar as per user chatbarorder
         const sortedBarData = chatBar.sort((a, b) => {
-            const tempA = a.chatId ? a.chatId : a._id.toString();
-            const tempB = b.chatId ? b.chatId : b._id.toString();
+            const tempA = a.chatId ? a.chatId : a.id;
+            const tempB = b.chatId ? b.chatId : b.id;
             const indexA = userFriends?.chatBarOrder.indexOf(tempA);
             const indexB = userFriends?.chatBarOrder.indexOf(tempB);
             if (indexA === undefined || indexB === undefined) {
@@ -278,20 +280,14 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
         })
             .sort({ createdAt: -1 })
             .limit(15)
-            .select({ uuId: true, isFile: true, chatId: true, from: true, fromText: true, toText: true, createdAt: true, _id: false })
+            .select({ uuId: true, isFile: true, chatId: true, from: true, fromText: true, toText: true, createdAt: true, id: false })
             .lean()
             .exec();
 
         if (messages.length === 0) {
-            if (createdAt) {
-                return res.status(200).json({
-                    success: false,
-                    message: 'no further messages for this chatId'
-                });
-            }
             return res.status(200).json({
                 success: false,
-                message: 'no messages yet for this chatId'
+                message: 'no further messages for this chatId'
             });
         }
 
@@ -301,9 +297,9 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
             newMessages.push({
                 uuId: message.uuId,
                 isFile: message.isFile,
-                chatId: message.chatId._id.toString(),
-                from: message.from._id.toString(),
-                text: message.from._id.toString() === userId ? message.fromText : message.toText,
+                chatId: message.chatId.id,
+                from: message.from.id,
+                text: message.from.id === userId ? message.fromText : message.toText,
                 createdAt: message.createdAt.toISOString()
             } as SoMessageRecieved);
         });
@@ -339,10 +335,10 @@ export const groupMessages = async (req: Request, res: Response): Promise<Respon
         })
             .sort({ createdAt: -1 })
             .limit(15)
-            .select({ uuId: true, isFile: true, from: true, to: true, text: true, createdAt: true, _id: false })
+            .select({ uuId: true, isFile: true, from: true, to: true, text: true, createdAt: true, id: false })
             .populate({
                 path: "from",
-                select: "firstName lastName imageUrl"
+                select: "id firstName lastName imageUrl"
             })
             .lean()
             .exec();
@@ -350,7 +346,7 @@ export const groupMessages = async (req: Request, res: Response): Promise<Respon
         if (gpMessages.length === 0) {
             return res.status(200).json({
                 success: false,
-                message: 'no messages yet for this group'
+                message: 'no messages further for this group'
             });
         }
 

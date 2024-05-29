@@ -2,20 +2,20 @@
 
 // client
 export type SoUserRequest = {
-    _id: string,
+    id: string,
     userName: string,
-    imageUrl?: string
+    imageUrl?: string | undefined
 }
 export type SoRequestAccepted = {
-    _id: string,
+    id: string,
     chatId: string,
     firstName: string,
     lastName: string,
-    imageUrl?: string,
+    imageUrl?: string | undefined,
     publicKey: string
 }
 export type SoAddedInGroup = {
-    _id: string,
+    id: string,
     groupName: string,
     gpImageUrl?: string
 }
@@ -36,7 +36,7 @@ export type SoGroupMessageRecieved = {
     createdAt: string,
     firstName: string,
     lastName: string,
-    imageUrl?: string,
+    imageUrl?: string | undefined,
 }
 
 // server
@@ -47,7 +47,7 @@ export type SoSendMessage = {
     toText: string
 }
 export type SoSendGroupMessage = {
-    _id: string,
+    id: string,
     text: string,
     firstName: string,
     lastName: string,

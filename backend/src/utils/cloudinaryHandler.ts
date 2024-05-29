@@ -8,7 +8,7 @@ export const uploadToCloudinary = async (file: Express.Multer.File): Promise<str
         const secureUrl = await cloudinary.uploader.upload(
             file.path,
             {
-                folder: process.env.FOLDER_NAME as string,
+                folder: process.env['FOLDER_NAME'] as string,
                 resource_type: "auto",
                 chunk_size: 2000000, // 2mb
             }

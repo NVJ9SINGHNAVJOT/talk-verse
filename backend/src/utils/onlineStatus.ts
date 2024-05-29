@@ -36,14 +36,14 @@ export const showOnline = async (io: Server, userId: string, status: boolean, so
             io.in(socket.id).socketsJoin(groupRooms);
         }
 
-        const userData = await User.findById({ _id: userId }).select({ friends: true }).exec();
+        const userData = await User.findById({ id: userId }).select({ friends: true }).exec();
         if (userData?.friends.length === undefined || userData?.friends.length < 1) {
             return;
         }
 
         const onlineFriends: string[] = [];
         userData?.friends.forEach((friend) => {
-            const friendId: string = friend.friendId._id.toString();
+            const friendId: string = friend.friendId.id;
             if (friendId && userSocketIDs.has(friendId)) {
                 const socketIds = userSocketIDs.get(friendId);
                 if (socketIds) {

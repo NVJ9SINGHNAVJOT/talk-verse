@@ -65,18 +65,18 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
 
     socket.on(serverE.SEND_GROUP_MESSAGE, async (data: SoSendGroupMessage) => {
         try {
-            if (!data._id || !data.text || !data.firstName || !data.lastName) {
+            if (!data.id || !data.text || !data.firstName || !data.lastName) {
                 logger.error('invalid data in socket send group message event', { data: data });
                 return;
             }
 
-            const members = groupIds.get(data._id);
+            const members = groupIds.get(data.id);
             if (!members || members.length === 0) {
                 logger.error('no members present for group', { data: data });
                 return;
             }
 
-            const channel = channels.get(data._id);
+            const channel = channels.get(data.id);
             if (!channel) {
                 logger.error('channel not present for groupId', { data: data });
                 return;
@@ -90,25 +90,25 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
                 uuId: uuId,
                 isFile: false,
                 from: userId,
-                to: data._id,
+                to: data.id,
                 text: data.text,
                 createdAt: createdAt.toISOString(),
                 firstName: data.firstName,
                 lastName: data.lastName,
                 imageUrl: data.imageUrl
             };
-            io.to(data._id).emit(clientE.GROUP_MESSAGE_RECIEVED, newGpMessage);
+            io.to(data.id).emit(clientE.GROUP_MESSAGE_RECIEVED, newGpMessage);
             // release channel
             channel.unlock();
 
             try {
-                await GpMessage.create({ uuId: uuId, from: userId, to: data._id, text: data.text, createdAt: createdAt });
-                const offlineMem = groupOffline.get(data._id);
+                await GpMessage.create({ uuId: uuId, from: userId, to: data.id, text: data.text, createdAt: createdAt });
+                const offlineMem = groupOffline.get(data.id);
                 if (offlineMem) {
                     const newOfline = Array.from(offlineMem);
                     if (newOfline.length > 0) {
                         await UnseenCount.updateMany(
-                            { userId: { $in: newOfline }, mainId: data._id },
+                            { userId: { $in: newOfline }, mainId: data.id },
                             { $inc: { count: 1 } }
                         );
                     }

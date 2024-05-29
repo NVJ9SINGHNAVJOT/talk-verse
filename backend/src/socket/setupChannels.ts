@@ -4,21 +4,21 @@ import { channels, groupIds, groupOffline } from "@/socket/index";
 import Channel from "@/types/channel";
 
 const setupChannels = async () => {
-    const allChats = await Chat.find().select({ _id: true }).exec();
-    const allGroups = await Group.find().select({ _id: true, members: true }).exec();
+    const allChats = await Chat.find().select({ id: true }).exec();
+    const allGroups = await Group.find().select({ id: true, members: true }).exec();
 
     if (allChats.length > 0) {
         allChats.forEach((chat) => {
             // Create a new channel instance
             const channel = new Channel();
             // set channel for new chatId
-            channels.set(chat._id.toString(), channel);
+            channels.set(chat.id, channel);
         });
     }
 
     if (allGroups.length > 0) {
         allGroups.forEach((group) => {
-            const groupId = group._id.toString();
+            const groupId = group.id;
 
             // Create a new channel instance
             const channel = new Channel();
@@ -27,7 +27,7 @@ const setupChannels = async () => {
 
             const memeberIds: string[] = [];
             group.members.forEach((member) => {
-                memeberIds.push(member._id.toString());
+                memeberIds.push(member.id.toString());
             });
 
             // set group members id in groupIds map

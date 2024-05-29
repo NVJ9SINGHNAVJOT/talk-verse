@@ -22,7 +22,7 @@ export const groupIds = new Map<string, string[]>();
 // groupId -> offline members
 export const groupOffline = new Map<string, Set<string>>();
 
-// create a map to store channels for mainID   chatId/_id  ->   chatId is for two users and _id is of group
+// create a map to store channels for mainID   chatId/id  ->   chatId is for two users and id is of group
 export const channels: Map<string, Channel> = new Map();
 
 export const setupWebSocket = (app: Application): HTTPServer => {
