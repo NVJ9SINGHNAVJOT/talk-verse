@@ -8,7 +8,13 @@ const {
     CREATE_POST,
     DELETE_POST,
     CREATE_STORY,
-    DELETE_STORY
+    DELETE_STORY,
+    UPDATE_LIKE,
+    ADD_COMMENT,
+    DELETE_COMMENT,
+    RECENT_POSTS,
+    TRENDING_POSTS,
+    CATEGORY_POSTS
 } = postEndPoints;
 
 export const userBlogProfileApi = async (): Promise<UserBlogProfileRs> => {
@@ -62,6 +68,18 @@ export const createStoryApi = async (data: FormData): Promise<CreateStoryRs> => 
 export const deleteStoryApi = async (storyId: string): Promise<boolean> => {
     try {
         const resData: CommonRs = await fetchApi('DELETE', DELETE_STORY, null, null, { 'storyId': storyId });
+        if (resData && resData.success === true) {
+            return true;
+        }
+        return false;
+    } catch (error) {
+        return false;
+    }
+};
+
+export const updateLikeApi = async (postId: string, update: 'add' | 'delete'): Promise<boolean> => {
+    try {
+        const resData: CommonRs = await fetchApi('POST', UPDATE_LIKE, null, null, { 'postId': postId, update: update });
         if (resData && resData.success === true) {
             return true;
         }

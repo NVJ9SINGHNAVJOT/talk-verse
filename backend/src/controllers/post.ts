@@ -1,4 +1,5 @@
 import { db } from '@/db/postgresql/connection';
+import { likes } from '@/db/postgresql/schema/likes';
 import { post } from '@/db/postgresql/schema/post';
 import { story } from '@/db/postgresql/schema/story';
 import { user } from '@/db/postgresql/schema/user';
@@ -8,7 +9,7 @@ import { uploadMultiplesToCloudinary, uploadToCloudinary } from '@/utils/cloudin
 import { deleteFile, deleteFiles } from '@/utils/deleteFile';
 import { errRes } from '@/utils/error';
 import valid from '@/validators/validator';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { Request, Response } from 'express';
 
 export const userBlogProfile = async (req: Request, res: Response): Promise<Response> => {
@@ -140,7 +141,7 @@ export const deletePost = async (req: Request, res: Response): Promise<Response>
             return errRes(res, 400, "postId not present in querry");
         }
 
-        const intPostId = parseInt(postId as string);
+        const intPostId = parseInt(`${postId}`);
         await db.delete(post).where(eq(post.id, intPostId));
 
         return res.status(200).json({
@@ -203,7 +204,7 @@ export const deleteStory = async (req: Request, res: Response): Promise<Response
             return errRes(res, 400, "storyId not present in querry");
         }
 
-        const intStoryId = parseInt(storyId as string);
+        const intStoryId = parseInt(`${storyId}`);
         await db.delete(story).where(eq(story.id, intStoryId));
 
         return res.status(200).json({
@@ -213,5 +214,50 @@ export const deleteStory = async (req: Request, res: Response): Promise<Response
         });
     } catch (error) {
         return errRes(res, 500, "error while deleting story", error);
+    }
+};
+
+export const updateLike = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const userId2 = (req as CustomRequest).userId2;
+
+        if (!userId2) {
+            return errRes(res, 400, "invalid data, userId2 not present");
+        }
+
+        const { postId, update } = req.query;
+        if (!postId) {
+            return errRes(res, 400, "postId not present in querry");
+        }
+
+        const intPostId = parseInt(`${postId}`);
+
+        // update is add or delete
+        if (`${update}` === "add") {
+            // insert like data in likes
+            await db.insert(likes).values({ userId: userId2, postId: intPostId });
+
+            // update likes count in post row where postId is equall to post.id
+            await db.update(post)
+                .set({ likesCount: sql`${post.likesCount} + 1` })
+                .where(eq(post.id, intPostId));
+        }
+        else {
+            // delete like data in likes
+            await db.delete(likes).where(eq(likes.postId, intPostId));
+
+            // update likes count in post row where postId is equall to post.id
+            await db.update(post)
+                .set({ likesCount: sql`${post.likesCount} - 1` })
+                .where(eq(post.id, intPostId));
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "like updated for post"
+        });
+
+    } catch (error) {
+        return errRes(res, 500, "error while updating like for post", error);
     }
 };

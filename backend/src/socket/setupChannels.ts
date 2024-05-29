@@ -11,27 +11,29 @@ const setupChannels = async () => {
         allChats.forEach((chat) => {
             // Create a new channel instance
             const channel = new Channel();
-            // set channel for new chatid
+            // set channel for new chatId
             channels.set(chat._id.toString(), channel);
         });
     }
 
     if (allGroups.length > 0) {
         allGroups.forEach((group) => {
-            const grpId = group._id.toString();
+            const groupId = group._id.toString();
 
             // Create a new channel instance
             const channel = new Channel();
-            // set channel for new chatid
-            channels.set(grpId, channel);
+            // set channel for new groupId
+            channels.set(groupId, channel);
 
             const memeberIds: string[] = [];
             group.members.forEach((member) => {
                 memeberIds.push(member._id.toString());
             });
 
-            groupIds.set(grpId, memeberIds);
-            groupOffline.set(grpId, new Set(memeberIds));
+            // set group members id in groupIds map
+            groupIds.set(groupId, memeberIds);
+            // initially set all group memebers as offline members
+            groupOffline.set(groupId, new Set(memeberIds));
         });
     }
 };

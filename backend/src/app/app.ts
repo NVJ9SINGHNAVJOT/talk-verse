@@ -9,7 +9,6 @@ import notificationRoutes from '@/routes/notificationRoutes';
 import chatRoutes from '@/routes/chatRoutes';
 import profileRoutes from "@/routes/profileRoutes";
 import postRoutes from "@/routes/postRoutes";
-import postDataRoutes from "@/routes/postDataRoutes";
 import corsOptions from "@/config/corsOptions";
 import logging from "@/middlewares/logging";
 
@@ -35,7 +34,6 @@ app.use('/api/v1/notification', notificationRoutes);
 app.use('/api/v1/chat', chatRoutes);
 app.use('/api/v1/profile', profileRoutes);
 app.use('/api/v1/post', postRoutes);
-app.use('/api/v1/postData', postDataRoutes);
 
 app.get('/', (_req: Request, res: Response) => {
     res.json({

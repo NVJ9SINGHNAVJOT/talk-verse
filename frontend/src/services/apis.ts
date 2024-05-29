@@ -42,18 +42,14 @@ export const chatEndPoints = {
 export const postEndPoints = {
   USER_BLOG_PROFILE: BASE_URL_SERVER + "/post/userBlogProfile",
   CREATE_POST: BASE_URL_SERVER + "/post/createPost",
-  DELETE_POST: BASE_URL_SERVER + "/post/deletePost",
+  DELETE_POST: BASE_URL_SERVER + "/post/deletePost", // parameters: postId
   CREATE_STORY: BASE_URL_SERVER + "/post/createStory",
-  DELETE_STORY: BASE_URL_SERVER + "/post/deleteStory",
-};
-
-// postData endpoints
-export const postDataEndPoints = {
-  RECENT_POSTS: BASE_URL_SERVER + "/postData/recentPosts",
-  TRENDING_POSTS_: BASE_URL_SERVER + "/postData/trendingPosts",
-  CATEGORY_POSTS: BASE_URL_SERVER + "/postData/categoryPosts", // parameters: category
-  UPDATE_LIKE: BASE_URL_SERVER + "/postData/updateLike", // parameters: like
-  ADD_COMMENT: BASE_URL_SERVER + "/postData/addComment",
-  DELETE_COMMENT: BASE_URL_SERVER + "/postData/deleteComment",
-  GET_STORIES: BASE_URL_SERVER + "/postData/getStories"
+  DELETE_STORY: BASE_URL_SERVER + "/post/deleteStory", // parameters: storyId
+  UPDATE_LIKE: BASE_URL_SERVER + "/post/updateLike", // parameters: postId, update
+  GET_STORIES: BASE_URL_SERVER + "/post/getStories",
+  ADD_COMMENT: BASE_URL_SERVER + "/post/addComment",
+  DELETE_COMMENT: BASE_URL_SERVER + "/post/deleteComment",
+  RECENT_POSTS: BASE_URL_SERVER + "/post/recentPosts",
+  TRENDING_POSTS_: BASE_URL_SERVER + "/post/trendingPosts",
+  CATEGORY_POSTS: BASE_URL_SERVER + "/post/categoryPosts", // parameters: category
 };

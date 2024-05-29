@@ -273,8 +273,8 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
         }
 
         const messages = await Message.find({
-            chatId: chatId as string,
-            createdAt: { $lt: createdAt }
+            chatId: `${chatId}`,
+            createdAt: { $lt: `${createdAt}` }
         })
             .sort({ createdAt: -1 })
             .limit(15)
@@ -334,8 +334,8 @@ export const groupMessages = async (req: Request, res: Response): Promise<Respon
         }
 
         const gpMessages = await GpMessage.find({
-            to: groupId as string,
-            createdAt: { $lt: createdAt }
+            to: `${groupId}`,
+            createdAt: { $lt: `${createdAt}` }
         })
             .sort({ createdAt: -1 })
             .limit(15)
