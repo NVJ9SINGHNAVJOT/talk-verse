@@ -29,11 +29,11 @@ app.use(logging);
 app.use(serverKey);
 
 // routes
-app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/notification', notificationRoutes);
-app.use('/api/v1/chat', chatRoutes);
-app.use('/api/v1/profile', profileRoutes);
-app.use('/api/v1/post', postRoutes);
+app.use('/api/v1/auths', authRoutes);
+app.use('/api/v1/notifications', notificationRoutes);
+app.use('/api/v1/chats', chatRoutes);
+app.use('/api/v1/profiles', profileRoutes);
+app.use('/api/v1/posts', postRoutes);
 
 app.get('/', (_req: Request, res: Response) => {
     res.json({

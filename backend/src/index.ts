@@ -1,8 +1,6 @@
 // initialization for server
 import dotenv from 'dotenv';
 dotenv.config();
-import consoleConfig from "@/config/console";
-consoleConfig();
 import { logger, loggerConfig } from '@/logger/logger';
 loggerConfig(process.env.ENVIRONMENT as string);
 

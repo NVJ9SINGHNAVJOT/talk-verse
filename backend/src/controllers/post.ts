@@ -9,7 +9,7 @@ import { uploadMultiplesToCloudinary, uploadToCloudinary } from '@/utils/cloudin
 import { deleteFile, deleteFiles } from '@/utils/deleteFile';
 import { errRes } from '@/utils/error';
 import valid from '@/validators/validator';
-import { eq, sql } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { Request, Response } from 'express';
 
 export const userBlogProfile = async (req: Request, res: Response): Promise<Response> => {
@@ -234,6 +234,16 @@ export const updateLike = async (req: Request, res: Response): Promise<Response>
 
         // update is add or delete
         if (`${update}` === "add") {
+            // check if like is already present
+            const result = await db.select().from(likes)
+                .where(and(eq(likes.userId, userId2), eq(likes.postId, intPostId)))
+                .limit(1)
+                .execute();
+
+            if (result.length !== 0) {
+                return errRes(res, 400, "post already liked by user");
+            }
+
             // insert like data in likes
             await db.insert(likes).values({ userId: userId2, postId: intPostId });
 
