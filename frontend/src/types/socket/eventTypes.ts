@@ -4,14 +4,14 @@
 export type SoUserRequest = {
     _id: string,
     userName: string,
-    imageUrl?: string
+    imageUrl?: string | undefined
 }
 export type SoRequestAccepted = {
     _id: string,
     chatId: string,
     firstName: string,
     lastName: string,
-    imageUrl?: string,
+    imageUrl?: string | undefined,
     publicKey: string
 }
 export type SoAddedInGroup = {
@@ -36,7 +36,7 @@ export type SoGroupMessageRecieved = {
     createdAt: string,
     firstName: string,
     lastName: string,
-    imageUrl?: string,
+    imageUrl?: string | undefined,
 }
 
 // server
