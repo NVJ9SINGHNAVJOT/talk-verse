@@ -53,7 +53,7 @@ export const setupWebSocket = (app: Application): HTTPServer => {
         if (!userId) {
             socket.disconnect();
         }
-        logger.info("a user connected id: ", userId, ": ", socket.id);
+        logger.info(`a user connected id: ${userId} : ${socket.id}`);
         // set userId in userSocketIds and show friends that user in online
         userSocketIDs.set(userId, socket.id);
         showOnline(io, userId, true, socket);
@@ -63,7 +63,7 @@ export const setupWebSocket = (app: Application): HTTPServer => {
         registerMessageEvents(io, socket, userId);
 
         socket.on('disconnect', () => {
-            logger.info("a user disconnected id: ", userId, ": ", socket.id);
+            logger.info(`a user disconnected id: ${userId} : ${socket.id}`);
             // delete userId in userSocketIds and show friends that user if offline
             // eslint-disable-next-line drizzle/enforce-delete-with-where
             userSocketIDs.delete(userId);
