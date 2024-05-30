@@ -2,7 +2,9 @@ import { sql } from 'drizzle-orm';
 import { NodePgDatabase, drizzle } from 'drizzle-orm/node-postgres';
 import { configDotenv } from "dotenv";
 import { Pool } from 'pg';
+import { logger, loggerConfig } from '@/logger/logger';
 configDotenv();
+loggerConfig(process.env['ENVIRONMENT'] as string);
 
 const tables = ["user", "story", "save", "post", "likes", "follow", "comment"];
 
@@ -18,7 +20,7 @@ async function setupPostgreSQLTriggers() {
         });
         const db: NodePgDatabase = drizzle(pool);
 
-        console.log('setting up triggers...');
+        logger.info('setting up triggers...');
         // Create the function to update the updatedAt column if it doesn't exist
         await db.execute(sql.raw(`
             CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -40,11 +42,11 @@ async function setupPostgreSQLTriggers() {
             `));
         }
 
-        console.log('triggers setup complete, exiting...');
+        logger.info('triggers setup complete, exiting...');
         await pool.end();
 
     } catch (error) {
-        console.log('triggers failed for postgresql', error);
+        logger.error('triggers failed for postgresql', { error: error });
     }
 }
 
