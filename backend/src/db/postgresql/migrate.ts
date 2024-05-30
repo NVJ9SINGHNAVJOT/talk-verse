@@ -2,9 +2,9 @@ import { Pool } from 'pg';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { NodePgDatabase, drizzle } from 'drizzle-orm/node-postgres';
 import { configDotenv } from "dotenv";
-import { logger, loggerConfig } from '@/logger/logger';
+// import { logger, loggerConfig } from '@/logger/logger';
 configDotenv();
-loggerConfig(process.env['ENVIRONMENT'] as string);
+// loggerConfig(process.env['ENVIRONMENT'] as string);
 
 async function migratePostgreSQL() {
     try {
@@ -17,14 +17,17 @@ async function migratePostgreSQL() {
         });
         const db: NodePgDatabase = drizzle(pool);
 
-        logger.info('Running migrations...');
+        /* ===== Caution: only for development purpose, remove comment in production ===== */
+        // logger.info('Running migrations...');
         await migrate(db, { migrationsFolder: 'src/db/postgresql/migrations' });
 
         await pool.end();
-        logger.info('All migrations have been done, exiting...');
+        /* ===== Caution: only for development purpose, remove comment in production ===== */
+        // logger.info('All migrations have been done, exiting...');
 
     } catch (error) {
-        logger.error('error while postgresql migration', { error: error });
+        /* ===== Caution: only for development purpose, remove comment in production ===== */
+        // logger.error('error while postgresql migration', { error: error });
     }
 }
 
