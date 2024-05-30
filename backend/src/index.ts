@@ -17,7 +17,7 @@ async function main() {
     await postgresqlDatabaseConnect();
 
     // get port number
-    const PORT: number = parseInt(process.env['PORT'] as string) || 5000;
+    const PORT = parseInt(process.env['PORT'] as string) || 5000;
     
     // setup server
     const httpServer = setupWebSocket(app);
