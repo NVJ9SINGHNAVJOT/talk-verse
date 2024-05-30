@@ -99,7 +99,7 @@ export const createPost = async (req: Request, res: Response): Promise<Response>
             userId: userId2,
             category: data.category,
             title: data.title,
-            mediaUrls: secUrls,
+            mediaUrls: secUrls ? secUrls : [],
             tags: tags,
             content: content
         }).returning({

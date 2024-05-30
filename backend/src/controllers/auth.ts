@@ -94,7 +94,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     await Notification.create({ userId: newUser?._id });
 
     // create user in postgreSQL database
-    const newUser2 = await db.insert(user).values({ refId: newUser._id.toString(), userName: data.userName, imageUrl: secUrl }).returning({ id: user.id });
+    const newUser2 = await db.insert(user).values({ refId: newUser._id.toString(), userName: data.userName, imageUrl: secUrl as string }).returning({ id: user.id });
     if (newUser2.length !== 1 || !newUser2[0]) {
       await Notification.deleteOne({ userId: newUser.id });
       await User.deleteOne({ _id: newUser.id });
@@ -176,7 +176,7 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
     if (await bcrypt.compare(data.password, checkUser.password as string)) {
       newUserToken = jwt.sign(
         { userId: checkUser._id },
-        process.env.JWT_SECRET as string,
+        process.env['JWT_SECRET'] as string,
         {
           expiresIn: "24h",
         }
@@ -208,7 +208,7 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
           httpOnly: true,
           secure: true,
         };
-        return res.cookie(process.env.TOKEN_NAME as string, newUserToken, options).status(200).json({
+        return res.cookie(process.env['TOKEN_NAME'] as string, newUserToken, options).status(200).json({
           success: true,
           message: "user login successfull",
           user: {
@@ -236,7 +236,7 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
 export const checkUser = async (req: Request, res: Response): Promise<Response> => {
   try {
     // Extracting JWT from request cookies or header
-    const token = req.cookies[process.env.TOKEN_NAME as string];
+    const token = req.cookies[process.env['TOKEN_NAME'] as string];
 
     if (!token) {
       return res.status(200).json({
@@ -273,7 +273,7 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
 
 export const logOut = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const token = req.cookies[process.env.TOKEN_NAME as string];
+    const token = req.cookies[process.env['TOKEN_NAME'] as string];
 
     if (!token) {
       return res.status(200).json({
@@ -292,7 +292,7 @@ export const logOut = async (req: Request, res: Response): Promise<Response> => 
     await Token.findOneAndDelete({ tokenValue: token });
     await User.findByIdAndUpdate({ _id: userIds[0] as string }, { $unset: { userToken: true } });
 
-    res.cookie(process.env.TOKEN_NAME as string, "", {
+    res.cookie(process.env['TOKEN_NAME'] as string, "", {
       expires: new Date(0), // Set an immediate expiration date (in the past)
       httpOnly: true,
       secure: true,

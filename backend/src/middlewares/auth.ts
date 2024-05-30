@@ -7,7 +7,7 @@ import { jwtVerify } from "@/utils/token";
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
     try {
         // Extracting JWT from request cookies or header
-        const token = req.cookies[process.env.TOKEN_NAME as string];
+        const token = req.cookies[process.env["TOKEN_NAME"] as string];
 
         // If JWT is missing, return 401 Unauthorized response
         if (!token) {

@@ -10,11 +10,11 @@ import { follow, followsRelations } from "@/db/postgresql/schema/follow";
 import { save, savessRelations } from "@/db/postgresql/schema/save";
 
 const pool = new Pool({
-    host: process.env.POSTGRESQL_HOST,
-    port: parseInt(process.env.POSTGRESQL_PORT as string),
-    user: process.env.POSTGRESQL_USER,
-    password: process.env.POSTGRESQL_PASSWORD,
-    database: process.env.POSTGRESQL_DATABASE_NAME,
+    host: process.env["POSTGRESQL_HOST"],
+    port: parseInt(process.env["POSTGRESQL_PORT"] as string),
+    user: process.env["POSTGRESQL_USER"],
+    password: process.env["POSTGRESQL_PASSWORD"],
+    database: process.env["POSTGRESQL_DATABASE_NAME"],
 });
 
 export async function postgresqlDatabaseConnect() {

@@ -5,7 +5,7 @@ import { NextFunction, Request, Response } from "express";
 function serverKey(req: Request, res: Response, next: NextFunction) {
     try {
         const serverKey = req.header("Authorization")?.replace("Bearer ", "");
-        if (serverKey === process.env.SERVER_KEY as string) {
+        if (serverKey === process.env["SERVER_KEY"] as string) {
             next();
         }
         else {

@@ -113,9 +113,8 @@ export const updateProfileImage = async (req: Request, res: Response): Promise<R
             return errRes(res, 500, "error while uploading user profile image");
         }
 
-
         if (getUser.imageUrl) {
-            const publicId = process.env.FOLDER_NAME as string + "/" + getUser.imageUrl.split('/').pop()?.split('.')[0];
+            const publicId = process.env['FOLDER_NAME'] as string + "/" + getUser.imageUrl.split('/').pop()?.split('.')[0];
             await deleteFromCloudinay(publicId);
         }
 

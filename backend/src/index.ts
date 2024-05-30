@@ -2,7 +2,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import { logger, loggerConfig } from '@/logger/logger';
-loggerConfig(process.env.ENVIRONMENT as string);
+loggerConfig(process.env['ENVIRONMENT'] as string);
 
 // setup server config
 import app from '@/app/app';
@@ -17,7 +17,7 @@ async function main() {
     await postgresqlDatabaseConnect();
 
     // get port number
-    const PORT: number = parseInt(process.env.PORT as string) || 5000;
+    const PORT: number = parseInt(process.env['PORT'] as string) || 5000;
     
     // setup server
     const httpServer = setupWebSocket(app);

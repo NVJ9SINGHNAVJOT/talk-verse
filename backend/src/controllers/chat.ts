@@ -21,19 +21,19 @@ type BarData = {
     _id: string,
 
     // friend
-    chatId?: string
-    firstName?: string,
-    lastName?: string,
-    imageUrl?: string
+    chatId?: string | undefined
+    firstName?: string | undefined,
+    lastName?: string | undefined,
+    imageUrl?: string | undefined,
 
     // group
-    groupName?: string,
-    gpImageUrl?: string
+    groupName?: string | undefined,
+    gpImageUrl?: string | undefined
 }
 
 type FriendPublicKey = {
-    friendId: string,
-    publicKey: string
+    friendId: string | undefined,
+    publicKey: string | undefined
 }
 
 export const chatBarData = async (req: Request, res: Response): Promise<Response> => {
