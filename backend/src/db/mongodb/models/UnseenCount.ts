@@ -3,6 +3,7 @@ import { IUser } from '@/db/mongodb/models/User';
 
 // Define an interface representing a UnseenCount document
 export interface IUnseenCount extends Document {
+    _id: mongoose.Types.ObjectId;
     userId: mongoose.Types.ObjectId & IUser;
     mainId: mongoose.Types.ObjectId;
     count: number;

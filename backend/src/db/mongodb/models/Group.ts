@@ -3,6 +3,7 @@ import { IUser } from '@/db/mongodb/models/User';
 
 // Define an interface representing a Group document
 export interface IGroup extends Document {
+    _id: mongoose.Types.ObjectId;
     groupName: string;
     gpCreater: mongoose.Types.ObjectId & IUser;
     gpImageUrl: string;

@@ -9,6 +9,7 @@ interface CombineChatId {
 
 // Define interfaces for each model to represent the document structure
 export interface IUser extends Document {
+    _id: mongoose.Types.ObjectId;
     userId2: number;
     firstName: string;
     lastName: string;

@@ -4,6 +4,7 @@ import { IGroup } from '@/db/mongodb/models/Group';
 
 // Define an interface representing a Group Message document
 export interface IGpMessage extends Document {
+    _id: mongoose.Types.ObjectId;
     uuId: string;
     isFile: boolean,
     from: mongoose.Types.ObjectId & IUser;

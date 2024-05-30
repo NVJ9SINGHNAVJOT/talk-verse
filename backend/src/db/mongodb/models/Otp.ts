@@ -2,6 +2,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 
 // Define an interface representing a Otp document
 export interface IOtp extends Document {
+    _id: mongoose.Types.ObjectId;
     email: string;
     otpValue: string;
     createdAt: Date;

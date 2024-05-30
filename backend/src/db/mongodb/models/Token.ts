@@ -2,6 +2,7 @@ import mongoose, { Schema, Document , Model} from 'mongoose';
 
 // Define an interface representing a Token document
 export interface IToken extends Document {
+    _id: mongoose.Types.ObjectId;
     tokenValue: string;
     createdAt: Date;
 }

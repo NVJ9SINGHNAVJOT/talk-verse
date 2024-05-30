@@ -3,6 +3,7 @@ import { IUser } from '@/db/mongodb/models/User';
 
 // Define an interface representing a Chat document
 export interface IChat extends Document {
+    _id: mongoose.Types.ObjectId;
     user1: mongoose.Types.ObjectId & IUser;
     user2: mongoose.Types.ObjectId & IUser;
 }

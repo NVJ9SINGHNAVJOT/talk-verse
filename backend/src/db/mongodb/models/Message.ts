@@ -4,6 +4,7 @@ import { IUser } from '@/db/mongodb/models/User';
 
 // Define an interface representing a Message document
 export interface IMessage extends Document {
+    _id: mongoose.Types.ObjectId;
     uuId: string;
     isFile: boolean;
     chatId: mongoose.Types.ObjectId & IChat;

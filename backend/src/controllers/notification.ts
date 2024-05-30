@@ -172,10 +172,10 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
             { new: true })
             .select({ chatBarOrder: true, firstName: true, lastName: true, imageUrl: true, publicKey: true }).exec();
 
-        user1?.chatBarOrder.unshift(chat._id);
+        user1?.chatBarOrder.unshift(chat._id.toString());
         await user1?.save();
 
-        user2?.chatBarOrder.unshift(chat._id);
+        user2?.chatBarOrder.unshift(chat._id.toString());
         await user2?.save();
 
         // Create a new mutex instance
@@ -188,8 +188,8 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
 
         if (socketId && user2) {
             const sdata: SoRequestAccepted = {
-                _id: user2._id,
-                chatId: chat._id,
+                _id: user2._id.toString(),
+                chatId: chat._id.toString(),
                 firstName: user2.firstName,
                 lastName: user2.lastName,
                 imageUrl: user2.imageUrl,
@@ -348,7 +348,7 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
             const ucOfGroupMem = await UnseenCount.create({ userId: userId, mainId: newGroup._id });
             await Notification.findOneAndUpdate({ userId: userId }, { $push: { unseenMessages: ucOfGroupMem._id } }).exec();
             const groupUser = await User.findById({ _id: userId });
-            groupUser?.chatBarOrder.unshift(newGroup._id);
+            groupUser?.chatBarOrder.unshift(newGroup._id.toString());
             await groupUser?.save();
         }));
 
@@ -368,7 +368,7 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
 
             // in online users of group, event is emitted only except for creater, as creater get group in response
             const sdata: SoAddedInGroup = {
-                _id: newGroup._id,
+                _id: newGroup._id.toString(),
                 groupName: data.groupName,
                 gpImageUrl: secUrl
             };

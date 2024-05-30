@@ -114,7 +114,6 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
 
     /* ===== Caution: only for development purpose, remove comment in production ===== */
     // await sendPrivateKeyMail(data.email, privateKeyPemOnly);
-    console.log('pKey', privateKeyPemOnly);
 
     return res.status(200).json({
       success: true,

@@ -72,21 +72,21 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
         // combine user friends and their chatId in array and push in chatbar 
         const friends = userFriends?.friends?.map((item) => {
             const newValue: BarData = {
-                _id: item.friendId._id,
+                _id: item.friendId._id.toString(),
                 firstName: item.friendId.firstName,
                 lastName: item.friendId.lastName,
                 imageUrl: item.friendId.imageUrl,
                 chatId: item.chatId._id.toString(),
             };
             chatBar.push(newValue);
-            friendPublicKeys.push({ friendId: item.friendId._id, publicKey: item.friendId.publicKey })
+            friendPublicKeys.push({ friendId: item.friendId._id.toString(), publicKey: item.friendId.publicKey });
             return newValue;
         }
         );
 
         // push groups in chatbar
         groups.forEach((group) => {
-            chatBar.push(group);
+            chatBar.push(group as BarData);
         });
 
         // sort chatbar as per user chatbarorder

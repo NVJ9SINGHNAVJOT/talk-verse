@@ -4,6 +4,7 @@ import { IUnseenCount } from '@/db/mongodb/models/UnseenCount';
 
 // Define an interface representing a Notification document
 export interface INotification extends Document {
+    _id: mongoose.Types.ObjectId;
     userId: mongoose.Types.ObjectId & IUser;
     friendRequests: mongoose.Types.ObjectId[] & IUser[];
     unseenMessages: mongoose.Types.ObjectId[] & IUnseenCount[];
