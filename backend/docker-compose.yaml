@@ -1,0 +1,54 @@
+---
+version: '3.8'
+
+x-logging: &x-logging
+  logging:
+    driver: 'json-file'
+    options:
+      max-file: '5'
+      max-size: '10m'
+
+volumes:
+  talkverse-pg:
+  talkverse-mongo:
+
+networks:
+  talkverse-proxy:
+  proxy:
+    external: true
+
+services:
+  # ---
+
+  postgres:
+    <<: *x-logging
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+    container_name: talkverse-postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRESQL_DATABASE_NAME:-database}
+      POSTGRES_USER: ${POSTGRESQL_USER:-user}
+      POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD:-password}
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - talkverse-pg:/var/lib/postgresql/data
+    networks:
+      - talkverse-proxy
+    ports: [5432:5432]
+
+  mongo:
+    <<: *x-logging
+    restart: unless-stopped
+    container_name: talkverse-mongo
+    image: mongo:5.0
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-database}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-user}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-password}
+    volumes:
+      - talkverse-mongo:/data/db
+    networks:
+      - talkverse-proxy
+    ports: [27017:27017]

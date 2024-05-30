@@ -9,6 +9,9 @@ import { story, storysRelations } from "@/db/postgresql/schema/story";
 import { follow, followsRelations } from "@/db/postgresql/schema/follow";
 import { save, savessRelations } from "@/db/postgresql/schema/save";
 
+import dotenv from "dotenv";
+dotenv.config();
+
 const pool = new Pool({
     host: process.env["POSTGRESQL_HOST"],
     port: parseInt(process.env["POSTGRESQL_PORT"] as string),

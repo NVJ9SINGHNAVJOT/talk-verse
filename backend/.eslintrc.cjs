@@ -1,6 +1,10 @@
 module.exports = {
   root: true,
-  env: { es2022: true, node: true },
+  env: {
+    es2022: true,
+    node: true,
+    commonjs: true,
+  },
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
@@ -15,5 +19,13 @@ module.exports = {
     "no-console": "warn",
     "drizzle/enforce-delete-with-where": "error",
     "drizzle/enforce-update-with-where": "error",
+  },
+  settings: {
+    "import/resolver": {
+      typescript: {
+        alwaysTryTypes: true,
+        project: "./tsconfig.json",
+      },
+    },
   },
 };
