@@ -8,6 +8,9 @@ import { comment, commentsRelations } from "@/db/postgresql/schema/comment";
 import { story, storysRelations } from "@/db/postgresql/schema/story";
 import { follow, followsRelations } from "@/db/postgresql/schema/follow";
 import { save, savessRelations } from "@/db/postgresql/schema/save";
+import { configDotenv } from "dotenv";
+
+configDotenv();
 
 const pool = new Pool({
     host: process.env["POSTGRESQL_HOST"],
