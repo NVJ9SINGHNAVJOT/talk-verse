@@ -1,1 +1,0 @@
-ALTER TABLE "story" RENAME COLUMN "media_url" TO "story_url";

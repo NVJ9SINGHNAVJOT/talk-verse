@@ -1,5 +1,5 @@
 {
-  "id": "16f889a0-8ea6-48a1-a519-a5a29c905380",
+  "id": "2820b442-41df-4079-8dba-c5875afeedfd",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -392,8 +392,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "media_url": {
-          "name": "media_url",
+        "story_url": {
+          "name": "story_url",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true

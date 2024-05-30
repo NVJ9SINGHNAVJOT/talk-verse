@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS "save" (
 CREATE TABLE IF NOT EXISTS "story" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" integer NOT NULL,
-	"media_url" varchar NOT NULL,
+	"story_url" varchar NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
