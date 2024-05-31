@@ -15,7 +15,7 @@ export const checkUserSocket = async (socket: Socket): Promise<boolean> => {
 
         const serverKey = socket.handshake.headers.authorization?.replace("Bearer ", "");
 
-        if (!serverKey || serverKey !== process.env.SERVER_KEY) {
+        if (!serverKey || serverKey !== `${process.env['SERVER_KEY']}`) {
             return false;
         }
 
@@ -35,7 +35,7 @@ export const checkUserSocket = async (socket: Socket): Promise<boolean> => {
         });
 
         // Extract the token value
-        const token = parsedCookies[process.env.TOKEN_NAME];
+        const token = parsedCookies[`${process.env['TOKEN_NAME']}`];
 
         if (!token) {
             return false;

@@ -11,7 +11,7 @@ export const jwtVerify = async (token: string): Promise<(string | number)[] | nu
     }
 
     // decode token
-    const decoded: CustomPayload = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
+    const decoded: CustomPayload = jwt.verify(token, `${process.env['JWT_SECRET']}`) as JwtPayload;
 
     if (!decoded.userId) {
         return null;

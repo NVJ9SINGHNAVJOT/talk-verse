@@ -13,11 +13,11 @@ import { configDotenv } from "dotenv";
 configDotenv();
 
 const pool = new Pool({
-    host: process.env.POSTGRESQL_HOST,
-    port: parseInt(process.env.POSTGRESQL_PORT),
-    user: process.env.POSTGRESQL_USER,
-    password: process.env.POSTGRESQL_PASSWORD,
-    database: process.env.POSTGRESQL_DATABASE_NAME,
+    host: `${process.env['POSTGRESQL_HOST']}`,
+    port: parseInt(`${process.env['POSTGRESQL_PORT']}`),
+    user: `${process.env['POSTGRESQL_USER']}`,
+    password: `${process.env['POSTGRESQL_PASSWORD']}`,
+    database: `${process.env['POSTGRESQL_DATABASE_NAME']}`,
 });
 
 export async function postgresqlDatabaseConnect() {

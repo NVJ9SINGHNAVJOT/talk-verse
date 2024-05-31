@@ -6,7 +6,7 @@ const clientOptions: mongoose.ConnectOptions = { serverApi: { version: '1', stri
 export async function mongodbDatabaseConnect() {
     try {
         // Create a Mongoose client with a MongoClientOptions object to set the Stable API version
-        await mongoose.connect(process.env.MONGODB_URL, clientOptions);
+        await mongoose.connect(`${process.env['MONGODB_URL']}`, clientOptions);
         await mongoose.connection.db.admin().command({ ping: 1 });
         logger.info("mongodb database connected");
     } catch {

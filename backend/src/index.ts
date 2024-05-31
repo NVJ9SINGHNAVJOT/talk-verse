@@ -15,14 +15,14 @@ async function main() {
     // check environment variables
     checkEnvVariables();
     // setup logger
-    loggerConfig(process.env.ENVIRONMENT);
+    loggerConfig(`${process.env['ENVIRONMENT']}`);
 
     // connect databases
     await mongodbDatabaseConnect();
     await postgresqlDatabaseConnect();
 
     // get port number
-    const PORT = parseInt(process.env.PORT) || 5000;
+    const PORT = parseInt(`${process.env['PORT']}`) || 5000;
 
     // setup server
     const httpServer = setupWebSocket(app);
