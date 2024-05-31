@@ -89,7 +89,7 @@ const UserInfo = () => {
               className=" text-[0.9rem] cursor-pointer w-fit"
               onClick={goSetting}
             >
-              set bio Lorem ipsum dolor sit.
+              set bio
             </p>
           )}
 

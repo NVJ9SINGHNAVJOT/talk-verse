@@ -1,7 +1,27 @@
 import z from "zod";
 
 // password
-export const passwordSchema = z.string().min(8).max(20).regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])$/);
+export const passwordSchema = z.string().min(8).max(20).refine((password) => {
+    // Check for at least one uppercase letter
+    if (!/[A-Z]/.test(password)) {
+        return false;
+    }
+    // Check for at least one lowercase letter
+    if (!/[a-z]/.test(password)) {
+        return false;
+    }
+    // Check for at least one digit
+    if (!/\d/.test(password)) {
+        return false;
+    }
+    // Check for at least one special symbol
+    if (!/[!@#$%^&*]/.test(password)) {
+        return false;
+    }
+    return true;
+}, {
+    message: 'Invalid password format. Please ensure it meets the criteria.',
+});
 
 // name
 export const nameSchema = z.string().min(1).max(15).regex(/^[a-zA-Z]{2,}$/);

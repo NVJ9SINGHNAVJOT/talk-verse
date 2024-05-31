@@ -166,7 +166,7 @@ export const updateProfile = async (req: Request, res: Response): Promise<Respon
                 user.countryCode = data.countryCode;
             }
             if (data.contactNumber) {
-                user.contactNumber = data.contactNumber;
+                user.contactNumber = parseInt(data.contactNumber);
             }
             if (data.dateOfBirth) {
                 user.dateOfBirth = data.dateOfBirth;
