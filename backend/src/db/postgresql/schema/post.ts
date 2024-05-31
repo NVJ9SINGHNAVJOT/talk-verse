@@ -16,8 +16,8 @@ export const post = pgTable("post", {
     tags: varchar("tags").array().notNull().default(sql`ARRAY[]::text[]`),
     content: varchar("content").array().notNull().default(sql`ARRAY[]::text[]`),
     likesCount: integer("likes_count").notNull().default(0),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
-    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const postsRelations = relations(post, ({ one, many }) => ({

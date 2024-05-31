@@ -8,8 +8,8 @@ export const story = pgTable("story", {
         .notNull()
         .references(() => user.id),
     storyUrl: varchar("story_url").notNull(),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
-    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const storysRelations = relations(story, ({ one }) => ({

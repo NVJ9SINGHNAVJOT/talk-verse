@@ -5,11 +5,11 @@ import { user } from "@/db/postgresql/schema/user";
 
 export const comment = pgTable("comment", {
     id: serial("id").primaryKey(),
-    userId: integer("user_id").references(() => user.id),
-    postId: integer("post_id").references(() => post.id),
+    userId: integer("user_id").notNull().references(() => user.id),
+    postId: integer("post_id").notNull().references(() => post.id),
     text: varchar("text").notNull(),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
-    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const commentsRelations = relations(comment, ({ one }) => ({

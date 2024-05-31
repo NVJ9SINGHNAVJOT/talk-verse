@@ -48,7 +48,7 @@ export const postEndPoints = {
   UPDATE_LIKE: BASE_URL_SERVER + "/posts/updateLike", // parameters: postId, update
   GET_STORIES: BASE_URL_SERVER + "/posts/getStories",
   ADD_COMMENT: BASE_URL_SERVER + "/posts/addComment",
-  DELETE_COMMENT: BASE_URL_SERVER + "/posts/deleteComment",
+  DELETE_COMMENT: BASE_URL_SERVER + "/posts/deleteComment", // parameters: commentId
   RECENT_POSTS: BASE_URL_SERVER + "/posts/recentPosts",
   TRENDING_POSTS_: BASE_URL_SERVER + "/posts/trendingPosts",
   CATEGORY_POSTS: BASE_URL_SERVER + "/posts/categoryPosts", // parameters: category

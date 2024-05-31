@@ -1,4 +1,4 @@
-import { CreatePostRs, CreateStoryRs, UserBlogProfileRs } from "@/types/apis/postApiRs";
+import { AddCommentRs, CreatePostRs, CreateStoryRs, UserBlogProfileRs } from "@/types/apis/postApiRs";
 import { fetchApi } from "@/services/fetchApi";
 import { postEndPoints } from "@/services/apis";
 import { CommonRs } from "@/types/apis/common";
@@ -80,6 +80,30 @@ export const deleteStoryApi = async (storyId: string): Promise<boolean> => {
 export const updateLikeApi = async (postId: string, update: 'add' | 'delete'): Promise<boolean> => {
     try {
         const resData: CommonRs = await fetchApi('POST', UPDATE_LIKE, null, null, { 'postId': postId, update: update });
+        if (resData && resData.success === true) {
+            return true;
+        }
+        return false;
+    } catch (error) {
+        return false;
+    }
+};
+
+export const addCommentApi = async (postId: string, comment: string): Promise<AddCommentRs> => {
+    try {
+        const resData: AddCommentRs = await fetchApi('POST', ADD_COMMENT, { postId: postId, comment: comment }, { 'Content-Type': 'application/json' });
+        if (resData && resData.success === true) {
+            return resData;
+        }
+        return null;
+    } catch (error) {
+        return null;
+    }
+};
+
+export const deleteCommentApi = async (commentId: string): Promise<boolean> => {
+    try {
+        const resData: CommonRs = await fetchApi('DELETE', DELETE_COMMENT, null, null, { 'commentId': commentId });
         if (resData && resData.success === true) {
             return true;
         }

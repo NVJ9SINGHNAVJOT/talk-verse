@@ -1,9 +1,10 @@
 import { db } from '@/db/postgresql/connection';
+import { comment } from '@/db/postgresql/schema/comment';
 import { likes } from '@/db/postgresql/schema/likes';
 import { post } from '@/db/postgresql/schema/post';
 import { story } from '@/db/postgresql/schema/story';
 import { user } from '@/db/postgresql/schema/user';
-import { CreatePostReqSchema } from '@/types/controllers/postReq';
+import { AddCommentReqSchema, CreatePostReqSchema } from '@/types/controllers/postReq';
 import { CustomRequest } from '@/types/custom';
 import { uploadMultiplesToCloudinary, uploadToCloudinary } from '@/utils/cloudinaryHandler';
 import { deleteFile, deleteFiles } from '@/utils/deleteFile';
@@ -180,7 +181,8 @@ export const createStory = async (req: Request, res: Response): Promise<Response
         return res.status(200).json({
             success: true,
             message: "story created successfully",
-            id: newStory[0]?.id
+            id: newStory[0]?.id,
+            storyUrl: secUrl
         });
 
     } catch (error) {
@@ -269,5 +271,70 @@ export const updateLike = async (req: Request, res: Response): Promise<Response>
 
     } catch (error) {
         return errRes(res, 500, "error while updating like for post", error);
+    }
+};
+
+export const addComment = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const userId2 = (req as CustomRequest).userId2;
+
+        if (!userId2) {
+            return errRes(res, 400, "invalid data, userId2 not present");
+        }
+
+        const addCommentReq = AddCommentReqSchema.safeParse(req.body);
+        if (!addCommentReq.success) {
+            return errRes(res, 400, `invalid data for comment, ${addCommentReq.error.toString()}`);
+        }
+
+        const data = addCommentReq.data;
+        const newComment = await db.insert(comment).values({ userId: userId2, postId: parseInt(data.postId), text: data.comment })
+            .returning({ id: comment.id, userId: comment.userId, text: comment.text, createdAt: comment.createdAt }).execute();
+
+        return res.status(200).json({
+            success: true,
+            message: "comment added",
+            comment: newComment[0]
+        });
+    } catch (error) {
+        return errRes(res, 500, "error while adding comment for post", error);
+    }
+};
+
+export const deleteComment = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const userId2 = (req as CustomRequest).userId2;
+
+        if (!userId2) {
+            return errRes(res, 400, "invalid data, userId2 not present");
+        }
+
+        const { commentId } = req.query;
+        if (!commentId) {
+            return errRes(res, 400, "invalid data for deleting comment");
+        }
+
+        await db.delete(comment).where(and(eq(comment.id, parseInt(`${commentId}`)), eq(comment.userId, userId2)))
+
+        return res.status(200).json({
+            success: true,
+            message: "comment deleted"
+        });
+    } catch (error) {
+        return errRes(res, 500, "error while deleting comment for post", error);
+    }
+};
+
+export const getStories = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const userId2 = (req as CustomRequest).userId2;
+
+        if (!userId2) {
+            return errRes(res, 400, "invalid data, userId2 not present");
+        }
+
+        const stories = await db.select()
+    } catch (error) {
+        return errRes(res, 500, "error while getting stories", error);
     }
 };

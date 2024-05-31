@@ -26,5 +26,15 @@ export type CreatePostRs = {
 export type CreateStoryRs = {
     success: boolean,
     message: string,
-    id: number
+    id: number,
+    storyUrl: string
+} | null
+
+export type AddCommentRs = {
+    success: boolean,
+    message: string,
+    id: number,
+    userId: number,
+    text: string
+    createdAt: Date,
 } | null

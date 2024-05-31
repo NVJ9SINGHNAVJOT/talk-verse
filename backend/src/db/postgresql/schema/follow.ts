@@ -10,8 +10,8 @@ export const follow = pgTable("follow", {
     followingId: integer("following_id")
         .notNull()
         .references(() => user.id),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
-    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const followsRelations = relations(follow, ({ one }) => ({

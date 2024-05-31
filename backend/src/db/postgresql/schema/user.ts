@@ -18,8 +18,8 @@ export const user = pgTable("user", {
 
     followingCount: integer("following_count").notNull().default(0),
     followersCount: integer("followers_count").notNull().default(0),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
-    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const usersRelations = relations(user, ({ many }) => ({

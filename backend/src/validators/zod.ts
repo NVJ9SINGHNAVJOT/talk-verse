@@ -37,3 +37,6 @@ export const optSchema = z.string().length(6).regex(/^[0-9]{6}$/);
 export const categoriesSchema = z.enum(["Technology", "Lifestyle", "Blog", "Nature", "Music",
     "Sports", "Health", "Finance", "Art", "History",
     "Literature", "Science", "Business", "Other"]);
+
+// postgreSQL id
+export const postgreSQLIdSchema = z.string().min(1).regex(/^\d+$/);
