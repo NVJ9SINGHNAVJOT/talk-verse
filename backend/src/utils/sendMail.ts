@@ -1,7 +1,6 @@
 import { logger } from '@/logger/logger';
 import nodemailer from 'nodemailer';
 import { passwordUpdatedTemplate, privateKeyTemplate, verificationTemplate } from '@/utils/templates';
-import { envVar } from '@/validators/checkEnvVariables';
 
 type MailOptions = {
     from: string;
@@ -13,10 +12,10 @@ type MailOptions = {
 const sendMail = async (email: string, title: string, body: string): Promise<nodemailer.SentMessageInfo> => {
     try {
         const transporter = nodemailer.createTransport({
-            host: envVar.MAIL_HOST,
+            host: process.env.MAIL_HOST,
             auth: {
-                user: envVar.MAIL_USER,
-                pass: envVar.MAIL_PASS,
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASS,
             },
         });
 

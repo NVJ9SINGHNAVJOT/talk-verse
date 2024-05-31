@@ -1,12 +1,11 @@
 import { logger } from "@/logger/logger";
 import { errRes } from "@/utils/error";
-import { envVar } from "@/validators/checkEnvVariables";
 import { NextFunction, Request, Response } from "express";
 
 function serverKey(req: Request, res: Response, next: NextFunction) {
     try {
         const serverKey = req.header("Authorization")?.replace("Bearer ", "");
-        if (serverKey === envVar.SERVER_KEY) {
+        if (serverKey === process.env.SERVER_KEY) {
             next();
         }
         else {

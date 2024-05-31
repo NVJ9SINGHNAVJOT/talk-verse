@@ -9,16 +9,15 @@ import { story, storysRelations } from "@/db/postgresql/schema/story";
 import { follow, followsRelations } from "@/db/postgresql/schema/follow";
 import { save, savessRelations } from "@/db/postgresql/schema/save";
 import { configDotenv } from "dotenv";
-import { envVar } from "@/validators/checkEnvVariables";
 
 configDotenv();
 
 const pool = new Pool({
-    host: envVar.POSTGRESQL_HOST,
-    port: parseInt(envVar.POSTGRESQL_PORT),
-    user: envVar.POSTGRESQL_USER,
-    password: envVar.POSTGRESQL_PASSWORD,
-    database: envVar.POSTGRESQL_DATABASE_NAME,
+    host: process.env.POSTGRESQL_HOST,
+    port: parseInt(process.env.POSTGRESQL_PORT),
+    user: process.env.POSTGRESQL_USER,
+    password: process.env.POSTGRESQL_PASSWORD,
+    database: process.env.POSTGRESQL_DATABASE_NAME,
 });
 
 export async function postgresqlDatabaseConnect() {

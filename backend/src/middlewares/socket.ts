@@ -2,7 +2,6 @@ import { Socket } from "socket.io";
 import { CustomSocket } from "@/types/custom";
 import { jwtVerify } from "@/utils/token";
 import { logger } from "@/logger/logger";
-import { envVar } from "@/validators/checkEnvVariables";
 
 // check authentication for socket
 export const checkUserSocket = async (socket: Socket): Promise<boolean> => {
@@ -16,7 +15,7 @@ export const checkUserSocket = async (socket: Socket): Promise<boolean> => {
 
         const serverKey = socket.handshake.headers.authorization?.replace("Bearer ", "");
 
-        if (!serverKey || serverKey !== envVar.SERVER_KEY) {
+        if (!serverKey || serverKey !== process.env.SERVER_KEY) {
             return false;
         }
 
@@ -36,7 +35,7 @@ export const checkUserSocket = async (socket: Socket): Promise<boolean> => {
         });
 
         // Extract the token value
-        const token = parsedCookies[envVar.TOKEN_NAME as string];
+        const token = parsedCookies[process.env.TOKEN_NAME];
 
         if (!token) {
             return false;

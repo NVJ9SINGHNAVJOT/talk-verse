@@ -6,7 +6,6 @@ import { CustomRequest } from '@/types/custom';
 import { deleteFromCloudinay, uploadToCloudinary } from '@/utils/cloudinaryHandler';
 import { deleteFile } from '@/utils/deleteFile';
 import { errRes } from '@/utils/error';
-import { envVar } from '@/validators/checkEnvVariables';
 import { eq } from 'drizzle-orm';
 import { Request, Response } from 'express';
 
@@ -114,7 +113,7 @@ export const updateProfileImage = async (req: Request, res: Response): Promise<R
         }
 
         if (getUser.imageUrl) {
-            const publicId = envVar.FOLDER_NAME + "/" + getUser.imageUrl.split('/').pop()?.split('.')[0];
+            const publicId = process.env.FOLDER_NAME + "/" + getUser.imageUrl.split('/').pop()?.split('.')[0];
             await deleteFromCloudinay(publicId);
         }
 

@@ -15,7 +15,6 @@ import * as forge from 'node-forge';
 import { deleteFile } from '@/utils/deleteFile';
 import { db } from '@/db/postgresql/connection';
 import { user } from '@/db/postgresql/schema/user';
-import { envVar } from '@/validators/checkEnvVariables';
 
 export const signUp = async (req: Request, res: Response): Promise<Response> => {
   try {
@@ -181,7 +180,7 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
     if (await bcrypt.compare(data.password, `${checkUser.password}`)) {
       newUserToken = jwt.sign(
         { userId: checkUser._id },
-        envVar.JWT_SECRET,
+        process.env.JWT_SECRET,
         {
           expiresIn: "24h",
         }
@@ -213,7 +212,7 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
           httpOnly: true,
           secure: true,
         };
-        return res.cookie(envVar.TOKEN_NAME, newUserToken, options).status(200).json({
+        return res.cookie(process.env.TOKEN_NAME, newUserToken, options).status(200).json({
           success: true,
           message: "user login successfull",
           user: {
@@ -241,7 +240,7 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
 export const checkUser = async (req: Request, res: Response): Promise<Response> => {
   try {
     // Extracting JWT from request cookies or header
-    const token = req.cookies[envVar.TOKEN_NAME];
+    const token = req.cookies[process.env.TOKEN_NAME];
 
     if (!token) {
       return res.status(200).json({
@@ -278,7 +277,7 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
 
 export const logOut = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const token = req.cookies[envVar.TOKEN_NAME];
+    const token = req.cookies[process.env.TOKEN_NAME];
 
     if (!token) {
       return res.status(200).json({
@@ -297,7 +296,7 @@ export const logOut = async (req: Request, res: Response): Promise<Response> => 
     await Token.findOneAndDelete({ tokenValue: token });
     await User.findByIdAndUpdate({ _id: `${userIds[0]}` }, { $unset: { userToken: true } });
 
-    res.cookie(envVar.TOKEN_NAME, "", {
+    res.cookie(process.env.TOKEN_NAME, "", {
       expires: new Date(0), // Set an immediate expiration date (in the past)
       httpOnly: true,
       secure: true,

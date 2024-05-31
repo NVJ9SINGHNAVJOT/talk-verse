@@ -2,14 +2,13 @@ import { logger } from '@/logger/logger';
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
 import { deleteFiles } from '@/utils/deleteFile';
-import { envVar } from '@/validators/checkEnvVariables';
 
 export const uploadToCloudinary = async (file: Express.Multer.File): Promise<string | null> => {
     try {
         const secureUrl = await cloudinary.uploader.upload(
             file.path,
             {
-                folder: envVar.FOLDER_NAME as string,
+                folder: process.env.FOLDER_NAME,
                 resource_type: "auto",
                 chunk_size: 2000000, // 2mb
             }

@@ -2,13 +2,12 @@ import { Request, Response, NextFunction } from "express";
 import { errRes } from "@/utils/error";
 import { CustomRequest } from "@/types/custom";
 import { jwtVerify } from "@/utils/token";
-import { envVar } from "@/validators/checkEnvVariables";
 
 // user token authorization and checked with database
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
     try {
         // Extracting JWT from request cookies or header
-        const token = req.cookies[envVar.TOKEN_NAME];
+        const token = req.cookies[process.env.TOKEN_NAME];
 
         // If JWT is missing, return 401 Unauthorized response
         if (!token) {
