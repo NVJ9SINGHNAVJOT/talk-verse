@@ -14,7 +14,7 @@ export const profileEndPoints = {
   CHECK_USERNAME: BASE_URL_SERVER + "/profiles/checkUserName", // parameters: userName
   PROFILE_DETAILS: BASE_URL_SERVER + "/profiles/getDetails",
   SET_PROFILE_IMAGE: BASE_URL_SERVER + "/profiles/updateProfileImage",
-  SET_PROFILE_DETAILS: BASE_URL_SERVER + "/profiles/updateUserDetails"
+  SET_PROFILE_DETAILS: BASE_URL_SERVER + "/profiles/updateProfile"
 };
 
 // notification endpoints

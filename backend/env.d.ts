@@ -1,6 +1,6 @@
 declare namespace NodeJS {
     export interface ProcessEnv {
-        ENVIRONMENT: "development" | "production" | "test";
+        ENVIRONMENT: string;
         SERVER_KEY: string;
         PORT: string;
 
@@ -23,6 +23,5 @@ declare namespace NodeJS {
         POSTGRESQL_USER: string;
         POSTGRESQL_PASSWORD: string;
         POSTGRESQL_DATABASE_NAME: string;
-        POSTGRESQL_CONNECTION_URL: string;
     }
 }

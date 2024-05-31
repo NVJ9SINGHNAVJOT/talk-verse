@@ -211,20 +211,21 @@ const Group = () => {
     }
     if (groupId) {
       setWorkModal(true);
-      /* for reference form data type required for api call
-            FileData = {
-            isGroup: string;  "0"  ,  "1"  0 is false and 1 is true for api call
-            mainId: string         
-  
-            to: string;
-            firstName?: string;
-            lastName?: string;
-            imageUrl?: string;
-          };
-        */
+      /* 
+        for reference form data type required for api call
+          FileData = {
+          isGroup: string; "true" , "false"
+          mainId: string; mainId is of chatId or groupId      
+
+          to: string; for chat it is friendId and for group it is groupId
+          firstName?: string;
+          lastName?: string;
+          imageUrl?: string;
+        };
+      */
       const sendFile = new FormData();
       sendFile.append("fileMessg", file);
-      sendFile.append("isGroup", "1");
+      sendFile.append("isGroup", "true");
       sendFile.append("mainId", groupId);
       sendFile.append("to", groupId);
       sendFile.append("firstName", currUser.firstName);

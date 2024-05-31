@@ -3,12 +3,11 @@ import { likes } from '@/db/postgresql/schema/likes';
 import { post } from '@/db/postgresql/schema/post';
 import { story } from '@/db/postgresql/schema/story';
 import { user } from '@/db/postgresql/schema/user';
-import { CreatePostReq } from '@/types/controllers/postReq';
+import { CreatePostReqSchema } from '@/types/controllers/postReq';
 import { CustomRequest } from '@/types/custom';
 import { uploadMultiplesToCloudinary, uploadToCloudinary } from '@/utils/cloudinaryHandler';
 import { deleteFile, deleteFiles } from '@/utils/deleteFile';
 import { errRes } from '@/utils/error';
-import valid from '@/validators/validator';
 import { and, eq, sql } from 'drizzle-orm';
 import { Request, Response } from 'express';
 
@@ -41,7 +40,6 @@ export const userBlogProfile = async (req: Request, res: Response): Promise<Resp
 export const createPost = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId2 = (req as CustomRequest).userId2;
-
         if (!userId2) {
             if (req.files?.length) {
                 deleteFiles(req.files);
@@ -49,14 +47,16 @@ export const createPost = async (req: Request, res: Response): Promise<Response>
             return errRes(res, 400, "invalid data, userId2 not present");
         }
 
-        const data: CreatePostReq = req.body;
-
-        if (!data.category || !valid.isCategory(data.category) || (!req.files?.length && !data.content)) {
+        // validation
+        const createPostReq = CreatePostReqSchema.safeParse(req.body);
+        if (!createPostReq.success) {
             if (req.files?.length) {
                 deleteFiles(req.files);
             }
-            return errRes(res, 400, "invalid data for post creation");
+            return errRes(res, 400, `invalid data for post creation, ${createPostReq.error.toString()}`);
         }
+
+        const data = createPostReq.data;
 
         const tags: string[] = [];
         if (data.tags) {

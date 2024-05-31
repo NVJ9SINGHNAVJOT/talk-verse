@@ -1,12 +1,12 @@
 import User from '@/db/mongodb/models/User';
 import { db } from '@/db/postgresql/connection';
 import { user } from '@/db/postgresql/schema/user';
-import { UpdateUserDetailsReq } from '@/types/controllers/profileReq';
+import { UpdateProfileReqSchema } from '@/types/controllers/profileReq';
 import { CustomRequest } from '@/types/custom';
 import { deleteFromCloudinay, uploadToCloudinary } from '@/utils/cloudinaryHandler';
 import { deleteFile } from '@/utils/deleteFile';
 import { errRes } from '@/utils/error';
-import valid from '@/validators/validator';
+import { envVar } from '@/validators/checkEnvVariables';
 import { eq } from 'drizzle-orm';
 import { Request, Response } from 'express';
 
@@ -114,7 +114,7 @@ export const updateProfileImage = async (req: Request, res: Response): Promise<R
         }
 
         if (getUser.imageUrl) {
-            const publicId = process.env['FOLDER_NAME'] as string + "/" + getUser.imageUrl.split('/').pop()?.split('.')[0];
+            const publicId = envVar.FOLDER_NAME + "/" + getUser.imageUrl.split('/').pop()?.split('.')[0];
             await deleteFromCloudinay(publicId);
         }
 
@@ -136,14 +136,18 @@ export const updateProfileImage = async (req: Request, res: Response): Promise<R
     }
 };
 
-export const updateUserDetails = async (req: Request, res: Response): Promise<Response> => {
+export const updateProfile = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = (req as CustomRequest).userId;
 
         if (!userId) {
             return errRes(res, 400, "invalid data, userId not present");
         }
-        const data: UpdateUserDetailsReq = req.body;
+        const updateProfileReq = UpdateProfileReqSchema.safeParse(req.body);
+        if (!updateProfileReq.success) {
+            return errRes(res, 400, `invalid data for pofile update, ${updateProfileReq.error.toString()}`);
+        }
+        const data = updateProfileReq.data;
 
         const user = await User.findById({ _id: userId }).select({
             email: true,
@@ -173,10 +177,6 @@ export const updateUserDetails = async (req: Request, res: Response): Promise<Re
             }
             // check whether userName exist or not
             if (data.userName) {
-                if (!valid.isUserName(data.userName)) {
-                    await user?.save();
-                    return errRes(res, 400, "userName is invalid for profile update");
-                }
                 const checkUsers = await User.countDocuments({ userName: data.userName });
                 if (checkUsers === 0) {
                     user.userName = data.userName;

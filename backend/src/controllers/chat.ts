@@ -5,7 +5,7 @@ import UnseenCount from "@/db/mongodb/models/UnseenCount";
 import User from "@/db/mongodb/models/User";
 import { channels, groupIds, groupOffline } from "@/socket";
 import { clientE } from "@/socket/events";
-import { FileMessageReq } from "@/types/controllers/chatReq";
+import { FileMessageReqSchema } from "@/types/controllers/chatReq";
 import { CustomRequest } from "@/types/custom";
 import { SoGroupMessageRecieved, SoMessageRecieved } from "@/types/socket/eventTypes";
 import { uploadToCloudinary } from '@/utils/cloudinaryHandler';
@@ -15,13 +15,14 @@ import { getSingleSocket } from "@/utils/getSocketIds";
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from "uuid";
 import { deleteFile } from "@/utils/deleteFile";
+import { isValidMongooseObjectId } from "@/validators/mongooseId";
 
 type BarData = {
     // common
     _id: string,
 
     // friend
-    chatId?: string 
+    chatId?: string
     firstName?: string,
     lastName?: string,
     imageUrl?: string,
@@ -118,31 +119,37 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
 export const fileMessage = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = (req as CustomRequest).userId;
-        const data: FileMessageReq = req.body;
+        const fileMessageReq = FileMessageReqSchema.safeParse(req.body);
 
         // validation
+        if (!req.file) {
+            return errRes(res, 400, 'file not present for message');
+        }
         if (!userId) {
-            if (req.file) {
-                deleteFile(req.file);
-            }
+            deleteFile(req.file);
             return errRes(res, 400, 'user id not present');
         }
-        if (!data.to || !data.mainId || !req.file) {
-            if (req.file) {
-                deleteFile(req.file);
-            }
-            return errRes(res, 400, 'invalid data for filemessage');
+        if (!fileMessageReq.success) {
+            deleteFile(req.file);
+            return errRes(res, 400, `invalid data for filemessage, ${fileMessageReq.error.toString()}`);
+        }
+        const data = fileMessageReq.data;
+        if (!isValidMongooseObjectId([data.mainId, data.to])) {
+            deleteFile(req.file);
+            return errRes(res, 400, 'invalid mongoose ids in request');
         }
 
         const secUrl = await uploadToCloudinary(req.file);
         if (secUrl === null) {
-            deleteFile(req.file);
+            if (req.file) {
+                deleteFile(req.file);
+            }
             return errRes(res, 500, "error while uploading filemessage to cloudinary, url is null");
         }
 
-        if (data.isGroup === "1") {
+        if (data.isGroup === "true") {
             if (!data.firstName || !data.lastName) {
-                return errRes(res, 400, 'invalid data for sending group message');
+                return errRes(res, 400, 'invalid user group data for sending group message');
             }
 
             const members = groupIds.get(data.mainId);
@@ -205,7 +212,7 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
             }
             // message through channel
             await channel.lock();
-            const combineSocketIds: string[] = []
+            const combineSocketIds: string[] = [];
             const mySocketId = getSingleSocket(userId);
             const friendSocketId = getSingleSocket(data.to);
 
@@ -298,14 +305,15 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
         const newMessages: SoMessageRecieved[] = [];
 
         messages.forEach((message) => {
-            newMessages.push({
+            const userChatMessage: SoMessageRecieved = {
                 uuId: message.uuId,
                 isFile: message.isFile,
                 chatId: message.chatId._id.toString(),
                 from: message.from._id.toString(),
                 text: message.from._id.toString() === userId ? message.fromText : message.toText,
                 createdAt: message.createdAt.toISOString()
-            } as SoMessageRecieved);
+            };
+            newMessages.push(userChatMessage);
         });
 
         return res.status(200).json({

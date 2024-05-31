@@ -1,9 +1,8 @@
 import User from '@/db/mongodb/models/User';
-import { LogInReq, SendOtpReq, SignUpReq } from '@/types/controllers/authReq';
+import { LogInReqSchema, SendOtpReqSchema, SignUpReqSchema } from '@/types/controllers/authReq';
 import { Request, Response } from 'express';
 import { uploadToCloudinary } from '@/utils/cloudinaryHandler';
 import { errRes } from '@/utils/error';
-import valid from '@/validators/validator';
 import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
 import Token from '@/db/mongodb/models/Token';
@@ -16,24 +15,26 @@ import * as forge from 'node-forge';
 import { deleteFile } from '@/utils/deleteFile';
 import { db } from '@/db/postgresql/connection';
 import { user } from '@/db/postgresql/schema/user';
+import { envVar } from '@/validators/checkEnvVariables';
 
 export const signUp = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const data: SignUpReq = req.body;
-
     // validation
-    if (
-      !valid.isEmail(data.email) ||
-      !valid.isName(data.firstName) ||
-      !valid.isName(data.lastName) ||
-      !valid.isUserName(data.userName) ||
-      !valid.isPassword(data.confirmPassword, data.confirmPassword) ||
-      !data.otp
-    ) {
+    const signUpReq = SignUpReqSchema.safeParse(req.body);
+    if (!signUpReq.success) {
       if (req.file) {
         deleteFile(req.file);
       }
-      return errRes(res, 400, "invalid data");
+      return errRes(res, 400, `invalid data, ${signUpReq.error.toString()}`);
+    }
+
+    const data = signUpReq.data;
+
+    if (data.password !== data.confirmPassword) {
+      if (req.file) {
+        deleteFile(req.file);
+      }
+      return errRes(res, 400, "password matching failed");
     }
 
     const checkOtp = await Otp.findOne({ email: data.email, otpValue: data.otp });
@@ -67,13 +68,14 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     }
 
     /* all verification done, now create user */
-    let secUrl;
+    let secUrl = "";
     if (req.file) {
-      secUrl = await uploadToCloudinary(req.file);
-      if (secUrl === null) {
+      const imageUrl = await uploadToCloudinary(req.file);
+      if (imageUrl === null) {
         deleteFile(req.file);
         return errRes(res, 500, "error while uploading user image");
       }
+      secUrl = imageUrl;
     }
 
     // encrypt password
@@ -94,7 +96,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     await Notification.create({ userId: newUser?._id });
 
     // create user in postgreSQL database
-    const newUser2 = await db.insert(user).values({ refId: newUser._id.toString(), userName: data.userName, imageUrl: secUrl as string }).returning({ id: user.id });
+    const newUser2 = await db.insert(user).values({ refId: newUser._id.toString(), userName: data.userName, imageUrl: secUrl }).returning({ id: user.id });
     if (newUser2.length !== 1 || !newUser2[0]) {
       await Notification.deleteOne({ userId: newUser.id });
       await User.deleteOne({ _id: newUser.id });
@@ -130,10 +132,13 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
 
 export const sendOtp = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const data: SendOtpReq = req.body;
-    if (!data.email || !valid.isEmail(data.email)) {
-      return errRes(res, 400, 'invalid email id');
+    // validation
+    const sendOtpReq = SendOtpReqSchema.safeParse(req.body);
+    if (!sendOtpReq.success) {
+      return errRes(res, 400, `invalid email id, ${sendOtpReq.error.toString()}`);
     }
+
+    const data = sendOtpReq.data;
 
     const newOtp = generateOTP();
     await Otp.create({ email: data.email, otpValue: newOtp });
@@ -153,14 +158,14 @@ export const sendOtp = async (req: Request, res: Response): Promise<Response> =>
 
 export const logIn = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const data: LogInReq = req.body;
+    const logInReq = LogInReqSchema.safeParse(req.body);
 
     // validation
-    if (!valid.isEmail(data.email) ||
-      !valid.isPassword(data.confirmPassword, data.confirmPassword)
-    ) {
-      return errRes(res, 401, "invalid data");
+    if (!logInReq.success) {
+      return errRes(res, 400, `invalid data, ${logInReq.error.toString()}`);
     }
+
+    const data = logInReq.data;
 
     const checkUser = await User.findOne({ email: data.email }).select({
       email: true, password: true,
@@ -173,10 +178,10 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
 
     // check password and generate token
     let newUserToken: string;
-    if (await bcrypt.compare(data.password, checkUser.password as string)) {
+    if (await bcrypt.compare(data.password, `${checkUser.password}`)) {
       newUserToken = jwt.sign(
         { userId: checkUser._id },
-        process.env['JWT_SECRET'] as string,
+        envVar.JWT_SECRET,
         {
           expiresIn: "24h",
         }
@@ -208,7 +213,7 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
           httpOnly: true,
           secure: true,
         };
-        return res.cookie(process.env['TOKEN_NAME'] as string, newUserToken, options).status(200).json({
+        return res.cookie(envVar.TOKEN_NAME, newUserToken, options).status(200).json({
           success: true,
           message: "user login successfull",
           user: {
@@ -236,7 +241,7 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
 export const checkUser = async (req: Request, res: Response): Promise<Response> => {
   try {
     // Extracting JWT from request cookies or header
-    const token = req.cookies[process.env['TOKEN_NAME'] as string];
+    const token = req.cookies[envVar.TOKEN_NAME];
 
     if (!token) {
       return res.status(200).json({
@@ -252,7 +257,7 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
       return errRes(res, 401, "user authorization failed");
     }
 
-    const user = await User.findById({ _id: userIds[0] as string }).select({
+    const user = await User.findById({ _id: `${userIds[0]}` }).select({
       firstName: true, lastName: true, imageUrl: true, publicKey: true
     }).exec();
 
@@ -273,7 +278,7 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
 
 export const logOut = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const token = req.cookies[process.env['TOKEN_NAME'] as string];
+    const token = req.cookies[envVar.TOKEN_NAME];
 
     if (!token) {
       return res.status(200).json({
@@ -290,9 +295,9 @@ export const logOut = async (req: Request, res: Response): Promise<Response> => 
     }
 
     await Token.findOneAndDelete({ tokenValue: token });
-    await User.findByIdAndUpdate({ _id: userIds[0] as string }, { $unset: { userToken: true } });
+    await User.findByIdAndUpdate({ _id: `${userIds[0]}` }, { $unset: { userToken: true } });
 
-    res.cookie(process.env['TOKEN_NAME'] as string, "", {
+    res.cookie(envVar.TOKEN_NAME, "", {
       expires: new Date(0), // Set an immediate expiration date (in the past)
       httpOnly: true,
       secure: true,

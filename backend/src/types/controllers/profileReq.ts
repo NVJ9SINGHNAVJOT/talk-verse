@@ -1,9 +1,12 @@
+import { fancyNameSchema } from "@/validators/zod";
+import z from "zod";
 
-export type UpdateUserDetailsReq = {
-    userName?: string,
-    gender?: string,
-    dateOfBirth?: string,
-    bio?: string,
-    countryCode: string,
-    contactNumber?: number
-};
+export const UpdateProfileReqSchema = z.object({
+    userName: fancyNameSchema,
+    gender: z.enum(["Male", "Female", "Other"]).optional(),
+    dateOfBirth: z.string().optional(),
+    bio: z.string().min(1).max(150).optional(),
+    countryCode: z.string().regex(/^[a-zA-Z0-9+-]*$/).optional(),
+    contactNumber: z.number().min(1).max(9).optional(),
+});
+export type UpdateProfileReq = z.infer<typeof UpdateProfileReqSchema>;

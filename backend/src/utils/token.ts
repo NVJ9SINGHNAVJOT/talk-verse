@@ -1,6 +1,7 @@
 import Token from "@/db/mongodb/models/Token";
 import User from "@/db/mongodb/models/User";
 import { CustomPayload } from "@/types/custom";
+import { envVar } from "@/validators/checkEnvVariables";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
 export const jwtVerify = async (token: string): Promise<(string | number)[] | null> => {
@@ -11,7 +12,7 @@ export const jwtVerify = async (token: string): Promise<(string | number)[] | nu
     }
 
     // decode token
-    const decoded: CustomPayload = jwt.verify(token, process.env["JWT_SECRET"] as string) as JwtPayload;
+    const decoded: CustomPayload = jwt.verify(token, envVar.JWT_SECRET) as JwtPayload;
 
     if (!decoded.userId) {
         return null;

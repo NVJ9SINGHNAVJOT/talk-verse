@@ -4,7 +4,7 @@ import UnseenCount from '@/db/mongodb/models/UnseenCount';
 import User from '@/db/mongodb/models/User';
 import { clientE } from '@/socket/events';
 import { channels, groupIds, groupOffline, userSocketIDs } from '@/socket/index';
-import { OtherUserIdReq, SetOrderReq, SetUnseenCountReq } from '@/types/controllers/notificationReq';
+import { CreateGroupReqSchema, OtherUserIdReq, OtherUserIdReqSchema, SetOrderReq, SetOrderReqSchema, SetUnseenCountReq, SetUnseenCountReqSchema } from '@/types/controllers/notificationReq';
 import { CustomRequest } from '@/types/custom';
 import Channel from '@/types/channel';
 import { SoAddedInGroup, SoRequestAccepted, SoUserRequest } from '@/types/socket/eventTypes';
@@ -16,6 +16,7 @@ import { CreateGroupReq } from '@/types/controllers/notificationReq';
 import { uploadToCloudinary } from '@/utils/cloudinaryHandler';
 import Group from '@/db/mongodb/models/Group';
 import { deleteFile } from '@/utils/deleteFile';
+import { isValidMongooseObjectId } from '@/validators/mongooseId';
 
 export const getUsers = async (req: Request, res: Response): Promise<Response> => {
     try {
@@ -68,16 +69,17 @@ export const getUsers = async (req: Request, res: Response): Promise<Response> =
 export const sendRequest = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = (req as CustomRequest).userId;
-        const data: OtherUserIdReq = req.body;
-
+        const otherUserIdReq = OtherUserIdReqSchema.safeParse(req.body);
 
         if (!userId) {
             return errRes(res, 400, 'user id not present');
         }
 
-        if (!data.otherUserId) {
-            return errRes(res, 400, 'invalid data');
+        if (!otherUserIdReq.success) {
+            return errRes(res, 400, `invalid data for sending request, ${otherUserIdReq.error.toString()}`);
         }
+
+        const data = otherUserIdReq.data;
 
         // check user exist or not for req id
         const checkUser = await User.findById({ _id: data.otherUserId }).select({ userName: true, imageUrl: true, friends: true }).exec();
@@ -129,15 +131,17 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
 export const acceptRequest = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = (req as CustomRequest).userId;
-        const data: OtherUserIdReq = req.body;
+        const otherUserIdReq = OtherUserIdReqSchema.safeParse(req.body);
 
         if (!userId) {
             return errRes(res, 400, 'user id not present');
         }
 
-        if (!data.otherUserId) {
-            return errRes(res, 400, 'invalid data');
+        if (!otherUserIdReq.success) {
+            return errRes(res, 400, `invalid data for accepting request, ${otherUserIdReq.error.toString()}`);
         }
+
+        const data = otherUserIdReq.data;
 
         // check user exist or not for req id
         const otherUser = await User.findById({ _id: data.otherUserId })
@@ -222,16 +226,17 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
 export const deleteRequest = async (req: Request, res: Response) => {
     try {
         const userId = (req as CustomRequest).userId;
-
-        const data: OtherUserIdReq = req.body;
+        const otherUserIdReq = OtherUserIdReqSchema.safeParse(req.body);
 
         if (!userId) {
             return errRes(res, 400, 'user id not present');
         }
 
-        if (!data.otherUserId) {
-            return errRes(res, 400, 'invalid userId for deleting request');
+        if (!otherUserIdReq.success) {
+            return errRes(res, 400, `invalid data for deleting request, ${otherUserIdReq.error.toString()}`);
         }
+
+        const data = otherUserIdReq.data;
 
         await Notification.findOneAndUpdate({ userId: userId },
             { $pull: { friendRequests: data.otherUserId } }).exec();
@@ -292,8 +297,6 @@ export const getAllNotifications = async (req: Request, res: Response): Promise<
 export const createGroup = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = (req as CustomRequest).userId;
-        const data: CreateGroupReq = req.body;
-
         // validation
         if (!userId) {
             if (req.file) {
@@ -301,20 +304,26 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
             }
             return errRes(res, 400, 'user id not present');
         }
-        if (!data.groupName || !data.userIdsInGroup) {
+
+        const createGroupReq = CreateGroupReqSchema.safeParse(req.body);
+
+        if (!createGroupReq.success) {
             if (req.file) {
                 deleteFile(req.file);
             }
-            return errRes(res, 400, 'invalid data for creating group');
+            return errRes(res, 400, `invalid data for creating group, ${createGroupReq.data}`);
         }
 
+        const data = createGroupReq.data;
+
         const members: string[] = JSON.parse(data.userIdsInGroup);
-        if (!members || members.length < 1) {
+        if (!members || members.length < 1 || !isValidMongooseObjectId(members)) {
             if (req.file) {
                 deleteFile(req.file);
             }
-            return errRes(res, 400, 'invalid data for creating group');
+            return errRes(res, 400, 'invalid groupIds for creating group');
         }
+        // push current userId also in members array
         members.push(userId);
 
         let secUrl;
@@ -324,7 +333,7 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
                 if (req.file) {
                     deleteFile(req.file);
                 }
-                return errRes(res, 500, "error while uploading user image");
+                return errRes(res, 500, "error while uploading group image");
             }
         }
         else {
@@ -439,14 +448,18 @@ export const checkOnlineFriends = async (req: Request, res: Response): Promise<R
 export const setUnseenCount = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = (req as CustomRequest).userId;
-        const data: SetUnseenCountReq = req.body;
-
         if (!userId) {
             return errRes(res, 400, 'user id not present');
         }
 
-        if (!data.mainId || data.count === undefined) {
-            return errRes(res, 400, 'invalid data for setunseencount');
+        const setUnseenCountReq = SetUnseenCountReqSchema.safeParse(req.body);
+
+        if (!setUnseenCountReq.success) {
+            return errRes(res, 400, `invalid data for setunseencount, ${setUnseenCountReq.error.toString()}`);
+        }
+        const data = setUnseenCountReq.data;
+        if (!isValidMongooseObjectId([data.mainId])) {
+            return errRes(res, 400, "invalid id for setting unseen count");
         }
 
         await UnseenCount.findOneAndUpdate({ userId: userId, mainId: data.mainId },
@@ -465,15 +478,18 @@ export const setUnseenCount = async (req: Request, res: Response): Promise<Respo
 export const setOrder = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = (req as CustomRequest).userId;
-        const data: SetOrderReq = req.body;
-
         if (!userId) {
             return errRes(res, 400, 'user id not present');
         }
-
-        if (!data.mainId) {
-            return errRes(res, 400, 'invalid data for setunseencount');
+        const setOrderReq = SetOrderReqSchema.safeParse(req.body);
+        if (!setOrderReq.success) {
+            return errRes(res, 400, `invalid data for setunseencount, ${setOrderReq.error.toString()}`);
         }
+        const data = setOrderReq.data;
+        if (!isValidMongooseObjectId([data.mainId])) {
+            return errRes(res, 400, "invalid id for setting order for chatbar");
+        }
+
         const user = await User.findById({ _id: userId }).select({ chatBarOrder: true });
         const existingIndex = user?.chatBarOrder.indexOf(data.mainId);
 
