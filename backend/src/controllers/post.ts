@@ -460,7 +460,7 @@ export const recentPosts = async (req: Request, res: Response): Promise<Response
             return res.status(200).json({
                 success: true,
                 message: "recent posts",
-                recentPosts: recentPosts
+                posts: recentPosts
             });
         }
         return res.status(200).json({
@@ -474,7 +474,13 @@ export const recentPosts = async (req: Request, res: Response): Promise<Response
 
 export const trendingPosts = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const userId2 = (req as CustomRequest).userId2;
+        const trendingPostsReq = GetCreatedAtReqSchema.safeParse(req.query);
+        if (!trendingPostsReq.success) {
+            return errRes(res, 400, `invalid data for trendingPosts, ${trendingPostsReq.error.toString()}`);
+        }
+
+        const data = trendingPostsReq.data;
+
         const trendingPosts = await db
             .select({
                 id: post.id,
@@ -488,10 +494,22 @@ export const trendingPosts = async (req: Request, res: Response): Promise<Respon
                 createdAt: post.createdAt
             })
             .from(post)
-            .where(lt(post.createdAt, new Date()))
+            .where(lt(post.createdAt, new Date(data.createdAt)))
             .orderBy(desc(post.likesCount), desc(post.createdAt))
             .limit(15)
             .execute();
+
+        if (trendingPosts.length) {
+            return res.status(200).json({
+                success: true,
+                message: "trending posts",
+                posts: trendingPosts
+            });
+        }
+        return res.status(200).json({
+            success: false,
+            message: "no further trending posts",
+        });
     } catch (error) {
         return errRes(res, 500, "error while getting trending posts");
     }

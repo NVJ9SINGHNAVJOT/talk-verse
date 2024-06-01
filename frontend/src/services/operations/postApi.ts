@@ -1,4 +1,7 @@
-import { AddCommentRs, CreatePostRs, CreateStoryRs, GetStoriesRs, UserBlogProfileRs } from "@/types/apis/postApiRs";
+import {
+    AddCommentRs, CreatePostRs, CreateStoryRs, GetStoriesRs, PostsRs,
+    UserBlogProfileRs
+} from "@/types/apis/postApiRs";
 import { fetchApi } from "@/services/fetchApi";
 import { postEndPoints } from "@/services/apis";
 import { CommonRs } from "@/types/apis/common";
@@ -114,10 +117,10 @@ export const deleteCommentApi = async (commentId: string): Promise<boolean> => {
     }
 };
 
-export const getStoriesApi = async (): Promise<GetStoriesRs> => {
+export const getStoriesApi = async (createdAt: string): Promise<GetStoriesRs> => {
     try {
-        const resData: GetStoriesRs = await fetchApi('GET', GET_STORIES);
-        if (resData && resData.success === true) {
+        const resData: GetStoriesRs = await fetchApi('GET', GET_STORIES, null, null, { 'createdAt': createdAt });
+        if (resData) {
             return resData;
         }
         return null;
@@ -126,3 +129,26 @@ export const getStoriesApi = async (): Promise<GetStoriesRs> => {
     }
 };
 
+export const recentPostsApi = async (createdAt: string): Promise<PostsRs> => {
+    try {
+        const resData: PostsRs = await fetchApi('GET', RECENT_POSTS, null, null, { 'createdAt': createdAt });
+        if (resData) {
+            return resData;
+        }
+        return null;
+    } catch (error) {
+        return null;
+    }
+};
+
+export const trendingPostsApi = async (createdAt: string): Promise<PostsRs> => {
+    try {
+        const resData: PostsRs = await fetchApi('GET', TRENDING_POSTS, null, null, { 'createdAt': createdAt });
+        if (resData) {
+            return resData;
+        }
+        return null;
+    } catch (error) {
+        return null;
+    }
+};

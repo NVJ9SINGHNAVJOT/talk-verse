@@ -7,20 +7,21 @@ export type UserBlogProfileRs = {
     }
 } | null
 
+export type Post = {
+    id: number,
+    userId: number,
+    category: string,
+    title?: string,
+    mediaUrls?: string[],
+    tags?: string[],
+    content?: string[],
+    likesCount: number,
+    createdAt: Date
+}
 export type CreatePostRs = {
     success: boolean,
     message: string,
-    post: {
-        id: number,
-        userId: number,
-        category: string,
-        title?: string,
-        mediaUrls?: string[],
-        tags?: string[],
-        content?: string[],
-        likesCount: number,
-        createdAt: Date
-    }
+    post: Post
 } | null
 
 export type CreateStoryRs = {
@@ -50,4 +51,10 @@ export type GetStoriesRs = {
         storyUrl: string,
         createdAt: string,
     }[]
+} | null
+
+export type PostsRs = {
+    success: boolean,
+    message: string,
+    posts?: Post[]
 } | null

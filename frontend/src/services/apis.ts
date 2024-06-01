@@ -51,6 +51,6 @@ export const postEndPoints = {
   DELETE_COMMENT: BASE_URL_SERVER + "/posts/deleteComment", // parameters: commentId
   GET_STORIES: BASE_URL_SERVER + "/posts/getStories", // parameters: createdAt
   RECENT_POSTS: BASE_URL_SERVER + "/posts/recentPosts", // parameters: createdAt
-  TRENDING_POSTS_: BASE_URL_SERVER + "/posts/trendingPosts", // parameters: createdAt
+  TRENDING_POSTS: BASE_URL_SERVER + "/posts/trendingPosts", // parameters: createdAt
   CATEGORY_POSTS: BASE_URL_SERVER + "/posts/categoryPosts", // parameters: category, createdAt
 };
