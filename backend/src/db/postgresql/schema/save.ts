@@ -13,7 +13,7 @@ export const save = pgTable("save", {
     saveUserIdPostIdUnique: unique("save_user_id_post_id_unique").on(save.userId, save.postId)
 }));
 
-export const savessRelations = relations(save, ({ one }) => ({
+export const savesRelations = relations(save, ({ one }) => ({
     user: one(user, { fields: [save.userId], references: [user.id] }),
     post: one(post, { fields: [save.postId], references: [post.id] }),
 }));

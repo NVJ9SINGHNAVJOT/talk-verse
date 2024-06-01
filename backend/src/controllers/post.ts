@@ -49,11 +49,15 @@ export const followUser = async (req: Request, res: Response): Promise<Response>
             return errRes(res, 400, "userIdToFollow is same as userId2, invalid data in querry");
         }
 
-        await db.insert(follow).values({ followerId: userId2, followingId: intUserIdToFollow })
-            .onConflictDoNothing({ target: [follow.followerId, follow.followingId] });
+        const followRes = await db.insert(follow).values({ followerId: userId2, followingId: intUserIdToFollow })
+            .onConflictDoNothing({ target: [follow.followerId, follow.followingId] }).returning({ id: follow.id }).execute();
 
+        // check querry response
+        if (followRes.length === 0) {
+            return errRes(res, 400, "user already followed other user");
+        }
         return res.status(200).json({
-            success: false,
+            success: true,
             messasge: "user followed other user"
         });
     } catch (error) {
@@ -130,7 +134,7 @@ export const createPost = async (req: Request, res: Response): Promise<Response>
             content: post.content,
             likesCount: post.likesCount,
             createdAt: post.createdAt
-        });
+        }).execute();
 
         return res.status(200).json({
             success: true,
@@ -156,12 +160,18 @@ export const deletePost = async (req: Request, res: Response): Promise<Response>
         }
 
         const intPostId = parseInt(`${postId}`);
-        await db.delete(post).where(and(eq(post.id, intPostId), eq(post.userId, userId2)));
 
-        return res.status(200).json({
-            success: true,
-            message: "post deleted successfully"
-        });
+        const postRes = await db.delete(post).where(and(eq(post.id, intPostId), eq(post.userId, userId2)))
+            .returning({ id: post.id }).execute();
+
+        // check querry response
+        if (postRes.length) {
+            return res.status(200).json({
+                success: true,
+                message: "post deleted successfully"
+            });
+        }
+        return errRes(res, 400, "postId is invalid, no post present for postId to delete");
 
     } catch (error) {
         return errRes(res, 500, "error while deleting post", error);
@@ -212,13 +222,17 @@ export const deleteStory = async (req: Request, res: Response): Promise<Response
         }
 
         const intStoryId = parseInt(`${storyId}`);
-        await db.delete(story).where(and(eq(story.id, intStoryId), eq(story.userId, userId2)));
+        const response = await db.delete(story).where(and(eq(story.id, intStoryId), eq(story.userId, userId2)))
+            .returning({ id: story.id }).execute();
 
-        return res.status(200).json({
-            success: true,
-            message: "story deleted successfully"
-
-        });
+        // check querry response
+        if (response.length) {
+            return res.status(200).json({
+                success: true,
+                message: "story deleted successfully"
+            });
+        }
+        return errRes(res, 400, "stroyId is invalid for deleting story");
     } catch (error) {
         return errRes(res, 500, "error while deleting story", error);
     }
@@ -245,9 +259,9 @@ export const updateLike = async (req: Request, res: Response): Promise<Response>
                     .onConflictDoNothing({ target: [likes.userId, likes.postId] })
                     .returning({ id: likes.id });
 
-                // if like is already present return error
+                // if like is already present return false
                 if (likeExists.length === 0) {
-                    return { success: false, message: "Like is already present for post by user" };
+                    return false;
                 }
 
                 // update likes count in the post row where postId is equal to post.id
@@ -255,11 +269,11 @@ export const updateLike = async (req: Request, res: Response): Promise<Response>
                     .set({ likesCount: sql`${post.likesCount} + 1` })
                     .where(eq(post.id, intPostId));
 
-                return { success: true, message: "Like added and likes count updated" };
+                return true;
             });
 
             // check database querry response
-            if (likesRes.success) {
+            if (likesRes) {
                 return res.status(200).json({
                     success: true,
                     message: "like updated for post"
@@ -287,15 +301,15 @@ export const updateLike = async (req: Request, res: Response): Promise<Response>
                     .set({ likesCount: sql`${post.likesCount} - 1` })
                     .where(eq(post.id, intPostId));
 
-                return { success: true, message: 'Like removed and likes count updated' };
+                return true;
             } else {
-                // their is no like present for post by user return error
-                return { success: false, message: 'Like does not exist' };
+                // their is no like present for post by user return false
+                return false;
             }
         });
 
         // check database querry response
-        if (likesRes.success) {
+        if (likesRes) {
             return res.status(200).json({
                 success: true,
                 message: "like updated for post"
@@ -340,12 +354,18 @@ export const deleteComment = async (req: Request, res: Response): Promise<Respon
             return errRes(res, 400, "invalid data for deleting comment");
         }
 
-        await db.delete(comment).where(and(eq(comment.id, parseInt(`${commentId}`)), eq(comment.userId, userId2)));
+        const commentRes = await db.delete(comment).where(and(eq(comment.id, parseInt(`${commentId}`)), eq(comment.userId, userId2)))
+            .returning({ id: comment.id }).execute();
 
-        return res.status(200).json({
-            success: true,
-            message: "comment deleted"
-        });
+        if (commentRes.length) {
+            return res.status(200).json({
+                success: true,
+                message: "comment deleted"
+            });
+        }
+
+        return errRes(res, 400, "invalid id for deleting comment");
+
     } catch (error) {
         return errRes(res, 500, "error while deleting comment for post", error);
     }
@@ -355,9 +375,11 @@ export const getStories = async (req: Request, res: Response): Promise<Response>
     try {
         const userId2 = (req as CustomRequest).userId2;
 
-        const stories = await db.select().from(story)
-            .where(arrayContains(story.userId, db.select({ userId: follow.followingId })
-                .from(follow).where(eq(follow.followerId, userId2))));
+        const stories = await db.select()
+            .from(story)
+            .leftJoin(follow, eq(story.userId, follow.followingId))
+            .where(eq(follow.followerId, userId2))
+            .execute();
 
         return res.status(200).json({
             success: true,
