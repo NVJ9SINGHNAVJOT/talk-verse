@@ -10,7 +10,7 @@ import { CustomRequest } from '@/types/custom';
 import { uploadMultiplesToCloudinary, uploadToCloudinary } from '@/utils/cloudinaryHandler';
 import { deleteFile, deleteFiles } from '@/utils/deleteFile';
 import { errRes } from '@/utils/error';
-import { and, arrayContains, eq, sql } from 'drizzle-orm';
+import { and, eq, sql, lt } from 'drizzle-orm';
 import { Request, Response } from 'express';
 
 export const userBlogProfile = async (req: Request, res: Response): Promise<Response> => {
@@ -375,10 +375,26 @@ export const getStories = async (req: Request, res: Response): Promise<Response>
     try {
         const userId2 = (req as CustomRequest).userId2;
 
-        const stories = await db.select()
+        const { createdAt } = req.query;
+
+        if (!createdAt) {
+            return errRes(res, 400, "invalid createdAt data for getting stories");
+        }
+        const beforeAt = new Date(`${createdAt}`);
+        const stories = await db.select({
+            story: {
+                storyUrl: story.storyUrl,
+                createdAt: story.createdAt,
+            },
+            user: {
+                userName: user.userName,
+                imageUrl: user.imageUrl,
+            }
+        })
             .from(story)
             .leftJoin(follow, eq(story.userId, follow.followingId))
-            .where(eq(follow.followerId, userId2))
+            .leftJoin(user, eq(story.userId, user.id))
+            .where(and(eq(follow.followerId, userId2), lt(story.createdAt, beforeAt)))
             .execute();
 
         return res.status(200).json({
