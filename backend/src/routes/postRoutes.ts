@@ -15,7 +15,7 @@ router.delete('/deleteStory', auth, deleteStory); // parameters: storyId
 router.post('/updateLike', auth, updateLike); // parameters: postId, update
 router.post('/addComment', auth, addComment);
 router.delete('/deleteComment', auth, deleteComment); // parameters: commentId
-router.get('/getStories', auth, getStories);
+router.get('/getStories', auth, getStories); // parameters: createdAt
 router.get('/recentPosts', auth);
 router.get('/trendingPosts', auth);
 router.get('/categoryPosts', auth); // parameters: category
