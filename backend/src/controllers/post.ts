@@ -1,5 +1,6 @@
 import { db } from '@/db/postgresql/connection';
 import { comment } from '@/db/postgresql/schema/comment';
+import { follow } from '@/db/postgresql/schema/follow';
 import { likes } from '@/db/postgresql/schema/likes';
 import { post } from '@/db/postgresql/schema/post';
 import { story } from '@/db/postgresql/schema/story';
@@ -9,16 +10,12 @@ import { CustomRequest } from '@/types/custom';
 import { uploadMultiplesToCloudinary, uploadToCloudinary } from '@/utils/cloudinaryHandler';
 import { deleteFile, deleteFiles } from '@/utils/deleteFile';
 import { errRes } from '@/utils/error';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, arrayContains, eq, sql } from 'drizzle-orm';
 import { Request, Response } from 'express';
 
 export const userBlogProfile = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId2 = (req as CustomRequest).userId2;
-
-        if (!userId2) {
-            return errRes(res, 400, "invalid data, userId2 not present");
-        }
 
         const blogProfile = await db.select({ followingCount: user.followingCount, followersCount: user.followersCount })
             .from(user).where(eq(user.id, userId2)).limit(1).execute();
@@ -38,15 +35,31 @@ export const userBlogProfile = async (req: Request, res: Response): Promise<Resp
     }
 };
 
+export const followUser = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const userId2 = (req as CustomRequest).userId2;
+
+        const { userIdToFollow } = req.query;
+        if (!userIdToFollow) {
+            return errRes(res, 400, "userIdToFollow not present in querry");
+        }
+
+        const intUserIdToFollow = parseInt(`${userIdToFollow}`);
+
+        await db.insert(follow).values({ followerId: userId2, followingId: intUserIdToFollow });
+
+        return res.status(200).json({
+            success: false,
+            messasge: "user followed other user"
+        });
+    } catch (error) {
+        return errRes(res, 500, "error while following user", error);
+    }
+};
+
 export const createPost = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId2 = (req as CustomRequest).userId2;
-        if (!userId2) {
-            if (req.files?.length) {
-                deleteFiles(req.files);
-            }
-            return errRes(res, 400, "invalid data, userId2 not present");
-        }
 
         // validation
         const createPostReq = CreatePostReqSchema.safeParse(req.body);
@@ -133,17 +146,13 @@ export const deletePost = async (req: Request, res: Response): Promise<Response>
     try {
         const userId2 = (req as CustomRequest).userId2;
 
-        if (!userId2) {
-            return errRes(res, 400, "invalid data, userId2 not present");
-        }
-
         const { postId } = req.query;
         if (!postId) {
             return errRes(res, 400, "postId not present in querry");
         }
 
         const intPostId = parseInt(`${postId}`);
-        await db.delete(post).where(eq(post.id, intPostId));
+        await db.delete(post).where(and(eq(post.id, intPostId), eq(post.userId, userId2)));
 
         return res.status(200).json({
             success: true,
@@ -158,10 +167,6 @@ export const deletePost = async (req: Request, res: Response): Promise<Response>
 export const createStory = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId2 = (req as CustomRequest).userId2;
-
-        if (!userId2) {
-            return errRes(res, 400, "invalid data, userId2 not present");
-        }
 
         if (!req.file) {
             return errRes(res, 400, "media file not present for story");
@@ -197,17 +202,13 @@ export const deleteStory = async (req: Request, res: Response): Promise<Response
     try {
         const userId2 = (req as CustomRequest).userId2;
 
-        if (!userId2) {
-            return errRes(res, 400, "invalid data, userId2 not present");
-        }
-
         const { storyId } = req.query;
         if (!storyId) {
             return errRes(res, 400, "storyId not present in querry");
         }
 
         const intStoryId = parseInt(`${storyId}`);
-        await db.delete(story).where(eq(story.id, intStoryId));
+        await db.delete(story).where(and(eq(story.id, intStoryId), eq(story.userId, userId2)));
 
         return res.status(200).json({
             success: true,
@@ -222,10 +223,6 @@ export const deleteStory = async (req: Request, res: Response): Promise<Response
 export const updateLike = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId2 = (req as CustomRequest).userId2;
-
-        if (!userId2) {
-            return errRes(res, 400, "invalid data, userId2 not present");
-        }
 
         const { postId, update } = req.query;
         if (!postId) {
@@ -278,10 +275,6 @@ export const addComment = async (req: Request, res: Response): Promise<Response>
     try {
         const userId2 = (req as CustomRequest).userId2;
 
-        if (!userId2) {
-            return errRes(res, 400, "invalid data, userId2 not present");
-        }
-
         const addCommentReq = AddCommentReqSchema.safeParse(req.body);
         if (!addCommentReq.success) {
             return errRes(res, 400, `invalid data for comment, ${addCommentReq.error.toString()}`);
@@ -305,16 +298,12 @@ export const deleteComment = async (req: Request, res: Response): Promise<Respon
     try {
         const userId2 = (req as CustomRequest).userId2;
 
-        if (!userId2) {
-            return errRes(res, 400, "invalid data, userId2 not present");
-        }
-
         const { commentId } = req.query;
         if (!commentId) {
             return errRes(res, 400, "invalid data for deleting comment");
         }
 
-        await db.delete(comment).where(and(eq(comment.id, parseInt(`${commentId}`)), eq(comment.userId, userId2)))
+        await db.delete(comment).where(and(eq(comment.id, parseInt(`${commentId}`)), eq(comment.userId, userId2)));
 
         return res.status(200).json({
             success: true,
@@ -329,11 +318,9 @@ export const getStories = async (req: Request, res: Response): Promise<Response>
     try {
         const userId2 = (req as CustomRequest).userId2;
 
-        if (!userId2) {
-            return errRes(res, 400, "invalid data, userId2 not present");
-        }
-
-        const stories = await db.select()
+        const stories = await db.select().from(story)
+            .where(arrayContains(story.userId, db.select({ userId: follow.followingId })
+                .from(follow).where(eq(follow.followerId, userId2))));
     } catch (error) {
         return errRes(res, 500, "error while getting stories", error);
     }

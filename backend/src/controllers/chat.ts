@@ -41,10 +41,6 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
     try {
         const userId = (req as CustomRequest).userId;
 
-        if (!userId) {
-            return errRes(res, 400, 'user id not present');
-        }
-
         const userFriends = await User.findById({ _id: userId })
             .select({ friends: true, chatBarOrder: true })
             .populate({
@@ -124,10 +120,6 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
         // validation
         if (!req.file) {
             return errRes(res, 400, 'file not present for message');
-        }
-        if (!userId) {
-            deleteFile(req.file);
-            return errRes(res, 400, 'user id not present');
         }
         if (!fileMessageReq.success) {
             deleteFile(req.file);
@@ -269,10 +261,6 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
     try {
         const userId = (req as CustomRequest).userId;
 
-        if (!userId) {
-            return errRes(res, 400, 'user id not present');
-        }
-
         const { chatId, createdAt } = req.query;
 
         if (!chatId || !createdAt) {
@@ -329,12 +317,6 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
 
 export const groupMessages = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const userId = (req as CustomRequest).userId;
-
-        if (!userId) {
-            return errRes(res, 400, 'user id not present');
-        }
-
         const { groupId, createdAt } = req.query;
 
         if (!groupId || !createdAt) {

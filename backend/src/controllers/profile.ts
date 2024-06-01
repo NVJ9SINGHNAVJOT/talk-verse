@@ -11,12 +11,6 @@ import { Request, Response } from 'express';
 
 export const checkUserName = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const userId = (req as CustomRequest).userId;
-
-        if (!userId) {
-            return errRes(res, 400, "invalid data, userId not present");
-        }
-
         const { userName } = req.query;
 
         // validation
@@ -50,10 +44,6 @@ export const getUserDetails = async (req: Request, res: Response): Promise<Respo
     try {
         const userId = (req as CustomRequest).userId;
 
-        if (!userId) {
-            return errRes(res, 400, "invalid data, userId not present");
-        }
-
         const userData = await User.findById({ _id: userId }).select({
             email: true,
             userName: true,
@@ -83,13 +73,6 @@ export const updateProfileImage = async (req: Request, res: Response): Promise<R
     try {
         const userId = (req as CustomRequest).userId;
         const userId2 = (req as CustomRequest).userId2;
-
-        if (!userId || !userId2) {
-            if (req.file) {
-                deleteFile(req.file);
-            }
-            return errRes(res, 400, "invalid data, userIds not present");
-        }
 
         if (!req.file) {
             return errRes(res, 400, "invalid data, imageFile not present");
@@ -138,10 +121,7 @@ export const updateProfileImage = async (req: Request, res: Response): Promise<R
 export const updateProfile = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = (req as CustomRequest).userId;
-
-        if (!userId) {
-            return errRes(res, 400, "invalid data, userId not present");
-        }
+        
         const updateProfileReq = UpdateProfileReqSchema.safeParse(req.body);
         if (!updateProfileReq.success) {
             return errRes(res, 400, `invalid data for pofile update, ${updateProfileReq.error.toString()}`);

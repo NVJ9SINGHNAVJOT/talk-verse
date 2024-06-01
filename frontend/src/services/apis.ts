@@ -41,6 +41,7 @@ export const chatEndPoints = {
 // userPost endpoints
 export const postEndPoints = {
   USER_BLOG_PROFILE: BASE_URL_SERVER + "/posts/userBlogProfile",
+  FOLLOW_USER: BASE_URL_SERVER + "/posts/followUser", // parameters: userIdToFollow
   CREATE_POST: BASE_URL_SERVER + "/posts/createPost",
   DELETE_POST: BASE_URL_SERVER + "/posts/deletePost", // parameters: postId
   CREATE_STORY: BASE_URL_SERVER + "/posts/createStory",

@@ -4,7 +4,7 @@ import UnseenCount from '@/db/mongodb/models/UnseenCount';
 import User from '@/db/mongodb/models/User';
 import { clientE } from '@/socket/events';
 import { channels, groupIds, groupOffline, userSocketIDs } from '@/socket/index';
-import { CreateGroupReqSchema, OtherUserIdReq, OtherUserIdReqSchema, SetOrderReq, SetOrderReqSchema, SetUnseenCountReq, SetUnseenCountReqSchema } from '@/types/controllers/notificationReq';
+import { CreateGroupReqSchema, OtherUserIdReqSchema, SetOrderReqSchema, SetUnseenCountReqSchema } from '@/types/controllers/notificationReq';
 import { CustomRequest } from '@/types/custom';
 import Channel from '@/types/channel';
 import { SoAddedInGroup, SoRequestAccepted, SoUserRequest } from '@/types/socket/eventTypes';
@@ -12,7 +12,6 @@ import emitSocketEvent from '@/utils/emitSocketEvent';
 import { errRes } from '@/utils/error';
 import { getMultiSockets, getSingleSocket } from '@/utils/getSocketIds';
 import { Request, Response } from 'express';
-import { CreateGroupReq } from '@/types/controllers/notificationReq';
 import { uploadToCloudinary } from '@/utils/cloudinaryHandler';
 import Group from '@/db/mongodb/models/Group';
 import { deleteFile } from '@/utils/deleteFile';
@@ -21,9 +20,6 @@ import { isValidMongooseObjectId } from '@/validators/mongooseId';
 export const getUsers = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = (req as CustomRequest).userId;
-        if (!userId) {
-            return errRes(res, 400, 'user id not present');
-        }
 
         const { userName } = req.query;
 
@@ -70,10 +66,6 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
     try {
         const userId = (req as CustomRequest).userId;
         const otherUserIdReq = OtherUserIdReqSchema.safeParse(req.body);
-
-        if (!userId) {
-            return errRes(res, 400, 'user id not present');
-        }
 
         if (!otherUserIdReq.success) {
             return errRes(res, 400, `invalid data for sending request, ${otherUserIdReq.error.toString()}`);
@@ -132,10 +124,6 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
     try {
         const userId = (req as CustomRequest).userId;
         const otherUserIdReq = OtherUserIdReqSchema.safeParse(req.body);
-
-        if (!userId) {
-            return errRes(res, 400, 'user id not present');
-        }
 
         if (!otherUserIdReq.success) {
             return errRes(res, 400, `invalid data for accepting request, ${otherUserIdReq.error.toString()}`);
@@ -227,10 +215,6 @@ export const deleteRequest = async (req: Request, res: Response) => {
     try {
         const userId = (req as CustomRequest).userId;
         const otherUserIdReq = OtherUserIdReqSchema.safeParse(req.body);
-
-        if (!userId) {
-            return errRes(res, 400, 'user id not present');
-        }
 
         if (!otherUserIdReq.success) {
             return errRes(res, 400, `invalid data for deleting request, ${otherUserIdReq.error.toString()}`);
