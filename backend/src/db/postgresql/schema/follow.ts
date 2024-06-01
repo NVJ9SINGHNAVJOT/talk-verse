@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, integer, serial, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, integer, serial, timestamp, unique } from "drizzle-orm/pg-core";
 import { user } from "@/db/postgresql/schema/user";
 
 export const follow = pgTable("follow", {
@@ -12,7 +12,9 @@ export const follow = pgTable("follow", {
         .references(() => user.id),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-});
+}, (follow) => ({
+    followFollowerIdFollowingIdUnique: unique("follow_follower_id_following_id_unique").on(follow.followerId, follow.followingId)
+}));
 
 export const followsRelations = relations(follow, ({ one }) => ({
     user: one(user, { fields: [follow.followerId, follow.followingId], references: [user.id, user.id] }),

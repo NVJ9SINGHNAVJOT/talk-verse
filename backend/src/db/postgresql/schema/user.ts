@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, serial, timestamp, varchar } from "drizzle-orm/pg-core";
+import { pgTable, serial, timestamp, unique, varchar } from "drizzle-orm/pg-core";
 import { integer } from "drizzle-orm/pg-core";
 import { post } from "@/db/postgresql/schema/post";
 import { story } from "@/db/postgresql/schema/story";
@@ -20,7 +20,9 @@ export const user = pgTable("user", {
     followersCount: integer("followers_count").notNull().default(0),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-});
+}, (user) => ({
+    userUserNameUnique: unique('user_user_name_unique').on(user.userName)
+}));
 
 export const usersRelations = relations(user, ({ many }) => ({
     post: many(post),

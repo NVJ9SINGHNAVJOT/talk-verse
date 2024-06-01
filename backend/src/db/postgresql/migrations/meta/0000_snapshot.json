@@ -1,5 +1,5 @@
 {
-  "id": "4702cd02-f466-4388-9f52-bdfcfd1695cb",
+  "id": "bb25e210-5f70-40a3-bf6b-c719068b61f4",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -146,7 +146,16 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "follow_follower_id_following_id_unique": {
+          "name": "follow_follower_id_following_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "follower_id",
+            "following_id"
+          ]
+        }
+      }
     },
     "likes": {
       "name": "likes",
@@ -215,7 +224,16 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "likes_user_id_post_id_unique": {
+          "name": "likes_user_id_post_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "user_id",
+            "post_id"
+          ]
+        }
+      }
     },
     "post": {
       "name": "post",
@@ -374,7 +392,16 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "save_user_id_post_id_unique": {
+          "name": "save_user_id_post_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "user_id",
+            "post_id"
+          ]
+        }
+      }
     },
     "story": {
       "name": "story",
@@ -492,7 +519,15 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "user_user_name_unique": {
+          "name": "user_user_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "user_name"
+          ]
+        }
+      }
     }
   },
   "enums": {},

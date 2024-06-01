@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS "follow" (
 	"follower_id" integer NOT NULL,
 	"following_id" integer NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "follow_follower_id_following_id_unique" UNIQUE("follower_id","following_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "likes" (
@@ -20,7 +21,8 @@ CREATE TABLE IF NOT EXISTS "likes" (
 	"user_id" integer NOT NULL,
 	"post_id" integer NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "likes_user_id_post_id_unique" UNIQUE("user_id","post_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "post" (
@@ -41,7 +43,8 @@ CREATE TABLE IF NOT EXISTS "save" (
 	"user_id" integer NOT NULL,
 	"post_id" integer NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "save_user_id_post_id_unique" UNIQUE("user_id","post_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "story" (
@@ -60,7 +63,8 @@ CREATE TABLE IF NOT EXISTS "user" (
 	"following_count" integer DEFAULT 0 NOT NULL,
 	"followers_count" integer DEFAULT 0 NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "user_user_name_unique" UNIQUE("user_name")
 );
 --> statement-breakpoint
 DO $$ BEGIN

@@ -45,8 +45,12 @@ export const followUser = async (req: Request, res: Response): Promise<Response>
         }
 
         const intUserIdToFollow = parseInt(`${userIdToFollow}`);
+        if (userId2 === intUserIdToFollow) {
+            return errRes(res, 400, "userIdToFollow is same as userId2, invalid data in querry");
+        }
 
-        await db.insert(follow).values({ followerId: userId2, followingId: intUserIdToFollow });
+        await db.insert(follow).values({ followerId: userId2, followingId: intUserIdToFollow })
+            .onConflictDoNothing({ target: [follow.followerId, follow.followingId] });
 
         return res.status(200).json({
             success: false,
@@ -231,40 +235,73 @@ export const updateLike = async (req: Request, res: Response): Promise<Response>
 
         const intPostId = parseInt(`${postId}`);
 
-        // update is add or delete
+        // update is add
         if (`${update}` === "add") {
-            // check if like is already present
-            const result = await db.select().from(likes)
-                .where(and(eq(likes.userId, userId2), eq(likes.postId, intPostId)))
-                .limit(1)
-                .execute();
+            // send querry to database
+            const likesRes = await db.transaction(async (tx) => {
+                // check if like is already present for post by user
+                const likeExists = await tx.insert(likes)
+                    .values({ userId: userId2, postId: intPostId })
+                    .onConflictDoNothing({ target: [likes.userId, likes.postId] })
+                    .returning({ id: likes.id });
 
-            if (result.length !== 0) {
-                return errRes(res, 400, "post already liked by user");
+                // if like is already present return error
+                if (likeExists.length === 0) {
+                    return { success: false, message: "Like is already present for post by user" };
+                }
+
+                // update likes count in the post row where postId is equal to post.id
+                await tx.update(post)
+                    .set({ likesCount: sql`${post.likesCount} + 1` })
+                    .where(eq(post.id, intPostId));
+
+                return { success: true, message: "Like added and likes count updated" };
+            });
+
+            // check database querry response
+            if (likesRes.success) {
+                return res.status(200).json({
+                    success: true,
+                    message: "like updated for post"
+                });
             }
-
-            // insert like data in likes
-            await db.insert(likes).values({ userId: userId2, postId: intPostId });
-
-            // update likes count in post row where postId is equall to post.id
-            await db.update(post)
-                .set({ likesCount: sql`${post.likesCount} + 1` })
-                .where(eq(post.id, intPostId));
-        }
-        else {
-            // delete like data in likes
-            await db.delete(likes).where(eq(likes.postId, intPostId));
-
-            // update likes count in post row where postId is equall to post.id
-            await db.update(post)
-                .set({ likesCount: sql`${post.likesCount} - 1` })
-                .where(eq(post.id, intPostId));
+            return errRes(res, 400, "like is already present for post by user");
         }
 
-        return res.status(200).json({
-            success: true,
-            message: "like updated for post"
+        // update is delete
+        // send querry to database
+        const likesRes = await db.transaction(async (tx) => {
+            // check if like is present for post by user
+            const likeExists = await tx.select().from(likes)
+                .where(and(eq(likes.postId, intPostId), eq(likes.userId, userId2)))
+                .limit(1).execute();
+
+            // like is present then delete it
+            if (likeExists.length > 0) {
+                // delete like
+                await tx.delete(likes)
+                    .where(and(eq(likes.postId, intPostId), eq(likes.userId, userId2))).execute();
+
+                // update like count
+                await tx.update(post)
+                    .set({ likesCount: sql`${post.likesCount} - 1` })
+                    .where(eq(post.id, intPostId));
+
+                return { success: true, message: 'Like removed and likes count updated' };
+            } else {
+                // their is no like present for post by user return error
+                return { success: false, message: 'Like does not exist' };
+            }
         });
+
+        // check database querry response
+        if (likesRes.success) {
+            return res.status(200).json({
+                success: true,
+                message: "like updated for post"
+            });
+        }
+        return errRes(res, 400, "no like is present for post by user");
 
     } catch (error) {
         return errRes(res, 500, "error while updating like for post", error);
@@ -321,6 +358,12 @@ export const getStories = async (req: Request, res: Response): Promise<Response>
         const stories = await db.select().from(story)
             .where(arrayContains(story.userId, db.select({ userId: follow.followingId })
                 .from(follow).where(eq(follow.followerId, userId2))));
+
+        return res.status(200).json({
+            success: true,
+            message: "stories for user",
+            stories: stories
+        });
     } catch (error) {
         return errRes(res, 500, "error while getting stories", error);
     }
