@@ -47,10 +47,10 @@ export const postEndPoints = {
   CREATE_STORY: BASE_URL_SERVER + "/posts/createStory",
   DELETE_STORY: BASE_URL_SERVER + "/posts/deleteStory", // parameters: storyId
   UPDATE_LIKE: BASE_URL_SERVER + "/posts/updateLike", // parameters: postId, update
-  GET_STORIES: BASE_URL_SERVER + "/posts/getStories", // parameters: createdAt
   ADD_COMMENT: BASE_URL_SERVER + "/posts/addComment",
   DELETE_COMMENT: BASE_URL_SERVER + "/posts/deleteComment", // parameters: commentId
-  RECENT_POSTS: BASE_URL_SERVER + "/posts/recentPosts",
-  TRENDING_POSTS_: BASE_URL_SERVER + "/posts/trendingPosts",
-  CATEGORY_POSTS: BASE_URL_SERVER + "/posts/categoryPosts", // parameters: category
+  GET_STORIES: BASE_URL_SERVER + "/posts/getStories", // parameters: createdAt
+  RECENT_POSTS: BASE_URL_SERVER + "/posts/recentPosts", // parameters: createdAt
+  TRENDING_POSTS_: BASE_URL_SERVER + "/posts/trendingPosts", // parameters: createdAt
+  CATEGORY_POSTS: BASE_URL_SERVER + "/posts/categoryPosts", // parameters: category, createdAt
 };

@@ -33,8 +33,21 @@ export type CreateStoryRs = {
 export type AddCommentRs = {
     success: boolean,
     message: string,
-    id: number,
-    userId: number,
-    text: string
-    createdAt: Date,
+    comment: {
+        id: number,
+        userId: number,
+        text: string
+        createdAt: Date,
+    }
+} | null
+
+export type GetStoriesRs = {
+    success: boolean,
+    message: string,
+    stories: {
+        userName: string,
+        imageUrl: string,
+        storyUrl: string,
+        createdAt: string,
+    }[]
 } | null

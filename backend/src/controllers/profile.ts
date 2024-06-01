@@ -1,7 +1,7 @@
 import User from '@/db/mongodb/models/User';
 import { db } from '@/db/postgresql/connection';
 import { user } from '@/db/postgresql/schema/user';
-import { UpdateProfileReqSchema } from '@/types/controllers/profileReq';
+import { CheckUserNameReqSchema, UpdateProfileReqSchema } from '@/types/controllers/profileReq';
 import { CustomRequest } from '@/types/custom';
 import { deleteFromCloudinay, uploadToCloudinary } from '@/utils/cloudinaryHandler';
 import { deleteFile } from '@/utils/deleteFile';
@@ -11,17 +11,14 @@ import { Request, Response } from 'express';
 
 export const checkUserName = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const { userName } = req.query;
-
-        // validation
-        if (!userName) {
-            return res.status(400).json({
-                success: false,
-                message: 'invalid username input'
-            });
+        const checkUserNameReq = CheckUserNameReqSchema.safeParse(req.query);
+        if (!checkUserNameReq.success) {
+            return errRes(res, 400, `invalid data for checkUserName, ${checkUserNameReq.error.toString()}`);
         }
 
-        const checkUserName = await User.countDocuments({ userName: userName });
+        const data = checkUserNameReq.data;
+
+        const checkUserName = await User.countDocuments({ userName: data.userName });
 
         if (checkUserName !== 0) {
             return res.status(200).json({
@@ -121,7 +118,7 @@ export const updateProfileImage = async (req: Request, res: Response): Promise<R
 export const updateProfile = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId = (req as CustomRequest).userId;
-        
+
         const updateProfileReq = UpdateProfileReqSchema.safeParse(req.body);
         if (!updateProfileReq.success) {
             return errRes(res, 400, `invalid data for pofile update, ${updateProfileReq.error.toString()}`);
@@ -147,9 +144,6 @@ export const updateProfile = async (req: Request, res: Response): Promise<Respon
             }
             if (data.contactNumber) {
                 user.contactNumber = parseInt(data.contactNumber);
-            }
-            if (data.dateOfBirth) {
-                user.dateOfBirth = data.dateOfBirth;
             }
             if (data.gender) {
                 user.gender = data.gender;

@@ -5,7 +5,7 @@ import UnseenCount from "@/db/mongodb/models/UnseenCount";
 import User from "@/db/mongodb/models/User";
 import { channels, groupIds, groupOffline } from "@/socket";
 import { clientE } from "@/socket/events";
-import { FileMessageReqSchema } from "@/types/controllers/chatReq";
+import { ChatMessagesReqSchema, FileMessageReqSchema, GroupMessagesReqSchema } from "@/types/controllers/chatReq";
 import { CustomRequest } from "@/types/custom";
 import { SoGroupMessageRecieved, SoMessageRecieved } from "@/types/socket/eventTypes";
 import { uploadToCloudinary } from '@/utils/cloudinaryHandler';
@@ -15,7 +15,6 @@ import { getSingleSocket } from "@/utils/getSocketIds";
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from "uuid";
 import { deleteFile } from "@/utils/deleteFile";
-import { isValidMongooseObjectId } from "@/validators/mongooseId";
 
 type BarData = {
     // common
@@ -126,10 +125,6 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
             return errRes(res, 400, `invalid data for filemessage, ${fileMessageReq.error.toString()}`);
         }
         const data = fileMessageReq.data;
-        if (!isValidMongooseObjectId([data.mainId, data.to])) {
-            deleteFile(req.file);
-            return errRes(res, 400, 'invalid mongoose ids in request');
-        }
 
         const secUrl = await uploadToCloudinary(req.file);
         if (secUrl === null) {
@@ -261,15 +256,17 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
     try {
         const userId = (req as CustomRequest).userId;
 
-        const { chatId, createdAt } = req.query;
+        const chatMessagesReq = ChatMessagesReqSchema.safeParse(req.query);
 
-        if (!chatId || !createdAt) {
-            return errRes(res, 400, 'invalid data in querry');
+        if (!chatMessagesReq.success) {
+            return errRes(res, 400, `invalid data for chat messages, ${chatMessagesReq.error.toString()}`);
         }
 
+        const data = chatMessagesReq.data;
+
         const messages = await Message.find({
-            chatId: `${chatId}`,
-            createdAt: { $lt: `${createdAt}` }
+            chatId: `${data.chatId}`,
+            createdAt: { $lt: `${data.createdAt}` }
         })
             .sort({ createdAt: -1 })
             .limit(15)
@@ -278,15 +275,9 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
             .exec();
 
         if (messages.length === 0) {
-            if (createdAt) {
-                return res.status(200).json({
-                    success: false,
-                    message: 'no further messages for this chatId'
-                });
-            }
             return res.status(200).json({
                 success: false,
-                message: 'no messages yet for this chatId'
+                message: 'no further messages for this chatId'
             });
         }
 
@@ -317,15 +308,17 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
 
 export const groupMessages = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const { groupId, createdAt } = req.query;
+        const groupMessagesReq = GroupMessagesReqSchema.safeParse(req.query);
 
-        if (!groupId || !createdAt) {
-            return errRes(res, 400, 'invalid data in querry');
+        if (!groupMessagesReq.success) {
+            return errRes(res, 400, `invalid data for group messages, ${groupMessagesReq.error.toString()}`);
         }
 
+        const data = groupMessagesReq.data;
+
         const gpMessages = await GpMessage.find({
-            to: `${groupId}`,
-            createdAt: { $lt: `${createdAt}` }
+            to: `${data.groupId}`,
+            createdAt: { $lt: `${data.createdAt}` }
         })
             .sort({ createdAt: -1 })
             .limit(15)
@@ -340,7 +333,7 @@ export const groupMessages = async (req: Request, res: Response): Promise<Respon
         if (gpMessages.length === 0) {
             return res.status(200).json({
                 success: false,
-                message: 'no messages yet for this group'
+                message: 'no further messages for this group'
             });
         }
 

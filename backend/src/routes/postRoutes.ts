@@ -1,5 +1,10 @@
 /* eslint-disable drizzle/enforce-delete-with-where */
-import { addComment, createPost, createStory, deleteComment, deletePost, deleteStory, followUser, getStories, updateLike, userBlogProfile } from '@/controllers/post';
+import {
+    addComment, createPost, createStory, deleteComment, deletePost, deleteStory,
+    followUser, getStories, recentPosts,
+    trendingPosts,
+    updateLike, userBlogProfile
+} from '@/controllers/post';
 import { auth } from '@/middlewares/auth';
 import { postFiles, storyFile } from '@/middlewares/multer';
 import express, { Router } from 'express';
@@ -16,8 +21,8 @@ router.post('/updateLike', auth, updateLike); // parameters: postId, update
 router.post('/addComment', auth, addComment);
 router.delete('/deleteComment', auth, deleteComment); // parameters: commentId
 router.get('/getStories', auth, getStories); // parameters: createdAt
-router.get('/recentPosts', auth);
-router.get('/trendingPosts', auth);
-router.get('/categoryPosts', auth); // parameters: category
+router.get('/recentPosts', auth, recentPosts); // parameters: createdAt
+router.get('/trendingPosts', auth, trendingPosts); // parameters: createdAt
+router.get('/categoryPosts', auth); // parameters: category, createdAt
 
 export default router;

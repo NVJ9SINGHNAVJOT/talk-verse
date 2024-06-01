@@ -1,4 +1,4 @@
-import { AddCommentRs, CreatePostRs, CreateStoryRs, UserBlogProfileRs } from "@/types/apis/postApiRs";
+import { AddCommentRs, CreatePostRs, CreateStoryRs, GetStoriesRs, UserBlogProfileRs } from "@/types/apis/postApiRs";
 import { fetchApi } from "@/services/fetchApi";
 import { postEndPoints } from "@/services/apis";
 import { CommonRs } from "@/types/apis/common";
@@ -12,6 +12,7 @@ const {
     UPDATE_LIKE,
     ADD_COMMENT,
     DELETE_COMMENT,
+    GET_STORIES,
     RECENT_POSTS,
     TRENDING_POSTS,
     CATEGORY_POSTS
@@ -112,3 +113,16 @@ export const deleteCommentApi = async (commentId: string): Promise<boolean> => {
         return false;
     }
 };
+
+export const getStoriesApi = async (): Promise<GetStoriesRs> => {
+    try {
+        const resData: GetStoriesRs = await fetchApi('GET', GET_STORIES);
+        if (resData && resData.success === true) {
+            return resData;
+        }
+        return null;
+    } catch (error) {
+        return null;
+    }
+};
+

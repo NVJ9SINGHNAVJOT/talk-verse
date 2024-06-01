@@ -5,12 +5,16 @@ import { likes } from '@/db/postgresql/schema/likes';
 import { post } from '@/db/postgresql/schema/post';
 import { story } from '@/db/postgresql/schema/story';
 import { user } from '@/db/postgresql/schema/user';
-import { AddCommentReqSchema, CreatePostReqSchema } from '@/types/controllers/postReq';
+import {
+    AddCommentReqSchema, CreatePostReqSchema, DeleteCommentReqSchema,
+    DeletePostReqSchema, DeleteStoryReqSchema, FollowUserReqSchema, GetCreatedAtReqSchema,
+    UpdateLikeReqSchema
+} from '@/types/controllers/postReq';
 import { CustomRequest } from '@/types/custom';
 import { uploadMultiplesToCloudinary, uploadToCloudinary } from '@/utils/cloudinaryHandler';
 import { deleteFile, deleteFiles } from '@/utils/deleteFile';
 import { errRes } from '@/utils/error';
-import { and, eq, sql, lt } from 'drizzle-orm';
+import { and, eq, sql, lt, desc } from 'drizzle-orm';
 import { Request, Response } from 'express';
 
 export const userBlogProfile = async (req: Request, res: Response): Promise<Response> => {
@@ -38,13 +42,15 @@ export const userBlogProfile = async (req: Request, res: Response): Promise<Resp
 export const followUser = async (req: Request, res: Response): Promise<Response> => {
     try {
         const userId2 = (req as CustomRequest).userId2;
+        const followUserReq = FollowUserReqSchema.safeParse(req.query);
 
-        const { userIdToFollow } = req.query;
-        if (!userIdToFollow) {
-            return errRes(res, 400, "userIdToFollow not present in querry");
+        if (!followUserReq.success) {
+            return errRes(res, 400, `invalid data for follow user, ${followUserReq.error.toString()}`);
         }
 
-        const intUserIdToFollow = parseInt(`${userIdToFollow}`);
+        const data = followUserReq.data;
+
+        const intUserIdToFollow = parseInt(data.userIdToFollow);
         if (userId2 === intUserIdToFollow) {
             return errRes(res, 400, "userIdToFollow is same as userId2, invalid data in querry");
         }
@@ -154,12 +160,14 @@ export const deletePost = async (req: Request, res: Response): Promise<Response>
     try {
         const userId2 = (req as CustomRequest).userId2;
 
-        const { postId } = req.query;
-        if (!postId) {
-            return errRes(res, 400, "postId not present in querry");
+        const deletePostReq = DeletePostReqSchema.safeParse(req.query);
+        if (!deletePostReq.success) {
+            return errRes(res, 400, `invalid data for postId delete, ${deletePostReq.error.toString()}`);
         }
 
-        const intPostId = parseInt(`${postId}`);
+        const data = deletePostReq.data;
+
+        const intPostId = parseInt(data.postId);
 
         const postRes = await db.delete(post).where(and(eq(post.id, intPostId), eq(post.userId, userId2)))
             .returning({ id: post.id }).execute();
@@ -216,12 +224,15 @@ export const deleteStory = async (req: Request, res: Response): Promise<Response
     try {
         const userId2 = (req as CustomRequest).userId2;
 
-        const { storyId } = req.query;
-        if (!storyId) {
-            return errRes(res, 400, "storyId not present in querry");
+        const deleteStoryReq = DeleteStoryReqSchema.safeParse(req.query);
+        if (!deleteStoryReq.success) {
+            return errRes(res, 400, `invalid data for storyId delete, ${deleteStoryReq.error.toString()}`);
         }
 
-        const intStoryId = parseInt(`${storyId}`);
+        const data = deleteStoryReq.data;
+
+        const intStoryId = parseInt(data.storyId);
+
         const response = await db.delete(story).where(and(eq(story.id, intStoryId), eq(story.userId, userId2)))
             .returning({ id: story.id }).execute();
 
@@ -242,15 +253,18 @@ export const updateLike = async (req: Request, res: Response): Promise<Response>
     try {
         const userId2 = (req as CustomRequest).userId2;
 
-        const { postId, update } = req.query;
-        if (!postId) {
-            return errRes(res, 400, "postId not present in querry");
+        const updateLikeReq = UpdateLikeReqSchema.safeParse(req.query);
+
+        if (!updateLikeReq.success) {
+            return errRes(res, 400, `invalid data for update like, ${updateLikeReq.error.toString()}`);
         }
 
-        const intPostId = parseInt(`${postId}`);
+        const data = updateLikeReq.data;
+
+        const intPostId = parseInt(data.postId);
 
         // update is add
-        if (`${update}` === "add") {
+        if (data.update === "add") {
             // send querry to database
             const likesRes = await db.transaction(async (tx) => {
                 // check if like is already present for post by user
@@ -349,12 +363,14 @@ export const deleteComment = async (req: Request, res: Response): Promise<Respon
     try {
         const userId2 = (req as CustomRequest).userId2;
 
-        const { commentId } = req.query;
-        if (!commentId) {
-            return errRes(res, 400, "invalid data for deleting comment");
+        const deleteCommentReq = DeleteCommentReqSchema.safeParse(req.query);
+        if (!deleteCommentReq.success) {
+            return errRes(res, 400, `invalid data for deleting comment, ${deleteCommentReq.error.toString()}`);
         }
 
-        const commentRes = await db.delete(comment).where(and(eq(comment.id, parseInt(`${commentId}`)), eq(comment.userId, userId2)))
+        const data = deleteCommentReq.data;
+
+        const commentRes = await db.delete(comment).where(and(eq(comment.id, parseInt(data.commentId)), eq(comment.userId, userId2)))
             .returning({ id: comment.id }).execute();
 
         if (commentRes.length) {
@@ -375,34 +391,108 @@ export const getStories = async (req: Request, res: Response): Promise<Response>
     try {
         const userId2 = (req as CustomRequest).userId2;
 
-        const { createdAt } = req.query;
+        const getStoriesReq = GetCreatedAtReqSchema.safeParse(req.query);
 
-        if (!createdAt) {
-            return errRes(res, 400, "invalid createdAt data for getting stories");
+        if (!getStoriesReq.success) {
+            return errRes(res, 400, `invalid data for getting stories, ${getStoriesReq.error.toString()}`);
         }
-        const beforeAt = new Date(`${createdAt}`);
+        const data = getStoriesReq.data;
+
+        const beforeAt = new Date(`${data.createdAt}`);
         const stories = await db.select({
-            story: {
-                storyUrl: story.storyUrl,
-                createdAt: story.createdAt,
-            },
-            user: {
-                userName: user.userName,
-                imageUrl: user.imageUrl,
-            }
+            userName: user.userName,
+            imageUrl: user.imageUrl,
+            storyUrl: story.storyUrl,
+            createdAt: story.createdAt,
         })
             .from(story)
             .leftJoin(follow, eq(story.userId, follow.followingId))
             .leftJoin(user, eq(story.userId, user.id))
             .where(and(eq(follow.followerId, userId2), lt(story.createdAt, beforeAt)))
+            .orderBy(desc(story.createdAt))
+            .limit(15)
             .execute();
 
+        if (stories.length) {
+            return res.status(200).json({
+                success: true,
+                message: "stories for user",
+                stories: stories
+            });
+        }
         return res.status(200).json({
-            success: true,
-            message: "stories for user",
-            stories: stories
+            success: false,
+            message: "no further stories for user"
         });
+
     } catch (error) {
         return errRes(res, 500, "error while getting stories", error);
+    }
+};
+
+export const recentPosts = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const recentPostsReq = GetCreatedAtReqSchema.safeParse(req.query);
+        if (!recentPostsReq.success) {
+            return errRes(res, 400, `invalid data for recentPosts, ${recentPostsReq.error.toString()}`);
+        }
+
+        const data = recentPostsReq.data;
+
+        const recentPosts = await db.select({
+            id: post.id,
+            userId: post.userId,
+            category: post.category,
+            title: post.title,
+            mediaUrls: post.mediaUrls,
+            tags: post.tags,
+            content: post.content,
+            likesCount: post.likesCount,
+            createdAt: post.createdAt
+        })
+            .from(post)
+            .where(lt(post.createdAt, new Date(data.createdAt)))
+            .orderBy(desc(post.createdAt))
+            .limit(15)
+            .execute();
+
+        if (recentPosts.length) {
+            return res.status(200).json({
+                success: true,
+                message: "recent posts",
+                recentPosts: recentPosts
+            });
+        }
+        return res.status(200).json({
+            success: false,
+            message: "no further recent posts",
+        });
+    } catch (error) {
+        return errRes(res, 500, "error while getting trending posts");
+    }
+};
+
+export const trendingPosts = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const userId2 = (req as CustomRequest).userId2;
+        const trendingPosts = await db
+            .select({
+                id: post.id,
+                userId: post.userId,
+                category: post.category,
+                title: post.title,
+                mediaUrls: post.mediaUrls,
+                tags: post.tags,
+                content: post.content,
+                likesCount: post.likesCount,
+                createdAt: post.createdAt
+            })
+            .from(post)
+            .where(lt(post.createdAt, new Date()))
+            .orderBy(desc(post.likesCount), desc(post.createdAt))
+            .limit(15)
+            .execute();
+    } catch (error) {
+        return errRes(res, 500, "error while getting trending posts");
     }
 };

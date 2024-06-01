@@ -1,4 +1,5 @@
 import z from "zod";
+import { isValidMongooseObjectId } from "@/validators/mongooseId";
 
 // password
 export const passwordSchema = z.string().min(8).max(20).refine((password) => {
@@ -37,6 +38,11 @@ export const optSchema = z.string().length(6).regex(/^[0-9]{6}$/);
 export const categoriesSchema = z.enum(["Technology", "Lifestyle", "Blog", "Nature", "Music",
     "Sports", "Health", "Finance", "Art", "History",
     "Literature", "Science", "Business", "Other"]);
+
+// mongoose id
+export const mongooseIdSchema = z.string().refine((value) => {
+    return isValidMongooseObjectId([value]);
+}, { message: "invalid mongoose id" });
 
 // postgreSQL id
 export const postgreSQLIdSchema = z.string().min(1).regex(/^\d+$/);

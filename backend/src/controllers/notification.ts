@@ -41,7 +41,7 @@ export const getUsers = async (req: Request, res: Response): Promise<Response> =
         );
         excluedIds.push(userId);
 
-        const users = await User.find({ _id: { $nin: excluedIds }, userName: { $regex: userName, $options: 'i' } })
+        const users = await User.find({ _id: { $nin: excluedIds }, userName: { $regex: `${userName}`, $options: 'i' } })
             .select({ userName: true, imageUrl: true }).limit(20).exec();
 
         if (users.length < 1) {
