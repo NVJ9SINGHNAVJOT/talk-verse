@@ -25,6 +25,10 @@ import Settings from "@/components/core/profile/Settings";
 import UserInfo from "@/components/core/profile/UserInfo";
 import ChekKey from "@/pages/ChekKey";
 import Contact from "@/pages/Contact";
+import Blog from "@/pages/Blog";
+import Trending from "./components/blog/post/Trending";
+import Recent from "./components/blog/post/Recent";
+import Category from "./components/blog/post/Category";
 
 function App() {
   const pageRenderDivRef = useRef<HTMLDivElement>(null);
@@ -54,10 +58,10 @@ function App() {
     <SiteLoadingModal />
   ) : (
     <div className="w-screen h-screen overflow-y-auto overflow-x-hidden max-w-maxContent min-w-minContent">
-      {/* main nav bar */}
+      {/* ===== main nav bar ===== */}
       <MainNavbar />
 
-      {/* all pages will be rendered below */}
+      {/* ===== all pages will be rendered below ===== */}
       <div
         ref={pageRenderDivRef}
         className="w-screen h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden max-w-maxContent min-w-minContent scroll-smooth"
@@ -67,12 +71,13 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
 
-          {/* open routes */}
+          {/* ===== open routes ===== */}
           <Route element={<OpenRoute />}>
             <Route path="/login" element={<Login />} />
           </Route>
 
-          {/* private routes */}
+          {/* ===== private routes ===== */}
+          {/* talk page */}
           <Route
             element={
               <PrivateRoute>
@@ -86,6 +91,7 @@ function App() {
             <Route path="/talk/chat/:chatId?" element={<Chat />} />
             <Route path="/talk/group/:groupId?" element={<Group />} />
           </Route>
+          {/* profile page */}
           <Route
             element={
               <PrivateRoute>
@@ -97,6 +103,7 @@ function App() {
             <Route path="/profile/dashboard" element={<Dashboard />} />
             <Route path="/profile/settings" element={<Settings />} />
           </Route>
+          {/* checkkey page */}
           <Route
             path="/checkKey"
             element={
@@ -105,8 +112,20 @@ function App() {
               </PrivateRoute>
             }
           />
+          {/* blog page */}
+          <Route
+            element={
+              <PrivateRoute>
+                <Blog />
+              </PrivateRoute>
+            }
+          >
+            <Route path="/blog/trending" element={<Trending />} />
+            <Route path="/blog/recent" element={<Recent />} />
+            <Route path="/blog/:category?" element={<Category />} />
+          </Route>
 
-          {/* error routes */}
+          {/* ===== error routes ===== */}
           <Route path="/error" element={<Error />} />
           <Route path="*" element={<Error />} />
         </Routes>

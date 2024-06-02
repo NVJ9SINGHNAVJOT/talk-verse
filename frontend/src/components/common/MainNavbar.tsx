@@ -59,6 +59,10 @@ const MainNavbar = () => {
     }
   };
 
+  const blogHandler = () => {
+    navigate("/blog/trending");
+  };
+
   return (
     <div
       className="relative bg-[radial-gradient(circle_at_24.1%_68.8%,_rgb(50,_50,_50)_0%,_rgb(0,_0,_0)_99.4%)]
@@ -107,7 +111,10 @@ const MainNavbar = () => {
         >
           Talk
         </div>
-        <div className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">
+        <div
+          className=" text-white  cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]"
+          onClick={blogHandler}
+        >
           Blog
         </div>
       </div>
@@ -167,7 +174,10 @@ const MainNavbar = () => {
           >
             Talk
           </div>
-          <div className="cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]">
+          <div
+            className="cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]"
+            onClick={blogHandler}
+          >
             Blog
           </div>
         </div>
