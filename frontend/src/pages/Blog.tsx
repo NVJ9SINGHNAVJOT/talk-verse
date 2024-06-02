@@ -4,9 +4,9 @@ const Blog = () => {
   return (
     <div className="w-full flex h-[calc(100vh-4rem)] min-w-minContent">
       {/* user profile and category section  */}
-      <section className=" w-64 bg-black"></section>
+      <section className=" w-72 bg-black"></section>
       {/* posts section */}
-      <section className=" w-[calc(100%-16rem-18rem)] bg-yellow-200">
+      <section className=" w-full bg-yellow-200">
         {/* story section */}
         <section></section>
         <Outlet />

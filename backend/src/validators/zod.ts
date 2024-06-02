@@ -2,21 +2,21 @@ import z from "zod";
 import { isValidMongooseObjectId } from "@/validators/mongooseId";
 
 // password
-export const passwordSchema = z.string().min(8).max(20).refine((password) => {
+export const passwordSchema = z.string().min(8).max(20).refine((value) => {
     // Check for at least one uppercase letter
-    if (!/[A-Z]/.test(password)) {
+    if (!/[A-Z]/.test(value)) {
         return false;
     }
     // Check for at least one lowercase letter
-    if (!/[a-z]/.test(password)) {
+    if (!/[a-z]/.test(value)) {
         return false;
     }
     // Check for at least one digit
-    if (!/\d/.test(password)) {
+    if (!/\d/.test(value)) {
         return false;
     }
     // Check for at least one special symbol
-    if (!/[!@#$%^&*]/.test(password)) {
+    if (!/[!@#$%^&*]/.test(value)) {
         return false;
     }
     return true;
