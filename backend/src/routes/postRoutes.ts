@@ -1,6 +1,7 @@
 /* eslint-disable drizzle/enforce-delete-with-where */
 import {
-    addComment, createPost, createStory, deleteComment, deletePost, deleteStory,
+    addComment, categoryPosts, createPost, createStory,
+    deleteComment, deletePost, deleteStory,
     followUser, getStories, recentPosts,
     trendingPosts,
     updateLike, userBlogProfile
@@ -23,6 +24,6 @@ router.delete('/deleteComment', auth, deleteComment); // parameters: commentId
 router.get('/getStories', auth, getStories); // parameters: createdAt
 router.get('/recentPosts', auth, recentPosts); // parameters: createdAt
 router.get('/trendingPosts', auth, trendingPosts); // parameters: createdAt
-router.get('/categoryPosts', auth); // parameters: category, createdAt
+router.get('/categoryPosts', auth, categoryPosts); // parameters: category, createdAt
 
 export default router;

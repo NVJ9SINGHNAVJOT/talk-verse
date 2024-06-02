@@ -45,3 +45,9 @@ export const GetCreatedAtReqSchema = z.object({
     createdAt: z.string().datetime()
 });
 export type GetCreatedAtReq = z.infer<typeof GetCreatedAtReqSchema>;
+
+export const CategoryPostsReqSchema = z.object({
+    category: categoriesSchema,
+    createdAt: z.string().datetime(),
+});
+export type CategoryPostsReq = z.infer<typeof CategoryPostsReqSchema>;

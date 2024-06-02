@@ -6,7 +6,7 @@ import { post } from '@/db/postgresql/schema/post';
 import { story } from '@/db/postgresql/schema/story';
 import { user } from '@/db/postgresql/schema/user';
 import {
-    AddCommentReqSchema, CreatePostReqSchema, DeleteCommentReqSchema,
+    AddCommentReqSchema, CategoryPostsReqSchema, CreatePostReqSchema, DeleteCommentReqSchema,
     DeletePostReqSchema, DeleteStoryReqSchema, FollowUserReqSchema, GetCreatedAtReqSchema,
     UpdateLikeReqSchema
 } from '@/types/controllers/postReq';
@@ -512,5 +512,48 @@ export const trendingPosts = async (req: Request, res: Response): Promise<Respon
         });
     } catch (error) {
         return errRes(res, 500, "error while getting trending posts");
+    }
+};
+
+export const categoryPosts = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const categoryPostsReq = CategoryPostsReqSchema.safeParse(req.query);
+        if (!categoryPostsReq.success) {
+            return errRes(res, 400, `invalid data for category post, ${categoryPostsReq.error.toString()}`);
+        }
+
+        const data = categoryPostsReq.data;
+
+        const categoryPosts = await db
+            .select({
+                id: post.id,
+                userId: post.userId,
+                category: post.category,
+                title: post.title,
+                mediaUrls: post.mediaUrls,
+                tags: post.tags,
+                content: post.content,
+                likesCount: post.likesCount,
+                createdAt: post.createdAt
+            })
+            .from(post)
+            .where(and(eq(post.category, data.category), lt(post.createdAt, new Date(data.createdAt))))
+            .orderBy(desc(post.createdAt))
+            .limit(15)
+            .execute();
+
+        if (categoryPosts.length) {
+            return res.status(200).json({
+                success: true,
+                message: "category posts",
+                posts: categoryPosts
+            });
+        }
+        return res.status(200).json({
+            success: false,
+            message: "no further category posts",
+        });
+    } catch (error) {
+        return errRes(res, 500, "error while getting category posts");
     }
 };
