@@ -21,6 +21,7 @@ networks:
 services:
   # ---
   app:
+    <<: *x-logging
     build:
       context: .
       dockerfile: Dockerfile
