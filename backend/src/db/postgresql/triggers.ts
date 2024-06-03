@@ -9,7 +9,7 @@ loggerConfig(process.env['ENVIRONMENT'] as string);
 const tables = ["user", "story", "save", "post", "likes", "follow", "comment"];
 
 // Function to create the trigger function 
-async function setupPostgreSQLTriggers() {
+export async function setupPostgreSQLTriggers() {
     try {
         const pool = new Pool({
             host: process.env['POSTGRESQL_HOST'],
@@ -49,5 +49,3 @@ async function setupPostgreSQLTriggers() {
         logger.error('triggers failed for postgresql', { error: error });
     }
 }
-
-setupPostgreSQLTriggers();

@@ -10,6 +10,8 @@ import setupChannels from '@/socket/setupChannels';
 import { mongodbDatabaseConnect } from '@/db/mongodb/connection';
 import { postgresqlDatabaseConnect } from '@/db/postgresql/connection';
 import { checkEnvVariables } from '@/validators/checkEnvVariables';
+import { migratePostgreSQL } from '@/db/postgresql/migrate';
+import { setupPostgreSQLTriggers } from '@/db/postgresql/triggers';
 
 async function main() {
     // check environment variables
@@ -17,6 +19,10 @@ async function main() {
     // setup logger
     loggerConfig(`${process.env['ENVIRONMENT']}`);
 
+    // postgresql migrations and triggers
+    await migratePostgreSQL();
+    await setupPostgreSQLTriggers();
+    
     // connect databases
     await mongodbDatabaseConnect();
     await postgresqlDatabaseConnect();

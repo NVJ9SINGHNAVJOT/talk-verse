@@ -6,7 +6,7 @@ import { logger, loggerConfig } from '@/logger/logger';
 configDotenv();
 loggerConfig(process.env['ENVIRONMENT'] as string);
 
-async function migratePostgreSQL() {
+export async function migratePostgreSQL() {
     try {
         const pool = new Pool({
             host: process.env['POSTGRESQL_HOST'],
@@ -27,5 +27,3 @@ async function migratePostgreSQL() {
         logger.error('error while postgresql migration', { error: error });
     }
 }
-
-migratePostgreSQL();
