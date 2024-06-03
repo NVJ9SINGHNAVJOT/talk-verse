@@ -13,5 +13,7 @@ export default {
         user: process.env["POSTGRESQL_USER"] as string,
         password: process.env["POSTGRESQL_PASSWORD"] as string,
         database: process.env["POSTGRESQL_DATABASE_NAME"] as string,
-    }
+    },
+    verbose: true,
+    strict: true,
 } satisfies Config;

@@ -9,7 +9,7 @@ x-logging: &x-logging
       max-size: '10m'
 
 volumes:
-  app:
+  talkverse-app:
   talkverse-pg:
   talkverse-mongo:
 
@@ -27,7 +27,7 @@ services:
       dockerfile: Dockerfile
     container_name: talkverse-app
     volumes:
-      - .:/usr/src/app
+      - talkverse-app:/usr/src/app
     networks:
       - talkverse-proxy
     ports: [5000:5000]
@@ -42,9 +42,9 @@ services:
     container_name: talkverse-postgres
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: ${POSTGRESQL_DATABASE_NAME:-database}
-      POSTGRES_USER: ${POSTGRESQL_USER:-user}
-      POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRESQL_DATABASE_NAME}
+      POSTGRES_USER: ${POSTGRESQL_USER}
+      POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
