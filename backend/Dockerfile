@@ -1,21 +1,24 @@
-# Dockerfile
-FROM node:lts-alpine3.20
+FROM node:20-alpine AS base
 
-# Create app directory
-WORKDIR /usr/src/app
+# Install dependencies only when needed
+FROM base AS deps
 
-# Install app dependencies
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+# Install dependencies
 COPY package.json ./
-RUN npm install
+COPY package-lock.json ./
+RUN npm ci
 
-# Copy the rest of your application code
+# Rebuild the source code only when needed
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Build your TypeScript code
 RUN npm run build
 
-# Expose the port your app will listen on
 EXPOSE 5000
 
-# Start your application
-CMD ["npm", "run", "start"]
+CMD ["node", "dist/index.js"]
