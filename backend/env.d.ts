@@ -17,14 +17,11 @@ declare namespace NodeJS {
         API_SECRET: string;
 
         MONGO_INITDB_DATABASE: string;
-        MONGO_INITDB_ROOT_USERNAME: string;
-        MONGO_INITDB_ROOT_PASSWORD: string;
         MONGODB_URL: string;
 
         POSTGRES_HOST: string;
-        POSTGRES_PORT: string;
         POSTGRES_USER: string;
-        POSTGRES_PASSWORD: string;
         POSTGRES_DB: string;
+        POSTGRES_PASSWORD: string;
     }
 }
