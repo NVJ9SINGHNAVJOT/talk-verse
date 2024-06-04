@@ -11,8 +11,8 @@ export async function migratePostgreSQL() {
         const pool = new Pool({
             host: `${process.env['POSTGRES_HOST']}`,
             user: `${process.env['POSTGRES_USER']}`,
-            password: `${process.env['POSTGRES_PASSWORD']}`,
             database: `${process.env['POSTGRES_DB']}`,
+            password: `${process.env['POSTGRES_PASSWORD']}`,
         });
         const db: NodePgDatabase = drizzle(pool);
 

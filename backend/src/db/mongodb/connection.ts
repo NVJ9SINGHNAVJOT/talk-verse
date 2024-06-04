@@ -13,6 +13,6 @@ export async function mongodbDatabaseConnect() {
         // Ensures that the client will close when error
         logger.error("mongodb connection failed", { error: error });
         await mongoose.disconnect();
-        process.exit();
+        process.exit(1);
     }
 }

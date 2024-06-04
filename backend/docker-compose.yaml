@@ -1,13 +1,6 @@
 ---
 version: '3.8'
 
-x-logging: &x-logging
-  logging:
-    driver: 'json-file'
-    options:
-      max-file: '5'
-      max-size: '10m'
-
 volumes:
   talkverse-app:
   talkverse-pg:
@@ -19,9 +12,8 @@ networks:
     external: true
 
 services:
-  # ---
+
   app:
-    <<: *x-logging
     build:
       context: .
       dockerfile: Dockerfile
@@ -31,27 +23,28 @@ services:
     networks:
       - talkverse-proxy
     ports: [5000:5000]
+    env_file: .env.example
     depends_on:
       - postgres
       - mongo
 
   postgres:
-    <<: *x-logging
-    security_opt: [no-new-privileges:true]
-    restart: unless-stopped
     container_name: talkverse-postgres
     image: postgres:16-alpine
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
       - talkverse-pg:/var/lib/postgresql/data
+    env_file: .env.example
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
       - talkverse-proxy
     ports: [5432:5432]
 
   mongo:
-    <<: *x-logging
-    restart: unless-stopped
     container_name: talkverse-mongo
     image: mongo:5.0
     volumes:
