@@ -18,6 +18,9 @@ export function checkEnvVariables() {
         !process.env['API_KEY'] ||
         !process.env['API_SECRET'] ||
 
+        !process.env['MONGO_INITDB_DATABASE'] ||
+        !process.env['MONGO_INITDB_ROOT_USERNAME'] ||
+        !process.env['MONGO_INITDB_ROOT_PASSWORD'] ||
         !process.env['MONGODB_URL'] ||
 
         !process.env['POSTGRES_HOST'] ||
