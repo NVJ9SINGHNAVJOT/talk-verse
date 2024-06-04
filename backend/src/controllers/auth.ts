@@ -217,6 +217,7 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
           message: "user login successfull",
           user: {
             _id: checkUser._id,
+            userName: checkUser.userName,
             firstName: checkUser.firstName,
             lastName: checkUser.lastName,
             imageUrl: checkUser.imageUrl,
@@ -257,7 +258,7 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
     }
 
     const user = await User.findById({ _id: `${userIds[0]}` }).select({
-      firstName: true, lastName: true, imageUrl: true, publicKey: true
+      firstName: true, lastName: true, userName: true, imageUrl: true, publicKey: true
     }).exec();
 
     if (!user) {

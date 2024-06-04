@@ -3,6 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 export type User = {
     _id: string,
+    userName:string,
     firstName: string,
     lastName: string,
     imageUrl?: string | null
