@@ -9,9 +9,9 @@ export async function mongodbDatabaseConnect() {
         await mongoose.connect(`${process.env['MONGODB_URL']}`, clientOptions);
         await mongoose.connection.db.admin().command({ ping: 1 });
         logger.info("mongodb database connected");
-    } catch {
+    } catch (error) {
         // Ensures that the client will close when error
-        logger.info("mongodb connection failed");
+        logger.error("mongodb connection failed", { error: error });
         await mongoose.disconnect();
         process.exit();
     }
