@@ -26,6 +26,8 @@ services:
     depends_on:
       - postgres
       - mongo
+    entrypoint: ['/app/wait-for.sh', 'postgres:5432', '--', '/app/start.sh']
+    command: [ 'node', 'dist/index.js']
 
   postgres:
     container_name: talkverse-postgres

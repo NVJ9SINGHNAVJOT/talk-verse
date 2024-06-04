@@ -21,5 +21,3 @@ RUN npm run postgresqldb:generate
 RUN npm run build
 
 EXPOSE 5000
-
-CMD ["node", "dist/index.js"]
