@@ -9,13 +9,13 @@ import { setupWebSocket } from '@/socket/index';
 import setupChannels from '@/socket/setupChannels';
 import { mongodbDatabaseConnect } from '@/db/mongodb/connection';
 import { postgresqlDatabaseConnect } from '@/db/postgresql/connection';
-// import { checkEnvVariables } from '@/validators/checkEnvVariables';
+import { checkEnvVariables } from '@/validators/checkEnvVariables';
 import { migratePostgreSQL } from '@/db/postgresql/migrate';
 import { setupPostgreSQLTriggers } from '@/db/postgresql/triggers';
 
 async function main() {
     // check environment variables
-    // checkEnvVariables();
+    checkEnvVariables();
     // setup logger
     loggerConfig(`${process.env['ENVIRONMENT']}`);
 
