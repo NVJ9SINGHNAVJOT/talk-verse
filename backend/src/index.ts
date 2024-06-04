@@ -19,14 +19,14 @@ async function main() {
     // setup logger
     loggerConfig(`${process.env['ENVIRONMENT']}`);
 
-    // postgresql migrations and triggers
-    await migratePostgreSQL();
-    await setupPostgreSQLTriggers();
-    
     // connect databases
     await mongodbDatabaseConnect();
     await postgresqlDatabaseConnect();
 
+    // postgresql migrations and triggers
+    await migratePostgreSQL();
+    await setupPostgreSQLTriggers();
+    
     // get port number
     const PORT = parseInt(`${process.env['PORT']}`) || 5000;
 
