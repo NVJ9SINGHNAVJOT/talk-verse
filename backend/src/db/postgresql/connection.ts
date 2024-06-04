@@ -12,7 +12,7 @@ import { configDotenv } from "dotenv";
 
 configDotenv();
 
-const pool = new Pool({
+export const pool = new Pool({
     host: `${process.env['POSTGRES_HOST']}`,
     user: `${process.env['POSTGRES_USER']}`,
     password: `${process.env['POSTGRES_PASSWORD']}`,

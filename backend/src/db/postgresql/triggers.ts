@@ -1,22 +1,13 @@
 import { sql } from 'drizzle-orm';
 import { NodePgDatabase, drizzle } from 'drizzle-orm/node-postgres';
-import { configDotenv } from "dotenv";
-import { Pool } from 'pg';
-import { logger, loggerConfig } from '@/logger/logger';
-configDotenv();
-loggerConfig(process.env['ENVIRONMENT'] as string);
+import { logger, } from '@/logger/logger';
+import { pool } from '@/db/postgresql/connection';
 
 const tables = ["user", "story", "save", "post", "likes", "follow", "comment"];
 
 // Function to create the trigger function 
 export async function setupPostgreSQLTriggers() {
     try {
-        const pool = new Pool({
-            host: `${process.env['POSTGRES_HOST']}`,
-            user: `${process.env['POSTGRES_USER']}`,
-            password: `${process.env['POSTGRES_PASSWORD']}`,
-            database: `${process.env['POSTGRES_DB']}`,
-        });
         const db: NodePgDatabase = drizzle(pool);
 
         logger.info('setting up triggers...');
@@ -42,9 +33,9 @@ export async function setupPostgreSQLTriggers() {
         }
 
         logger.info('triggers setup complete, exiting...');
-        await pool.end();
-
     } catch (error) {
         logger.error('triggers failed for postgresql', { error: error });
+        await pool.end();
+        process.exit();
     }
 }
