@@ -1,5 +1,3 @@
-import { logger } from "@/logger/logger";
-
 export function checkEnvVariables() {
     if (
         !process.env['ENVIRONMENT'] ||
@@ -26,7 +24,7 @@ export function checkEnvVariables() {
         !process.env['POSTGRES_PASSWORD'] ||
         !process.env['POSTGRES_DB']
     ) {
-        logger.error("error in environment variables");
+        console.error("error in environment variables");
         process.exit();
     }
 }
