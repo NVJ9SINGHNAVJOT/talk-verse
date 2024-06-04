@@ -41,10 +41,6 @@ services:
     restart: unless-stopped
     container_name: talkverse-postgres
     image: postgres:16-alpine
-    environment:
-      POSTGRES_DB: ${POSTGRESQL_DATABASE_NAME}
-      POSTGRES_USER: ${POSTGRESQL_USER}
-      POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
@@ -58,10 +54,6 @@ services:
     restart: unless-stopped
     container_name: talkverse-mongo
     image: mongo:5.0
-    environment:
-      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-database}
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-user}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-password}
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro

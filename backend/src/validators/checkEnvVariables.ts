@@ -1,3 +1,5 @@
+import { logger } from "@/logger/logger";
+
 export function checkEnvVariables() {
     if (
         !process.env['ENVIRONMENT'] ||
@@ -18,12 +20,13 @@ export function checkEnvVariables() {
 
         !process.env['MONGODB_URL'] ||
 
-        !process.env['POSTGRESQL_HOST'] ||
-        !process.env['POSTGRESQL_PORT'] ||
-        !process.env['POSTGRESQL_USER'] ||
-        !process.env['POSTGRESQL_PASSWORD'] ||
-        !process.env['POSTGRESQL_DATABASE_NAME']
+        !process.env['POSTGRES_HOST'] ||
+        !process.env['POSTGRES_PORT'] ||
+        !process.env['POSTGRES_USER'] ||
+        !process.env['POSTGRES_PASSWORD'] ||
+        !process.env['POSTGRES_DB']
     ) {
+        logger.error("error in environment variables");
         process.exit();
     }
 }

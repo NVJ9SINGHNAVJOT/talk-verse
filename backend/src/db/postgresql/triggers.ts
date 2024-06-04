@@ -12,11 +12,11 @@ const tables = ["user", "story", "save", "post", "likes", "follow", "comment"];
 export async function setupPostgreSQLTriggers() {
     try {
         const pool = new Pool({
-            host: process.env['POSTGRESQL_HOST'],
-            port: parseInt(process.env['POSTGRESQL_PORT'] as string),
-            user: process.env['POSTGRESQL_USER'],
-            password: process.env['POSTGRESQL_PASSWORD'],
-            database: process.env['POSTGRESQL_DATABASE_NAME'],
+            host: `${process.env['POSTGRES_HOST']}`,
+            port: parseInt(`${process.env['POSTGRES_PORT']}`),
+            user: `${process.env['POSTGRES_USER']}`,
+            password: `${process.env['POSTGRES_PASSWORD']}`,
+            database: `${process.env['POSTGRES_DB']}`,
         });
         const db: NodePgDatabase = drizzle(pool);
 
