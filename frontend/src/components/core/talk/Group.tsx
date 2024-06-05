@@ -16,7 +16,6 @@ import {
   getGroupMessagesApi,
 } from "@/services/operations/chatApi";
 import { sendGroupMessageEvent } from "@/socket/emitEvents/emitMessageEvents";
-import { GetGroupMessagesRs } from "@/types/apis/chatApiRs";
 import { MessageText } from "@/types/common";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -98,7 +97,7 @@ const Group = () => {
         }
 
         // get messages for groupId
-        const response: GetGroupMessagesRs = await getGroupMessagesApi(
+        const response = await getGroupMessagesApi(
           groupId,
           lastCreatedAt
         );
@@ -171,7 +170,7 @@ const Group = () => {
           setApiCall({ api: `getGroupMessagesApi-${groupId}`, status: true })
         );
 
-        const response: GetGroupMessagesRs = await getGroupMessagesApi(
+        const response = await getGroupMessagesApi(
           groupId,
           gpMessages[groupId][gpMessages[groupId].length - 1].createdAt
         );

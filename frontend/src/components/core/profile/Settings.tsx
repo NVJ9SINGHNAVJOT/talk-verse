@@ -5,8 +5,6 @@ import {
   checkUserNameApi,
   setProfileDetailsApi,
 } from "@/services/operations/profileApi";
-import { CommonRs } from "@/types/apis/common";
-import { GetProfileRs } from "@/types/apis/profileApiRs";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaEdit } from "react-icons/fa";
@@ -44,7 +42,7 @@ const Settings = () => {
     let change = false;
 
     if (profile?.userName !== data.userName) {
-      const response: CommonRs = await checkUserNameApi(data.userName);
+      const response = await checkUserNameApi(data.userName);
       if (response) {
         if (response.success === false) {
           toast.info("This userName is already in use");
@@ -78,7 +76,7 @@ const Settings = () => {
     }
 
     if (change) {
-      const response: GetProfileRs = await setProfileDetailsApi(newProfileData);
+      const response = await setProfileDetailsApi(newProfileData);
 
       if (response) {
         if (response.success === true) {

@@ -5,7 +5,6 @@ import { setCreateGroupLoading } from "@/redux/slices/loadingSlice";
 import { addNewUnseen } from "@/redux/slices/messagesSlice";
 import { useAppSelector } from "@/redux/store";
 import { createGroupApi } from "@/services/operations/notificationApi";
-import { CreateGroupRs } from "@/types/apis/chatApiRs";
 import { maxFileSize, validFiles } from "@/utils/constants";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -78,7 +77,7 @@ const CreateGroupModal = (props: CreateGroupModalProps) => {
     newFormData.append("userIdsInGroup", JSON.stringify(groupMembers));
     setGroupMembers([]);
 
-    const response: CreateGroupRs = await createGroupApi(newFormData);
+    const response = await createGroupApi(newFormData);
     if (response && response.success) {
       dispatch(addGroup(response.newGroup));
       dispatch(addNewUnseen(response.newGroup._id));

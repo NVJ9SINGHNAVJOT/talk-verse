@@ -80,7 +80,6 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     // encrypt password
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
-    /* ===== Caution: create key pair for user ===== */
     // Generate a key pair (public and private keys)
     const keypair = forge.pki.rsa.generateKeyPair({ bits: 2048 });
     const publicKeyPem = forge.pki.publicKeyToPem(keypair.publicKey);
@@ -113,7 +112,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     // Remove the first and last lines (which contain the comment)
     const privateKeyPemOnly = lines.slice(1, -1).join("\n");
 
-    /* ===== Caution: only for development purpose, remove comment in production ===== */
+    /* ===== Caution: commented only for development purpose, remove comment in production ===== */
     // await sendPrivateKeyMail(data.email, privateKeyPemOnly);
 
     return res.status(200).json({
@@ -142,7 +141,7 @@ export const sendOtp = async (req: Request, res: Response): Promise<Response> =>
     const newOtp = generateOTP();
     await Otp.create({ email: data.email, otpValue: newOtp });
 
-    /* ===== Caution: only for development purpose, remove comment in production ===== */
+    /* ===== Caution: commented only for development purpose, remove comment in production ===== */
     // await sendVerficationMail(data.email, newOtp);
 
     return res.status(200).json({

@@ -14,7 +14,7 @@ import { CustomRequest } from '@/types/custom';
 import { uploadMultiplesToCloudinary, uploadToCloudinary } from '@/utils/cloudinaryHandler';
 import { deleteFile, deleteFiles } from '@/utils/deleteFile';
 import { errRes } from '@/utils/error';
-import { and, eq, sql, lt, desc } from 'drizzle-orm';
+import { and, eq, sql, lt, desc, count } from 'drizzle-orm';
 import { Request, Response } from 'express';
 
 export const userBlogProfile = async (req: Request, res: Response): Promise<Response> => {
@@ -24,14 +24,19 @@ export const userBlogProfile = async (req: Request, res: Response): Promise<Resp
         const blogProfile = await db.select({ followingCount: user.followingCount, followersCount: user.followersCount })
             .from(user).where(eq(user.id, userId2)).limit(1).execute();
 
-        if (blogProfile.length !== 1) {
-            return errRes(res, 400, "userId2 not present in database");
-        }
+        const totalPosts = await db
+            .select({ count: count() })
+            .from(post)
+            .where(eq(post.userId, userId2));
 
         return res.status(200).json({
             success: true,
             message: "user blog profile data",
-            blogProfile: blogProfile[0]
+            blogProfile: {
+                followingCount: blogProfile[0]?.followingCount,
+                followersCount: blogProfile[0]?.followingCount,
+                totalPosts: totalPosts[0]?.count
+            }
         });
 
     } catch (error) {
@@ -62,6 +67,17 @@ export const followUser = async (req: Request, res: Response): Promise<Response>
         if (followRes.length === 0) {
             return errRes(res, 400, "user already followed other user");
         }
+
+        // user followed other user, now increase the count of following for curr user 
+        await db.update(user)
+            .set({ followingCount: sql`${user.followingCount} + 1` })
+            .where(eq(user.id, userId2));
+
+        // now increase count of follower for other user
+        await db.update(user)
+            .set({ followingCount: sql`${user.followersCount} + 1` })
+            .where(eq(user.id, userId2));
+
         return res.status(200).json({
             success: true,
             messasge: "user followed other user"

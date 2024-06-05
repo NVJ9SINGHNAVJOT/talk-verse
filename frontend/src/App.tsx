@@ -14,7 +14,6 @@ import SocketProvider from "@/context/SocketContext";
 import { useEffect, useRef, useState } from "react";
 import useScrollOnTop from "@/hooks/useScrollOnTop";
 import { checkUserApi } from "@/services/operations/authApi";
-import { CheckUserRs } from "@/types/apis/authApiRs";
 import { setUser } from "@/redux/slices/userSlice";
 import { useDispatch } from "react-redux";
 import { setAuthUser } from "@/redux/slices/authSlice";
@@ -39,7 +38,7 @@ function App() {
 
   useEffect(() => {
     const checkDefaultLogin = async () => {
-      const response: CheckUserRs = await checkUserApi();
+      const response = await checkUserApi();
 
       if (response && response.success === true) {
         dispatch(setUser(response.user));

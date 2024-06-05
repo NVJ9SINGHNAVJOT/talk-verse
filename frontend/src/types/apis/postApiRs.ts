@@ -1,10 +1,12 @@
+export type BlogProfile = {
+    followingCount: number,
+    followersCount: number,
+    totalPosts: number
+}
 export type UserBlogProfileRs = {
     success: boolean,
     message: string,
-    blogProfile: {
-        followingCount: number,
-        followersCount: number
-    }
+    blogProfile: BlogProfile
 } | null
 
 export type Post = {

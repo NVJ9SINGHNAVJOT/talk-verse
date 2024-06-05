@@ -5,7 +5,6 @@ import { useAppSelector } from "@/redux/store";
 import { fileMessageApi, getMessagesApi } from "@/services/operations/chatApi";
 import { useNavigate, useParams } from "react-router-dom";
 import useScrollTrigger from "@/hooks/useScrollTrigger";
-import { GetChatMessagesRs } from "@/types/apis/chatApiRs";
 import { useDispatch } from "react-redux";
 import {
   addPMessages,
@@ -101,7 +100,7 @@ const Chat = () => {
         }
 
         // get messages for chatId
-        const response: GetChatMessagesRs = await getMessagesApi(
+        const response = await getMessagesApi(
           chatId,
           lastCreatedAt
         );
@@ -171,7 +170,7 @@ const Chat = () => {
         /* ===== Caution: getMessagesApi api call state management ===== */
         dispatch(setApiCall({ api: `getMessagesApi-${chatId}`, status: true }));
 
-        const response: GetChatMessagesRs = await getMessagesApi(
+        const response = await getMessagesApi(
           chatId,
           pMessages[chatId][pMessages[chatId].length - 1].createdAt
         );

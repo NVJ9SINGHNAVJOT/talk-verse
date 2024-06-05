@@ -23,9 +23,10 @@ async function main() {
     await mongodbDatabaseConnect();
     await postgresqlDatabaseConnect();
 
+    /* ===== Caution: commented only for development purpose, remove comment in production ===== */
     // postgresql migrations and triggers
-    await migratePostgreSQL();
-    await setupPostgreSQLTriggers();
+    // await migratePostgreSQL();
+    // await setupPostgreSQLTriggers();
     
     // get port number
     const PORT = parseInt(`${process.env['PORT']}`) || 5000;

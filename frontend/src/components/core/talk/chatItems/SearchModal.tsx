@@ -4,7 +4,6 @@ import {
   getUsersApi,
   sendRequestApi,
 } from "@/services/operations/notificationApi";
-import { GetUsersRs } from "@/types/apis/notificationApiRs";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { RxAvatar } from "react-icons/rx";
@@ -38,7 +37,7 @@ const SearchModal = (props: SearchModalProps) => {
   useEffect(() => {
     const timeOutId = setTimeout(async () => {
       if (query) {
-        const response: GetUsersRs = await getUsersApi(query);
+        const response = await getUsersApi(query);
 
         if (response && response.success == true) {
           if (response.users) {
