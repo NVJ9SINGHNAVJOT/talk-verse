@@ -1,11 +1,7 @@
 module.exports = {
   root: true,
   env: { es2022: true, node: true, commonjs: true },
-  extends: [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:drizzle/recommended",
-  ],
+  extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:drizzle/recommended"],
   ignorePatterns: ["dist", "build", ".eslintrc.cjs"],
   parser: "@typescript-eslint/parser",
   plugins: ["@typescript-eslint", "drizzle"],

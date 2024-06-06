@@ -1,12 +1,12 @@
-import { Request, Response } from "express"
-import express, { Express } from 'express';
-import { cloudinaryConnect } from '@/config/cloudinary';
-import cookieParser from 'cookie-parser';
-import cors from 'cors';
+import { Request, Response } from "express";
+import express, { Express } from "express";
+import { cloudinaryConnect } from "@/config/cloudinary";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 import serverKey from "@/middlewares/serverKey";
-import authRoutes from '@/routes/authRoutes';
-import notificationRoutes from '@/routes/notificationRoutes';
-import chatRoutes from '@/routes/chatRoutes';
+import authRoutes from "@/routes/authRoutes";
+import notificationRoutes from "@/routes/notificationRoutes";
+import chatRoutes from "@/routes/chatRoutes";
 import profileRoutes from "@/routes/profileRoutes";
 import postRoutes from "@/routes/postRoutes";
 import corsOptions from "@/config/corsOptions";
@@ -29,17 +29,17 @@ app.use(logging);
 app.use(serverKey);
 
 // routes
-app.use('/api/v1/auths', authRoutes);
-app.use('/api/v1/notifications', notificationRoutes);
-app.use('/api/v1/chats', chatRoutes);
-app.use('/api/v1/profiles', profileRoutes);
-app.use('/api/v1/posts', postRoutes);
+app.use("/api/v1/auths", authRoutes);
+app.use("/api/v1/notifications", notificationRoutes);
+app.use("/api/v1/chats", chatRoutes);
+app.use("/api/v1/profiles", profileRoutes);
+app.use("/api/v1/posts", postRoutes);
 
-app.get('/', (_req: Request, res: Response) => {
-    res.json({
-        success: true,
-        message: 'server is up and running.'
-    });
+app.get("/", (_req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: "server is up and running.",
+  });
 });
 
 export default app;

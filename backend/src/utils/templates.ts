@@ -1,6 +1,5 @@
-
 export const verificationTemplate = (otp: string) => {
-    return `<!DOCTYPE html>
+  return `<!DOCTYPE html>
     <html>
     
     <head>
@@ -108,7 +107,7 @@ export const verificationTemplate = (otp: string) => {
 };
 
 export const passwordUpdatedTemplate = (userName: string, email: string) => {
-    return `<!DOCTYPE html>
+  return `<!DOCTYPE html>
     <html>
     
     <head>
@@ -202,7 +201,7 @@ export const passwordUpdatedTemplate = (userName: string, email: string) => {
 };
 
 export const privateKeyTemplate = (email: string, privateKey: string) => {
-    return `<!DOCTYPE html>
+  return `<!DOCTYPE html>
     <html>
     
     <head>

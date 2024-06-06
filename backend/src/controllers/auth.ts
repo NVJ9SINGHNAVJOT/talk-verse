@@ -1,20 +1,20 @@
-import User from '@/db/mongodb/models/User';
-import { LogInReqSchema, SendOtpReqSchema, SignUpReqSchema } from '@/types/controllers/authReq';
-import { Request, Response } from 'express';
-import { uploadToCloudinary } from '@/utils/cloudinaryHandler';
-import { errRes } from '@/utils/error';
+import User from "@/db/mongodb/models/User";
+import { LogInReqSchema, SendOtpReqSchema, SignUpReqSchema } from "@/types/controllers/authReq";
+import { Request, Response } from "express";
+import { uploadToCloudinary } from "@/utils/cloudinaryHandler";
+import { errRes } from "@/utils/error";
 import bcrypt from "bcrypt";
-import jwt from 'jsonwebtoken';
-import Token from '@/db/mongodb/models/Token';
-import Notification from '@/db/mongodb/models/Notification';
-import { jwtVerify } from '@/utils/token';
-import { generateOTP } from '@/utils/generateOtp';
-import Otp from '@/db/mongodb/models/Otp';
-import { sendPrivateKeyMail, sendVerficationMail } from '@/utils/sendMail';
-import * as forge from 'node-forge';
-import { deleteFile } from '@/utils/deleteFile';
-import { db } from '@/db/postgresql/connection';
-import { user } from '@/db/postgresql/schema/user';
+import jwt from "jsonwebtoken";
+import Token from "@/db/mongodb/models/Token";
+import Notification from "@/db/mongodb/models/Notification";
+import { jwtVerify } from "@/utils/token";
+import { generateOTP } from "@/utils/generateOtp";
+import Otp from "@/db/mongodb/models/Otp";
+import { sendPrivateKeyMail, sendVerficationMail } from "@/utils/sendMail";
+import * as forge from "node-forge";
+import { deleteFile } from "@/utils/deleteFile";
+import { db } from "@/db/postgresql/connection";
+import { user } from "@/db/postgresql/schema/user";
 
 export const signUp = async (req: Request, res: Response): Promise<Response> => {
   try {
@@ -42,7 +42,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
       if (req.file) {
         deleteFile(req.file);
       }
-      return errRes(res, 400, 'Invalid otp or otp has expired');
+      return errRes(res, 400, "Invalid otp or otp has expired");
     }
     // delete otp after verification
     await Otp.deleteOne({ otpValue: data.otp });
@@ -86,22 +86,30 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     const privateKeyPem = forge.pki.privateKeyToPem(keypair.privateKey);
 
     const newUser = await User.create({
-      firstName: data.firstName, lastName: data.lastName, userName: data.userName, password: hashedPassword,
-      publicKey: publicKeyPem, email: data.email, imageUrl: secUrl ? secUrl : ""
+      firstName: data.firstName,
+      lastName: data.lastName,
+      userName: data.userName,
+      password: hashedPassword,
+      publicKey: publicKeyPem,
+      email: data.email,
+      imageUrl: secUrl ? secUrl : "",
     });
 
     // create notification model for user
     await Notification.create({ userId: newUser?._id });
 
     // create user in postgreSQL database
-    const newUser2 = await db.insert(user).values({ refId: newUser._id.toString(), userName: data.userName, imageUrl: secUrl }).returning({ id: user.id });
+    const newUser2 = await db
+      .insert(user)
+      .values({ refId: newUser._id.toString(), userName: data.userName, imageUrl: secUrl })
+      .returning({ id: user.id });
     if (newUser2.length !== 1 || !newUser2[0]) {
       await Notification.deleteOne({ userId: newUser.id });
       await User.deleteOne({ _id: newUser.id });
       return errRes(res, 500, "error while creating user in other database");
     }
 
-    // save user's id from postgreSQL 
+    // save user's id from postgreSQL
     newUser.userId2 = newUser2[0].id;
     await newUser.save();
 
@@ -117,9 +125,8 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
 
     return res.status(200).json({
       success: true,
-      message: "user registered successfully"
+      message: "user registered successfully",
     });
-
   } catch (error) {
     if (req.file) {
       deleteFile(req.file);
@@ -146,9 +153,8 @@ export const sendOtp = async (req: Request, res: Response): Promise<Response> =>
 
     return res.status(200).json({
       success: true,
-      message: 'otp send successfully'
+      message: "otp send successfully",
     });
-
   } catch (error) {
     return errRes(res, 500, "error while sending otp", error);
   }
@@ -165,10 +171,17 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
 
     const data = logInReq.data;
 
-    const checkUser = await User.findOne({ email: data.email }).select({
-      email: true, password: true,
-      firstName: true, lastName: true, imageUrl: true, userToken: true, publicKey: true
-    }).exec();
+    const checkUser = await User.findOne({ email: data.email })
+      .select({
+        email: true,
+        password: true,
+        firstName: true,
+        lastName: true,
+        imageUrl: true,
+        userToken: true,
+        publicKey: true,
+      })
+      .exec();
 
     if (!checkUser) {
       return errRes(res, 401, "user in not signed up");
@@ -177,22 +190,16 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
     // check password and generate token
     let newUserToken: string;
     if (await bcrypt.compare(data.password, `${checkUser.password}`)) {
-      newUserToken = jwt.sign(
-        { userId: checkUser._id },
-        `${process.env['JWT_SECRET']}`,
-        {
-          expiresIn: "24h",
-        }
-      );
-    }
-    else {
+      newUserToken = jwt.sign({ userId: checkUser._id }, `${process.env["JWT_SECRET"]}`, {
+        expiresIn: "24h",
+      });
+    } else {
       return errRes(res, 401, "incorrect password");
     }
 
     // save token in db and set in cookie for response
     if (newUserToken) {
-
-      // delete previous token 
+      // delete previous token
       if (checkUser.userToken) {
         await Token.findByIdAndDelete(checkUser.userToken).exec();
       }
@@ -200,9 +207,13 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
       const newToken = await Token.create({ tokenValue: newUserToken });
 
       // create token and add in user
-      const userToken = await User.findByIdAndUpdate({ _id: checkUser?._id },
+      const userToken = await User.findByIdAndUpdate(
+        { _id: checkUser?._id },
         { $set: { userToken: newToken._id } },
-        { new: true }).select({ userToken: true }).exec();
+        { new: true }
+      )
+        .select({ userToken: true })
+        .exec();
 
       // set token in cookie and select httponly: true
       if (userToken?.userToken) {
@@ -211,27 +222,27 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
           httpOnly: true,
           secure: true,
         };
-        return res.cookie(`${process.env['TOKEN_NAME']}`, newUserToken, options).status(200).json({
-          success: true,
-          message: "user login successfull",
-          user: {
-            _id: checkUser._id,
-            userName: checkUser.userName,
-            firstName: checkUser.firstName,
-            lastName: checkUser.lastName,
-            imageUrl: checkUser.imageUrl,
-            publicKey: checkUser.publicKey
-          },
-        });
-      }
-      else {
+        return res
+          .cookie(`${process.env["TOKEN_NAME"]}`, newUserToken, options)
+          .status(200)
+          .json({
+            success: true,
+            message: "user login successfull",
+            user: {
+              _id: checkUser._id,
+              userName: checkUser.userName,
+              firstName: checkUser.firstName,
+              lastName: checkUser.lastName,
+              imageUrl: checkUser.imageUrl,
+              publicKey: checkUser.publicKey,
+            },
+          });
+      } else {
         return errRes(res, 500, "error while generating token");
       }
-    }
-    else {
+    } else {
       return errRes(res, 500, "error while generating token");
     }
-
   } catch (error) {
     return errRes(res, 500, "error while user login", error);
   }
@@ -240,12 +251,12 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
 export const checkUser = async (req: Request, res: Response): Promise<Response> => {
   try {
     // Extracting JWT from request cookies or header
-    const token = req.cookies[`${process.env['TOKEN_NAME']}`];
+    const token = req.cookies[`${process.env["TOKEN_NAME"]}`];
 
     if (!token) {
       return res.status(200).json({
         success: false,
-        message: "token not present"
+        message: "token not present",
       });
     }
 
@@ -256,9 +267,15 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
       return errRes(res, 401, "user authorization failed");
     }
 
-    const user = await User.findById({ _id: `${userIds[0]}` }).select({
-      firstName: true, lastName: true, userName: true, imageUrl: true, publicKey: true
-    }).exec();
+    const user = await User.findById({ _id: `${userIds[0]}` })
+      .select({
+        firstName: true,
+        lastName: true,
+        userName: true,
+        imageUrl: true,
+        publicKey: true,
+      })
+      .exec();
 
     if (!user) {
       return errRes(res, 401, "user authorization failed, no user found for userId");
@@ -267,22 +284,21 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
     return res.status(200).json({
       success: true,
       message: "user check successfull",
-      user: user
+      user: user,
     });
-  }
-  catch (error) {
+  } catch (error) {
     return errRes(res, 500, "error while user check", error);
   }
 };
 
 export const logOut = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const token = req.cookies[`${process.env['TOKEN_NAME']}`];
+    const token = req.cookies[`${process.env["TOKEN_NAME"]}`];
 
     if (!token) {
       return res.status(200).json({
         success: false,
-        message: "token not present"
+        message: "token not present",
       });
     }
 
@@ -296,7 +312,7 @@ export const logOut = async (req: Request, res: Response): Promise<Response> => 
     await Token.findOneAndDelete({ tokenValue: token });
     await User.findByIdAndUpdate({ _id: `${userIds[0]}` }, { $unset: { userToken: true } });
 
-    res.cookie(`${process.env['TOKEN_NAME']}`, "", {
+    res.cookie(`${process.env["TOKEN_NAME"]}`, "", {
       expires: new Date(0), // Set an immediate expiration date (in the past)
       httpOnly: true,
       secure: true,
@@ -305,9 +321,8 @@ export const logOut = async (req: Request, res: Response): Promise<Response> => 
     // Redirect the user to the login page
     return res.status(200).json({
       success: true,
-      message: 'User logged out successfully',
+      message: "User logged out successfully",
     });
-
   } catch (error) {
     return errRes(res, 500, "error while user log out", error);
   }

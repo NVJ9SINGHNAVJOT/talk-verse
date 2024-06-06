@@ -13,31 +13,38 @@ import { configDotenv } from "dotenv";
 configDotenv();
 
 export const pool = new Pool({
-    host: `${process.env['POSTGRES_HOST']}`,
-    user: `${process.env['POSTGRES_USER']}`,
-    database: `${process.env['POSTGRES_DB']}`,
-    password: `${process.env['POSTGRES_PASSWORD']}`
+  host: `${process.env["POSTGRES_HOST"]}`,
+  user: `${process.env["POSTGRES_USER"]}`,
+  database: `${process.env["POSTGRES_DB"]}`,
+  password: `${process.env["POSTGRES_PASSWORD"]}`,
 });
 
 export async function postgresqlDatabaseConnect() {
-    try {
-        await pool.connect();
-        logger.info("postgresql database connected");
-    } catch (error) {
-        logger.error('error while connecting postgresql database', { error: error });
-        await pool.end();
-        process.exit();
-    }
+  try {
+    await pool.connect();
+    logger.info("postgresql database connected");
+  } catch (error) {
+    logger.error("error while connecting postgresql database", { error: error });
+    await pool.end();
+    process.exit();
+  }
 }
 
 export const db = drizzle(pool, {
-    schema: {
-        user, usersRelations,
-        post, postsRelations,
-        likes, likessRelations,
-        story, storysRelations,
-        comment, commentsRelations,
-        follow, followsRelations,
-        save, savesRelations
-    }
+  schema: {
+    user,
+    usersRelations,
+    post,
+    postsRelations,
+    likes,
+    likessRelations,
+    story,
+    storysRelations,
+    comment,
+    commentsRelations,
+    follow,
+    followsRelations,
+    save,
+    savesRelations,
+  },
 });

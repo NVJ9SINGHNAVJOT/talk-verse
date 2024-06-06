@@ -1,17 +1,17 @@
 import multer from "multer";
-import fs from 'fs';
+import fs from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 
-fs.mkdirSync('uploadStorage', { recursive: true });
+fs.mkdirSync("uploadStorage", { recursive: true });
 
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => {
-    cb(null, 'uploadStorage');
+    cb(null, "uploadStorage");
   },
   filename: function (_req, file, cb) {
     cb(null, file.fieldname + "-" + uuidv4() + path.extname(file.originalname));
-  }
+  },
 });
 
 const multerUpload = multer({

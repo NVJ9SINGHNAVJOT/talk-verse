@@ -8,7 +8,9 @@ import { follow } from "@/db/postgresql/schema/follow";
 import { likes } from "@/db/postgresql/schema/likes";
 import { save } from "@/db/postgresql/schema/save";
 
-export const user = pgTable("user", {
+export const user = pgTable(
+  "user",
+  {
     id: serial("id").primaryKey(),
 
     // reference from mongodb
@@ -20,15 +22,17 @@ export const user = pgTable("user", {
     followersCount: integer("followers_count").notNull().default(0),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-}, (user) => ({
-    userUserNameUnique: unique('user_user_name_unique').on(user.userName)
-}));
+  },
+  (user) => ({
+    userUserNameUnique: unique("user_user_name_unique").on(user.userName),
+  })
+);
 
 export const usersRelations = relations(user, ({ many }) => ({
-    post: many(post),
-    story: many(story),
-    comment: many(comment),
-    follow: many(follow),
-    likes: many(likes),
-    save: many(save)
+  post: many(post),
+  story: many(story),
+  comment: many(comment),
+  follow: many(follow),
+  likes: many(likes),
+  save: many(save),
 }));

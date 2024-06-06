@@ -7,6 +7,8 @@
     "postgresqldb:generate": "npx drizzle-kit generate:pg",
     "lint": "eslint src/**/*.ts",
     "format": "eslint src/**/*.ts --fix",
+    "prettier-write": "npx prettier . --write --ignore-unknown",
+    "prettier-check": "npx prettier . --check",
     "start": "node ./dist/index.js",
     "test-build": "npx tsc",
     "build": "esbuild ./src/index.ts --bundle --outdir=./dist --minify --platform=node --packages=external",
@@ -58,6 +60,7 @@
     "eslint": "^8.57.0",
     "eslint-plugin-drizzle": "^0.2.3",
     "nodemon": "^3.1.0",
+    "prettier": "^3.3.1",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.3"
