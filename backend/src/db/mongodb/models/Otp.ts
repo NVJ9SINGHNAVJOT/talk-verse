@@ -6,6 +6,7 @@ export interface IOtp extends Document {
     email: string;
     otpValue: string;
     createdAt: Date;
+    updatedAt: Date;
 }
 
 // Define the Otp schema using the interface

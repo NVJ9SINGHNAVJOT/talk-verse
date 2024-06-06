@@ -5,6 +5,7 @@ export interface IToken extends Document {
     _id: mongoose.Types.ObjectId;
     tokenValue: string;
     createdAt: Date;
+    updatedAt: Date;
 }
 
 // Define the Token schema using the interface

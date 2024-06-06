@@ -6,6 +6,8 @@ export interface IChat extends Document {
     _id: mongoose.Types.ObjectId;
     user1: mongoose.Types.ObjectId & IUser;
     user2: mongoose.Types.ObjectId & IUser;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 // user 1 is who initially sent request and user 2 is who accepted that request

@@ -8,6 +8,8 @@ export interface INotification extends Document {
     userId: mongoose.Types.ObjectId & IUser;
     friendRequests: mongoose.Types.ObjectId[] & IUser[];
     unseenMessages: mongoose.Types.ObjectId[] & IUnseenCount[];
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 // Define the Notification schema using the interface

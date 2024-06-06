@@ -26,6 +26,8 @@ export interface IUser extends Document {
     userToken?: mongoose.Types.ObjectId & IToken;
     friends: CombineChatId[];
     chatBarOrder: string[];
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 // Define the User schema

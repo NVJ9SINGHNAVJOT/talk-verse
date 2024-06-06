@@ -8,6 +8,8 @@ export interface IGroup extends Document {
     gpCreater: mongoose.Types.ObjectId & IUser;
     gpImageUrl: string;
     members: mongoose.Types.ObjectId[] & IUser[];
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 // Define the Group schema using the interface

@@ -7,6 +7,8 @@ export interface IUnseenCount extends Document {
     userId: mongoose.Types.ObjectId & IUser;
     mainId: mongoose.Types.ObjectId;
     count: number;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 // Define the UnseenCount schema using the interface

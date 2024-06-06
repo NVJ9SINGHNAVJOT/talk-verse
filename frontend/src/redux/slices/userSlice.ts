@@ -17,6 +17,7 @@ export type Profile = {
     gender?: string,
     countryCode?: string,
     contactNumber?: number,
+    updatedAt: string
 }
 
 interface UserState {
