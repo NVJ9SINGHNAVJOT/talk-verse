@@ -1,0 +1,7 @@
+dist
+node_modules
+src/assets
+.env
+.env.example
+package-lock.json
+package.json
