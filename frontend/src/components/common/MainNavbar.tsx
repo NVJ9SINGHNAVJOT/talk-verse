@@ -70,12 +70,7 @@ const MainNavbar = () => {
     >
       {/* main logo and name */}
       <div className="flex items-center justify-evenly gap-5 ml-8">
-        <img
-          alt="Logo"
-          src={mainLogo}
-          className="h-14 cursor-pointer"
-          onClick={homeHandler}
-        />
+        <img alt="Logo" src={mainLogo} className="h-14 cursor-pointer" onClick={homeHandler} />
         <div
           className="ct-mainLogoButton text-2xl font-semibold  text-richblack-25 "
           role="button"
@@ -121,9 +116,7 @@ const MainNavbar = () => {
 
       {/* sign in buttons or user logo */}
       {user ? (
-        <div
-          className={`flex justify-evenly items-center md:gap-2 gap-x-2 mr-8 `}
-        >
+        <div className={`flex justify-evenly items-center md:gap-2 gap-x-2 mr-8 `}>
           <UserMenu />
           <div ref={menuRefExclude} onClick={toogleMenu} className="md:hidden">
             <GiHamburgerMenu className="cursor-pointer w-6 h-8 ml-2 aspect-auto text-white rounded-sm" />
@@ -156,28 +149,16 @@ const MainNavbar = () => {
           >
             Home
           </div>
-          <div
-            className="cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]"
-            onClick={aboutHandler}
-          >
+          <div className="cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]" onClick={aboutHandler}>
             About
           </div>
-          <div
-            className="cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]"
-            onClick={contactHandler}
-          >
+          <div className="cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]" onClick={contactHandler}>
             Contact
           </div>
-          <div
-            className="cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]"
-            onClick={talkHandler}
-          >
+          <div className="cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]" onClick={talkHandler}>
             Talk
           </div>
-          <div
-            className="cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]"
-            onClick={blogHandler}
-          >
+          <div className="cursor-pointer round rounded-sm hover:[text-shadow:0_0_5px_#59deed]" onClick={blogHandler}>
             Blog
           </div>
         </div>

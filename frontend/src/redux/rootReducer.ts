@@ -6,11 +6,11 @@ import chatReducer from "@/redux/slices/chatSlice";
 import messagesReducer from "@/redux/slices/messagesSlice";
 
 const rootReducer = combineReducers({
-    auth: authReducer,
-    user: userReducer,
-    loading: loadingReducer,
-    chat: chatReducer,
-    messages: messagesReducer
+  auth: authReducer,
+  user: userReducer,
+  loading: loadingReducer,
+  chat: chatReducer,
+  messages: messagesReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

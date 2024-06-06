@@ -1,9 +1,6 @@
 import { setMyPrivateKey } from "@/redux/slices/messagesSlice";
 import { useAppSelector } from "@/redux/store";
-import {
-  decryptPMessage,
-  encryptPMessage,
-} from "@/utils/encryptionAndDecryption";
+import { decryptPMessage, encryptPMessage } from "@/utils/encryptionAndDecryption";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
@@ -39,10 +36,7 @@ const ChekKey = () => {
     }
 
     try {
-      const completeKey =
-        "-----BEGIN RSA PRIVATE KEY-----" +
-        data.key +
-        "-----END RSA PRIVATE KEY-----";
+      const completeKey = "-----BEGIN RSA PRIVATE KEY-----" + data.key + "-----END RSA PRIVATE KEY-----";
       const encryptMessage = encryptPMessage(checkMessage, myPublicKey);
       const decryptedMessage = decryptPMessage(encryptMessage, completeKey);
       if (!decryptedMessage || checkMessage !== decryptedMessage) {
@@ -64,8 +58,7 @@ const ChekKey = () => {
       className="ct-checkPgBack flex flex-col items-center justify-center w-full h-[calc(100vh-4rem)] gap-8 "
     >
       <h2 className=" font-be-veitnam-pro text-3xl font-semibold text-white">
-        Enter Your{" "}
-        <span className=" text-black font-extrabold">Private Key</span>
+        Enter Your <span className=" text-black font-extrabold">Private Key</span>
       </h2>
       <input
         type="text"
@@ -81,11 +74,7 @@ const ChekKey = () => {
           minLength: 1,
         })}
       />
-      <button
-        disabled={loading}
-        className=" text-center  bg-slate-50 rounded-lg py-2 px-8 font-semibold"
-        type="submit"
-      >
+      <button disabled={loading} className=" text-center  bg-slate-50 rounded-lg py-2 px-8 font-semibold" type="submit">
         Submit
       </button>
     </form>

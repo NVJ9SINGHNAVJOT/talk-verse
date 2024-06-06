@@ -78,7 +78,7 @@ const Talk = () => {
       dispatch(resetGroupIdStart());
       dispatch(resetGroupIdEnd());
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

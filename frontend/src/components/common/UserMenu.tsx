@@ -28,10 +28,7 @@ const UserMenu = () => {
     second = user.lastName.charAt(0);
   }
   return (
-    <div
-      ref={userMenuRef}
-      className=" relative flex justify-evenly items-center"
-    >
+    <div ref={userMenuRef} className=" relative flex justify-evenly items-center">
       {user.imageUrl ? (
         <img
           onClick={toggleMenu}
@@ -51,9 +48,7 @@ const UserMenu = () => {
       )}
       {/* drop down menu */}
       <div
-        className={`${
-          menuOpen ? "block" : "hidden"
-        } gap-1 absolute top-16 -left-[6rem] flex flex-col justify-start 
+        className={`${menuOpen ? "block" : "hidden"} gap-1 absolute top-16 -left-[6rem] flex flex-col justify-start 
           z-[500] text-white w-36 bg-black py-2 rounded-sm`}
       >
         <div
@@ -84,9 +79,7 @@ const UserMenu = () => {
           Log Out
         </div>
       </div>
-      {togLogO && (
-        <LogOutModal setTogLogO={setTogLogO} setMenuOpen={setMenuOpen} />
-      )}
+      {togLogO && <LogOutModal setTogLogO={setTogLogO} setMenuOpen={setMenuOpen} />}
     </div>
   );
 };

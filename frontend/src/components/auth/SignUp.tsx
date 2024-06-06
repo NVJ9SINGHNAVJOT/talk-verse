@@ -129,12 +129,9 @@ const SignUp = (props: SignInProps) => {
         onSubmit={handleSubmit(sendOtp)}
         className="flex w-10/12 lm:w-7/12 flex-col justify-evenly items-center gap-2"
       >
-        <h2 className=" text-center text-base text-white font-sans font-semibold">
-          Sign Up to TalkVerse
-        </h2>
+        <h2 className=" text-center text-base text-white font-sans font-semibold">Sign Up to TalkVerse</h2>
         <p className="text-white text-xs text-center">
-          Enter the realm of endless dialogue and discovery. Your journey begins
-          here!
+          Enter the realm of endless dialogue and discovery. Your journey begins here!
         </p>
 
         {/* image input */}
@@ -181,11 +178,7 @@ const SignUp = (props: SignInProps) => {
                 pattern: /^[a-zA-Z]{2,}$/,
               })}
             />
-            {errors.firstName && (
-              <span className=" absolute text-red-600 text-[0.7rem]">
-                Letters, min 2
-              </span>
-            )}
+            {errors.firstName && <span className=" absolute text-red-600 text-[0.7rem]">Letters, min 2</span>}
 
             <label
               className=" text-white peer-focus:font-medium absolute text-sm   
@@ -209,11 +202,7 @@ const SignUp = (props: SignInProps) => {
                 pattern: /^[a-zA-Z]{2,}$/,
               })}
             />
-            {errors.lastName && (
-              <span className=" absolute text-red-600 text-[0.7rem]">
-                Letters, min 2
-              </span>
-            )}
+            {errors.lastName && <span className=" absolute text-red-600 text-[0.7rem]">Letters, min 2</span>}
 
             <label
               className=" text-white peer-focus:font-medium absolute text-sm   
@@ -240,12 +229,7 @@ const SignUp = (props: SignInProps) => {
               minLength: 3,
             })}
           />
-          {errors.userName && (
-            <span className=" absolute text-red-600 text-[0.7rem]">
-              {" "}
-              Characters, min 3 & max 10
-            </span>
-          )}
+          {errors.userName && <span className=" absolute text-red-600 text-[0.7rem]"> Characters, min 3 & max 10</span>}
 
           <label
             className=" text-white peer-focus:font-medium absolute text-sm   
@@ -269,11 +253,7 @@ const SignUp = (props: SignInProps) => {
               pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
             })}
           />
-          {errors.email && (
-            <span className=" absolute text-red-600 text-[0.7rem]">
-              Invalid format
-            </span>
-          )}
+          {errors.email && <span className=" absolute text-red-600 text-[0.7rem]">Invalid format</span>}
 
           <label
             className=" text-white peer-focus:font-medium absolute text-sm   
@@ -294,16 +274,14 @@ const SignUp = (props: SignInProps) => {
             required
             {...register("password", {
               required: true,
-              pattern:
-                /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,20}$/,
+              pattern: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,20}$/,
               minLength: 8,
               maxLength: 20,
             })}
           />
           {errors.password && (
             <span className=" absolute text-red-600 text-[0.7rem]">
-              lowercase, uppercase, digit, special character and Length: min -
-              8, max - 20
+              lowercase, uppercase, digit, special character and Length: min - 8, max - 20
             </span>
           )}
 
@@ -326,16 +304,14 @@ const SignUp = (props: SignInProps) => {
             required
             {...register("confirmPassword", {
               required: true,
-              pattern:
-                /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,20}$/,
+              pattern: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,20}$/,
               minLength: 8,
               maxLength: 20,
             })}
           />
           {errors.confirmPassword && (
             <span className=" absolute text-red-600 text-[0.7rem]">
-              lowercase, uppercase, digit, special character and Length: min -
-              8, max - 20
+              lowercase, uppercase, digit, special character and Length: min - 8, max - 20
             </span>
           )}
 
@@ -349,21 +325,14 @@ const SignUp = (props: SignInProps) => {
           </label>
         </div>
 
-        <button
-          disabled={isLogin}
-          type="submit"
-          className=" bg-white text-black p-1 rounded-sm w-full"
-        >
+        <button disabled={isLogin} type="submit" className=" bg-white text-black p-1 rounded-sm w-full">
           Submit
         </button>
       </form>
 
       <div className="flex flex-col items-center gap-5">
         <div className="text-white text-center ">Already have an account?</div>
-        <button
-          className=" bg-white text-black pl-4 pr-4 p-1 rounded-sm "
-          onClick={toggleSignIn}
-        >
+        <button className=" bg-white text-black pl-4 pr-4 p-1 rounded-sm " onClick={toggleSignIn}>
           Log In
         </button>
       </div>

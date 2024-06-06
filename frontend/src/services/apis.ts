@@ -6,7 +6,7 @@ export const authEndPoints = {
   OTP: BASE_URL_SERVER + "/auths/sendOtp",
   LOGIN: BASE_URL_SERVER + "/auths/login",
   CHECK_USER: BASE_URL_SERVER + "/auths/checkUser",
-  LOGOUT: BASE_URL_SERVER + "/auths/logout"
+  LOGOUT: BASE_URL_SERVER + "/auths/logout",
 };
 
 // profile endpoints
@@ -14,7 +14,7 @@ export const profileEndPoints = {
   CHECK_USERNAME: BASE_URL_SERVER + "/profiles/checkUserName", // parameters: userName
   PROFILE_DETAILS: BASE_URL_SERVER + "/profiles/getDetails",
   SET_PROFILE_IMAGE: BASE_URL_SERVER + "/profiles/updateProfileImage",
-  SET_PROFILE_DETAILS: BASE_URL_SERVER + "/profiles/updateProfile"
+  SET_PROFILE_DETAILS: BASE_URL_SERVER + "/profiles/updateProfile",
 };
 
 // notification endpoints
@@ -27,7 +27,7 @@ export const notificationEndPoints = {
   CREATE_GROUP: BASE_URL_SERVER + "/notifications/createGroup",
   CHECK_ONLINE_FRIENDS: BASE_URL_SERVER + "/notifications/checkOnlineFriends",
   SET_UNSEEN_COUNT: BASE_URL_SERVER + "/notifications/setUnseenCount",
-  SET_ORDER: BASE_URL_SERVER + "/notifications/setOrder"
+  SET_ORDER: BASE_URL_SERVER + "/notifications/setOrder",
 };
 
 // chat endpoints

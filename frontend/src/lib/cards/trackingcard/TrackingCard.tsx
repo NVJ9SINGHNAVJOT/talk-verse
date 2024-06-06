@@ -31,16 +31,12 @@ const TrackingCard = () => {
         <div className="tracker tr-25"></div>
         <div id="card">
           <div className="title">TalkVerse</div>
-          <div className="titlehidden">
-            Connecting lives, Because every friend was once a stranger.
-          </div>
+          <div className="titlehidden">Connecting lives, Because every friend was once a stranger.</div>
 
           <div className="subtitlehidden text-lg lg:text-xl">
-            In a world where you can be anything, be the connection that brings
-            joy, understanding, and unity. Our app is the bridge between hearts
-            and minds, spanning distances with a single tap. Here's to making
-            the unknown familiar, and the faraway close. Let's weave a web of
-            friendships, one story at a time.
+            In a world where you can be anything, be the connection that brings joy, understanding, and unity. Our app
+            is the bridge between hearts and minds, spanning distances with a single tap. Here's to making the unknown
+            familiar, and the faraway close. Let's weave a web of friendships, one story at a time.
           </div>
         </div>
       </div>

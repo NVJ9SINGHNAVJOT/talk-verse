@@ -1,5 +1,3 @@
-
-
 const Trending = () => {
   return <div>Trending</div>;
 };

@@ -22,17 +22,12 @@ const Home = () => {
           </p>
           <br />
           <p className=" text-center p-4 text-lg">
-            Discover a world of real-time communication with TalkVerse! Whether
-            you're catching up with friends, sharing your thoughts, or meeting
-            new people, our platform makes it seamless. Crafted with simplicity
-            in mind, TalkVerse lets you chat privately
+            Discover a world of real-time communication with TalkVerse! Whether you're catching up with friends, sharing
+            your thoughts, or meeting new people, our platform makes it seamless. Crafted with simplicity in mind,
+            TalkVerse lets you chat privately
           </p>
         </div>
-        <img
-          src={homePageImage}
-          alt="Home Page Image Loading..."
-          className="w-[25rem] aspect-square"
-        ></img>
+        <img src={homePageImage} alt="Home Page Image Loading..." className="w-[25rem] aspect-square"></img>
       </section>
       <section className="w-full flex justify-evenly items-center pt-8 py-36">
         <TrackingCard />

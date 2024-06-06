@@ -7,11 +7,7 @@ interface LettersPullProps {
   delay?: number;
 }
 
-export default function LettersPull({
-  className,
-  words,
-  delay,
-}: LettersPullProps) {
+export default function LettersPull({ className, words, delay }: LettersPullProps) {
   const letters = words.split("");
 
   const pullupVariant = {

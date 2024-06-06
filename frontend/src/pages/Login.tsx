@@ -19,11 +19,7 @@ const Login = () => {
     >
       {/* left part */}
       <div className="flex justify-center w-1/2 h-full]">
-        {isLogin ? (
-          <LogIn toggleSignIn={toggleSignIn} />
-        ) : (
-          <SignUp toggleSignIn={toggleSignIn} />
-        )}
+        {isLogin ? <LogIn toggleSignIn={toggleSignIn} /> : <SignUp toggleSignIn={toggleSignIn} />}
       </div>
 
       {/* right part */}

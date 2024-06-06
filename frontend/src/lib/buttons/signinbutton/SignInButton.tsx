@@ -22,10 +22,7 @@ const SignInButton = (props: SignInButtonProps) => {
   };
 
   return (
-    <div
-      className="signButton text-richblack-25 cursor-pointer "
-      onClick={loginHandler}
-    >
+    <div className="signButton text-richblack-25 cursor-pointer " onClick={loginHandler}>
       {title}
     </div>
   );

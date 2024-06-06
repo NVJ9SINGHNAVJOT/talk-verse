@@ -11,10 +11,7 @@ import {
   setMainGroupId,
 } from "@/redux/slices/messagesSlice";
 import { useAppSelector } from "@/redux/store";
-import {
-  fileMessageApi,
-  getGroupMessagesApi,
-} from "@/services/operations/chatApi";
+import { fileMessageApi, getGroupMessagesApi } from "@/services/operations/chatApi";
 import { sendGroupMessageEvent } from "@/socket/emitEvents/emitMessageEvents";
 import { MessageText } from "@/types/common";
 import { useEffect, useRef, useState } from "react";
@@ -72,15 +69,10 @@ const Group = () => {
       // reset unseenCount for groupId
       dispatch(resetUnseenMessage(groupId));
       // this fucntion will only call api for a groupId messasges once
-      if (
-        groupIdStart[groupId] !== true &&
-        apiCalls[`getGroupMessagesApi-${groupId}`] !== true
-      ) {
+      if (groupIdStart[groupId] !== true && apiCalls[`getGroupMessagesApi-${groupId}`] !== true) {
         // api is getting called for first time for groupId and this hook will call this api only once
         /* ===== Caution: getGroupMessagesApi api call state management ===== */
-        dispatch(
-          setApiCall({ api: `getGroupMessagesApi-${groupId}`, status: true })
-        );
+        dispatch(setApiCall({ api: `getGroupMessagesApi-${groupId}`, status: true }));
         dispatch(setGroupIdStart(groupId));
 
         /*
@@ -90,36 +82,26 @@ const Group = () => {
 
         let lastCreatedAt;
         if (gpMessages[groupId] !== undefined) {
-          lastCreatedAt =
-            gpMessages[groupId][gpMessages[groupId].length - 1].createdAt;
+          lastCreatedAt = gpMessages[groupId][gpMessages[groupId].length - 1].createdAt;
         } else {
           lastCreatedAt = new Date().toISOString();
         }
 
         // get messages for groupId
-        const response = await getGroupMessagesApi(
-          groupId,
-          lastCreatedAt
-        );
+        const response = await getGroupMessagesApi(groupId, lastCreatedAt);
 
         // check response from api
         if (response) {
           // no messages for groupId yet if lastCreated in not present in gpMessages
           // and if present then their are no futher messages for current groupId
-          if (
-            response.success === false ||
-            (response.messages && response.messages.length < 15)
-          ) {
+          if (response.success === false || (response.messages && response.messages.length < 15)) {
             dispatch(setGroupIdEnd(groupId));
             setStop(true);
           }
 
           // check if their is any overlapping for messages for groupId
           if (response.messages && gpMessages[groupId] !== undefined) {
-            while (
-              response.messages.length > 0 &&
-              response.messages[0].createdAt > lastCreatedAt
-            ) {
+            while (response.messages.length > 0 && response.messages[0].createdAt > lastCreatedAt) {
               response.messages.splice(0, 1);
             }
           }
@@ -131,9 +113,7 @@ const Group = () => {
         } else {
           toast.error("Error while getting messages for group");
         }
-        dispatch(
-          setApiCall({ api: `getGroupMessagesApi-${groupId}`, status: false })
-        );
+        dispatch(setApiCall({ api: `getGroupMessagesApi-${groupId}`, status: false }));
       }
       setInitialLoad(false);
     };
@@ -166,9 +146,7 @@ const Group = () => {
         groupIdEnd[groupId] !== true
       ) {
         /* ===== Caution: getMessagesApi api call state management ===== */
-        dispatch(
-          setApiCall({ api: `getGroupMessagesApi-${groupId}`, status: true })
-        );
+        dispatch(setApiCall({ api: `getGroupMessagesApi-${groupId}`, status: true }));
 
         const response = await getGroupMessagesApi(
           groupId,
@@ -177,10 +155,7 @@ const Group = () => {
 
         if (response) {
           // no futher messages for this groupId
-          if (
-            response.success === false ||
-            (response.messages && response.messages.length < 15)
-          ) {
+          if (response.success === false || (response.messages && response.messages.length < 15)) {
             dispatch(setGroupIdEnd(groupId));
             setStop(true);
           }
@@ -192,9 +167,7 @@ const Group = () => {
         }
 
         setTimeout(() => {
-          dispatch(
-            setApiCall({ api: `getGroupMessagesApi-${groupId}`, status: false })
-          );
+          dispatch(setApiCall({ api: `getGroupMessagesApi-${groupId}`, status: false }));
         }, 2500);
       }
     };

@@ -4,8 +4,8 @@ const useScrollTrigger = (
   ref: React.RefObject<HTMLDivElement>,
   setTrigger: React.Dispatch<React.SetStateAction<boolean>>,
   stop: boolean,
-  resetTrigger: boolean) => {
-
+  resetTrigger: boolean
+) => {
   useEffect(() => {
     if (!ref.current) {
       return;
@@ -18,7 +18,7 @@ const useScrollTrigger = (
       }
 
       const { scrollTop, clientHeight, scrollHeight } = ref.current;
-      const scrollPercentage = Math.floor(((clientHeight - scrollTop) / (scrollHeight)) * 100);
+      const scrollPercentage = Math.floor(((clientHeight - scrollTop) / scrollHeight) * 100);
 
       if (scrollPercentage > 85 && !stop) {
         setTrigger((prev) => !prev);
@@ -26,11 +26,11 @@ const useScrollTrigger = (
     }
 
     if (ref.current) {
-      ref.current.addEventListener('scroll', handleScrollTrig);
+      ref.current.addEventListener("scroll", handleScrollTrig);
     }
 
     return () => {
-      currReft.removeEventListener('scroll', handleScrollTrig);
+      currReft.removeEventListener("scroll", handleScrollTrig);
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -38,5 +38,3 @@ const useScrollTrigger = (
 };
 
 export default useScrollTrigger;
-
-

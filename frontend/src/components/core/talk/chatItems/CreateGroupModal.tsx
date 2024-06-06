@@ -37,9 +37,7 @@ const CreateGroupModal = (props: CreateGroupModalProps) => {
     if (!groupMembers.includes(_id)) {
       setGroupMembers((prev) => [...prev, _id]);
     } else {
-      setGroupMembers(() =>
-        groupMembers.filter((friendId) => friendId !== _id)
-      );
+      setGroupMembers(() => groupMembers.filter((friendId) => friendId !== _id));
     }
   };
 
@@ -105,10 +103,7 @@ const CreateGroupModal = (props: CreateGroupModalProps) => {
   ) : (
     <div className="fixed inset-0 w-screen h-screen backdrop-blur-[4px] bg-transparent z-[1000] flex justify-center items-center">
       <div ref={refModal} className="flex flex-col gap-6 p-8">
-        <form
-          onSubmit={handleSubmit(createGroup)}
-          className=" flex justify-center items-center gap-6 p-8"
-        >
+        <form onSubmit={handleSubmit(createGroup)} className=" flex justify-center items-center gap-6 p-8">
           <div className="flex justify-center items-center relative size-11">
             <input
               id="imgInput"
@@ -169,16 +164,9 @@ const CreateGroupModal = (props: CreateGroupModalProps) => {
         >
           {friends.map((friend, index) => {
             return (
-              <div
-                key={index}
-                className=" flex w-fit items-center gap-x-3 bg-black text-white px-3 py-1 rounded-lg"
-              >
+              <div key={index} className=" flex w-fit items-center gap-x-3 bg-black text-white px-3 py-1 rounded-lg">
                 {friend.imageUrl ? (
-                  <img
-                    src={friend.imageUrl}
-                    className=" rounded-full  size-8 aspect-auto"
-                    alt="Loading..."
-                  />
+                  <img src={friend.imageUrl} className=" rounded-full  size-8 aspect-auto" alt="Loading..." />
                 ) : (
                   <RxAvatar className=" size-8 aspect-auto" />
                 )}

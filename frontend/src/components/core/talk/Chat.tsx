@@ -19,10 +19,7 @@ import { useForm } from "react-hook-form";
 import { MessageText } from "@/types/common";
 import { sendMessageEvent } from "@/socket/emitEvents/emitMessageEvents";
 import { useSocketContext } from "@/context/SocketContext";
-import {
-  startTypingEvent,
-  stopTypingEvent,
-} from "@/socket/emitEvents/emitNotificationEvents";
+import { startTypingEvent, stopTypingEvent } from "@/socket/emitEvents/emitNotificationEvents";
 import { setFriendToFirst } from "@/redux/slices/chatSlice";
 import WorkModal from "@/lib/modals/workmodal/WorkModal";
 import FileInputs from "./chatItems/FileInputs";
@@ -78,10 +75,7 @@ const Chat = () => {
       dispatch(resetUnseenMessage(chatId));
 
       // this fucntion will only call api for a chatId messasges once
-      if (
-        chatIdStart[chatId] !== true &&
-        apiCalls[`getMessagesApi-${chatId}`] !== true
-      ) {
+      if (chatIdStart[chatId] !== true && apiCalls[`getMessagesApi-${chatId}`] !== true) {
         // api is getting called for first time for chatId and this hook will call this api only once
         /* ===== Caution: getMessagesApi api call state management ===== */
         dispatch(setApiCall({ api: `getMessagesApi-${chatId}`, status: true }));
@@ -93,36 +87,26 @@ const Chat = () => {
         */
         let lastCreatedAt;
         if (pMessages[chatId] !== undefined) {
-          lastCreatedAt =
-            pMessages[chatId][pMessages[chatId].length - 1].createdAt;
+          lastCreatedAt = pMessages[chatId][pMessages[chatId].length - 1].createdAt;
         } else {
           lastCreatedAt = new Date().toISOString();
         }
 
         // get messages for chatId
-        const response = await getMessagesApi(
-          chatId,
-          lastCreatedAt
-        );
+        const response = await getMessagesApi(chatId, lastCreatedAt);
 
         // check response from api
         if (response) {
           // no messages for chatId yet if lastCreated in not present in pMessages
           // and if present then their are no futher messages for current chatId
-          if (
-            response.success === false ||
-            (response.messages && response.messages.length < 15)
-          ) {
+          if (response.success === false || (response.messages && response.messages.length < 15)) {
             dispatch(setChatIdEnd(chatId));
             setStop(true);
           }
 
           // check if their is any overlapping for messages for chatId
           if (response.messages && pMessages[chatId] !== undefined) {
-            while (
-              response.messages.length > 0 &&
-              response.messages[0].createdAt > lastCreatedAt
-            ) {
+            while (response.messages.length > 0 && response.messages[0].createdAt > lastCreatedAt) {
               response.messages.splice(0, 1);
             }
           }
@@ -134,9 +118,7 @@ const Chat = () => {
         } else {
           toast.error("Error while getting messages for chat");
         }
-        dispatch(
-          setApiCall({ api: `getMessagesApi-${chatId}`, status: false })
-        );
+        dispatch(setApiCall({ api: `getMessagesApi-${chatId}`, status: false }));
       }
       setInitialLoad(false);
     };
@@ -162,25 +144,15 @@ const Chat = () => {
     }
 
     const getMessages = async () => {
-      if (
-        apiCalls[`getMessagesApi-${chatId}`] !== true &&
-        chatIdStart[chatId] === true &&
-        chatIdEnd[chatId] !== true
-      ) {
+      if (apiCalls[`getMessagesApi-${chatId}`] !== true && chatIdStart[chatId] === true && chatIdEnd[chatId] !== true) {
         /* ===== Caution: getMessagesApi api call state management ===== */
         dispatch(setApiCall({ api: `getMessagesApi-${chatId}`, status: true }));
 
-        const response = await getMessagesApi(
-          chatId,
-          pMessages[chatId][pMessages[chatId].length - 1].createdAt
-        );
+        const response = await getMessagesApi(chatId, pMessages[chatId][pMessages[chatId].length - 1].createdAt);
 
         if (response) {
           // no futher messages for this chatId
-          if (
-            response.success === false ||
-            (response.messages && response.messages.length < 15)
-          ) {
+          if (response.success === false || (response.messages && response.messages.length < 15)) {
             dispatch(setChatIdEnd(chatId));
             setStop(true);
           }
@@ -192,9 +164,7 @@ const Chat = () => {
         }
 
         setTimeout(() => {
-          dispatch(
-            setApiCall({ api: `getMessagesApi-${chatId}`, status: false })
-          );
+          dispatch(setApiCall({ api: `getMessagesApi-${chatId}`, status: false }));
         }, 2500);
       }
     };
@@ -255,14 +225,7 @@ const Chat = () => {
       return;
     }
 
-    sendMessageEvent(
-      socket,
-      chatId,
-      currFriendId,
-      data.text,
-      myPublicKey,
-      publicKeys[currFriendId]
-    );
+    sendMessageEvent(socket, chatId, currFriendId, data.text, myPublicKey, publicKeys[currFriendId]);
     if (!lastMainId || lastMainId !== chatId) {
       dispatch(setFriendToFirst(chatId));
     }
@@ -294,10 +257,7 @@ const Chat = () => {
 
   return (
     <div className="w-full h-full">
-      <div
-        ref={scrollableDivRef}
-        className="w-full h-[90%] px-8 overflow-y-scroll flex flex-col-reverse"
-      >
+      <div ref={scrollableDivRef} className="w-full h-[90%] px-8 overflow-y-scroll flex flex-col-reverse">
         {/* messages for chat */}
         {chatId !== undefined && pMessages[chatId] === undefined ? (
           <div className=" w-5/6 text-white font-be-veitnam-pro text-2xl p-7 text-center mx-auto my-auto">

@@ -27,10 +27,7 @@ const OtpInput = (props: OtpInputProps) => {
         className=" bg-[#0a161b] w-24 text-center border-[2px] px-1 pb-1 border-transparent outline-[none]
          text-white duration-200 focus:border-[rgb(152,88,255)] outline-none rounded-lg h-12 placeholder:text-[0.8rem]"
       />
-      <button
-        onClick={otpHandler}
-        className=" bg-white text-black p-1 rounded-sm w-10/12"
-      >
+      <button onClick={otpHandler} className=" bg-white text-black p-1 rounded-sm w-10/12">
         Submit
       </button>
     </div>

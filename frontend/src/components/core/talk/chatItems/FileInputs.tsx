@@ -23,11 +23,7 @@ const FileInputs = (props: FileInputsProps) => {
   const [fileTyp, setFileTyp] = useState<string>();
   const [fileMenu, setFileMenu] = useState<boolean>(false);
 
-  useOnClickOutside(
-    fileMenuClickOut,
-    () => setFileMenu(false),
-    fileMenuExlcudes
-  );
+  useOnClickOutside(fileMenuClickOut, () => setFileMenu(false), fileMenuExlcudes);
 
   const handleFileMenu = () => {
     setFileMenu((prev) => !prev);

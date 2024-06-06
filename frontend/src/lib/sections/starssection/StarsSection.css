@@ -29,7 +29,8 @@
   border-radius: 50%;
   filter: drop-shadow(0 0 6px currentColor);
   transform: translate3d(104em, 0, 0);
-  animation: fall var(--fall-duration) var(--fall-delay) linear infinite,
+  animation:
+    fall var(--fall-duration) var(--fall-delay) linear infinite,
     tail-fade var(--tail-fade-duration) var(--fall-delay) ease-out infinite;
 }
 

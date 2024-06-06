@@ -23,22 +23,14 @@ const MainFooter = () => {
         {/* logo and main description */}
         <div className="flex flex-col col-span-3 lg:col-span-2 ">
           <div className="flex gap-5">
-            <img
-              src={mainLogo}
-              alt="Loading..."
-              className=" w-16 aspect-square"
-            ></img>
-            <span
-              onClick={homeHandler}
-              className=" text-2xl font-medium cursor-pointer"
-            >
+            <img src={mainLogo} alt="Loading..." className=" w-16 aspect-square"></img>
+            <span onClick={homeHandler} className=" text-2xl font-medium cursor-pointer">
               TalkVerse
             </span>
           </div>
           <p className="mt-4 max-w-[300px]">
-            Every blog post is a journey. Start with a single step, a single
-            word, and let the path unfold before you. Embrace the adventure of
-            expression.
+            Every blog post is a journey. Start with a single step, a single word, and let the path unfold before you.
+            Embrace the adventure of expression.
           </p>
           <div className="flex mt-6 gap-6">
             <FaFacebook className=" text-xl cursor-pointer" />
@@ -50,9 +42,7 @@ const MainFooter = () => {
 
         {/* headings and subheadings */}
         <div className="flex flex-col">
-          <div className="text-lg font-medium mb-6 cursor-pointer w-fit">
-            About Us
-          </div>
+          <div className="text-lg font-medium mb-6 cursor-pointer w-fit">About Us</div>
           <p className="text-sm my-1 cursor-pointer w-fit">Company History</p>
           <p className="text-sm my-1 cursor-pointer w-fit">Meet The Team</p>
           <p className="text-sm my-1 cursor-pointer w-fit">Employee Handbook</p>
@@ -60,9 +50,7 @@ const MainFooter = () => {
         </div>
 
         <div className="flex flex-col">
-          <div className="text-lg font-medium mb-6 cursor-pointer w-fit">
-            Resources
-          </div>
+          <div className="text-lg font-medium mb-6 cursor-pointer w-fit">Resources</div>
           <p className="text-sm my-1 cursor-pointer w-fit">Development</p>
           <p className="text-sm my-1 cursor-pointer w-fit">Design</p>
           <p className="text-sm my-1 cursor-pointer w-fit">Adverstisment</p>
@@ -72,18 +60,14 @@ const MainFooter = () => {
         </div>
 
         <div className="flex flex-col">
-          <div className="text-lg font-medium mb-6 cursor-pointer w-fit">
-            Links
-          </div>
+          <div className="text-lg font-medium mb-6 cursor-pointer w-fit">Links</div>
           <p className="text-sm my-1 cursor-pointer w-fit">FAQs</p>
           <p className="text-sm my-1 cursor-pointer w-fit">Support</p>
           <p className="text-sm my-1 cursor-pointer w-fit">Live Chat</p>
         </div>
 
         <div className="flex flex-col col-span-2 lg:col-span-1">
-          <div className="text-lg font-medium mb-6 cursor-pointer w-fit">
-            Contact Us
-          </div>
+          <div className="text-lg font-medium mb-6 cursor-pointer w-fit">Contact Us</div>
           <p className="text-sm my-1 flex">
             <CiMail className=" text-xl cursor-pointer" />
             <span className="pl-2">talkverse@gmail.com</span>
@@ -102,12 +86,8 @@ const MainFooter = () => {
       {/* bottom description part */}
       <hr className="h-px my-8 bg-whitesmoke border-0"></hr>
       <div className="flex justify-between">
-        <p className=" text-xs font-medium">
-          Copyright © 2024 TalkVerse · All rights reserved
-        </p>
-        <p className=" text-xs font-medium">
-          Terms & Conditions · Privacy Policy{" "}
-        </p>
+        <p className=" text-xs font-medium">Copyright © 2024 TalkVerse · All rights reserved</p>
+        <p className=" text-xs font-medium">Terms & Conditions · Privacy Policy </p>
       </div>
     </footer>
   );

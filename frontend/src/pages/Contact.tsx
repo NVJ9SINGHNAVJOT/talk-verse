@@ -1,11 +1,7 @@
 import MainFooter from "@/components/common/MainFooter";
 import SendQerryButton from "@/lib/buttons/sendquerrybutton/SendQerryButton";
 import LettersPull from "@/lib/cards/LettersPull";
-import {
-  TextRevealCard,
-  TextRevealCardDescription,
-  TextRevealCardTitle,
-} from "@/lib/cards/TextRevealCard";
+import { TextRevealCard, TextRevealCardDescription, TextRevealCardTitle } from "@/lib/cards/TextRevealCard";
 import { BackgroundBeams } from "@/lib/sections/BackgroundBeams";
 import { useForm } from "react-hook-form";
 import { FaFacebook, FaInstagram, FaXTwitter, FaGithub } from "react-icons/fa6";
@@ -28,20 +24,13 @@ const Contact = () => {
       {/* heading section */}
       <section className=" w-full flex flex-col lm:flex-row items-center gap-y-16 justify-evenly mt-8">
         <div className="">
-          <TextRevealCard
-            text="You know the business"
-            revealText="I know the chemistry "
-          >
-            <TextRevealCardTitle>
-              Sometimes, you just need to see it.
-            </TextRevealCardTitle>
+          <TextRevealCard text="You know the business" revealText="I know the chemistry ">
+            <TextRevealCardTitle>Sometimes, you just need to see it.</TextRevealCardTitle>
             <TextRevealCardDescription>
-              Get in Touch with Us At Talkverse, we value your feedback,
-              inquiries, and suggestions. Whether you have a question about our
-              services, want to collaborate, or simply want to say hello, we're
-              here to listen. Feel free to reach out to us through the contact
-              form below, or connect with us on social media. We appreciate your
-              interest in Talkverse and look forward to hearing from you!
+              Get in Touch with Us At Talkverse, we value your feedback, inquiries, and suggestions. Whether you have a
+              question about our services, want to collaborate, or simply want to say hello, we're here to listen. Feel
+              free to reach out to us through the contact form below, or connect with us on social media. We appreciate
+              your interest in Talkverse and look forward to hearing from you!
             </TextRevealCardDescription>
           </TextRevealCard>
         </div>

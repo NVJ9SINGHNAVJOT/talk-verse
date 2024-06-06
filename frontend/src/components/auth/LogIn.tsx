@@ -60,9 +60,7 @@ const LogIn = (props: SignInProps) => {
         onSubmit={handleSubmit(onSubmitForm)}
         className="flex w-10/12 lm:w-7/12 flex-col justify-evenly items-center gap-4"
       >
-        <h2 className=" text-center text-xl text-white font-sans font-semibold">
-          Log In to TalkVerse
-        </h2>
+        <h2 className=" text-center text-xl text-white font-sans font-semibold">Log In to TalkVerse</h2>
 
         <div className="relative z-0 w-full mb-5 group">
           <input
@@ -76,11 +74,7 @@ const LogIn = (props: SignInProps) => {
               pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
             })}
           />
-          {errors.email && (
-            <span className=" absolute text-red-600 text-[0.7rem]">
-              Invalid format
-            </span>
-          )}
+          {errors.email && <span className=" absolute text-red-600 text-[0.7rem]">Invalid format</span>}
 
           <label
             className=" text-white peer-focus:font-medium absolute text-sm  
@@ -101,16 +95,14 @@ const LogIn = (props: SignInProps) => {
             required
             {...register("password", {
               required: true,
-              pattern:
-                /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,20}$/,
+              pattern: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,20}$/,
               minLength: 8,
               maxLength: 20,
             })}
           />
           {errors.password && (
             <span className=" absolute text-red-600 text-[0.7rem]">
-              lowercase, uppercase, digit, special character and Length: min -
-              8, max - 20
+              lowercase, uppercase, digit, special character and Length: min - 8, max - 20
             </span>
           )}
 
@@ -133,16 +125,14 @@ const LogIn = (props: SignInProps) => {
             required
             {...register("confirmPassword", {
               required: true,
-              pattern:
-                /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,20}$/,
+              pattern: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,20}$/,
               minLength: 8,
               maxLength: 20,
             })}
           />
           {errors.password && (
             <span className=" absolute text-red-600 text-[0.7rem]">
-              lowercase, uppercase, digit, special character and Length: min -
-              8, max - 20
+              lowercase, uppercase, digit, special character and Length: min - 8, max - 20
             </span>
           )}
 
@@ -156,24 +146,15 @@ const LogIn = (props: SignInProps) => {
           </label>
         </div>
 
-        <button
-          disabled={isLogin}
-          type="submit"
-          className=" bg-white text-black p-1 rounded-sm w-full"
-        >
+        <button disabled={isLogin} type="submit" className=" bg-white text-black p-1 rounded-sm w-full">
           Submit
         </button>
       </form>
 
       <div className="flex flex-col items-center gap-5">
-        <div className="text-white text-center ">
-          Not a member yet? Join the conversation today!
-        </div>
+        <div className="text-white text-center ">Not a member yet? Join the conversation today!</div>
 
-        <button
-          className=" bg-white text-black pl-4 pr-4 p-1 rounded-sm "
-          onClick={toggleSignIn}
-        >
+        <button className=" bg-white text-black pl-4 pr-4 p-1 rounded-sm " onClick={toggleSignIn}>
           Sign Up
         </button>
       </div>

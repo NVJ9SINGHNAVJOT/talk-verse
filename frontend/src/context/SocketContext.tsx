@@ -1,32 +1,9 @@
-import {
-  setChatBarData,
-  setFriends,
-  setGroups,
-  setOnlineFriend,
-  setUserRequests,
-} from "@/redux/slices/chatSlice";
-import {
-  PublicKeys,
-  setMyId,
-  setPublicKeys,
-  setUnseenMessages,
-  UnseenMessages,
-} from "@/redux/slices/messagesSlice";
+import { setChatBarData, setFriends, setGroups, setOnlineFriend, setUserRequests } from "@/redux/slices/chatSlice";
+import { PublicKeys, setMyId, setPublicKeys, setUnseenMessages, UnseenMessages } from "@/redux/slices/messagesSlice";
 import { setTalkPageLoading } from "@/redux/slices/loadingSlice";
 import { chatBarDataApi } from "@/services/operations/chatApi";
-import {
-  checkOnlineFriendsApi,
-  getAllNotificationsApi,
-} from "@/services/operations/notificationApi";
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  useContext,
-  useRef,
-  useState,
-} from "react";
+import { checkOnlineFriendsApi, getAllNotificationsApi } from "@/services/operations/notificationApi";
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -70,17 +47,14 @@ export default function SocketProvider({ children }: ContextProviderProps) {
     }
     dispatch(setMyId(myUserId));
     try {
-      const socketInstance = io(
-        process.env.REACT_APP_BASE_URL_SOCKET_IO_SERVER as string,
-        {
-          withCredentials: true,
-          autoConnect: false,
-          extraHeaders: {
-            // serverKey for access
-            Authorization: process.env.SERVER_KEY as string,
-          },
-        }
-      );
+      const socketInstance = io(process.env.REACT_APP_BASE_URL_SOCKET_IO_SERVER as string, {
+        withCredentials: true,
+        autoConnect: false,
+        extraHeaders: {
+          // serverKey for access
+          Authorization: process.env.SERVER_KEY as string,
+        },
+      });
 
       socketRef.current = socketInstance.connect();
 
@@ -154,9 +128,7 @@ export default function SocketProvider({ children }: ContextProviderProps) {
   };
 
   return (
-    <SocketContext.Provider
-      value={{ socket, setSocket, setupSocketConnection, disconnectSocket }}
-    >
+    <SocketContext.Provider value={{ socket, setSocket, setupSocketConnection, disconnectSocket }}>
       {children}
     </SocketContext.Provider>
   );

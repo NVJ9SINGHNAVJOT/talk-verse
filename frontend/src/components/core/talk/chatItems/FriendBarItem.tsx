@@ -15,9 +15,7 @@ const FriendBarItem = (props: FriendBarItemsProps) => {
   const friend = props.friend;
   const onlineFriends = useAppSelector((state) => state.chat.onlineFriends);
   const isTyping = useAppSelector((state) => state.chat.userTyping);
-  const unseenMessages = useAppSelector(
-    (state) => state.messages.unseenMessages
-  );
+  const unseenMessages = useAppSelector((state) => state.messages.unseenMessages);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const goToChat = () => {
@@ -30,9 +28,7 @@ const FriendBarItem = (props: FriendBarItemsProps) => {
   return (
     <div
       onClick={() => goToChat()}
-      className={` ${
-        props.inChat === friend.chatId ? "bg-[#21262C]" : "hover:bg-[#21262C]"
-      }
+      className={` ${props.inChat === friend.chatId ? "bg-[#21262C]" : "hover:bg-[#21262C]"}
       relative w-full h-[3.8rem] flex justify-between items-center px-2 lg:px-4 cursor-pointer
       transition-all duration-100 ease-in-out delay-0 `}
     >
@@ -53,15 +49,11 @@ const FriendBarItem = (props: FriendBarItemsProps) => {
       <div className=" flex gap-x-2 justify-center items-center">
         <div
           className={`${
-            unseenMessages[friend.chatId] === 0
-              ? " bg-transparent "
-              : "bg-orange-500"
+            unseenMessages[friend.chatId] === 0 ? " bg-transparent " : "bg-orange-500"
           } rounded-full text-white size-6 lg:size-7 text-center text-sm flex justify-center items-center `}
         >
           <div className=" pb-[0.15rem]">
-            {unseenMessages[friend.chatId] === 0
-              ? ""
-              : unseenMessages[friend.chatId]}
+            {unseenMessages[friend.chatId] === 0 ? "" : unseenMessages[friend.chatId]}
           </div>
         </div>
         <div

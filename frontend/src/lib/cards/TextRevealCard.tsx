@@ -22,8 +22,7 @@ export const TextRevealCard = ({
 
   useEffect(() => {
     if (cardRef.current) {
-      const { left, width: localWidth } =
-        cardRef.current.getBoundingClientRect();
+      const { left, width: localWidth } = cardRef.current.getBoundingClientRect();
       setLeft(left);
       setLocalWidth(localWidth);
     }
@@ -111,9 +110,7 @@ export const TextRevealCard = ({
         ></motion.div>
 
         <div className=" overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,white,transparent)]">
-          <p className="text-base sm:text-[2.7rem] py-10 font-bold bg-clip-text text-slate-500 bg-[#323238]">
-            {text}
-          </p>
+          <p className="text-base sm:text-[2.7rem] py-10 font-bold bg-clip-text text-slate-500 bg-[#323238]">{text}</p>
           <MemoizedStars />
         </div>
       </div>
@@ -121,18 +118,8 @@ export const TextRevealCard = ({
   );
 };
 
-export const TextRevealCardTitle = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <h2 className={twMerge("text-white text-lg mb-2", className)}>
-      {children}
-    </h2>
-  );
+export const TextRevealCardTitle = ({ children, className }: { children: React.ReactNode; className?: string }) => {
+  return <h2 className={twMerge("text-white text-lg mb-2", className)}>{children}</h2>;
 };
 
 export const TextRevealCardDescription = ({
@@ -142,9 +129,7 @@ export const TextRevealCardDescription = ({
   children: React.ReactNode;
   className?: string;
 }) => {
-  return (
-    <p className={twMerge("text-[#a9a9a9] text-sm", className)}>{children}</p>
-  );
+  return <p className={twMerge("text-[#a9a9a9] text-sm", className)}>{children}</p>;
 };
 
 const Stars = () => {

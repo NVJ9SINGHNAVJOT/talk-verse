@@ -31,19 +31,11 @@ const Blog = () => {
         {/* user profile details */}
         <div className="flex flex-col mt-4 text-snow-200 font-be-veitnam-pro items-center gap-y-1">
           {user?.imageUrl ? (
-            <img
-              src={user?.imageUrl}
-              alt="Loading..."
-              className=" size-20 rounded-full aspect-auto"
-            />
+            <img src={user?.imageUrl} alt="Loading..." className=" size-20 rounded-full aspect-auto" />
           ) : (
             <RxAvatar className="w-full size-20 rounded-full aspect-auto fill-slate-500" />
           )}
-          {user && (
-            <p className=" text-[1rem]">
-              {user?.firstName + " " + user?.lastName}
-            </p>
-          )}
+          {user && <p className=" text-[1rem]">{user?.firstName + " " + user?.lastName}</p>}
           {user && <p className=" text-[0.8rem]">{user.userName}</p>}
           <div className=" w-full flex mt-5 justify-between">
             <div className="flex flex-col items-center ml-1">
@@ -61,9 +53,7 @@ const Blog = () => {
           </div>
         </div>
         {/* posts categories */}
-        <div>
-          
-        </div>
+        <div></div>
       </section>
       {/* posts section */}
       <section className="flex-1 ">

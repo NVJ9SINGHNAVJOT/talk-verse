@@ -1,10 +1,7 @@
 import { countryCodes } from "@/assets/data/countryCodes";
 import { Profile, setProfile } from "@/redux/slices/userSlice";
 import { useAppSelector } from "@/redux/store";
-import {
-  checkUserNameApi,
-  setProfileDetailsApi,
-} from "@/services/operations/profileApi";
+import { checkUserNameApi, setProfileDetailsApi } from "@/services/operations/profileApi";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaEdit } from "react-icons/fa";
@@ -102,10 +99,7 @@ const Settings = () => {
 
   return (
     <div className=" w-full mt-14 ">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col w-fit mx-auto gap-8"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-fit mx-auto gap-8">
         <div className=" flex gap-4 items-center">
           <label className=" font-semibold">User Name</label>
           <input
@@ -190,9 +184,7 @@ const Settings = () => {
             className="  bg-black text-white rounded-lg px-4 py-2 outline-none text-center"
             disabled={!disabled.includes("countryCode")}
           >
-            {!profile?.countryCode && (
-              <option defaultValue={""}>Select Country Code</option>
-            )}
+            {!profile?.countryCode && <option defaultValue={""}>Select Country Code</option>}
 
             {countryCodes.map((data, i) => {
               return (

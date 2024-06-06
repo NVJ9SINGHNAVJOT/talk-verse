@@ -13,13 +13,9 @@ const MessageCard = (props: MessageCardProps) => {
       {props.message.isFile ? (
         <FileItem url={props.message.text} />
       ) : (
-        <p className=" text-[0.9rem] w-full break-words">
-          {props.message.text}
-        </p>
+        <p className=" text-[0.9rem] w-full break-words">{props.message.text}</p>
       )}
-      <p className=" mt-2 self-end  text-snow-700 text-xs">
-        {getDTimeStamp(props.message.createdAt)}
-      </p>
+      <p className=" mt-2 self-end  text-snow-700 text-xs">{getDTimeStamp(props.message.createdAt)}</p>
     </div>
   );
 };

@@ -21,9 +21,7 @@ const ChatWelcomeCard = () => {
       >
         "{welcomeQuotes[randomNumber].title}"
       </div>
-      <span className=" text-white pt-8">
-        - {welcomeQuotes[randomNumber].author}
-      </span>
+      <span className=" text-white pt-8">- {welcomeQuotes[randomNumber].author}</span>
     </div>
   );
 };

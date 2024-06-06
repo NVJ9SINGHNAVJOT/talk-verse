@@ -71,18 +71,7 @@ input[type="number"]::-webkit-outer-spin-button {
 .ct-mainLogoButton:before {
   -webkit-filter: blur(5px);
   content: "";
-  background: linear-gradient(
-    45deg,
-    #ff0000,
-    #ff7300,
-    #fffb00,
-    #48ff00,
-    #00ffd5,
-    #002bff,
-    #7a00ff,
-    #ff00c8,
-    #ff0000
-  );
+  background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
   position: absolute;
   top: -2px;
   left: -2px;
@@ -126,7 +115,9 @@ input[type="number"]::-webkit-outer-spin-button {
 .ct-searchInput {
   border-radius: 1rem;
   background: linear-gradient(135deg, #23272f 0%, #14161a 100%);
-  box-shadow: 10px 10px 20px #0e1013, -10px -10px 40px #383e4b;
+  box-shadow:
+    10px 10px 20px #0e1013,
+    -10px -10px 40px #383e4b;
   padding: 0.3rem;
   gap: 0.3rem;
 }
@@ -134,8 +125,11 @@ input[type="number"]::-webkit-outer-spin-button {
 .ct-searchInput input {
   border-radius: 0.8rem;
   background: #23272f;
-  box-shadow: inset 5px 5px 10px #0e1013, inset -5px -5px 10px #383e4b,
-    0px 0px 100px rgba(255, 212, 59, 0), 0px 0px 100px rgba(255, 102, 0, 0);
+  box-shadow:
+    inset 5px 5px 10px #0e1013,
+    inset -5px -5px 10px #383e4b,
+    0px 0px 100px rgba(255, 212, 59, 0),
+    0px 0px 100px rgba(255, 102, 0, 0);
   width: 100%;
   padding: 1rem;
   border: none;
@@ -147,9 +141,11 @@ input[type="number"]::-webkit-outer-spin-button {
 .ct-searchInput input:focus {
   border: 1px solid #ffd43b;
   outline: none;
-  box-shadow: inset 0px 0px 10px rgba(255, 102, 0, 0.5),
+  box-shadow:
+    inset 0px 0px 10px rgba(255, 102, 0, 0.5),
     inset 0px 0px 10px rgba(255, 212, 59, 0.5),
-    0px 0px 100px rgba(255, 212, 59, 0.5), 0px 0px 100px rgba(255, 102, 0, 0.5);
+    0px 0px 100px rgba(255, 212, 59, 0.5),
+    0px 0px 100px rgba(255, 102, 0, 0.5);
 }
 
 /* message card */
@@ -164,10 +160,14 @@ input[type="number"]::-webkit-outer-spin-button {
   border-bottom-right-radius: 5px;
   border-bottom-left-radius: 5px;
   color: rgb(255, 255, 255);
-  box-shadow: rgb(81 81 81 / 23%) 0px -36px 30px 0px inset,
-    rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px,
-    rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px,
-    rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+  box-shadow:
+    rgb(81 81 81 / 23%) 0px -36px 30px 0px inset,
+    rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset,
+    rgba(0, 0, 0, 0.06) 0px 2px 1px,
+    rgba(0, 0, 0, 0.09) 0px 4px 2px,
+    rgba(0, 0, 0, 0.09) 0px 8px 4px,
+    rgba(0, 0, 0, 0.09) 0px 16px 8px,
+    rgba(0, 0, 0, 0.09) 0px 32px 16px;
 }
 
 .ct-message :after {
@@ -208,10 +208,14 @@ input[type="number"]::-webkit-outer-spin-button {
   color: rgb(227, 227, 227);
   filter: brightness(1.1);
   filter: contrast(1.5);
-  box-shadow: rgb(81 81 81 / 23%) 0px -36px 30px 0px inset,
-    rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px,
-    rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px,
-    rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+  box-shadow:
+    rgb(81 81 81 / 23%) 0px -36px 30px 0px inset,
+    rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset,
+    rgba(0, 0, 0, 0.06) 0px 2px 1px,
+    rgba(0, 0, 0, 0.09) 0px 4px 2px,
+    rgba(0, 0, 0, 0.09) 0px 8px 4px,
+    rgba(0, 0, 0, 0.09) 0px 16px 8px,
+    rgba(0, 0, 0, 0.09) 0px 32px 16px;
 }
 
 .ct-othermessage:after {

@@ -78,17 +78,12 @@ const UserInfo = () => {
       <section className=" w-full flex justify-around mt-14 px-4 lm:px-10 flex-col-reverse md:flex-row">
         {/* user Details */}
         <div className=" w-7/12 flex flex-col mt-10 md:mt-6 ml-10 md:ml-6 ">
-          <p className=" text-4xl font-semibold font-be-veitnam-pro  mb-14">
-            {user?.firstName + " " + user?.lastName}
-          </p>
+          <p className=" text-4xl font-semibold font-be-veitnam-pro  mb-14">{user?.firstName + " " + user?.lastName}</p>
           <p className=" text-xl font-semibold ">Bio</p>
           {profile?.bio ? (
             <p className=" text-[0.9rem]">{profile.bio}</p>
           ) : (
-            <p
-              className=" text-[0.9rem] cursor-pointer w-fit"
-              onClick={goSetting}
-            >
+            <p className=" text-[0.9rem] cursor-pointer w-fit" onClick={goSetting}>
               set bio
             </p>
           )}
@@ -101,23 +96,15 @@ const UserInfo = () => {
           {profile?.gender ? (
             <p className=" text-[0.9rem]">{profile.gender}</p>
           ) : (
-            <p
-              className=" text-[0.9rem] cursor-pointer w-fit"
-              onClick={goSetting}
-            >
+            <p className=" text-[0.9rem] cursor-pointer w-fit" onClick={goSetting}>
               set gender
             </p>
           )}
           <p className=" text-xl font-semibold  mt-2">Contact No.</p>
           {profile?.contactNumber ? (
-            <p className=" text-[0.9rem] mb-8 md:mb-0">
-              {profile.countryCode + " " + profile.contactNumber}
-            </p>
+            <p className=" text-[0.9rem] mb-8 md:mb-0">{profile.countryCode + " " + profile.contactNumber}</p>
           ) : (
-            <p
-              className=" text-[0.9rem] cursor-pointer mb-8 md:mb-0 w-fit"
-              onClick={goSetting}
-            >
+            <p className=" text-[0.9rem] cursor-pointer mb-8 md:mb-0 w-fit" onClick={goSetting}>
               set contact no.
             </p>
           )}
@@ -137,17 +124,9 @@ const UserInfo = () => {
          mx-auto"
           >
             {selectedFile ? (
-              <img
-                src={URL.createObjectURL(selectedFile)}
-                alt="Loading..."
-                className=" w-full h-64 aspect-auto "
-              />
+              <img src={URL.createObjectURL(selectedFile)} alt="Loading..." className=" w-full h-64 aspect-auto " />
             ) : user?.imageUrl ? (
-              <img
-                src={user?.imageUrl}
-                alt="Loading..."
-                className=" w-full h-64 aspect-auto "
-              />
+              <img src={user?.imageUrl} alt="Loading..." className=" w-full h-64 aspect-auto " />
             ) : (
               <RxAvatar className=" w-full h-64 aspect-auto text-white" />
             )}

@@ -11,26 +11,11 @@ const FileItem = ({ url }: FileItemProps) => {
   const fileExt = useMemo(() => url.split(".").pop(), [url]);
   if (!fileExt) return "error";
   else if (validFiles.video.includes("video/" + fileExt)) {
-    return (
-      <video
-        src={url}
-        preload="none"
-        controls
-        className=" w-60 mt-4 rounded-md aspect-video"
-      />
-    );
+    return <video src={url} preload="none" controls className=" w-60 mt-4 rounded-md aspect-video" />;
   } else if (validFiles.image.includes("image/" + fileExt)) {
-    return (
-      <img
-        src={url}
-        alt="Loading..."
-        className=" w-56 mt-4 rounded-md aspect-auto"
-      />
-    );
+    return <img src={url} alt="Loading..." className=" w-56 mt-4 rounded-md aspect-auto" />;
   } else if (validFiles.audio.includes("audio/" + fileExt)) {
-    return (
-      <audio src={url} preload="none" controls className=" w-80 h-9 mt-4 " />
-    );
+    return <audio src={url} preload="none" controls className=" w-80 h-9 mt-4 " />;
   } else if (validFiles.pdf === "application/" + fileExt) {
     return (
       <a href={url} target="_blank" download>

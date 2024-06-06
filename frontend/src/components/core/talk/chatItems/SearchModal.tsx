@@ -1,9 +1,6 @@
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import { useRef } from "react";
-import {
-  getUsersApi,
-  sendRequestApi,
-} from "@/services/operations/notificationApi";
+import { getUsersApi, sendRequestApi } from "@/services/operations/notificationApi";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { RxAvatar } from "react-icons/rx";
@@ -42,8 +39,7 @@ const SearchModal = (props: SearchModalProps) => {
         if (response && response.success == true) {
           if (response.users) {
             const newUsers: UserRequest[] = response.users.filter(
-              (newUser) =>
-                !myFriends.some((friend) => newUser._id === friend._id)
+              (newUser) => !myFriends.some((friend) => newUser._id === friend._id)
             );
             if (newUsers.length === 0) {
               toast.info("No new users for this username");
@@ -68,11 +64,7 @@ const SearchModal = (props: SearchModalProps) => {
     <div className="fixed inset-0 w-screen h-screen backdrop-blur-[1px] bg-transparent z-[1000] flex justify-center items-center">
       <div ref={refModal}>
         <div className="ct-searchInput relative flex justify-center">
-          <input
-            type="text"
-            placeholder="Search Username"
-            onChange={(event) => setQuery(event.target.value)}
-          />
+          <input type="text" placeholder="Search Username" onChange={(event) => setQuery(event.target.value)} />
 
           {users.length > 0 && (
             <div
@@ -81,16 +73,9 @@ const SearchModal = (props: SearchModalProps) => {
             >
               {users.map((user, index) => {
                 return (
-                  <div
-                    key={index}
-                    className=" flex w-fit items-center gap-x-3 bg-black  px-3 py-1 rounded-lg"
-                  >
+                  <div key={index} className=" flex w-fit items-center gap-x-3 bg-black  px-3 py-1 rounded-lg">
                     {user.imageUrl ? (
-                      <img
-                        src={user.imageUrl}
-                        className=" rounded-full w-10 h-10 aspect-auto"
-                        alt="Loading..."
-                      />
+                      <img src={user.imageUrl} className=" rounded-full w-10 h-10 aspect-auto" alt="Loading..." />
                     ) : (
                       <RxAvatar className="w-10 h-10 aspect-auto" />
                     )}

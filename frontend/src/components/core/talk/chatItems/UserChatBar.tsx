@@ -8,27 +8,14 @@ import userChatBarEvents from "@/socket/events/userChatBarEvents";
 import { useRef, useState } from "react";
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import { useAppSelector } from "@/redux/store";
-import {
-  acceptRequestApi,
-  deleteRequestApi,
-} from "@/services/operations/notificationApi";
+import { acceptRequestApi, deleteRequestApi } from "@/services/operations/notificationApi";
 import { RxAvatar } from "react-icons/rx";
 import { CiCirclePlus } from "react-icons/ci";
-import {
-  addChatBarData,
-  addFriend,
-  ChatBarData,
-  deleteUserRequest,
-  Friend,
-} from "@/redux/slices/chatSlice";
+import { addChatBarData, addFriend, ChatBarData, deleteUserRequest, Friend } from "@/redux/slices/chatSlice";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import GroupBarItem from "@/components/core/talk/chatItems/GroupBarItem";
-import {
-  addNewUnseen,
-  addPublicKey,
-  PublicKey,
-} from "@/redux/slices/messagesSlice";
+import { addNewUnseen, addPublicKey, PublicKey } from "@/redux/slices/messagesSlice";
 import { SoAddedInGroup } from "@/types/socket/eventTypes";
 import FriendBarItem from "@/components/core/talk/chatItems/FriendBarItem";
 
@@ -98,20 +85,12 @@ const UserChatBar = () => {
         className="w-full h-[4rem] flex justify-around items-center py-2 border-b-[1px]
          border-b-whitesmoke border-r-[3px] border-r-black "
       >
-        <IoSearchOutline
-          onClick={toggleSearchModal}
-          className=" text-white text-2xl cursor-pointer"
-        />
-        <FiPlus
-          onClick={toggelCreateGroupModal}
-          className=" text-white text-2xl cursor-pointer"
-        />
+        <IoSearchOutline onClick={toggleSearchModal} className=" text-white text-2xl cursor-pointer" />
+        <FiPlus onClick={toggelCreateGroupModal} className=" text-white text-2xl cursor-pointer" />
         <div className=" relative">
           <div ref={excSeeNotifRef}>
             <FaRegBell
-              className={` ${
-                userRequests.length === 0 ? "text-white" : "text-yellow-400 "
-              } text-2xl cursor-pointer`}
+              className={` ${userRequests.length === 0 ? "text-white" : "text-yellow-400 "} text-2xl cursor-pointer`}
               onClick={() => setSeeNotif((prev) => !prev)}
             />
           </div>
@@ -121,9 +100,7 @@ const UserChatBar = () => {
               className=" absolute z-[500] -top-3 -right-[18rem] rounded-xl gap-y-3 text-white flex flex-col px-5 py-2 bg-black"
             >
               {userRequests?.length === 0 ? (
-                <div className=" bg-black px-3 py-1 text-white text-center w-[12rem]">
-                  No Requests
-                </div>
+                <div className=" bg-black px-3 py-1 text-white text-center w-[12rem]">No Requests</div>
               ) : (
                 userRequests?.map((user, index) => {
                   return (
@@ -132,11 +109,7 @@ const UserChatBar = () => {
                       className=" flex w-fit items-center gap-x-3 bg-black hover:bg-gray-800 px-3 py-1 rounded-lg"
                     >
                       {user.imageUrl ? (
-                        <img
-                          src={user.imageUrl}
-                          className=" rounded-full w-10 h-10 aspect-auto"
-                          alt="Loading..."
-                        />
+                        <img src={user.imageUrl} className=" rounded-full w-10 h-10 aspect-auto" alt="Loading..." />
                       ) : (
                         <RxAvatar className="w-10 h-10 aspect-auto" />
                       )}
@@ -163,17 +136,9 @@ const UserChatBar = () => {
         {chatBarData?.map((data, index) => (
           <div key={index}>
             {data.chatId !== undefined ? (
-              <FriendBarItem
-                friend={data as Friend}
-                inChat={inChat}
-                setInChat={setInChat}
-              />
+              <FriendBarItem friend={data as Friend} inChat={inChat} setInChat={setInChat} />
             ) : (
-              <GroupBarItem
-                group={data as SoAddedInGroup}
-                inChat={inChat}
-                setInChat={setInChat}
-              />
+              <GroupBarItem group={data as SoAddedInGroup} inChat={inChat} setInChat={setInChat} />
             )}
           </div>
         ))}
@@ -181,9 +146,7 @@ const UserChatBar = () => {
 
       {/* modals for search user and create group */}
       {isSearchOpen && <SearchModal toggleSearchModal={toggleSearchModal} />}
-      {isCreateGroupOpen && (
-        <CreateGroup toggelCreateGroupModal={toggelCreateGroupModal} />
-      )}
+      {isCreateGroupOpen && <CreateGroup toggelCreateGroupModal={toggelCreateGroupModal} />}
     </div>
   );
 };
