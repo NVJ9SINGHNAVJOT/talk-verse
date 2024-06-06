@@ -49,6 +49,7 @@ export const getUserDetails = async (req: Request, res: Response): Promise<Respo
             countryCode: true,
             contactNumber: true,
             about: true,
+            updatedAt: true,
             _id: false
         }).exec();
 
