@@ -20,35 +20,8 @@ import { CustomRequest } from "@/types/custom";
 import { uploadMultiplesToCloudinary, uploadToCloudinary } from "@/utils/cloudinaryHandler";
 import { deleteFile, deleteFiles } from "@/utils/deleteFile";
 import { errRes } from "@/utils/error";
-import { and, eq, sql, lt, desc, count } from "drizzle-orm";
+import { and, eq, sql, lt, desc } from "drizzle-orm";
 import { Request, Response } from "express";
-
-export const userBlogProfile = async (req: Request, res: Response): Promise<Response> => {
-  try {
-    const userId2 = (req as CustomRequest).userId2;
-
-    const blogProfile = await db
-      .select({ followingCount: user.followingCount, followersCount: user.followersCount })
-      .from(user)
-      .where(eq(user.id, userId2))
-      .limit(1)
-      .execute();
-
-    const totalPosts = await db.select({ count: count() }).from(post).where(eq(post.userId, userId2));
-
-    return res.status(200).json({
-      success: true,
-      message: "user blog profile data",
-      blogProfile: {
-        followingCount: blogProfile[0]?.followingCount,
-        followersCount: blogProfile[0]?.followingCount,
-        totalPosts: totalPosts[0]?.count,
-      },
-    });
-  } catch (error) {
-    return errRes(res, 500, "error while getting userBlogProfile data", error);
-  }
-};
 
 export const followUser = async (req: Request, res: Response): Promise<Response> => {
   try {

@@ -9,21 +9,11 @@ import {
   GetUsersRs,
 } from "@/types/apis/notificationApiRs";
 
-const {
-  GET_USERS,
-  SEND_REQUEST,
-  ACCEPT_REQUEST,
-  DELETE_REQUESET,
-  GET_ALL_NOTIFICATIONS,
-  CREATE_GROUP,
-  CHECK_ONLINE_FRIENDS,
-  SET_UNSEEN_COUNT,
-  SET_ORDER,
-} = notificationEndPoints;
-
 export const getUsersApi = async (userName: string): Promise<GetUsersRs> => {
   try {
-    const resData: GetUsersRs = await fetchApi("GET", GET_USERS, null, null, { userName: userName });
+    const resData: GetUsersRs = await fetchApi("GET", notificationEndPoints.GET_USERS, null, null, {
+      userName: userName,
+    });
     // success false is used in response
     if (resData) {
       return resData;
@@ -38,7 +28,7 @@ export const sendRequestApi = async (otherUserId: string): Promise<boolean> => {
   try {
     const resData: CommonRs = await fetchApi(
       "POST",
-      SEND_REQUEST,
+      notificationEndPoints.SEND_REQUEST,
       { otherUserId: otherUserId },
       { "Content-Type": "application/json" }
     );
@@ -55,7 +45,7 @@ export const acceptRequestApi = async (otherUserId: string): Promise<AcceptReque
   try {
     const resData: AcceptRequestRs = await fetchApi(
       "POST",
-      ACCEPT_REQUEST,
+      notificationEndPoints.ACCEPT_REQUEST,
       { otherUserId: otherUserId },
       { "Content-Type": "application/json" }
     );
@@ -72,7 +62,7 @@ export const deleteRequestApi = async (otherUserId: string): Promise<boolean> =>
   try {
     const resData: CommonRs = await fetchApi(
       "DELETE",
-      DELETE_REQUESET,
+      notificationEndPoints.DELETE_REQUESET,
       { otherUserId: otherUserId },
       { "Content-Type": "application/json" }
     );
@@ -87,7 +77,7 @@ export const deleteRequestApi = async (otherUserId: string): Promise<boolean> =>
 
 export const getAllNotificationsApi = async (): Promise<GetAllNotificationsRs> => {
   try {
-    const resData: GetAllNotificationsRs = await fetchApi("GET", GET_ALL_NOTIFICATIONS);
+    const resData: GetAllNotificationsRs = await fetchApi("GET", notificationEndPoints.GET_ALL_NOTIFICATIONS);
     if (resData) {
       return resData;
     }
@@ -99,7 +89,7 @@ export const getAllNotificationsApi = async (): Promise<GetAllNotificationsRs> =
 
 export const createGroupApi = async (data: FormData): Promise<CreateGroupRs> => {
   try {
-    const resData: CreateGroupRs = await fetchApi("POST", CREATE_GROUP, data);
+    const resData: CreateGroupRs = await fetchApi("POST", notificationEndPoints.CREATE_GROUP, data);
     if (resData && resData.success === true) {
       return resData;
     }
@@ -111,7 +101,7 @@ export const createGroupApi = async (data: FormData): Promise<CreateGroupRs> => 
 
 export const checkOnlineFriendsApi = async (): Promise<CheckOnlineFriendsRs> => {
   try {
-    const resData: CheckOnlineFriendsRs = await fetchApi("GET", CHECK_ONLINE_FRIENDS);
+    const resData: CheckOnlineFriendsRs = await fetchApi("GET", notificationEndPoints.CHECK_ONLINE_FRIENDS);
     if (resData) {
       return resData;
     }
@@ -125,7 +115,7 @@ export const setUnseenCount = async (mainId: string, count: number): Promise<boo
   try {
     const resData: CommonRs = await fetchApi(
       "POST",
-      SET_UNSEEN_COUNT,
+      notificationEndPoints.SET_UNSEEN_COUNT,
       { mainId: mainId, count: count },
       { "Content-Type": "application/json" }
     );
@@ -142,7 +132,7 @@ export const setOrderApi = async (mainId: string): Promise<boolean> => {
   try {
     const resData: CommonRs = await fetchApi(
       "POST",
-      SET_ORDER,
+      notificationEndPoints.SET_ORDER,
       { mainId: mainId },
       { "Content-Type": "application/json" }
     );

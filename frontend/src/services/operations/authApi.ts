@@ -3,11 +3,9 @@ import { fetchApi } from "@/services/fetchApi";
 import { CheckUserRs } from "@/types/apis/authApiRs";
 import { CommonRs } from "@/types/apis/common";
 
-const { SIGNUP, OTP, LOGIN, CHECK_USER, LOGOUT } = authEndPoints;
-
 export const signUpApi = async (data: FormData): Promise<boolean> => {
   try {
-    const resData: CommonRs = await fetchApi("POST", SIGNUP, data);
+    const resData: CommonRs = await fetchApi("POST", authEndPoints.SIGNUP, data);
     if (resData && resData.success === true) {
       return true;
     }
@@ -19,7 +17,12 @@ export const signUpApi = async (data: FormData): Promise<boolean> => {
 
 export const sendOtpApi = async (email: string): Promise<boolean> => {
   try {
-    const resData: CommonRs = await fetchApi("POST", OTP, { email: email }, { "Content-Type": "application/json" });
+    const resData: CommonRs = await fetchApi(
+      "POST",
+      authEndPoints.OTP,
+      { email: email },
+      { "Content-Type": "application/json" }
+    );
     if (resData && resData.success === true) {
       return true;
     }
@@ -31,7 +34,9 @@ export const sendOtpApi = async (email: string): Promise<boolean> => {
 
 export const logInApi = async (data: object): Promise<CheckUserRs> => {
   try {
-    const resData: CheckUserRs = await fetchApi("POST", LOGIN, data, { "Content-Type": "application/json" });
+    const resData: CheckUserRs = await fetchApi("POST", authEndPoints.LOGIN, data, {
+      "Content-Type": "application/json",
+    });
     if (resData && resData.success === true) {
       return resData;
     }
@@ -43,7 +48,7 @@ export const logInApi = async (data: object): Promise<CheckUserRs> => {
 
 export const checkUserApi = async (): Promise<CheckUserRs> => {
   try {
-    const resData: CheckUserRs = await fetchApi("GET", CHECK_USER);
+    const resData: CheckUserRs = await fetchApi("GET", authEndPoints.CHECK_USER);
     if (resData && resData.success === true) {
       return resData;
     }
@@ -55,7 +60,7 @@ export const checkUserApi = async (): Promise<CheckUserRs> => {
 
 export const logOutApi = async (): Promise<boolean> => {
   try {
-    const resData: CommonRs = await fetchApi("DELETE", LOGOUT);
+    const resData: CommonRs = await fetchApi("DELETE", authEndPoints.LOGOUT);
     if (resData && resData.success === true) {
       return true;
     }

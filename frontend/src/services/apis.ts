@@ -15,6 +15,7 @@ export const profileEndPoints = {
   PROFILE_DETAILS: BASE_URL_SERVER + "/profiles/getDetails",
   SET_PROFILE_IMAGE: BASE_URL_SERVER + "/profiles/updateProfileImage",
   SET_PROFILE_DETAILS: BASE_URL_SERVER + "/profiles/updateProfile",
+  USER_BLOG_PROFILE: BASE_URL_SERVER + "/profiles/userBlogProfile",
 };
 
 // notification endpoints
@@ -40,7 +41,6 @@ export const chatEndPoints = {
 
 // userPost endpoints
 export const postEndPoints = {
-  USER_BLOG_PROFILE: BASE_URL_SERVER + "/posts/userBlogProfile",
   FOLLOW_USER: BASE_URL_SERVER + "/posts/followUser", // parameters: userIdToFollow
   CREATE_POST: BASE_URL_SERVER + "/posts/createPost",
   DELETE_POST: BASE_URL_SERVER + "/posts/deletePost", // parameters: postId

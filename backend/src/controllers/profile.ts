@@ -1,12 +1,13 @@
 import User from "@/db/mongodb/models/User";
 import { db } from "@/db/postgresql/connection";
+import { post } from "@/db/postgresql/schema/post";
 import { user } from "@/db/postgresql/schema/user";
 import { CheckUserNameReqSchema, UpdateProfileReqSchema } from "@/types/controllers/profileReq";
 import { CustomRequest } from "@/types/custom";
 import { deleteFromCloudinay, uploadToCloudinary } from "@/utils/cloudinaryHandler";
 import { deleteFile } from "@/utils/deleteFile";
 import { errRes } from "@/utils/error";
-import { eq } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { Request, Response } from "express";
 
 export const checkUserName = async (req: Request, res: Response): Promise<Response> => {
@@ -186,5 +187,32 @@ export const updateProfile = async (req: Request, res: Response): Promise<Respon
     });
   } catch (error) {
     return errRes(res, 500, "error while updating user details", error);
+  }
+};
+
+export const userBlogProfile = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const userId2 = (req as CustomRequest).userId2;
+
+    const blogProfile = await db
+      .select({ followingCount: user.followingCount, followersCount: user.followersCount })
+      .from(user)
+      .where(eq(user.id, userId2))
+      .limit(1)
+      .execute();
+
+    const totalPosts = await db.select({ count: count() }).from(post).where(eq(post.userId, userId2));
+
+    return res.status(200).json({
+      success: true,
+      message: "user blog profile data",
+      blogProfile: {
+        followingCount: blogProfile[0]?.followingCount,
+        followersCount: blogProfile[0]?.followingCount,
+        totalPosts: totalPosts[0]?.count,
+      },
+    });
+  } catch (error) {
+    return errRes(res, 500, "error while getting userBlogProfile data", error);
   }
 };
