@@ -67,7 +67,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     }
 
     /* all verification done, now create user */
-    let secUrl = "";
+    let secUrl;
     if (req.file) {
       const imageUrl = await uploadToCloudinary(req.file);
       if (imageUrl === null) {
@@ -101,7 +101,13 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     // create user in postgreSQL database
     const newUser2 = await db
       .insert(user)
-      .values({ refId: newUser._id.toString(), userName: data.userName, imageUrl: secUrl })
+      .values({
+        refId: newUser._id.toString(),
+        firstName: data.firstName,
+        lastName: data.lastName,
+        userName: data.userName,
+        imageUrl: secUrl ? secUrl : null,
+      })
       .returning({ id: user.id });
     if (newUser2.length !== 1 || !newUser2[0]) {
       await Notification.deleteOne({ userId: newUser.id });

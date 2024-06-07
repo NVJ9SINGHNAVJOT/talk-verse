@@ -35,12 +35,15 @@ export type CheckOnlineFriendsRs = {
   onlineFriends?: string[];
 } | null;
 
+export type UserSuggestion = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  userName: string;
+  imageUrl?: string;
+};
 export type FollowSuggestionsRs = {
   success: boolean;
   message: string;
-  suggestions: {
-    id: number;
-    userName: string;
-    imageUrl: string | null;
-  }[];
+  suggestions?: UserSuggestion[];
 } | null;

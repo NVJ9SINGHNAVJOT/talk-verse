@@ -1,18 +1,17 @@
-export type Post = {
-  id: number;
-  userId: number;
-  category: string;
-  title?: string;
-  mediaUrls?: string[];
-  tags?: string[];
-  content?: string[];
-  likesCount: number;
-  createdAt: Date;
-};
 export type CreatePostRs = {
   success: boolean;
   message: string;
-  post: Post;
+  post: {
+    id: number;
+    userId: number;
+    category: string;
+    title?: string;
+    mediaUrls?: string[];
+    tags?: string[];
+    content?: string[];
+    likesCount: number;
+    createdAt: Date;
+  };
 } | null;
 
 export type CreateStoryRs = {
@@ -43,6 +42,21 @@ export type GetStoriesRs = {
     createdAt: string;
   }[];
 } | null;
+
+export type Post = {
+  id: number;
+  userId: number;
+  firstName: string;
+  lastName: string;
+  userName: string;
+  category: string;
+  title?: string;
+  mediaUrls?: string[];
+  tags?: string[];
+  content?: string[];
+  likesCount: number;
+  createdAt: Date;
+};
 
 export type PostsRs = {
   success: boolean;

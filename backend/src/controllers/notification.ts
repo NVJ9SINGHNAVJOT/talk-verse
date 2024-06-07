@@ -578,6 +578,8 @@ export const followSuggestions = async (req: Request, res: Response): Promise<Re
     const suggestions = await db
       .select({
         id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
         userName: user.userName,
         imageUrl: user.imageUrl,
       })

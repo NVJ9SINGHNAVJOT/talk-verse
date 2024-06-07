@@ -416,6 +416,9 @@ export const recentPosts = async (req: Request, res: Response): Promise<Response
       .select({
         id: post.id,
         userId: post.userId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        userName: user.userName,
         category: post.category,
         title: post.title,
         mediaUrls: post.mediaUrls,
@@ -425,6 +428,7 @@ export const recentPosts = async (req: Request, res: Response): Promise<Response
         createdAt: post.createdAt,
       })
       .from(post)
+      .leftJoin(user, eq(post.userId, user.id))
       .where(lt(post.createdAt, new Date(data.createdAt)))
       .orderBy(desc(post.createdAt))
       .limit(15)
@@ -459,6 +463,9 @@ export const trendingPosts = async (req: Request, res: Response): Promise<Respon
       .select({
         id: post.id,
         userId: post.userId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        userName: user.userName,
         category: post.category,
         title: post.title,
         mediaUrls: post.mediaUrls,
@@ -468,6 +475,7 @@ export const trendingPosts = async (req: Request, res: Response): Promise<Respon
         createdAt: post.createdAt,
       })
       .from(post)
+      .leftJoin(user, eq(post.userId, user.id))
       .where(lt(post.createdAt, new Date(data.createdAt)))
       .orderBy(desc(post.likesCount), desc(post.createdAt))
       .limit(15)
@@ -502,6 +510,9 @@ export const categoryPosts = async (req: Request, res: Response): Promise<Respon
       .select({
         id: post.id,
         userId: post.userId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        userName: user.userName,
         category: post.category,
         title: post.title,
         mediaUrls: post.mediaUrls,
@@ -511,6 +522,7 @@ export const categoryPosts = async (req: Request, res: Response): Promise<Respon
         createdAt: post.createdAt,
       })
       .from(post)
+      .leftJoin(user, eq(post.userId, user.id))
       .where(and(eq(post.category, data.category), lt(post.createdAt, new Date(data.createdAt))))
       .orderBy(desc(post.createdAt))
       .limit(15)

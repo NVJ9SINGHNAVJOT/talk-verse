@@ -1,5 +1,7 @@
 import { useAppSelector } from "@/redux/store";
+import { followSuggestionsApi } from "@/services/operations/notificationApi";
 import { userBlogProfileApi } from "@/services/operations/profileApi";
+import { UserSuggestion } from "@/types/apis/notificationApiRs";
 import { BlogProfile } from "@/types/apis/profileApiRs";
 import { useEffect, useState } from "react";
 import { RxAvatar } from "react-icons/rx";
@@ -27,19 +29,37 @@ const Blog = () => {
   const user = useAppSelector((state) => state.user.user);
   const [blogProfile, setBlogProfile] = useState<BlogProfile>();
   const [postMenu, setPostMenu] = useState<string>();
+  const [suggestions, setSuggestions] = useState<UserSuggestion[]>();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const getBlogProfile = async () => {
-      const response = await userBlogProfileApi();
-      if (response) {
-        setBlogProfile(response.blogProfile);
-      } else {
-        toast.error("Error while getting blogProfie data");
-        navigate("/error");
+  const getSuggestions = async () => {
+    const response = await followSuggestionsApi();
+    if (response) {
+      if (response.suggestions?.length) {
+        setSuggestions(response.suggestions);
       }
+    } else {
+      toast.error("Error while getting followSuggestions");
+      navigate("/error");
+    }
+  };
+
+  const getBlogProfile = async () => {
+    const response = await userBlogProfileApi();
+    if (response) {
+      setBlogProfile(response.blogProfile);
+    } else {
+      toast.error("Error while getting blogProfie data");
+      navigate("/error");
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await Promise.all([getSuggestions(), getBlogProfile()]);
     };
-    getBlogProfile();
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -131,7 +151,7 @@ const Blog = () => {
         </div>
         <div className=" text-stone-100">Suggestions</div>
         <div className=" flex flex-col text-snow-50">
-          <div>user</div>
+          <div>follow suggestion</div>
         </div>
         <div className=" border-dashed border-[1px] border-snow-500 w-full mt-2"></div>
       </section>

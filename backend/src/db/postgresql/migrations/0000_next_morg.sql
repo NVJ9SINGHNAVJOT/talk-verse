@@ -58,6 +58,8 @@ CREATE TABLE IF NOT EXISTS "story" (
 CREATE TABLE IF NOT EXISTS "user" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"ref_id" varchar NOT NULL,
+	"first_name" varchar NOT NULL,
+	"last_name" varchar NOT NULL,
 	"user_name" varchar NOT NULL,
 	"image_url" varchar,
 	"following_count" integer DEFAULT 0 NOT NULL,

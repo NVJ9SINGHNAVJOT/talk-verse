@@ -15,6 +15,8 @@ export const user = pgTable(
 
     // reference from mongodb
     refId: varchar("ref_id").notNull(),
+    firstName: varchar("first_name").notNull(),
+    lastName: varchar("last_name").notNull(),
     userName: varchar("user_name").notNull(),
     imageUrl: varchar("image_url"),
 
