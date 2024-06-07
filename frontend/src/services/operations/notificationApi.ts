@@ -5,6 +5,7 @@ import { CommonRs } from "@/types/apis/common";
 import {
   AcceptRequestRs,
   CheckOnlineFriendsRs,
+  FollowSuggestionsRs,
   GetAllNotificationsRs,
   GetUsersRs,
 } from "@/types/apis/notificationApiRs";
@@ -142,5 +143,17 @@ export const setOrderApi = async (mainId: string): Promise<boolean> => {
     return false;
   } catch (error) {
     return false;
+  }
+};
+
+export const followSuggestionsApi = async (): Promise<FollowSuggestionsRs> => {
+  try {
+    const resData: FollowSuggestionsRs = await fetchApi("GET", notificationEndPoints.FOLLOW_SUGGESTIONS);
+    if (resData) {
+      return resData;
+    }
+    return resData;
+  } catch (error) {
+    return null;
   }
 };

@@ -12,7 +12,6 @@ import {
   DeleteCommentReqSchema,
   DeletePostReqSchema,
   DeleteStoryReqSchema,
-  FollowUserReqSchema,
   GetCreatedAtReqSchema,
   UpdateLikeReqSchema,
 } from "@/types/controllers/postReq";
@@ -22,55 +21,6 @@ import { deleteFile, deleteFiles } from "@/utils/deleteFile";
 import { errRes } from "@/utils/error";
 import { and, eq, sql, lt, desc } from "drizzle-orm";
 import { Request, Response } from "express";
-
-export const followUser = async (req: Request, res: Response): Promise<Response> => {
-  try {
-    const userId2 = (req as CustomRequest).userId2;
-    const followUserReq = FollowUserReqSchema.safeParse(req.query);
-
-    if (!followUserReq.success) {
-      return errRes(res, 400, `invalid data for follow user, ${followUserReq.error.toString()}`);
-    }
-
-    const data = followUserReq.data;
-
-    const intUserIdToFollow = parseInt(data.userIdToFollow);
-    if (userId2 === intUserIdToFollow) {
-      return errRes(res, 400, "userIdToFollow is same as userId2, invalid data in querry");
-    }
-
-    const followRes = await db
-      .insert(follow)
-      .values({ followerId: userId2, followingId: intUserIdToFollow })
-      .onConflictDoNothing({ target: [follow.followerId, follow.followingId] })
-      .returning({ id: follow.id })
-      .execute();
-
-    // check querry response
-    if (followRes.length === 0) {
-      return errRes(res, 400, "user already followed other user");
-    }
-
-    // user followed other user, now increase the count of following for curr user
-    await db
-      .update(user)
-      .set({ followingCount: sql`${user.followingCount} + 1` })
-      .where(eq(user.id, userId2));
-
-    // now increase count of follower for other user
-    await db
-      .update(user)
-      .set({ followingCount: sql`${user.followersCount} + 1` })
-      .where(eq(user.id, userId2));
-
-    return res.status(200).json({
-      success: true,
-      messasge: "user followed other user",
-    });
-  } catch (error) {
-    return errRes(res, 500, "error while following user", error);
-  }
-};
 
 export const createPost = async (req: Request, res: Response): Promise<Response> => {
   try {

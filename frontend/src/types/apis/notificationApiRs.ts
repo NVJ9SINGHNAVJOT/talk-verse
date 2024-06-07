@@ -34,3 +34,13 @@ export type CheckOnlineFriendsRs = {
   message: string;
   onlineFriends?: string[];
 } | null;
+
+export type FollowSuggestionsRs = {
+  success: boolean;
+  message: string;
+  suggestions: {
+    id: number;
+    userName: string;
+    imageUrl: string | null;
+  }[];
+} | null;

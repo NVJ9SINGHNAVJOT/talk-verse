@@ -7,7 +7,6 @@ import {
   deleteComment,
   deletePost,
   deleteStory,
-  followUser,
   getStories,
   recentPosts,
   trendingPosts,
@@ -19,7 +18,6 @@ import express, { Router } from "express";
 
 const router: Router = express.Router();
 
-router.post("/followUser", auth, followUser); // parameters: userIdToFollow
 router.post("/createPost", postFiles, auth, createPost);
 router.delete("/deletePost", auth, deletePost); // parameters: postId
 router.post("/createStory", storyFile, auth, createStory);

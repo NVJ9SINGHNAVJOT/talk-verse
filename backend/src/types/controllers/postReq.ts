@@ -1,11 +1,6 @@
 import { categoriesSchema, postgreSQLIdSchema } from "@/validators/zod";
 import z from "zod";
 
-export const FollowUserReqSchema = z.object({
-  userIdToFollow: postgreSQLIdSchema,
-});
-export type FollowUserReq = z.infer<typeof FollowUserReqSchema>;
-
 export const CreatePostReqSchema = z.object({
   category: categoriesSchema,
   title: z.string().optional(),

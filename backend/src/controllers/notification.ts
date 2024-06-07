@@ -6,6 +6,7 @@ import { clientE } from "@/socket/events";
 import { channels, groupIds, groupOffline, userSocketIDs } from "@/socket/index";
 import {
   CreateGroupReqSchema,
+  FollowUserReqSchema,
   OtherUserIdReqSchema,
   SetOrderReqSchema,
   SetUnseenCountReqSchema,
@@ -21,6 +22,10 @@ import { uploadToCloudinary } from "@/utils/cloudinaryHandler";
 import Group from "@/db/mongodb/models/Group";
 import { deleteFile } from "@/utils/deleteFile";
 import { isValidMongooseObjectId } from "@/validators/mongooseId";
+import { db } from "@/db/postgresql/connection";
+import { user } from "@/db/postgresql/schema/user";
+import { follow } from "@/db/postgresql/schema/follow";
+import { and, eq, isNull, ne, sql } from "drizzle-orm";
 
 export const getUsers = async (req: Request, res: Response): Promise<Response> => {
   try {
@@ -513,6 +518,88 @@ export const setOrder = async (req: Request, res: Response): Promise<Response> =
       message: "order updated successfully",
     });
   } catch (error) {
-    return errRes(res, 400, "error while setting order", error);
+    return errRes(res, 500, "error while setting order", error);
+  }
+};
+
+export const followUser = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const userId2 = (req as CustomRequest).userId2;
+    const followUserReq = FollowUserReqSchema.safeParse(req.query);
+
+    if (!followUserReq.success) {
+      return errRes(res, 400, `invalid data for follow user, ${followUserReq.error.toString()}`);
+    }
+
+    const data = followUserReq.data;
+
+    const intUserIdToFollow = parseInt(data.userIdToFollow);
+    if (userId2 === intUserIdToFollow) {
+      return errRes(res, 400, "userIdToFollow is same as userId2, invalid data in querry");
+    }
+
+    const followRes = await db
+      .insert(follow)
+      .values({ followerId: userId2, followingId: intUserIdToFollow })
+      .onConflictDoNothing({ target: [follow.followerId, follow.followingId] })
+      .returning({ id: follow.id })
+      .execute();
+
+    // check querry response
+    if (followRes.length === 0) {
+      return errRes(res, 400, "user already followed other user");
+    }
+
+    // user followed other user, now increase the count of following for curr user
+    await db
+      .update(user)
+      .set({ followingCount: sql`${user.followingCount} + 1` })
+      .where(eq(user.id, userId2));
+
+    // now increase count of follower for other user
+    await db
+      .update(user)
+      .set({ followingCount: sql`${user.followersCount} + 1` })
+      .where(eq(user.id, userId2));
+
+    return res.status(200).json({
+      success: true,
+      messasge: "user followed other user",
+    });
+  } catch (error) {
+    return errRes(res, 500, "error while following user", error);
+  }
+};
+
+export const followSuggestions = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const userId2 = (req as CustomRequest).userId2;
+
+    const suggestions = await db
+      .select({
+        id: user.id,
+        userName: user.userName,
+        imageUrl: user.imageUrl,
+      })
+      .from(user)
+      .leftJoin(follow, and(eq(follow.followingId, user.id), eq(follow.followerId, userId2)))
+      .where(and(isNull(follow.followerId), ne(user.id, userId2)))
+      .limit(5)
+      .execute();
+
+    if (suggestions.length) {
+      return res.status(200).json({
+        success: true,
+        message: "follow suggestions for user",
+        suggestions: suggestions,
+      });
+    }
+
+    return res.status(200).json({
+      success: false,
+      message: "no follow suggestions for user",
+    });
+  } catch (error) {
+    return errRes(res, 500, "error while getting follow suggestions", error);
   }
 };

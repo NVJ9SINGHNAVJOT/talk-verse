@@ -1,4 +1,4 @@
-import { fancyNameSchema } from "@/validators/zod";
+import { fancyNameSchema, postgreSQLIdSchema } from "@/validators/zod";
 import z from "zod";
 
 export const OtherUserIdReqSchema = z.object({
@@ -22,3 +22,13 @@ export const SetOrderReqSchema = z.object({
   mainId: z.string(),
 });
 export type SetOrderReq = z.infer<typeof SetOrderReqSchema>;
+
+export const FollowUserReqSchema = z.object({
+  userIdToFollow: postgreSQLIdSchema,
+});
+export type FollowUserReq = z.infer<typeof FollowUserReqSchema>;
+
+export const UpdateFollowSuggestionReqSchema = z.object({
+  previousSuggestionsIds: postgreSQLIdSchema.array().length(4).optional(),
+});
+export type UpdateFollowSuggestionReq = z.infer<typeof UpdateFollowSuggestionReqSchema>;

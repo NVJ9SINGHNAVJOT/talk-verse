@@ -1,6 +1,6 @@
 import { Profile } from "@/redux/slices/userSlice";
 
-export type GetProfileRs = {
+export type ProfileRs = {
   success: boolean;
   message: string;
   userData: Profile;

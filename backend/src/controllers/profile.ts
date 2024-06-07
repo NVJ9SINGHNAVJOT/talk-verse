@@ -127,7 +127,7 @@ export const updateProfile = async (req: Request, res: Response): Promise<Respon
     }
     const data = updateProfileReq.data;
 
-    const user = await User.findById({ _id: userId })
+    const mongoUser = await User.findById({ _id: userId })
       .select({
         email: true,
         userName: true,
@@ -139,45 +139,47 @@ export const updateProfile = async (req: Request, res: Response): Promise<Respon
       })
       .exec();
 
-    if (user) {
+    if (mongoUser) {
       if (data.bio) {
-        user.bio = data.bio;
+        mongoUser.bio = data.bio;
       }
       if (data.countryCode) {
-        user.countryCode = data.countryCode;
+        mongoUser.countryCode = data.countryCode;
       }
       if (data.contactNumber) {
-        user.contactNumber = parseInt(data.contactNumber);
+        mongoUser.contactNumber = parseInt(data.contactNumber);
       }
       if (data.gender) {
-        user.gender = data.gender;
+        mongoUser.gender = data.gender;
       }
       // check whether userName exist or not
       if (data.userName) {
         const checkUsers = await User.countDocuments({ userName: data.userName });
         if (checkUsers === 0) {
-          user.userName = data.userName;
-          await user?.save();
+          mongoUser.userName = data.userName;
+          await mongoUser?.save();
+          await db.update(user).set({ userName: data.userName }).where(eq(user.refId, userId)).execute();
           return res.status(200).json({
             success: true,
             message: "user details updated successfully",
             userData: user,
           });
         } else {
-          await user.save();
+          await mongoUser.save();
           return res.status(200).json({
             success: false,
             message: "userName is already in use, try again",
+            userData: mongoUser,
           });
         }
       }
 
       // userName is not in data for update, so save user
-      await user.save();
+      await mongoUser.save();
       return res.status(200).json({
         success: true,
         message: "user details updated successfully",
-        userData: user,
+        userData: mongoUser,
       });
     }
 

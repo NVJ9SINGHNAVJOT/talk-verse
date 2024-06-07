@@ -4,6 +4,8 @@ import {
   checkOnlineFriends,
   createGroup,
   deleteRequest,
+  followSuggestions,
+  followUser,
   getAllNotifications,
   getUsers,
   sendRequest,
@@ -25,5 +27,7 @@ router.post("/createGroup", imageFile, auth, createGroup);
 router.get("/checkOnlineFriends", auth, checkOnlineFriends);
 router.post("/setUnseenCount", auth, setUnseenCount);
 router.post("/setOrder", auth, setOrder);
+router.post("/followUser", auth, followUser); // parameters: userIdToFollow
+router.get("/followSuggestions", auth, followSuggestions);
 
 export default router;

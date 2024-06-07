@@ -1,4 +1,4 @@
-import { GetProfileRs, SetProfileImageRs, UserBlogProfileRs } from "@/types/apis/profileApiRs";
+import { ProfileRs, SetProfileImageRs, UserBlogProfileRs } from "@/types/apis/profileApiRs";
 import { profileEndPoints } from "../apis";
 import { fetchApi } from "../fetchApi";
 import { CommonRs } from "@/types/apis/common";
@@ -18,9 +18,9 @@ export const checkUserNameApi = async (userName: string): Promise<CommonRs> => {
   }
 };
 
-export const getProfileApi = async (): Promise<GetProfileRs> => {
+export const getProfileApi = async (): Promise<ProfileRs> => {
   try {
-    const resData: GetProfileRs = await fetchApi("GET", profileEndPoints.PROFILE_DETAILS);
+    const resData: ProfileRs = await fetchApi("GET", profileEndPoints.PROFILE_DETAILS);
     if (resData && resData.success === true) {
       return resData;
     }
@@ -42,9 +42,9 @@ export const setProfileImageApi = async (data: FormData): Promise<SetProfileImag
   }
 };
 
-export const setProfileDetailsApi = async (data: NewProfileData): Promise<GetProfileRs> => {
+export const setProfileDetailsApi = async (data: NewProfileData): Promise<ProfileRs> => {
   try {
-    const resData: GetProfileRs = await fetchApi("POST", profileEndPoints.SET_PROFILE_DETAILS, data, {
+    const resData: ProfileRs = await fetchApi("POST", profileEndPoints.SET_PROFILE_DETAILS, data, {
       "Content-Type": "application/json",
     });
     if (resData) {

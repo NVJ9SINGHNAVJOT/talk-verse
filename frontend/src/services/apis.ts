@@ -29,6 +29,8 @@ export const notificationEndPoints = {
   CHECK_ONLINE_FRIENDS: BASE_URL_SERVER + "/notifications/checkOnlineFriends",
   SET_UNSEEN_COUNT: BASE_URL_SERVER + "/notifications/setUnseenCount",
   SET_ORDER: BASE_URL_SERVER + "/notifications/setOrder",
+  FOLLOW_USER: BASE_URL_SERVER + "/notifications/followUser", // parameters: userIdToFollow
+  FOLLOW_SUGGESTIONS: BASE_URL_SERVER + "/notifications/followSuggestions",
 };
 
 // chat endpoints
@@ -41,7 +43,6 @@ export const chatEndPoints = {
 
 // userPost endpoints
 export const postEndPoints = {
-  FOLLOW_USER: BASE_URL_SERVER + "/posts/followUser", // parameters: userIdToFollow
   CREATE_POST: BASE_URL_SERVER + "/posts/createPost",
   DELETE_POST: BASE_URL_SERVER + "/posts/deletePost", // parameters: postId
   CREATE_STORY: BASE_URL_SERVER + "/posts/createStory",
