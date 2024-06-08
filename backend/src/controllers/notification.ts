@@ -6,8 +6,8 @@ import { clientE } from "@/socket/events";
 import { channels, groupIds, groupOffline, userSocketIDs } from "@/socket/index";
 import {
   CreateGroupReqSchema,
-  FollowUserReqSchema,
-  OtherUserIdReqSchema,
+  OtherMongoUserIdReqSchema,
+  OtherPostgreSQLUserIdReqSchema,
   SetOrderReqSchema,
   SetUnseenCountReqSchema,
 } from "@/types/controllers/notificationReq";
@@ -26,6 +26,8 @@ import { db } from "@/db/postgresql/connection";
 import { user } from "@/db/postgresql/schema/user";
 import { follow } from "@/db/postgresql/schema/follow";
 import { and, eq, isNull, ne, sql } from "drizzle-orm";
+import { request } from "@/db/postgresql/schema/request";
+import { checkUserId } from "@/db/postgresql/query/query";
 
 export const getUsers = async (req: Request, res: Response): Promise<Response> => {
   try {
@@ -75,7 +77,7 @@ export const getUsers = async (req: Request, res: Response): Promise<Response> =
 export const sendRequest = async (req: Request, res: Response): Promise<Response> => {
   try {
     const userId = (req as CustomRequest).userId;
-    const otherUserIdReq = OtherUserIdReqSchema.safeParse(req.body);
+    const otherUserIdReq = OtherMongoUserIdReqSchema.safeParse(req.body);
 
     if (!otherUserIdReq.success) {
       return errRes(res, 400, `invalid data for sending request, ${otherUserIdReq.error.toString()}`);
@@ -136,7 +138,7 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
 export const acceptRequest = async (req: Request, res: Response): Promise<Response> => {
   try {
     const userId = (req as CustomRequest).userId;
-    const otherUserIdReq = OtherUserIdReqSchema.safeParse(req.body);
+    const otherUserIdReq = OtherMongoUserIdReqSchema.safeParse(req.body);
 
     if (!otherUserIdReq.success) {
       return errRes(res, 400, `invalid data for accepting request, ${otherUserIdReq.error.toString()}`);
@@ -239,7 +241,7 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
 export const deleteRequest = async (req: Request, res: Response) => {
   try {
     const userId = (req as CustomRequest).userId;
-    const otherUserIdReq = OtherUserIdReqSchema.safeParse(req.body);
+    const otherUserIdReq = OtherMongoUserIdReqSchema.safeParse(req.body);
 
     if (!otherUserIdReq.success) {
       return errRes(res, 400, `invalid data for deleting request, ${otherUserIdReq.error.toString()}`);
@@ -522,25 +524,69 @@ export const setOrder = async (req: Request, res: Response): Promise<Response> =
   }
 };
 
-export const followUser = async (req: Request, res: Response): Promise<Response> => {
+export const sendFollowRequest = async (req: Request, res: Response): Promise<Response> => {
   try {
     const userId2 = (req as CustomRequest).userId2;
-    const followUserReq = FollowUserReqSchema.safeParse(req.query);
+    const sendFollowRequestReq = OtherPostgreSQLUserIdReqSchema.safeParse(req.body);
 
-    if (!followUserReq.success) {
-      return errRes(res, 400, `invalid data for follow user, ${followUserReq.error.toString()}`);
+    if (!sendFollowRequestReq.success) {
+      return errRes(res, 400, `invalid otherUserId for follow req, ${sendFollowRequestReq.error.toString()}`);
     }
 
-    const data = followUserReq.data;
+    const data = sendFollowRequestReq.data;
 
-    const intUserIdToFollow = parseInt(data.userIdToFollow);
-    if (userId2 === intUserIdToFollow) {
-      return errRes(res, 400, "userIdToFollow is same as userId2, invalid data in querry");
+    if (!(await checkUserId(data.otherUserId))) {
+      return errRes(res, 400, "userId for sending request is invalid");
+    }
+
+    const insertNewRequest = await db
+      .insert(request)
+      .values({ fromId: userId2, toId: parseInt(data.otherUserId) })
+      .onConflictDoNothing({ target: [request.fromId, request.toId] })
+      .returning({ id: request.id })
+      .execute();
+
+    if (insertNewRequest.length !== 1) {
+      return errRes(res, 400, "error while inserting follow request data");
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "requeset submitted successfully",
+    });
+  } catch (error) {
+    return errRes(res, 500, "error while sending follow request");
+  }
+};
+
+export const acceptFollowRequest = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const userId2 = (req as CustomRequest).userId2;
+    const acceptFollowRequestReq = OtherPostgreSQLUserIdReqSchema.safeParse(req.body);
+
+    if (!acceptFollowRequestReq.success) {
+      return errRes(res, 400, `invalid data for accepting follow request, ${acceptFollowRequestReq.error.toString()}`);
+    }
+
+    const data = acceptFollowRequestReq.data;
+
+    if (!(await checkUserId(data.otherUserId))) {
+      return errRes(res, 400, "userId for accepting follow request is invalid");
+    }
+
+    const deleteRequest = await db
+      .delete(request)
+      .where(and(eq(request.fromId, userId2), eq(request.toId, parseInt(data.otherUserId))))
+      .returning({ id: request.id })
+      .execute();
+
+    if (deleteRequest.length !== 1) {
+      return errRes(res, 400, "userId for accepting follow request not present in request");
     }
 
     const followRes = await db
       .insert(follow)
-      .values({ followerId: userId2, followingId: intUserIdToFollow })
+      .values({ followerId: userId2, followingId: parseInt(data.otherUserId) })
       .onConflictDoNothing({ target: [follow.followerId, follow.followingId] })
       .returning({ id: follow.id })
       .execute();

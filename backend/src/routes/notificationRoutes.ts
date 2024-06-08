@@ -1,13 +1,14 @@
 /* eslint-disable drizzle/enforce-delete-with-where */
 import {
+  acceptFollowRequest,
   acceptRequest,
   checkOnlineFriends,
   createGroup,
   deleteRequest,
   followSuggestions,
-  followUser,
   getAllNotifications,
   getUsers,
+  sendFollowRequest,
   sendRequest,
   setOrder,
   setUnseenCount,
@@ -27,7 +28,8 @@ router.post("/createGroup", imageFile, auth, createGroup);
 router.get("/checkOnlineFriends", auth, checkOnlineFriends);
 router.post("/setUnseenCount", auth, setUnseenCount);
 router.post("/setOrder", auth, setOrder);
-router.post("/followUser", auth, followUser); // parameters: userIdToFollow
+router.post("/sendFollowRequest", auth, sendFollowRequest);
+router.post("/acceptFollowRequest", auth, acceptFollowRequest);
 router.get("/followSuggestions", auth, followSuggestions);
 
 export default router;

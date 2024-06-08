@@ -8,6 +8,7 @@ import { comment, commentsRelations } from "@/db/postgresql/schema/comment";
 import { story, storysRelations } from "@/db/postgresql/schema/story";
 import { follow, followsRelations } from "@/db/postgresql/schema/follow";
 import { save, savesRelations } from "@/db/postgresql/schema/save";
+import { request, requestsRelations } from "@/db/postgresql/schema/request";
 import { configDotenv } from "dotenv";
 
 configDotenv();
@@ -46,5 +47,7 @@ export const db = drizzle(pool, {
     followsRelations,
     save,
     savesRelations,
+    request,
+    requestsRelations,
   },
 });

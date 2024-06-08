@@ -5,9 +5,7 @@ import { UserSuggestion } from "@/types/apis/notificationApiRs";
 import { BlogProfile } from "@/types/apis/profileApiRs";
 import { useEffect, useState } from "react";
 import { HiOutlineUserAdd } from "react-icons/hi";
-import { HiUserPlus } from "react-icons/hi2";
 import { RxAvatar } from "react-icons/rx";
-import { TiUserAddOutline } from "react-icons/ti";
 import { Outlet, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 

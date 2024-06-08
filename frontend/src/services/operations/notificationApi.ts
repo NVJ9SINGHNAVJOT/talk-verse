@@ -146,6 +146,32 @@ export const setOrderApi = async (mainId: string): Promise<boolean> => {
   }
 };
 
+export const sendFollowRequestApi = async (userId: number): Promise<boolean> => {
+  try {
+    const resData = await fetchApi("POST", notificationEndPoints.SEND_FOLLOW_REQUEST, { otherUserId: userId });
+    if (resData && resData.success === true) {
+      return true;
+    }
+    return false;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const acceptFollowRequestApi = async (userId: number): Promise<boolean> => {
+  try {
+    const resData: CommonRs = await fetchApi("POST", notificationEndPoints.ACCEPT_FOLLOW_REQUEST, {
+      otherUserId: userId,
+    });
+    if (resData && resData.success === true) {
+      return true;
+    }
+    return false;
+  } catch (error) {
+    return false;
+  }
+};
+
 export const followSuggestionsApi = async (): Promise<FollowSuggestionsRs> => {
   try {
     const resData: FollowSuggestionsRs = await fetchApi("GET", notificationEndPoints.FOLLOW_SUGGESTIONS);

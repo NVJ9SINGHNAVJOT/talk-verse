@@ -1,13 +1,13 @@
-import { fancyNameSchema, postgreSQLIdSchema } from "@/validators/zod";
+import { fancyNameSchema, mongooseIdSchema, postgreSQLIdSchema } from "@/validators/zod";
 import z from "zod";
 
-export const OtherUserIdReqSchema = z.object({
-  otherUserId: z.string(),
+export const OtherMongoUserIdReqSchema = z.object({
+  otherUserId: mongooseIdSchema,
 });
-export type OtherUserIdReq = z.infer<typeof OtherUserIdReqSchema>;
+export type OtherMongoUserIdReq = z.infer<typeof OtherMongoUserIdReqSchema>;
 
 export const SetUnseenCountReqSchema = z.object({
-  mainId: z.string(),
+  mainId: mongooseIdSchema,
   count: z.number(),
 });
 export type SetUnseenCountReq = z.infer<typeof SetUnseenCountReqSchema>;
@@ -19,14 +19,14 @@ export const CreateGroupReqSchema = z.object({
 export type CreateGroupReq = z.infer<typeof CreateGroupReqSchema>;
 
 export const SetOrderReqSchema = z.object({
-  mainId: z.string(),
+  mainId: mongooseIdSchema,
 });
 export type SetOrderReq = z.infer<typeof SetOrderReqSchema>;
 
-export const FollowUserReqSchema = z.object({
-  userIdToFollow: postgreSQLIdSchema,
+export const OtherPostgreSQLUserIdReqSchema = z.object({
+  otherUserId: postgreSQLIdSchema,
 });
-export type FollowUserReq = z.infer<typeof FollowUserReqSchema>;
+export type OtherPostgreSQLUserIdReq = z.infer<typeof OtherPostgreSQLUserIdReqSchema>;
 
 export const UpdateFollowSuggestionReqSchema = z.object({
   previousSuggestionsIds: postgreSQLIdSchema.array().length(4).optional(),

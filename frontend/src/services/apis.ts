@@ -29,8 +29,11 @@ export const notificationEndPoints = {
   CHECK_ONLINE_FRIENDS: BASE_URL_SERVER + "/notifications/checkOnlineFriends",
   SET_UNSEEN_COUNT: BASE_URL_SERVER + "/notifications/setUnseenCount",
   SET_ORDER: BASE_URL_SERVER + "/notifications/setOrder",
-  FOLLOW_USER: BASE_URL_SERVER + "/notifications/followUser", // parameters: userIdToFollow
+  SEND_FOLLOW_REQUEST: BASE_URL_SERVER + "/notifications/sendFollowRequest",
+  DELETE_FOLLOW_REQUEST: BASE_URL_SERVER + "/notifications/deleteFollowRequest",
+  ACCEPT_FOLLOW_REQUEST: BASE_URL_SERVER + "/notifications/acceptFollowRequest",
   FOLLOW_SUGGESTIONS: BASE_URL_SERVER + "/notifications/followSuggestions",
+  NEW_FOLLOW_SUGGESTION: BASE_URL_SERVER + "/notifications/newFollowSuggestion",
 };
 
 // chat endpoints
