@@ -47,3 +47,9 @@ export type FollowSuggestionsRs = {
   message: string;
   suggestions?: UserSuggestion[];
 } | null;
+
+export type FollowRequestsRs = {
+  success: boolean;
+  message: string;
+  followRequests?: UserSuggestion[];
+} | null;

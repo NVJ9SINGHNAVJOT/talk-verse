@@ -5,6 +5,7 @@ import { CommonRs } from "@/types/apis/common";
 import {
   AcceptRequestRs,
   CheckOnlineFriendsRs,
+  FollowRequestsRs,
   FollowSuggestionsRs,
   GetAllNotificationsRs,
   GetUsersRs,
@@ -160,7 +161,7 @@ export const sendFollowRequestApi = async (userId: number): Promise<boolean> => 
 
 export const deletFollowRequestApi = async (userId: number): Promise<boolean> => {
   try {
-    const resData = await fetchApi("POST", notificationEndPoints.DELETE_FOLLOW_REQUEST, { otherUserId: userId });
+    const resData = await fetchApi("DELETE", notificationEndPoints.DELETE_FOLLOW_REQUEST, { otherUserId: userId });
     if (resData && resData.success === true) {
       return true;
     }
@@ -181,6 +182,18 @@ export const acceptFollowRequestApi = async (userId: number): Promise<boolean> =
     return false;
   } catch (error) {
     return false;
+  }
+};
+
+export const followRequestsApi = async (): Promise<FollowRequestsRs> => {
+  try {
+    const resData: FollowRequestsRs = await fetchApi("GET", notificationEndPoints.FOLLOW_REQUESTS);
+    if (resData) {
+      return resData;
+    }
+    return null;
+  } catch (error) {
+    return null;
   }
 };
 

@@ -210,7 +210,7 @@ export const userBlogProfile = async (req: Request, res: Response): Promise<Resp
       message: "user blog profile data",
       blogProfile: {
         followingCount: blogProfile[0]?.followingCount,
-        followersCount: blogProfile[0]?.followingCount,
+        followersCount: blogProfile[0]?.followersCount,
         totalPosts: totalPosts[0]?.count,
       },
     });

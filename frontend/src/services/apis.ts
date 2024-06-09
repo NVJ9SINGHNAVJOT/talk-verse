@@ -32,6 +32,7 @@ export const notificationEndPoints = {
   SEND_FOLLOW_REQUEST: BASE_URL_SERVER + "/notifications/sendFollowRequest",
   DELETE_FOLLOW_REQUEST: BASE_URL_SERVER + "/notifications/deleteFollowRequest",
   ACCEPT_FOLLOW_REQUEST: BASE_URL_SERVER + "/notifications/acceptFollowRequest",
+  FOLLOW_REQUESTS: BASE_URL_SERVER + "/notifications/followRequests",
   FOLLOW_SUGGESTIONS: BASE_URL_SERVER + "/notifications/followSuggestions",
   NEW_FOLLOW_SUGGESTION: BASE_URL_SERVER + "/notifications/newFollowSuggestion",
 };

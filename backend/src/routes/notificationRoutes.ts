@@ -6,6 +6,7 @@ import {
   createGroup,
   deleteFollowRequest,
   deleteRequest,
+  followRequests,
   followSuggestions,
   getAllNotifications,
   getUsers,
@@ -32,6 +33,7 @@ router.post("/setOrder", auth, setOrder);
 router.post("/sendFollowRequest", auth, sendFollowRequest);
 router.delete("/deleteFollowRequest", auth, deleteFollowRequest);
 router.post("/acceptFollowRequest", auth, acceptFollowRequest);
+router.get("/followRequests", auth, followRequests),
 router.get("/followSuggestions", auth, followSuggestions);
 
 export default router;

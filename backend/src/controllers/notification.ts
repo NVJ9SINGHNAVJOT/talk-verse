@@ -657,6 +657,40 @@ export const acceptFollowRequest = async (req: Request, res: Response): Promise<
   }
 };
 
+export const followRequests = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const userId2 = (req as CustomRequest).userId2;
+
+    const followRequests = await db
+      .select({
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        userName: user.userName,
+        imageUrl: user.imageUrl,
+      })
+      .from(request)
+      .innerJoin(user, eq(request.fromId, user.id))
+      .where(eq(request.toId, userId2))
+      .execute();
+
+    if (followRequests.length === 0) {
+      return res.status(200).json({
+        success: false,
+        message: "no follow requests for user",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "follow requests for user",
+      followRequests: followRequests,
+    });
+  } catch (error) {
+    return errRes(res, 500, "error while getting follow request for user", error);
+  }
+};
+
 export const followSuggestions = async (req: Request, res: Response): Promise<Response> => {
   try {
     const userId2 = (req as CustomRequest).userId2;
