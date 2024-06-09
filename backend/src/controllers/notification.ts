@@ -554,11 +554,11 @@ export const sendFollowRequest = async (req: Request, res: Response): Promise<Re
       .insert(request)
       .values({ fromId: userId2, toId: parseInt(data.otherUserId) })
       .onConflictDoNothing({ target: [request.fromId, request.toId] })
-      .returning({ id: request.id })
+      .returning()
       .execute();
 
-    if (insertNewRequest.length !== 1) {
-      return errRes(res, 400, "invalid data, error while inserting follow request data");
+    if (insertNewRequest.length === 0) {
+      return errRes(res, 400, "follow request already present");
     }
 
     return res.status(200).json({
@@ -566,7 +566,7 @@ export const sendFollowRequest = async (req: Request, res: Response): Promise<Re
       message: "requeset submitted successfully",
     });
   } catch (error) {
-    return errRes(res, 500, "error while sending follow request");
+    return errRes(res, 500, "error while sending follow request", error);
   }
 };
 
@@ -587,7 +587,7 @@ export const acceptFollowRequest = async (req: Request, res: Response): Promise<
 
     const deleteRequest = await db
       .delete(request)
-      .where(and(eq(request.fromId, userId2), eq(request.toId, parseInt(data.otherUserId))))
+      .where(and(eq(request.fromId, parseInt(data.otherUserId)), eq(request.toId, userId2)))
       .returning({ id: request.id })
       .execute();
 
@@ -597,7 +597,7 @@ export const acceptFollowRequest = async (req: Request, res: Response): Promise<
 
     const followRes = await db
       .insert(follow)
-      .values({ followerId: userId2, followingId: parseInt(data.otherUserId) })
+      .values({ followerId: parseInt(data.otherUserId), followingId: userId2 })
       .onConflictDoNothing({ target: [follow.followerId, follow.followingId] })
       .returning({ id: follow.id })
       .execute();
@@ -607,17 +607,17 @@ export const acceptFollowRequest = async (req: Request, res: Response): Promise<
       return errRes(res, 400, "user already followed other user");
     }
 
-    // user followed other user, now increase the count of following for curr user
+    // user is followed by other user, now increase the count of followers for curr user
+    await db
+      .update(user)
+      .set({ followersCount: sql`${user.followersCount} + 1` })
+      .where(eq(user.id, userId2));
+
+    // now increase count of following for other user
     await db
       .update(user)
       .set({ followingCount: sql`${user.followingCount} + 1` })
-      .where(eq(user.id, userId2));
-
-    // now increase count of follower for other user
-    await db
-      .update(user)
-      .set({ followingCount: sql`${user.followersCount} + 1` })
-      .where(eq(user.id, userId2));
+      .where(eq(user.id, parseInt(data.otherUserId)));
 
     return res.status(200).json({
       success: true,
