@@ -212,69 +212,72 @@ const Blog = () => {
           <div className="absolute z-10 w-16 h-16 rounded-full group-hover:scale-150 transition-all  duration-500 ease-in-out bg-sky-500 delay-150 group-hover:delay-300"></div>
           <p className="z-10 text-white font-semibold">Create Post</p>
         </div>
-        {/* follow requests */}
-        <div className=" text-stone-100 mt-8">Follow Requests</div>
-        <div className=" flex flex-col text-snow-50 gap-y-2">
-          {followRequests.length ? (
-            followRequests.map((followRequest, index) => {
-              return (
-                <div key={index} className=" flex justify-between items-center ">
-                  <div className="flex items-center gap-x-1">
-                    {followRequest.imageUrl ? (
-                      <img alt="Loading..." src={followRequest.imageUrl} className=" size-10 rounded-full" />
-                    ) : (
-                      <RxAvatar className=" size-10 rounded-full" />
-                    )}
-                    <div className=" flex flex-col ml-1">
-                      <p className="text-[0.9rem]">{followRequest.firstName + " " + followRequest.lastName}</p>
-                      <p className=" text-neutral-500 text-[0.7rem]">{followRequest.userName}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-x-1">
-                    <button disabled={acceptingReq} onClick={() => acceptRequest(followRequest.id)}>
-                      <CiCirclePlus className=" text-white size-6 aspect-auto cursor-pointer hover:bg-white hover:text-black rounded-full" />
-                    </button>
-                    <button disabled={deletingReq} onClick={() => deleteRequest(followRequest.id)}>
-                      <CiCirclePlus className=" text-white size-6 aspect-auto cursor-pointer rotate-45 hover:bg-white hover:text-black rounded-full" />
-                    </button>
-                  </div>
-                </div>
-              );
-            })
-          ) : (
-            <div className="text-xs mx-auto">No follow Requests</div>
-          )}
-        </div>
-        <div className=" border-dashed border-[1px] border-snow-500 w-10/12 mx-auto mt-2"></div>
         {/* follow suggestions */}
-        <div className=" text-stone-100 mt-8">Suggestions</div>
-        <div className=" flex flex-col text-snow-50 gap-y-2">
-          {suggestions.length ? (
-            suggestions.map((suggestion, index) => {
-              return (
-                <div key={index} className=" flex justify-between items-center ">
-                  <div className="flex items-center gap-x-1">
-                    {suggestion.imageUrl ? (
-                      <img alt="Loading..." src={suggestion.imageUrl} className=" size-10 rounded-full" />
-                    ) : (
-                      <RxAvatar className=" size-10 rounded-full" />
-                    )}
-                    <div className=" flex flex-col ml-1">
-                      <p className="text-[0.9rem]">{suggestion.firstName + " " + suggestion.lastName}</p>
-                      <p className=" text-neutral-500 text-[0.7rem]">{suggestion.userName}</p>
+        <div className=" border-dashed border-[1px] border-snow-500 w-10/12 mx-auto"></div>
+        {/* all suggestions and requests */}
+        <div className="w-full flex flex-col gap-y-4 overflow-y-auto">
+          <div className=" text-stone-100 mt-2 ml-2 font-be-veitnam-pro">Suggestions</div>
+          <div className=" flex flex-col text-snow-50 gap-y-2">
+            {suggestions.length ? (
+              suggestions.map((suggestion, index) => {
+                return (
+                  <div key={index} className=" flex justify-between items-center">
+                    <div className="flex items-center gap-x-1">
+                      {suggestion.imageUrl ? (
+                        <img alt="Loading..." src={suggestion.imageUrl} className=" size-10 rounded-full" />
+                      ) : (
+                        <RxAvatar className=" size-10 rounded-full" />
+                      )}
+                      <div className=" flex flex-col ml-1">
+                        <p className="text-[0.9rem]">{suggestion.firstName + " " + suggestion.lastName}</p>
+                        <p className=" text-neutral-500 text-[0.7rem]">{suggestion.userName}</p>
+                      </div>
+                    </div>
+                    <button disabled={sendingReq} onClick={() => sendFollowRequest(suggestion.id)}>
+                      <HiOutlineUserAdd className="size-6 hover:fill-white cursor-pointer mr-[0.4rem]" />
+                    </button>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="text-xs mx-auto">No more Suggestions</div>
+            )}
+          </div>
+          {/* follow requests */}
+          <div className=" border-dashed border-[1px] border-snow-500 w-10/12 mx-auto"></div>
+          <div className=" text-stone-100 mt-2 ml-2 font-be-veitnam-pro">Follow Requests</div>
+          <div className=" flex flex-col text-snow-50 gap-y-2">
+            {followRequests.length ? (
+              followRequests.map((followRequest, index) => {
+                return (
+                  <div key={index} className=" flex justify-between items-center">
+                    <div className="flex items-center gap-x-1">
+                      {followRequest.imageUrl ? (
+                        <img alt="Loading..." src={followRequest.imageUrl} className="size-10 rounded-full" />
+                      ) : (
+                        <RxAvatar className="size-10 rounded-full" />
+                      )}
+                      <div className=" flex flex-col ml-1">
+                        <p className="text-[0.9rem]">{followRequest.firstName + " " + followRequest.lastName}</p>
+                        <p className=" text-neutral-500 text-[0.7rem]">{followRequest.userName}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-x-1 mr-[0.4rem]">
+                      <button disabled={acceptingReq} onClick={() => acceptRequest(followRequest.id)}>
+                        <CiCirclePlus className=" text-white size-6 aspect-auto cursor-pointer hover:bg-white hover:text-black rounded-full" />
+                      </button>
+                      <button disabled={deletingReq} onClick={() => deleteRequest(followRequest.id)}>
+                        <CiCirclePlus className=" text-white size-6 aspect-auto cursor-pointer rotate-45 hover:bg-white hover:text-black rounded-full" />
+                      </button>
                     </div>
                   </div>
-                  <button disabled={sendingReq} onClick={() => sendFollowRequest(suggestion.id)}>
-                    <HiOutlineUserAdd className="size-6 hover:fill-white cursor-pointer" />
-                  </button>
-                </div>
-              );
-            })
-          ) : (
-            <div className="text-xs mx-auto">No more Suggestions</div>
-          )}
+                );
+              })
+            ) : (
+              <div className="text-xs mx-auto">No follow Requests</div>
+            )}
+          </div>
         </div>
-        <div className=" border-dashed border-[1px] border-snow-500 w-10/12 mx-auto mt-2"></div>
       </section>
     </div>
   );
