@@ -3,7 +3,7 @@ import { NodePgDatabase, drizzle } from "drizzle-orm/node-postgres";
 import { logger } from "@/logger/logger";
 import { pool } from "@/db/postgresql/connection";
 
-const tables = ["user", "story", "save", "post", "likes", "follow", "comment"];
+const tables = ["user", "story", "save", "post", "likes", "follow", "comment", "request"];
 
 // Function to create the trigger function
 export async function setupPostgreSQLTriggers() {

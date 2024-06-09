@@ -27,7 +27,6 @@ import { user } from "@/db/postgresql/schema/user";
 import { follow } from "@/db/postgresql/schema/follow";
 import { and, eq, isNull, ne, sql } from "drizzle-orm";
 import { request } from "@/db/postgresql/schema/request";
-import { checkUserId } from "@/db/postgresql/query/query";
 
 export const getUsers = async (req: Request, res: Response): Promise<Response> => {
   try {
@@ -535,8 +534,20 @@ export const sendFollowRequest = async (req: Request, res: Response): Promise<Re
 
     const data = sendFollowRequestReq.data;
 
-    if (!(await checkUserId(data.otherUserId))) {
-      return errRes(res, 400, "userId for sending request is invalid");
+    if (userId2 === parseInt(data.otherUserId)) {
+      return errRes(res, 400, "userId is same as otherUserId for sending request");
+    }
+
+    // check if otherUserId is already followed by user
+    const checkAlreadyFollowed = await db
+      .select({ id: follow.id })
+      .from(follow)
+      .where(and(eq(follow.followerId, userId2), eq(follow.followingId, parseInt(data.otherUserId))))
+      .limit(1)
+      .execute();
+
+    if (checkAlreadyFollowed.length) {
+      return errRes(res, 400, "user already followed other user");
     }
 
     const insertNewRequest = await db
@@ -547,7 +558,7 @@ export const sendFollowRequest = async (req: Request, res: Response): Promise<Re
       .execute();
 
     if (insertNewRequest.length !== 1) {
-      return errRes(res, 400, "error while inserting follow request data");
+      return errRes(res, 400, "invalid data, error while inserting follow request data");
     }
 
     return res.status(200).json({
@@ -570,8 +581,8 @@ export const acceptFollowRequest = async (req: Request, res: Response): Promise<
 
     const data = acceptFollowRequestReq.data;
 
-    if (!(await checkUserId(data.otherUserId))) {
-      return errRes(res, 400, "userId for accepting follow request is invalid");
+    if (userId2 === parseInt(data.otherUserId)) {
+      return errRes(res, 400, "userId is same as otherUserId for accepting follow request");
     }
 
     const deleteRequest = await db
@@ -581,7 +592,7 @@ export const acceptFollowRequest = async (req: Request, res: Response): Promise<
       .execute();
 
     if (deleteRequest.length !== 1) {
-      return errRes(res, 400, "userId for accepting follow request not present in request");
+      return errRes(res, 400, "otherUserId for accepting follow request not present in request");
     }
 
     const followRes = await db

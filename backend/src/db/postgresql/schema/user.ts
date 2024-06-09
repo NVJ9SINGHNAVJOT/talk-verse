@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, serial, timestamp, unique, varchar } from "drizzle-orm/pg-core";
+import { pgTable, serial, timestamp, varchar } from "drizzle-orm/pg-core";
 import { integer } from "drizzle-orm/pg-core";
 import { post } from "@/db/postgresql/schema/post";
 import { story } from "@/db/postgresql/schema/story";
@@ -8,27 +8,21 @@ import { follow } from "@/db/postgresql/schema/follow";
 import { likes } from "@/db/postgresql/schema/likes";
 import { save } from "@/db/postgresql/schema/save";
 
-export const user = pgTable(
-  "user",
-  {
-    id: serial("id").primaryKey(),
+export const user = pgTable("user", {
+  id: serial("id").primaryKey(),
 
-    // reference from mongodb
-    refId: varchar("ref_id").notNull(),
-    firstName: varchar("first_name").notNull(),
-    lastName: varchar("last_name").notNull(),
-    userName: varchar("user_name").notNull(),
-    imageUrl: varchar("image_url"),
+  // reference from mongodb
+  refId: varchar("ref_id").notNull(),
+  firstName: varchar("first_name").notNull(),
+  lastName: varchar("last_name").notNull(),
+  userName: varchar("user_name").notNull().unique(),
+  imageUrl: varchar("image_url"),
 
-    followingCount: integer("following_count").notNull().default(0),
-    followersCount: integer("followers_count").notNull().default(0),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-  },
-  (user) => ({
-    userUserNameUnique: unique("user_user_name_unique").on(user.userName),
-  })
-);
+  followingCount: integer("following_count").notNull().default(0),
+  followersCount: integer("followers_count").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
 
 export const usersRelations = relations(user, ({ many }) => ({
   post: many(post),

@@ -1,5 +1,5 @@
-import { relations, sql } from "drizzle-orm";
-import { pgTable, integer, serial, timestamp, unique, check } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { pgTable, integer, serial, timestamp, unique } from "drizzle-orm/pg-core";
 import { user } from "@/db/postgresql/schema/user";
 
 export const request = pgTable(
@@ -17,7 +17,6 @@ export const request = pgTable(
   },
   (request) => ({
     requestFromIdToIdUnique: unique("request_from_id_to_id_unique").on(request.fromId, request.toId),
-    requestFromIdNotSameAsToId: check("request_from_id_not_same_as_to_id", sql`${request.fromId} <> ${request.toId}`),
   })
 );
 
