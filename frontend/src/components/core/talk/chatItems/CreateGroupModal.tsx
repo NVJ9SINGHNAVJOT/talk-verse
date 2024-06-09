@@ -147,8 +147,7 @@ const CreateGroupModal = (props: CreateGroupModalProps) => {
             disabled={creatingGroup}
             type="submit"
             className="relative inline-flex h-[3rem] w-fit items-center justify-center rounded-md
-         bg-white px-4 font-medium text-gray-950 transition-colors focus:outline-none focus:ring-2
-          focus:ring-gray-400 focus:ring-offset-2 focus:ring-offset-gray-50"
+          bg-white px-4 font-medium text-gray-950 transition-colors"
           >
             <div
               className="absolute -inset-0.5 -z-10 rounded-lg bg-gradient-to-b from-[#c7d2fe]

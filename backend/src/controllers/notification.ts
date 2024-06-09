@@ -534,7 +534,7 @@ export const sendFollowRequest = async (req: Request, res: Response): Promise<Re
 
     const data = sendFollowRequestReq.data;
 
-    if (userId2 === parseInt(data.otherUserId)) {
+    if (userId2 === data.otherUserId) {
       return errRes(res, 400, "userId is same as otherUserId for sending request");
     }
 
@@ -542,7 +542,7 @@ export const sendFollowRequest = async (req: Request, res: Response): Promise<Re
     const checkAlreadyFollowed = await db
       .select({ id: follow.id })
       .from(follow)
-      .where(and(eq(follow.followerId, userId2), eq(follow.followingId, parseInt(data.otherUserId))))
+      .where(and(eq(follow.followerId, userId2), eq(follow.followingId, data.otherUserId)))
       .limit(1)
       .execute();
 
@@ -552,7 +552,7 @@ export const sendFollowRequest = async (req: Request, res: Response): Promise<Re
 
     const insertNewRequest = await db
       .insert(request)
-      .values({ fromId: userId2, toId: parseInt(data.otherUserId) })
+      .values({ fromId: userId2, toId: data.otherUserId })
       .onConflictDoNothing({ target: [request.fromId, request.toId] })
       .returning()
       .execute();
@@ -583,7 +583,7 @@ export const deleteFollowRequest = async (req: Request, res: Response): Promise<
 
     const checkDelete = await db
       .delete(request)
-      .where(and(eq(request.fromId, parseInt(data.otherUserId)), eq(request.toId, userId2)))
+      .where(and(eq(request.fromId, data.otherUserId), eq(request.toId, userId2)))
       .returning({ id: request.id });
 
     if (checkDelete.length !== 1) {
@@ -610,13 +610,13 @@ export const acceptFollowRequest = async (req: Request, res: Response): Promise<
 
     const data = acceptFollowRequestReq.data;
 
-    if (userId2 === parseInt(data.otherUserId)) {
+    if (userId2 === data.otherUserId) {
       return errRes(res, 400, "userId is same as otherUserId for accepting follow request");
     }
 
     const deleteRequest = await db
       .delete(request)
-      .where(and(eq(request.fromId, parseInt(data.otherUserId)), eq(request.toId, userId2)))
+      .where(and(eq(request.fromId, data.otherUserId), eq(request.toId, userId2)))
       .returning({ id: request.id })
       .execute();
 
@@ -626,7 +626,7 @@ export const acceptFollowRequest = async (req: Request, res: Response): Promise<
 
     const followRes = await db
       .insert(follow)
-      .values({ followerId: parseInt(data.otherUserId), followingId: userId2 })
+      .values({ followerId: data.otherUserId, followingId: userId2 })
       .onConflictDoNothing({ target: [follow.followerId, follow.followingId] })
       .returning({ id: follow.id })
       .execute();
@@ -646,7 +646,7 @@ export const acceptFollowRequest = async (req: Request, res: Response): Promise<
     await db
       .update(user)
       .set({ followingCount: sql`${user.followingCount} + 1` })
-      .where(eq(user.id, parseInt(data.otherUserId)));
+      .where(eq(user.id, data.otherUserId));
 
     return res.status(200).json({
       success: true,
@@ -705,7 +705,8 @@ export const followSuggestions = async (req: Request, res: Response): Promise<Re
       })
       .from(user)
       .leftJoin(follow, and(eq(follow.followingId, user.id), eq(follow.followerId, userId2)))
-      .where(and(isNull(follow.followerId), ne(user.id, userId2)))
+      .leftJoin(request, eq(user.id, request.toId))
+      .where(and(isNull(request.toId), isNull(follow.followerId), ne(user.id, userId2)))
       .limit(5)
       .execute();
 

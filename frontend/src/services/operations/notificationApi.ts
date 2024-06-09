@@ -149,7 +149,14 @@ export const setOrderApi = async (mainId: string): Promise<boolean> => {
 
 export const sendFollowRequestApi = async (userId: number): Promise<boolean> => {
   try {
-    const resData = await fetchApi("POST", notificationEndPoints.SEND_FOLLOW_REQUEST, { otherUserId: userId });
+    const resData = await fetchApi(
+      "POST",
+      notificationEndPoints.SEND_FOLLOW_REQUEST,
+      { otherUserId: userId },
+      {
+        "Content-Type": "application/json",
+      }
+    );
     if (resData && resData.success === true) {
       return true;
     }
@@ -161,7 +168,14 @@ export const sendFollowRequestApi = async (userId: number): Promise<boolean> => 
 
 export const deletFollowRequestApi = async (userId: number): Promise<boolean> => {
   try {
-    const resData = await fetchApi("DELETE", notificationEndPoints.DELETE_FOLLOW_REQUEST, { otherUserId: userId });
+    const resData = await fetchApi(
+      "DELETE",
+      notificationEndPoints.DELETE_FOLLOW_REQUEST,
+      { otherUserId: userId },
+      {
+        "Content-Type": "application/json",
+      }
+    );
     if (resData && resData.success === true) {
       return true;
     }
@@ -173,9 +187,16 @@ export const deletFollowRequestApi = async (userId: number): Promise<boolean> =>
 
 export const acceptFollowRequestApi = async (userId: number): Promise<boolean> => {
   try {
-    const resData: CommonRs = await fetchApi("POST", notificationEndPoints.ACCEPT_FOLLOW_REQUEST, {
-      otherUserId: userId,
-    });
+    const resData: CommonRs = await fetchApi(
+      "POST",
+      notificationEndPoints.ACCEPT_FOLLOW_REQUEST,
+      {
+        otherUserId: userId,
+      },
+      {
+        "Content-Type": "application/json",
+      }
+    );
     if (resData && resData.success === true) {
       return true;
     }

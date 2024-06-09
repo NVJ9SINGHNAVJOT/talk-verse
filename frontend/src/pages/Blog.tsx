@@ -36,10 +36,11 @@ const Blog = () => {
   const [sendingReq, setSendingReq] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const sendFollowRequest = async (userId: number) => {
+  const sendFollowRequest = async (reqUserId: number) => {
     setSendingReq(true);
-    const response = await sendFollowRequestApi(userId);
+    const response = await sendFollowRequestApi(reqUserId);
     if (response) {
+      setSuggestions((prev) => prev.filter((user) => user.id !== reqUserId));
       toast.success("Request send to follow");
     } else {
       toast.error("Error while sending request");
@@ -202,7 +203,7 @@ const Blog = () => {
               );
             })
           ) : (
-            <div>No follow Requests</div>
+            <div className="text-xs mx-auto">No follow Requests</div>
           )}
         </div>
         <div className=" border-dashed border-[1px] border-snow-500 w-10/12 mx-auto mt-2"></div>
@@ -231,7 +232,7 @@ const Blog = () => {
               );
             })
           ) : (
-            <div>No more Suggestions</div>
+            <div className="text-xs mx-auto">No more Suggestions</div>
           )}
         </div>
         <div className=" border-dashed border-[1px] border-snow-500 w-10/12 mx-auto mt-2"></div>

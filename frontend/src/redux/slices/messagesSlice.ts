@@ -210,7 +210,7 @@ const messagesSlice = createSlice({
     addPublicKey(state, action: PayloadAction<PublicKey>) {
       state.publicKeys[action.payload.userId] = action.payload.publicKey;
     },
-    setMyPrivateKey(state, action: PayloadAction<string>) {
+    setMyPrivateKey(state, action: PayloadAction<string | undefined>) {
       state.myPrivateKey = action.payload;
     },
 
