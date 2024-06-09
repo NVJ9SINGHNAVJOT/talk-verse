@@ -570,6 +570,35 @@ export const sendFollowRequest = async (req: Request, res: Response): Promise<Re
   }
 };
 
+export const deleteFollowRequest = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const userId2 = (req as CustomRequest).userId2;
+    const deleteFollowRequestReq = OtherPostgreSQLUserIdReqSchema.safeParse(req.body);
+
+    if (!deleteFollowRequestReq.success) {
+      return errRes(res, 400, `invalid data for deleting follow request, ${deleteFollowRequestReq.error.toString()}`);
+    }
+
+    const data = deleteFollowRequestReq.data;
+
+    const checkDelete = await db
+      .delete(request)
+      .where(and(eq(request.fromId, parseInt(data.otherUserId)), eq(request.toId, userId2)))
+      .returning({ id: request.id });
+
+    if (checkDelete.length !== 1) {
+      return errRes(res, 400, "invalid otherUserId, no request present for deleting follow request");
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "follow request deleted successfully",
+    });
+  } catch (error) {
+    return errRes(res, 500, "error while deleting follow request", error);
+  }
+};
+
 export const acceptFollowRequest = async (req: Request, res: Response): Promise<Response> => {
   try {
     const userId2 = (req as CustomRequest).userId2;

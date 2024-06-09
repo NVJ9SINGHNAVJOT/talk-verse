@@ -4,6 +4,7 @@ import {
   acceptRequest,
   checkOnlineFriends,
   createGroup,
+  deleteFollowRequest,
   deleteRequest,
   followSuggestions,
   getAllNotifications,
@@ -29,6 +30,7 @@ router.get("/checkOnlineFriends", auth, checkOnlineFriends);
 router.post("/setUnseenCount", auth, setUnseenCount);
 router.post("/setOrder", auth, setOrder);
 router.post("/sendFollowRequest", auth, sendFollowRequest);
+router.delete("/deleteFollowRequest", auth, deleteFollowRequest);
 router.post("/acceptFollowRequest", auth, acceptFollowRequest);
 router.get("/followSuggestions", auth, followSuggestions);
 

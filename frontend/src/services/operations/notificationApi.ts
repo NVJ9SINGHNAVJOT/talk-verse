@@ -158,6 +158,18 @@ export const sendFollowRequestApi = async (userId: number): Promise<boolean> => 
   }
 };
 
+export const deletFollowRequestApi = async (userId: number): Promise<boolean> => {
+  try {
+    const resData = await fetchApi("POST", notificationEndPoints.DELETE_FOLLOW_REQUEST, { otherUserId: userId });
+    if (resData && resData.success === true) {
+      return true;
+    }
+    return false;
+  } catch (error) {
+    return false;
+  }
+};
+
 export const acceptFollowRequestApi = async (userId: number): Promise<boolean> => {
   try {
     const resData: CommonRs = await fetchApi("POST", notificationEndPoints.ACCEPT_FOLLOW_REQUEST, {
