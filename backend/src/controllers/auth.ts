@@ -312,7 +312,7 @@ export const logOut = async (req: Request, res: Response): Promise<Response> => 
 
     // If JWT token present and userId invalid or null
     if (!userIds || userIds.length !== 2) {
-      return errRes(res, 401, "user authorization failed");
+      return errRes(res, 400, "user token invalid");
     }
 
     await Token.findOneAndDelete({ tokenValue: token });

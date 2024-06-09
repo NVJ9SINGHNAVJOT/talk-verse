@@ -1,5 +1,11 @@
 import { useAppSelector } from "@/redux/store";
-import { followRequestsApi, followSuggestionsApi, sendFollowRequestApi } from "@/services/operations/notificationApi";
+import {
+  acceptFollowRequestApi,
+  deletFollowRequestApi,
+  followRequestsApi,
+  followSuggestionsApi,
+  sendFollowRequestApi,
+} from "@/services/operations/notificationApi";
 import { userBlogProfileApi } from "@/services/operations/profileApi";
 import { UserSuggestion } from "@/types/apis/notificationApiRs";
 import { BlogProfile } from "@/types/apis/profileApiRs";
@@ -34,6 +40,8 @@ const Blog = () => {
   const [suggestions, setSuggestions] = useState<UserSuggestion[]>([]);
   const [followRequests, setFollowRequests] = useState<UserSuggestion[]>([]);
   const [sendingReq, setSendingReq] = useState<boolean>(false);
+  const [acceptingReq, setAcceptingReq] = useState<boolean>(false);
+  const [deletingReq, setDeletingReq] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const sendFollowRequest = async (reqUserId: number) => {
@@ -46,6 +54,33 @@ const Blog = () => {
       toast.error("Error while sending request");
     }
     setSendingReq(false);
+  };
+
+  const acceptRequest = async (reqUserId: number) => {
+    setAcceptingReq(true);
+    const response = await acceptFollowRequestApi(reqUserId);
+    if (response) {
+      setFollowRequests((prev) => prev.filter((user) => user.id != reqUserId));
+      if (blogProfile) {
+        blogProfile.followersCount = blogProfile.followersCount + 1;
+        setBlogProfile(blogProfile);
+      }
+      toast.success("New follower added");
+    } else {
+      toast.error("Error while adding follower");
+    }
+    setAcceptingReq(false);
+  };
+
+  const deleteRequest = async (reqUserId: number) => {
+    setDeletingReq(true);
+    const response = await deletFollowRequestApi(reqUserId);
+    if (response) {
+      setFollowRequests((prev) => prev.filter((user) => user.id != reqUserId));
+    } else {
+      toast.error("Error while adding follower");
+    }
+    setDeletingReq(false);
   };
 
   const getSuggestions = async () => {
@@ -168,7 +203,7 @@ const Blog = () => {
         <Outlet />
       </section>
       {/* create post and friend suggestion */}
-      <section className="hidden lm:flex lm:flex-col gap-y-4 lm:w-48 lg:w-56 px-1 bg-[#030609]">
+      <section className="hidden lm:flex lm:flex-col gap-y-4 w-56 px-1 bg-[#030609]">
         <div className="relative h-12 w-10/12 mt-4 mx-auto p-2 flex justify-center items-center hover:border-sky-600 duration-500 group cursor-pointer text-sky-50  overflow-hidden rounded-md bg-sky-800">
           <div className="absolute z-10 w-48 h-48 rounded-full group-hover:scale-150 transition-all  duration-500 ease-in-out bg-sky-900 delay-150 group-hover:delay-75"></div>
           <div className="absolute z-10 w-40 h-40 rounded-full group-hover:scale-150 transition-all  duration-500 ease-in-out bg-sky-800 delay-150 group-hover:delay-100"></div>
@@ -195,9 +230,13 @@ const Blog = () => {
                       <p className=" text-neutral-500 text-[0.7rem]">{followRequest.userName}</p>
                     </div>
                   </div>
-                  <div className="flex">
-                    <CiCirclePlus className=" text-white w-8 h-8 aspect-auto cursor-pointer hover:bg-white hover:text-black rounded-full" />
-                    <CiCirclePlus className=" text-white w-8 h-8 aspect-auto cursor-pointer rotate-45 hover:bg-white hover:text-black rounded-full" />
+                  <div className="flex gap-x-1">
+                    <button disabled={acceptingReq} onClick={() => acceptRequest(followRequest.id)}>
+                      <CiCirclePlus className=" text-white size-6 aspect-auto cursor-pointer hover:bg-white hover:text-black rounded-full" />
+                    </button>
+                    <button disabled={deletingReq} onClick={() => deleteRequest(followRequest.id)}>
+                      <CiCirclePlus className=" text-white size-6 aspect-auto cursor-pointer rotate-45 hover:bg-white hover:text-black rounded-full" />
+                    </button>
                   </div>
                 </div>
               );

@@ -27,14 +27,16 @@ const LogOutModal = (props: LogOutModalPros) => {
       toast.success("Logged Out");
     }
 
-    // clean up for log out
-    dispatch(setProfile(null));
-    dispatch(setUser(null));
-    dispatch(setAuthUser(false));
-    dispatch(setMyPrivateKey(undefined));
-
-    props.setMenuOpen(false);
     navigate("/");
+    props.setMenuOpen(false);
+
+    setTimeout(() => {
+      // clean up for log out
+      dispatch(setProfile(null));
+      dispatch(setUser(null));
+      dispatch(setAuthUser(false));
+      dispatch(setMyPrivateKey(undefined));
+    }, 500);
   };
 
   return (
