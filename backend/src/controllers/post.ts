@@ -129,7 +129,7 @@ export const deletePost = async (req: Request, res: Response): Promise<Response>
       .returning({ id: post.id })
       .execute();
 
-    // check querry response
+    // check query response
     if (postRes.length) {
       return res.status(200).json({
         success: true,
@@ -197,7 +197,7 @@ export const deleteStory = async (req: Request, res: Response): Promise<Response
       .returning({ id: story.id })
       .execute();
 
-    // check querry response
+    // check query response
     if (response.length) {
       return res.status(200).json({
         success: true,
@@ -226,7 +226,7 @@ export const updateLike = async (req: Request, res: Response): Promise<Response>
 
     // update is add
     if (data.update === "add") {
-      // send querry to database
+      // send query to database
       const likesRes = await db.transaction(async (tx) => {
         // check if like is already present for post by user
         const likeExists = await tx
@@ -249,7 +249,7 @@ export const updateLike = async (req: Request, res: Response): Promise<Response>
         return true;
       });
 
-      // check database querry response
+      // check database query response
       if (likesRes) {
         return res.status(200).json({
           success: true,
@@ -260,7 +260,7 @@ export const updateLike = async (req: Request, res: Response): Promise<Response>
     }
 
     // update is delete
-    // send querry to database
+    // send query to database
     const likesRes = await db.transaction(async (tx) => {
       // check if like is present for post by user
       const likeExists = await tx
@@ -291,7 +291,7 @@ export const updateLike = async (req: Request, res: Response): Promise<Response>
       }
     });
 
-    // check database querry response
+    // check database query response
     if (likesRes) {
       return res.status(200).json({
         success: true,

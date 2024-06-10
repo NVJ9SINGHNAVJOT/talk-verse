@@ -631,7 +631,7 @@ export const acceptFollowRequest = async (req: Request, res: Response): Promise<
       .returning({ id: follow.id })
       .execute();
 
-    // check querry response
+    // check query response
     if (followRes.length === 0) {
       return errRes(res, 400, "user already followed other user");
     }

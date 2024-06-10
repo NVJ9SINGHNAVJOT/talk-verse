@@ -1,23 +1,32 @@
 import MainFooter from "@/components/common/MainFooter";
-import SendQerryButton from "@/lib/buttons/sendquerrybutton/SendQerryButton";
+import SendQueryButton from "@/lib/buttons/sendquerybutton/SendQueryButton";
 import LettersPull from "@/lib/cards/LettersPull";
 import { TextRevealCard, TextRevealCardDescription, TextRevealCardTitle } from "@/lib/cards/TextRevealCard";
 import { BackgroundBeams } from "@/lib/sections/BackgroundBeams";
+import { sendQueryApi } from "@/services/operations/queryApi";
 import { useForm } from "react-hook-form";
 import { FaFacebook, FaInstagram, FaXTwitter, FaGithub } from "react-icons/fa6";
+import { toast } from "react-toastify";
 
-type ContactUs = {
+export type ContactUsQuery = {
   fullName: string;
   email: string;
   text: string;
 };
 
 const Contact = () => {
-  const { register, handleSubmit, reset } = useForm<ContactUs>();
+  const { register, handleSubmit, reset } = useForm<ContactUsQuery>();
 
-  const sendQerry = async (data: ContactUs) => {
+  const sendQuery = async (data: ContactUsQuery) => {
     reset();
+    const response = await sendQueryApi(data);
+    if (response) {
+      toast.success("Query sent");
+    } else {
+      toast.error("Error while sending query, try again");
+    }
   };
+
   return (
     <div className="w-full pt-10 bg-neutral-950  ">
       <LettersPull className="text-white " words={"Contact Us"} delay={0.05} />
@@ -58,7 +67,7 @@ const Contact = () => {
               className="relative z-10 text-lg md:text-7xl  bg-clip-text text-transparent bg-gradient-to-b
              from-neutral-200 to-neutral-600  text-center font-sans font-bold"
             >
-              Send Your Querry
+              Send Your Query
             </h1>
             <p></p>
             <p className="text-neutral-500 max-w-lg mx-auto my-2 text-xl text-center relative z-10">
@@ -66,7 +75,7 @@ const Contact = () => {
             </p>
             <div className="relative h-80  w-96 mt-7 flex justify-center">
               <form
-                onSubmit={handleSubmit(sendQerry)}
+                onSubmit={handleSubmit(sendQuery)}
                 className=" w-full absolute font-be-veitnam-pro flex flex-col text-white z-50"
               >
                 <label className="mb-1">Full Name</label>
@@ -75,6 +84,8 @@ const Contact = () => {
                    focus:text-white transition-all ease-in-out duration-100"
                   {...register("fullName", {
                     required: true,
+                    minLength: 2,
+                    maxLength: 30,
                     pattern: /^[a-zA-Z]{2,}$/,
                   })}
                   placeholder="Full Name"
@@ -96,13 +107,13 @@ const Contact = () => {
                   {...register("text", {
                     required: true,
                     minLength: 1,
-                    maxLength: 250,
+                    maxLength: 450,
                   })}
                   placeholder="Message"
-                  maxLength={250}
+                  maxLength={450}
                 ></textarea>
                 <button type="submit" className=" mt-10">
-                  <SendQerryButton />
+                  <SendQueryButton />
                 </button>
               </form>
             </div>

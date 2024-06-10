@@ -1,4 +1,4 @@
-.querryButton {
+.queryButton {
   text-decoration: none;
   position: relative;
   border: none;
@@ -12,7 +12,7 @@
   z-index: 1;
 }
 
-.querryButton:hover {
+.queryButton:hover {
   animation: glowSendButton 8s linear infinite;
   border: none;
 }
@@ -27,7 +27,7 @@
   }
 }
 
-.querryButton:before {
+.queryButton:before {
   content: "";
   position: absolute;
   top: -5px;
@@ -41,10 +41,10 @@
   transition: linear 0.4s;
 }
 
-.querryButton:hover::before {
+.queryButton:hover::before {
   filter: blur(20px);
 }
 
-.querryButton:active {
+.queryButton:active {
   background: linear-gradient(32deg, #03a9f4, #f441a5, #ffeb3b, #03a9f4);
 }

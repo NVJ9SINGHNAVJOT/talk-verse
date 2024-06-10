@@ -175,6 +175,8 @@ const SignUp = (props: SignInProps) => {
               required
               {...register("firstName", {
                 required: true,
+                minLength: 2,
+                maxLength: 15,
                 pattern: /^[a-zA-Z]{2,}$/,
               })}
             />
@@ -199,6 +201,8 @@ const SignUp = (props: SignInProps) => {
               required
               {...register("lastName", {
                 required: true,
+                minLength: 2,
+                maxLength: 15,
                 pattern: /^[a-zA-Z]{2,}$/,
               })}
             />

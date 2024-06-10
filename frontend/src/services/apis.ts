@@ -59,3 +59,7 @@ export const postEndPoints = {
   TRENDING_POSTS: BASE_URL_SERVER + "/posts/trendingPosts", // parameters: createdAt
   CATEGORY_POSTS: BASE_URL_SERVER + "/posts/categoryPosts", // parameters: category, createdAt
 };
+
+export const queryEndPoints = {
+  SEND_QUERY: BASE_URL_SERVER + "/queries/sendQuery",
+};

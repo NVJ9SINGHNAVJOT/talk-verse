@@ -285,7 +285,7 @@ const Blog = () => {
         </div>
       </section>
       {/* create post */}
-      {createPost && <CreatePost />}
+      {createPost && <CreatePost setCreatePost={setCreatePost} />}
     </div>
   );
 };

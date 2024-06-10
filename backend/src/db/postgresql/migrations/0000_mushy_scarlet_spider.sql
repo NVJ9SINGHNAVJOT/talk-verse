@@ -38,6 +38,15 @@ CREATE TABLE IF NOT EXISTS "post" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "query" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"full_name" varchar NOT NULL,
+	"email_id" varchar NOT NULL,
+	"query_text" varchar[] NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "request" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"from_id" integer NOT NULL,
