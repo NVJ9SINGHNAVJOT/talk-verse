@@ -1,6 +1,6 @@
 import { ProfileRs, SetProfileImageRs, UserBlogProfileRs } from "@/types/apis/profileApiRs";
-import { profileEndPoints } from "../apis";
-import { fetchApi } from "../fetchApi";
+import { profileEndPoints } from "@/services/apis";
+import { fetchApi } from "@/services/fetchApi";
 import { CommonRs } from "@/types/apis/common";
 import { NewProfileData } from "@/components/core/profile/Settings";
 

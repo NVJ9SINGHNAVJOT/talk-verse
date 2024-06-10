@@ -22,7 +22,7 @@ import { useSocketContext } from "@/context/SocketContext";
 import { startTypingEvent, stopTypingEvent } from "@/socket/emitEvents/emitNotificationEvents";
 import { setFriendToFirst } from "@/redux/slices/chatSlice";
 import WorkModal from "@/lib/modals/workmodal/WorkModal";
-import FileInputs from "./chatItems/FileInputs";
+import FileInputs from "@/components/core/talk/chatItems/FileInputs";
 import { setApiCall } from "@/redux/slices/loadingSlice";
 import useScrollOnTop from "@/hooks/useScrollOnTop";
 

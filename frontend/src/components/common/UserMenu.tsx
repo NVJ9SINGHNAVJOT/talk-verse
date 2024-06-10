@@ -1,7 +1,7 @@
 import useOnClickOutside from "@/hooks/useOnClickOutside";
 import { useAppSelector } from "@/redux/store";
 import { useRef, useState } from "react";
-import LogOutModal from "../auth/LogOutModal";
+import LogOutModal from "@/components/auth/LogOutModal";
 import { useNavigate } from "react-router-dom";
 
 const UserMenu = () => {

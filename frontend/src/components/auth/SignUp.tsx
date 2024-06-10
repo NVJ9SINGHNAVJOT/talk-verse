@@ -7,7 +7,7 @@ import { RxAvatar } from "react-icons/rx";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { maxFileSize, validFiles } from "@/utils/constants";
-import OtpInput from "./OtpInput";
+import OtpInput from "@/components/auth/OtpInput";
 import WorkModal from "@/lib/modals/workmodal/WorkModal";
 
 type SignUpData = {

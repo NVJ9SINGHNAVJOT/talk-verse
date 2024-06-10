@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { clientE, serverE } from "../events";
+import { clientE, serverE } from "@/socket/events";
 import { getSingleSocket } from "@/utils/getSocketIds";
 import { logger } from "@/logger/logger";
 

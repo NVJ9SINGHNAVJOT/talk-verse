@@ -25,9 +25,9 @@ import UserInfo from "@/components/core/profile/UserInfo";
 import ChekKey from "@/pages/ChekKey";
 import Contact from "@/pages/Contact";
 import Blog from "@/pages/Blog";
-import Trending from "./components/blog/post/Trending";
-import Recent from "./components/blog/post/Recent";
-import Category from "./components/blog/post/Category";
+import Trending from "@/components/blog/post/Trending";
+import Recent from "@/components/blog/post/Recent";
+import Category from "@/components/blog/post/Category";
 
 function App() {
   const pageRenderDivRef = useRef<HTMLDivElement>(null);

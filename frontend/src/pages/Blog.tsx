@@ -1,3 +1,4 @@
+import CreatePost from "@/components/core/blog/CreatePost";
 import { useAppSelector } from "@/redux/store";
 import {
   acceptFollowRequestApi,
@@ -42,6 +43,7 @@ const Blog = () => {
   const [sendingReq, setSendingReq] = useState<boolean>(false);
   const [acceptingReq, setAcceptingReq] = useState<boolean>(false);
   const [deletingReq, setDeletingReq] = useState<boolean>(false);
+  const [createPost, setCreatePost] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const sendFollowRequest = async (reqUserId: number) => {
@@ -132,7 +134,7 @@ const Blog = () => {
   }, [location.pathname]);
 
   return (
-    <div className="w-full flex h-[calc(100vh-4rem)] min-w-minContent">
+    <div className="relative w-full flex h-[calc(100vh-4rem)] min-w-minContent">
       {/* user profile and category section  */}
       <section className="w-48 h-full flex flex-col px-1 bg-[#030609]">
         {/* user profile details */}
@@ -204,7 +206,10 @@ const Blog = () => {
       </section>
       {/* create post and friend suggestion */}
       <section className="hidden lm:flex lm:flex-col gap-y-4 w-56 px-1 bg-[#030609]">
-        <div className="relative h-12 w-10/12 mt-4 mx-auto p-2 flex justify-center items-center hover:border-sky-600 duration-500 group cursor-pointer text-sky-50  overflow-hidden rounded-md bg-sky-800">
+        <div
+          onClick={() => setCreatePost(true)}
+          className="relative h-12 w-10/12 mt-4 mx-auto p-2 flex justify-center items-center hover:border-sky-600 duration-500 group cursor-pointer text-sky-50  overflow-hidden rounded-md bg-sky-800"
+        >
           <div className="absolute z-10 w-48 h-48 rounded-full group-hover:scale-150 transition-all  duration-500 ease-in-out bg-sky-900 delay-150 group-hover:delay-75"></div>
           <div className="absolute z-10 w-40 h-40 rounded-full group-hover:scale-150 transition-all  duration-500 ease-in-out bg-sky-800 delay-150 group-hover:delay-100"></div>
           <div className="absolute z-10 w-32 h-32 rounded-full group-hover:scale-150 transition-all  duration-500 ease-in-out bg-sky-700 delay-150 group-hover:delay-150"></div>
@@ -279,6 +284,8 @@ const Blog = () => {
           </div>
         </div>
       </section>
+      {/* create post */}
+      {createPost && <CreatePost />}
     </div>
   );
 };

@@ -19,7 +19,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import FileInputs from "./chatItems/FileInputs";
+import FileInputs from "@/components/core/talk/chatItems/FileInputs";
 import WorkModal from "@/lib/modals/workmodal/WorkModal";
 import useScrollOnTop from "@/hooks/useScrollOnTop";
 import { setApiCall } from "@/redux/slices/loadingSlice";
