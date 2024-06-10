@@ -164,7 +164,6 @@ const SignUp = (props: SignInProps) => {
         </div>
 
         {/* signup data */}
-
         <div className=" flex items-center gap-2 w-full pt-4">
           <div className="relative z-0 w-1/2 mb-5 group">
             <input
