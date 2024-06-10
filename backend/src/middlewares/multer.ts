@@ -17,13 +17,21 @@ const storage = multer.diskStorage({
 const multerUpload = multer({
   storage: storage,
   limits: {
-    fileSize: 1024 * 1024 * 5, // Set the limit to 5 MB (5 * 1024 * 1024 bytes)
+    fileSize: 1024 * 1024 * 5, // limit to 5 MB (5 * 1024 * 1024 bytes)
+  },
+});
+
+const multerUploadMultipleFiles = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 5, // individual file size limit to 5 MB
+    files: 5, // maximum number of files to 5
   },
 });
 
 const imageFile = multerUpload.single("imageFile");
 const fileMessg = multerUpload.single("fileMessg");
 const storyFile = multerUpload.single("storyFile");
-const postFiles = multerUpload.array("postFiles");
+const postFiles = multerUploadMultipleFiles.array("postFiles");
 
 export { imageFile, fileMessg, storyFile, postFiles };
