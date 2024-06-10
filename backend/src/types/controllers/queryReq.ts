@@ -6,8 +6,8 @@ export const SendQueryReqSchema = z.object({
     .string()
     .min(2)
     .max(30)
-    .regex(/^[a-zA-Z]{2,}$/),
-  emailId: emailSchema,
+    .regex(/^[a-zA-Z\s]{2,}$/),
+  email: emailSchema,
   text: z.array(z.string()).refine(
     (arr) => {
       const combinedLength = arr.reduce((total, str) => total + str.length, 0);

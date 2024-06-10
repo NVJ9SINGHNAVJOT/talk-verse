@@ -3,7 +3,8 @@ import SendQueryButton from "@/lib/buttons/sendquerybutton/SendQueryButton";
 import LettersPull from "@/lib/cards/LettersPull";
 import { TextRevealCard, TextRevealCardDescription, TextRevealCardTitle } from "@/lib/cards/TextRevealCard";
 import { BackgroundBeams } from "@/lib/sections/BackgroundBeams";
-import { sendQueryApi } from "@/services/operations/queryApi";
+import { sendQueryApi, SendQueryData } from "@/services/operations/queryApi";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaFacebook, FaInstagram, FaXTwitter, FaGithub } from "react-icons/fa6";
 import { toast } from "react-toastify";
@@ -16,15 +17,41 @@ export type ContactUsQuery = {
 
 const Contact = () => {
   const { register, handleSubmit, reset } = useForm<ContactUsQuery>();
+  const [sending, setSending] = useState<boolean>(false);
 
   const sendQuery = async (data: ContactUsQuery) => {
+    setSending(true);
+    const text = data.text.split(/\r?\n/);
+    // remove empty spaces from starting and last
+    while (text.length && text[0] === "") {
+      text.shift();
+    }
+    while (text.length && text[text.length - 1] === "") {
+      text.pop();
+    }
+
+    if (text.length === 0) {
+      toast.info("Invalid message");
+      setSending(false);
+      return;
+    }
+
     reset();
-    const response = await sendQueryApi(data);
+
+    const newData: SendQueryData = {
+      fullName: data.fullName,
+      email: data.email,
+      text: text,
+    };
+
+    const response = await sendQueryApi(newData);
+
     if (response) {
       toast.success("Query sent");
     } else {
       toast.error("Error while sending query, try again");
     }
+    setSending(false);
   };
 
   return (
@@ -86,7 +113,7 @@ const Contact = () => {
                     required: true,
                     minLength: 2,
                     maxLength: 30,
-                    pattern: /^[a-zA-Z]{2,}$/,
+                    pattern: /^[a-zA-Z\s]{2,}$/,
                   })}
                   placeholder="Full Name"
                 />
@@ -112,7 +139,7 @@ const Contact = () => {
                   placeholder="Message"
                   maxLength={450}
                 ></textarea>
-                <button type="submit" className=" mt-10">
+                <button disabled={sending} type="submit" className=" mt-10">
                   <SendQueryButton />
                 </button>
               </form>
