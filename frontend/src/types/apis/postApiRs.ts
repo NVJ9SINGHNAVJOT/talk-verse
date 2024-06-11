@@ -10,7 +10,7 @@ export type CreatePostRs = {
     tags?: string[];
     content?: string[];
     likesCount: number;
-    createdAt: Date;
+    createdAt: string;
   };
 } | null;
 
@@ -55,7 +55,7 @@ export type Post = {
   tags?: string[];
   content?: string[];
   likesCount: number;
-  createdAt: Date;
+  createdAt: string;
 };
 
 export type PostsRs = {

@@ -4,7 +4,8 @@ import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { MdOutlineCancelPresentation } from "react-icons/md";
 import { toast } from "react-toastify";
-import MediaFiles from "./MediaFiles";
+import MediaFiles from "@/components/core/blog/MediaFiles";
+import { createPostApi } from "@/services/operations/postApi";
 
 const categories = [
   "Technology",
@@ -23,15 +24,21 @@ const categories = [
   "Other",
 ];
 
-const checkFiles = (files: FileList, setMediaUrls: React.Dispatch<React.SetStateAction<string[]>>): File[] => {
+export type FileUrl = { type: string; url: string };
+
+const checkFiles = (files: FileList, setMediaUrls: React.Dispatch<React.SetStateAction<FileUrl[]>>): File[] => {
   const newFiles: File[] = [];
-  const newUrls: string[] = [];
+  const newUrls: FileUrl[] = [];
   for (const file of files) {
-    if (file.size > maxFileSize || !(validFiles.image.includes(file.type) || validFiles.video.includes(file.type))) {
+    if (file.size > maxFileSize) {
       return [];
+    } else if (validFiles.image.includes(file.type)) {
+      newFiles.push(file);
+      newUrls.push({ type: "image", url: URL.createObjectURL(file) });
+    } else if (validFiles.video.includes(file.type)) {
+      newFiles.push(file);
+      newUrls.push({ type: "video", url: URL.createObjectURL(file) });
     }
-    newFiles.push(file);
-    newUrls.push(URL.createObjectURL(file));
   }
   setMediaUrls(newUrls);
   return newFiles;
@@ -43,15 +50,15 @@ type CreatePostProps = {
 
 type PostData = {
   category: string;
-  title: string;
-  content: string;
+  title?: string;
+  content?: string;
 };
 
 const CreatePost = (props: CreatePostProps) => {
   const [tags, setTags] = useState<string[]>([]);
   const mediaFilesInputRef = useRef<HTMLInputElement>(null);
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
-  const [mediaUrls, setMediaUrls] = useState<string[]>([]);
+  const [mediaUrls, setMediaUrls] = useState<FileUrl[]>([]);
   const { register, handleSubmit, reset } = useForm<PostData>();
 
   const handleTagsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,19 +115,47 @@ const CreatePost = (props: CreatePostProps) => {
   };
 
   const onSubmit = async (data: PostData) => {
-    const linesArray = data.content.split(/\r?\n/);
-    while (linesArray.length && linesArray[0] === "") {
-      linesArray.shift();
+    let linesArray;
+
+    if (data.content) {
+      linesArray = data.content.split(/\r?\n/);
+      while (linesArray.length && linesArray[0] === "") {
+        linesArray.shift();
+      }
+      while (linesArray.length && linesArray[linesArray.length - 1] === "") {
+        linesArray.pop();
+      }
     }
-    while (linesArray.length && linesArray[linesArray.length - 1] === "") {
-      linesArray.pop();
-    }
-    if (mediaFiles.length === 0 && linesArray.length === 0) {
+    // either content or media files are required for post
+    if ((!linesArray || linesArray.length === 0) && mediaFiles.length === 0) {
       toast.info("Either media or content is required for post");
       return;
     }
+    setMediaUrls([]);
     reset();
-    console.log(data, mediaFiles, linesArray, tags);
+    props.setCreatePost(false);
+    const newData = new FormData();
+    newData.append("category", data.category);
+    if (data.title) {
+      newData.append("title", data.title);
+    }
+    if (mediaFiles.length) {
+      mediaFiles.forEach((file) => newData.append("postFiles", file));
+    }
+    if (linesArray && linesArray.length) {
+      newData.append("content", JSON.stringify(linesArray));
+    }
+    if (tags.length) {
+      newData.append("tags", JSON.stringify(tags));
+    }
+    const tid = toast.loading("Creating Post");
+    const response = await createPostApi(newData);
+    toast.dismiss(tid);
+    if (response) {
+      toast.success("New post created");
+      return;
+    }
+    toast.error("Error creating post");
   };
 
   return (
@@ -179,7 +214,7 @@ const CreatePost = (props: CreatePostProps) => {
               onChange={handleMediaFiles}
             />
             <label className=" text-[1.1rem]">Media</label>
-            {mediaFiles.length === 0 ? (
+            {mediaUrls.length === 0 ? (
               <div
                 className=" w-10/12 h-64 flex flex-col gap-y-1 justify-center items-center self-center rounded-lg bg-neutral-950
                     hover:bg-transparent cursor-pointer transition-all duration-100 ease-in-out"
