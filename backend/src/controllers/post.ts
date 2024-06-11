@@ -37,7 +37,7 @@ export const createPost = async (req: Request, res: Response): Promise<Response>
 
     const data = createPostReq.data;
 
-    const tags: string[] = [];
+    let tags;
     if (data.tags) {
       const checkTags: string[] = JSON.parse(data.tags);
       if (!checkTags || checkTags.length === 0 || checkTags.includes("")) {
@@ -46,19 +46,19 @@ export const createPost = async (req: Request, res: Response): Promise<Response>
         }
         return errRes(res, 400, "tags present in req, but invalid data in after parsing");
       }
-      tags.concat(checkTags);
+      tags = checkTags;
     }
 
-    const content: string[] = [];
-    if (data.tags) {
-      const checkContent: string[] = JSON.parse(data.tags);
-      if ((!checkContent || checkContent.length === 0, checkContent.includes(""))) {
+    let content;
+    if (data.content) {
+      const checkContent = JSON.parse(data.content);
+      if (!checkContent || checkContent.length === 0) {
         if (req.files?.length) {
           deleteFiles(req.files);
         }
         return errRes(res, 400, "content present in req, but invalid data in after parsing");
       }
-      content.concat(checkContent);
+      content = checkContent;
     }
 
     let secUrls;
@@ -80,9 +80,9 @@ export const createPost = async (req: Request, res: Response): Promise<Response>
         userId: userId2,
         category: data.category,
         title: data.title,
-        mediaUrls: secUrls ? secUrls : [],
-        tags: tags,
-        content: content,
+        mediaUrls: secUrls && secUrls,
+        tags: tags && tags,
+        content: content && content,
       })
       .returning({
         id: post.id,
