@@ -32,15 +32,16 @@ export type AddCommentRs = {
   };
 } | null;
 
+export type Story = {
+  userName: string;
+  imageUrl: string;
+  storyUrl: string;
+  createdAt: string;
+};
 export type GetStoriesRs = {
   success: boolean;
   message: string;
-  stories: {
-    userName: string;
-    imageUrl: string;
-    storyUrl: string;
-    createdAt: string;
-  }[];
+  stories: Story[];
 } | null;
 
 export type Post = {

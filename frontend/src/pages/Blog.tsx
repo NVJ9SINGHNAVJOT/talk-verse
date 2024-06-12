@@ -1,5 +1,6 @@
 import CreatePost from "@/components/core/blog/post/CreatePost";
 import CreateStory from "@/components/core/blog/story/CreateStory";
+import Stories from "@/components/core/blog/story/Stories";
 import { useAppSelector } from "@/redux/store";
 import {
   acceptFollowRequestApi,
@@ -201,25 +202,30 @@ const Blog = () => {
           })}
         </div>
       </section>
+
       {/* posts section */}
       <section className="flex-1 bg-[#09131d] pt-2 px-4">
         <div className=" my-2 text-white">Stories</div>
         {/* story section */}
-        <section className=" flex justify-between">
+        <section className=" flex">
           {/* create story */}
-          <div
-            onClick={() => setCreateStory(true)}
-            className=" bg-slate-900 cursor-pointer flex justify-center items-center rounded-full size-16 border-[2px]
+          <div className="flex flex-col items-center gap-y-2 text-white">
+            <div
+              onClick={() => setCreateStory(true)}
+              className=" bg-slate-900 cursor-pointer flex justify-center items-center rounded-full size-16 border-[2px]
             border-dotted border-whitesmoke"
-          >
-            <GoPlus className=" fill-white" />
+            >
+              <GoPlus className=" fill-white" />
+            </div>
+            <div className=" text-xs">Add Story</div>
           </div>
           {/* user following stories */}
-          <div className=" flex overflow-x-auto"></div>
+          <Stories />
         </section>
         <div>Feeds</div>
         <Outlet />
       </section>
+
       {/* create post and friend suggestion */}
       <section className="hidden lm:flex lm:flex-col gap-y-4 w-56 px-1 bg-[#030609]">
         <div
@@ -300,7 +306,7 @@ const Blog = () => {
           </div>
         </div>
       </section>
-      {/* create post */}
+
       {createPost && <CreatePost setCreatePost={setCreatePost} />}
       {createStory && <CreateStory setCreateStory={setCreateStory} />}
     </div>
