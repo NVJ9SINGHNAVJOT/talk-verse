@@ -46,7 +46,7 @@ const Blog = () => {
   const [acceptingReq, setAcceptingReq] = useState<boolean>(false);
   const [deletingReq, setDeletingReq] = useState<boolean>(false);
   const [createPost, setCreatePost] = useState<boolean>(false);
-  const [createStory, setStoryPost] = useState<boolean>(false);
+  const [createStory, setCreateStory] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const sendFollowRequest = async (reqUserId: number) => {
@@ -208,6 +208,7 @@ const Blog = () => {
         <section className=" flex justify-between">
           {/* create story */}
           <div
+            onClick={() => setCreateStory(true)}
             className=" bg-slate-900 cursor-pointer flex justify-center items-center rounded-full size-16 border-[2px]
             border-dotted border-whitesmoke"
           >
@@ -301,7 +302,7 @@ const Blog = () => {
       </section>
       {/* create post */}
       {createPost && <CreatePost setCreatePost={setCreatePost} />}
-      {createStory && <CreateStory />}
+      {createStory && <CreateStory setCreateStory={setCreateStory} />}
     </div>
   );
 };

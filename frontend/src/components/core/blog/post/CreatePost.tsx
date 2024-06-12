@@ -213,7 +213,21 @@ const CreatePost = (props: CreatePostProps) => {
               placeholder=""
               onChange={handleMediaFiles}
             />
-            <label className=" text-[1.1rem]">Media</label>
+            <div className="flex justify-between items-center">
+              <label className=" text-[1.1rem]">Media</label>
+              {mediaFiles.length !== 0 && (
+                <div
+                  onClick={() => {
+                    setMediaFiles([]);
+                    setMediaUrls([]);
+                  }}
+                  className=" text-xs cursor-pointer rounded-xl bg-white text-black hover:bg-transparent hover:text-white
+                   py-1 px-2 duration-[10ms] transition-all ease-linear delay-0"
+                >
+                  Remove
+                </div>
+              )}
+            </div>
             {mediaUrls.length === 0 ? (
               <div
                 className=" w-10/12 h-64 flex flex-col gap-y-1 justify-center items-center self-center rounded-lg bg-neutral-950
