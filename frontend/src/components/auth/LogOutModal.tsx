@@ -43,7 +43,7 @@ const LogOutModal = (props: LogOutModalPros) => {
     <div className="fixed inset-0 z-[1000] !mt-0 flex justify-center items-center overflow-auto bg-white bg-opacity-10 backdrop-blur-sm">
       {logginOut ? (
         <span
-          className="shinningLogOutTitle text-4xl cursor-pointer rounded-2xl
+          className="ct-shinningLogOutTitle text-4xl cursor-pointer rounded-2xl
          border border-gray-800 bg-[linear-gradient(110deg,#000,45%,#4D4B4B,55%,#000)] bg-[length:250%_100%]
           px-16 py-4 font-medium text-gray-300"
         >
