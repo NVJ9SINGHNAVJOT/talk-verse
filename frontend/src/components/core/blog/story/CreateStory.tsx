@@ -1,4 +1,7 @@
+import { CanvasRevealEffect } from "@/lib/sections/CanvasReveal";
+import { createStoryApi } from "@/services/operations/postApi";
 import { maxFileSize, validFiles } from "@/utils/constants";
+import { AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
 import { MdOutlineCancelPresentation } from "react-icons/md";
 import { toast } from "react-toastify";
@@ -48,15 +51,35 @@ const CreateStory = (props: CreateStoryProps) => {
     }
   };
 
+  const postStory = async () => {
+    props.setCreateStory(false);
+    const newData = new FormData();
+    if (mediaFile) {
+      newData.append("storyFile", mediaFile);
+    }
+    const tid = toast.loading("Posting story");
+
+    const response = await createStoryApi(newData);
+    toast.dismiss(tid);
+    if (response) {
+      toast.success("Story posted");
+    } else {
+      toast.error("Error while posting story");
+    }
+  };
+
   return (
     <div
       className="absolute flex flex-col items-center z-40 backdrop-blur-[7px] w-full min-h-full h-auto min-w-minContent 
       overflow-y-auto"
     >
-      <div className="relative w-72 h-[28rem] flex flex-col items-center justify-center border-[2px] border-whitesmoke mt-20 text-white gap-y-1">
-      <div onClick={() => props.setCreateStory(false)} className="absolute -right-24 -top-14 cursor-pointer">
-        <MdOutlineCancelPresentation className=" w-11 h-8 fill-white hover:fill-slate-300" />
-      </div>
+      <div
+        className={`absolute z-50 w-72 h-[28rem] flex flex-col items-center justify-center border-[2px] border-whitesmoke mt-20
+       text-white gap-y-1 ${mediaFile !== undefined && "bg-neutral-950"}`}
+      >
+        <div onClick={() => props.setCreateStory(false)} className="absolute -right-24 -top-14 cursor-pointer">
+          <MdOutlineCancelPresentation className=" w-11 h-8 fill-white hover:fill-slate-300" />
+        </div>
         {mediaFile !== undefined && (
           <div
             onClick={() => setMediaFile(undefined)}
@@ -64,6 +87,16 @@ const CreateStory = (props: CreateStoryProps) => {
             py-1 px-2 duration-[10ms] transition-all ease-linear delay-0"
           >
             Remove
+          </div>
+        )}
+        {mediaFile !== undefined && (
+          <div
+            onClick={() => postStory()}
+            className=" p-2 absolute cursor-pointer -bottom-16 rounded-xl bg-white text-black 
+            hover:bg-transparent hover:text-white  py-1 px-6 duration-[10ms] transition-all ease-linear delay-0
+            font-be-veitnam-pro"
+          >
+            Post
           </div>
         )}
         <input
@@ -94,6 +127,22 @@ const CreateStory = (props: CreateStoryProps) => {
           <video src={URL.createObjectURL(mediaFile)} controls />
         )}
       </div>
+
+      {/* canvas effect */}
+      <AnimatePresence>
+        <div className="h-full w-full absolute inset-0">
+          <CanvasRevealEffect
+            animationSpeed={5}
+            containerClassName="bg-transparent"
+            colors={[
+              [59, 130, 246],
+              [139, 92, 246],
+            ]}
+            opacities={[0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.4, 0.4, 0.4, 1]}
+            dotSize={2}
+          />
+        </div>
+      </AnimatePresence>
     </div>
   );
 };
