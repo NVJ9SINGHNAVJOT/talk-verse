@@ -204,10 +204,10 @@ const Blog = () => {
       </section>
 
       {/* posts section */}
-      <section className="flex-1 bg-[#09131d] pt-2 px-4">
-        <div className=" my-2 text-white">Stories</div>
+      <section className="flex-1 flex-col bg-[#09131d] pt-2 px-4">
         {/* story section */}
-        <section className=" flex">
+        <div className=" my-2 text-white">Stories</div>
+        <section className="flex-1 flex">
           {/* create story */}
           <div className="flex flex-col items-center gap-y-2 text-white">
             <div
@@ -219,9 +219,10 @@ const Blog = () => {
             </div>
             <div className=" text-xs">Add Story</div>
           </div>
-          {/* user following stories */}
+          {/* following user stories */}
           <Stories />
         </section>
+        {/* feeds section */}
         <div>Feeds</div>
         <Outlet />
       </section>
