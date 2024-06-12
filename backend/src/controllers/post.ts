@@ -19,7 +19,7 @@ import { CustomRequest } from "@/types/custom";
 import { uploadMultiplesToCloudinary, uploadToCloudinary } from "@/utils/cloudinaryHandler";
 import { deleteFile, deleteFiles } from "@/utils/deleteFile";
 import { errRes } from "@/utils/error";
-import { and, eq, sql, lt, desc } from "drizzle-orm";
+import { and, eq, sql, lt, desc, gt } from "drizzle-orm";
 import { Request, Response } from "express";
 
 export const createPost = async (req: Request, res: Response): Promise<Response> => {
@@ -382,7 +382,13 @@ export const getStories = async (req: Request, res: Response): Promise<Response>
       .from(story)
       .leftJoin(follow, eq(story.userId, follow.followingId))
       .leftJoin(user, eq(story.userId, user.id))
-      .where(and(eq(follow.followerId, userId2), lt(story.createdAt, beforeAt)))
+      .where(
+        and(
+          eq(follow.followerId, userId2),
+          lt(story.createdAt, beforeAt),
+          gt(story.createdAt, sql`now() - interval '1 day'`)
+        )
+      )
       .orderBy(desc(story.createdAt))
       .limit(15)
       .execute();
