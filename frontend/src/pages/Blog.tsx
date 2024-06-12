@@ -1,4 +1,5 @@
-import CreatePost from "@/components/core/blog/CreatePost";
+import CreatePost from "@/components/core/blog/post/CreatePost";
+import CreateStory from "@/components/core/blog/story/CreateStory";
 import { useAppSelector } from "@/redux/store";
 import {
   acceptFollowRequestApi,
@@ -12,6 +13,7 @@ import { UserSuggestion } from "@/types/apis/notificationApiRs";
 import { BlogProfile } from "@/types/apis/profileApiRs";
 import { useEffect, useState } from "react";
 import { CiCirclePlus } from "react-icons/ci";
+import { GoPlus } from "react-icons/go";
 import { HiOutlineUserAdd } from "react-icons/hi";
 import { RxAvatar } from "react-icons/rx";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -44,6 +46,7 @@ const Blog = () => {
   const [acceptingReq, setAcceptingReq] = useState<boolean>(false);
   const [deletingReq, setDeletingReq] = useState<boolean>(false);
   const [createPost, setCreatePost] = useState<boolean>(false);
+  const [createStory, setStoryPost] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const sendFollowRequest = async (reqUserId: number) => {
@@ -199,9 +202,21 @@ const Blog = () => {
         </div>
       </section>
       {/* posts section */}
-      <section className="flex-1 bg-[#09131d]">
+      <section className="flex-1 bg-[#09131d] pt-2 px-4">
+        <div className=" my-2 text-white">Stories</div>
         {/* story section */}
-        <section>Story</section>
+        <section className=" flex justify-between">
+          {/* create story */}
+          <div
+            className=" bg-slate-900 cursor-pointer flex justify-center items-center rounded-full size-16 border-[2px]
+            border-dotted border-whitesmoke"
+          >
+            <GoPlus className=" fill-white" />
+          </div>
+          {/* user following stories */}
+          <div className=" flex overflow-x-auto"></div>
+        </section>
+        <div>Feeds</div>
         <Outlet />
       </section>
       {/* create post and friend suggestion */}
@@ -286,6 +301,7 @@ const Blog = () => {
       </section>
       {/* create post */}
       {createPost && <CreatePost setCreatePost={setCreatePost} />}
+      {createStory && <CreateStory />}
     </div>
   );
 };
