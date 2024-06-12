@@ -1,4 +1,4 @@
-/* ===== Caution: Any changes in socket events types need to be changed in backend as well ===== */
+/* NOTE: Any changes in socket events types need to be changed in backend as well */
 
 // client
 export type SoUserRequest = {

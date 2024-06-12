@@ -28,7 +28,7 @@ const Profile = () => {
       if (apiCalls["getProfileApi"] === true) {
         return;
       }
-      /* ===== Caution: getProfileApi api call state management ===== */
+      /* NOTE: getProfileApi api call state management */
       dispatch(setApiCall({ api: "getProfileApi", status: true }));
       const response = await getProfileApi();
       if (response && response.success === true) {

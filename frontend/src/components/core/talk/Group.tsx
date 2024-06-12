@@ -71,7 +71,7 @@ const Group = () => {
       // this fucntion will only call api for a groupId messasges once
       if (groupIdStart[groupId] !== true && apiCalls[`getGroupMessagesApi-${groupId}`] !== true) {
         // api is getting called for first time for groupId and this hook will call this api only once
-        /* ===== Caution: getGroupMessagesApi api call state management ===== */
+        /* NOTE: getGroupMessagesApi api call state management */
         dispatch(setApiCall({ api: `getGroupMessagesApi-${groupId}`, status: true }));
         dispatch(setGroupIdStart(groupId));
 
@@ -145,7 +145,7 @@ const Group = () => {
         groupIdStart[groupId] === true &&
         groupIdEnd[groupId] !== true
       ) {
-        /* ===== Caution: getMessagesApi api call state management ===== */
+        /* NOTE: getMessagesApi api call state management */
         dispatch(setApiCall({ api: `getGroupMessagesApi-${groupId}`, status: true }));
 
         const response = await getGroupMessagesApi(

@@ -40,7 +40,7 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
         text: data.fromText,
         createdAt: createdAt.toISOString(),
       };
-      /* ===== Caution: fromText for currUser and toText for friend ===== */
+      /* NOTE: fromText for currUser and toText for friend */
       const sId = getSingleSocket(data.to);
       io.to(socket.id).emit(clientE.MESSAGE_RECIEVED, newMessage);
       if (sId) {

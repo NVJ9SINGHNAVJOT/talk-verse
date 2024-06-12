@@ -126,7 +126,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     // Remove the first and last lines (which contain the comment)
     const privateKeyPemOnly = lines.slice(1, -1).join("\n");
 
-    /* ===== Caution: commented only for development purpose, remove comment in production ===== */
+    /* NOTE: commented only for development purpose, remove comment in production */
     // await sendPrivateKeyMail(data.email, privateKeyPemOnly);
 
     return res.status(200).json({
@@ -154,7 +154,7 @@ export const sendOtp = async (req: Request, res: Response): Promise<Response> =>
     const newOtp = generateOTP();
     await Otp.create({ email: data.email, otpValue: newOtp });
 
-    /* ===== Caution: commented only for development purpose, remove comment in production ===== */
+    /* NOTE: commented only for development purpose, remove comment in production */
     // await sendVerficationMail(data.email, newOtp);
 
     return res.status(200).json({

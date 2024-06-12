@@ -52,33 +52,41 @@ const Stories = () => {
   }, []);
 
   return (
-    <div className=" relative ml-6 flex-1 flex gap-x-3 overflow-x-auto">
+    <div className="relative w-full ml-6">
       {stories.length === 0 ? (
         <div className=" mx-auto self-center text-white">It's a busy day</div>
       ) : (
-        stories.map((story, index) => {
-          return (
-            <div key={index} className=" flex flex-col items-center gap-y-2 text-white">
-              {story.imageUrl ? (
-                <img
-                  onClick={() => setStoryIndex(index)}
-                  alt="Loading..."
-                  src={story.imageUrl}
-                  className=" bg-slate-900 cursor-pointer rounded-full size-16 border-[2px]
-                 border-whitesmoke"
-                />
-              ) : (
-                <RxAvatar
-                  onClick={() => setStoryIndex(index)}
-                  className=" bg-slate-900 cursor-pointer rounded-full size-16 border-[2px]
-              border-whitesmoke"
-                />
-              )}
-              <div className=" text-xs w-16 truncate text-center">{story.userName}</div>
-            </div>
-          );
-        })
+        <div className=" w-full flex justify-between items-center">
+          <MdKeyboardArrowLeft className=" size-6 fill-white cursor-pointer" />
+          {/* FIXME: in below div if w-1 is removed then overflow properties dosn't work, for now w-1 is used with flex grow */}
+          <div className="flex flex-grow w-1 gap-x-3 overflow-x-auto">
+            {stories.map((story, index) => {
+              return (
+                <div key={index} className=" flex flex-col items-center gap-y-2 text-white">
+                  {story.imageUrl ? (
+                    <img
+                      onClick={() => setStoryIndex(index)}
+                      alt="Loading..."
+                      src={story.imageUrl}
+                      className=" bg-slate-900 cursor-pointer rounded-full size-16 border-[2px]
+                    border-whitesmoke"
+                    />
+                  ) : (
+                    <RxAvatar
+                      onClick={() => setStoryIndex(index)}
+                      className=" bg-slate-900 cursor-pointer rounded-full size-16 border-[2px]
+                  border-whitesmoke"
+                    />
+                  )}
+                  <div className=" text-xs w-16 truncate text-center mb-2">{story.userName}</div>
+                </div>
+              );
+            })}
+          </div>
+          <MdKeyboardArrowRight className=" size-6 fill-white cursor-pointer" />
+        </div>
       )}
+      {/* story view */}
       {storyIndex !== -1 && (
         <section className="fixed inset-0 z-50 top-16 backdrop-blur-sm max-w-maxContent">
           <div

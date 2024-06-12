@@ -204,10 +204,10 @@ const Blog = () => {
       </section>
 
       {/* posts section */}
-      <section className="flex-1 flex-col bg-[#09131d] pt-2 px-4">
+      <section className=" flex-grow flex-col bg-[#09131d] pt-2 px-4">
         {/* story section */}
         <div className=" my-2 text-white">Stories</div>
-        <section className="flex-1 flex">
+        <section className="w-full flex">
           {/* create story */}
           <div className="flex flex-col items-center gap-y-2 text-white">
             <div
