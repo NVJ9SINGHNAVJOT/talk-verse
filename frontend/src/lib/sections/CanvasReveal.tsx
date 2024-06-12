@@ -3,7 +3,8 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import React, { useMemo, useRef } from "react";
 import * as THREE from "three";
 
-export const CanvasRevealEffect = ({
+// FIXME: when this component is removed it gives error -> THREE.WebGLRenderer: Context Lost. three.module.js:28952
+export const CanvasReveal = ({
   animationSpeed = 0.4,
   opacities = [0.3, 0.3, 0.3, 0.5, 0.5, 0.5, 0.8, 0.8, 0.8, 1],
   colors = [[0, 255, 255]],

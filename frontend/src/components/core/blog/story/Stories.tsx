@@ -1,8 +1,8 @@
-import { CanvasRevealEffect } from "@/lib/sections/CanvasReveal";
+import { CanvasReveal } from "@/lib/sections/CanvasReveal";
 import { getStoriesApi } from "@/services/operations/postApi";
 import { Story } from "@/types/apis/postApiRs";
 import { AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight, MdOutlineCancelPresentation } from "react-icons/md";
 import { RxAvatar } from "react-icons/rx";
 import { toast } from "react-toastify";
@@ -10,6 +10,17 @@ import { toast } from "react-toastify";
 const Stories = () => {
   const [stories, setStories] = useState<Story[]>([]);
   const [storyIndex, setStoryIndex] = useState<number>(-1);
+  const storiesContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollStories = (direction: "left" | "right") => {
+    if (storiesContainerRef.current) {
+      if (direction === "left") {
+        storiesContainerRef.current.scrollLeft -= storiesContainerRef.current.clientWidth / 2;
+      } else {
+        storiesContainerRef.current.scrollLeft += storiesContainerRef.current.clientWidth / 2;
+      }
+    }
+  };
 
   const shiftStory = (shift: "previous" | "next") => {
     if (shift === "previous") {
@@ -17,8 +28,7 @@ const Stories = () => {
         return;
       }
       setStoryIndex((prev) => prev - 1);
-    }
-    if (shift === "next") {
+    } else {
       if (storyIndex === -1 || storyIndex === stories.length - 1) {
         return;
       }
@@ -52,14 +62,14 @@ const Stories = () => {
   }, []);
 
   return (
-    <div className="relative w-full ml-6">
+    <div className="relative w-full ml-5">
       {stories.length === 0 ? (
         <div className=" mx-auto self-center text-white">It's a busy day</div>
       ) : (
         <div className=" w-full flex justify-between items-center">
-          <MdKeyboardArrowLeft className=" size-6 fill-white cursor-pointer" />
+          <MdKeyboardArrowLeft onClick={() => scrollStories("left")} className=" size-10 fill-white cursor-pointer" />
           {/* FIXME: in below div if w-1 is removed then overflow properties dosn't work, for now w-1 is used with flex grow */}
-          <div className="flex flex-grow w-1 gap-x-3 overflow-x-auto">
+          <div ref={storiesContainerRef} className="flex flex-grow w-1 gap-x-3 overflow-x-auto scroll-smooth">
             {stories.map((story, index) => {
               return (
                 <div key={index} className=" flex flex-col items-center gap-y-2 text-white">
@@ -83,7 +93,7 @@ const Stories = () => {
               );
             })}
           </div>
-          <MdKeyboardArrowRight className=" size-6 fill-white cursor-pointer" />
+          <MdKeyboardArrowRight onClick={() => scrollStories("right")} className=" size-10 fill-white cursor-pointer" />
         </div>
       )}
       {/* story view */}
@@ -125,7 +135,7 @@ const Stories = () => {
           {/* canvas effect */}
           <AnimatePresence>
             <div className="h-full w-full absolute inset-0">
-              <CanvasRevealEffect
+              <CanvasReveal
                 animationSpeed={5}
                 containerClassName="bg-transparent"
                 colors={[

@@ -1,4 +1,4 @@
-import { CanvasRevealEffect } from "@/lib/sections/CanvasReveal";
+import { CanvasReveal } from "@/lib/sections/CanvasReveal";
 import { createStoryApi } from "@/services/operations/postApi";
 import { maxFileSize, validFiles } from "@/utils/constants";
 import { AnimatePresence } from "framer-motion";
@@ -132,7 +132,7 @@ const CreateStory = (props: CreateStoryProps) => {
       {/* canvas effect */}
       <AnimatePresence>
         <div className="h-full w-full absolute inset-0">
-          <CanvasRevealEffect
+          <CanvasReveal
             animationSpeed={5}
             containerClassName="bg-transparent"
             colors={[
