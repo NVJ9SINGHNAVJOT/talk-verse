@@ -34,14 +34,14 @@ export type AddCommentRs = {
 
 export type Story = {
   userName: string;
-  imageUrl: string;
+  imageUrl?: string;
   storyUrl: string;
   createdAt: string;
 };
 export type GetStoriesRs = {
   success: boolean;
   message: string;
-  stories: Story[];
+  stories?: Story[];
 } | null;
 
 export type Post = {

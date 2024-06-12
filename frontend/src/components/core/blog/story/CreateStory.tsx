@@ -77,9 +77,10 @@ const CreateStory = (props: CreateStoryProps) => {
         className={`absolute z-50 w-72 h-[28rem] flex flex-col items-center justify-center border-[2px] border-whitesmoke mt-20
        text-white gap-y-1 ${mediaFile !== undefined && "bg-neutral-950"}`}
       >
-        <div onClick={() => props.setCreateStory(false)} className="absolute -right-24 -top-14 cursor-pointer">
-          <MdOutlineCancelPresentation className=" w-11 h-8 fill-white hover:fill-slate-300" />
-        </div>
+        <MdOutlineCancelPresentation
+          onClick={() => props.setCreateStory(false)}
+          className=" w-11 h-8 absolute -right-24 -top-14 cursor-pointer fill-white hover:fill-slate-300"
+        />
         {mediaFile !== undefined && (
           <div
             onClick={() => setMediaFile(undefined)}

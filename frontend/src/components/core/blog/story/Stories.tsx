@@ -1,10 +1,30 @@
+import { CanvasRevealEffect } from "@/lib/sections/CanvasReveal";
 import { getStoriesApi } from "@/services/operations/postApi";
 import { Story } from "@/types/apis/postApiRs";
+import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
+import { MdKeyboardArrowLeft, MdKeyboardArrowRight, MdOutlineCancelPresentation } from "react-icons/md";
+import { RxAvatar } from "react-icons/rx";
 import { toast } from "react-toastify";
 
 const Stories = () => {
   const [stories, setStories] = useState<Story[]>([]);
+  const [storyIndex, setStoryIndex] = useState<number>(-1);
+
+  const shiftStory = (shift: "previous" | "next") => {
+    if (shift === "previous") {
+      if (storyIndex === -1 || storyIndex === 0) {
+        return;
+      }
+      setStoryIndex((prev) => prev - 1);
+    }
+    if (shift === "next") {
+      if (storyIndex === -1 || storyIndex === stories.length - 1) {
+        return;
+      }
+      setStoryIndex((prev) => prev + 1);
+    }
+  };
 
   useEffect(() => {
     const getStories = async () => {
@@ -17,11 +37,13 @@ const Stories = () => {
 
       const response = await getStoriesApi(lastCreatedAt);
       if (response) {
-        if (stories.length === 0) {
-          setStories(response.stories);
-          return;
+        if (response.stories) {
+          if (stories.length === 0) {
+            setStories(response.stories);
+            return;
+          }
+          setStories([...stories, ...response.stories]);
         }
-        setStories([...stories, ...response.stories]);
       } else {
         toast.error("Error while getting stories");
       }
@@ -30,23 +52,84 @@ const Stories = () => {
   }, []);
 
   return (
-    <div className=" ml-6 flex-1 flex overflow-x-auto">
+    <div className=" relative ml-6 flex-1 flex gap-x-3 overflow-x-auto">
       {stories.length === 0 ? (
         <div className=" mx-auto self-center text-white">It's a busy day</div>
       ) : (
-        stories.map((story) => {
+        stories.map((story, index) => {
           return (
-            <div className=" flex flex-col items-center gap-y-2 text-white">
-              <img
-                alt="Loading..."
-                src={story.imageUrl}
-                className=" bg-slate-900 cursor-pointer rounded-full size-16 border-[2px]
+            <div key={index} className=" flex flex-col items-center gap-y-2 text-white">
+              {story.imageUrl ? (
+                <img
+                  onClick={() => setStoryIndex(index)}
+                  alt="Loading..."
+                  src={story.imageUrl}
+                  className=" bg-slate-900 cursor-pointer rounded-full size-16 border-[2px]
                  border-whitesmoke"
-              />
-              <div className=" text-xs">{story.userName}</div>
+                />
+              ) : (
+                <RxAvatar
+                  onClick={() => setStoryIndex(index)}
+                  className=" bg-slate-900 cursor-pointer rounded-full size-16 border-[2px]
+              border-whitesmoke"
+                />
+              )}
+              <div className=" text-xs w-16 truncate text-center">{story.userName}</div>
             </div>
           );
         })
+      )}
+      {storyIndex !== -1 && (
+        <section className="fixed inset-0 z-50 top-16 backdrop-blur-sm max-w-maxContent">
+          <div
+            className=" relative mx-auto w-72 h-[28rem] border-[2px]
+           border-whitesmoke mt-20 text-white flex items-center "
+          >
+            <MdKeyboardArrowLeft
+              onClick={() => shiftStory("previous")}
+              className=" absolute z-[100] -left-32 size-24 cursor-pointer "
+            />
+            <MdKeyboardArrowRight
+              onClick={() => shiftStory("next")}
+              className=" absolute z-[100] -right-32 size-24 cursor-pointer "
+            />
+            <MdOutlineCancelPresentation
+              onClick={() => setStoryIndex(-1)}
+              className=" absolute z-[100] -right-16 -top-16 cursor-pointer w-11 h-8 fill-white hover:fill-slate-300"
+            />
+            <div className=" absolute z-[100] w-full h-full flex flex-col items-center justify-center bg-neutral-950">
+              <div className=" absolute self-start top-0 mt-1 ml-1 flex gap-x-2 items-center">
+                {stories[storyIndex].imageUrl ? (
+                  <img alt="" className="size-8 rounded-full" src={stories[storyIndex].imageUrl} />
+                ) : (
+                  <RxAvatar className="size-8 rounded-full" />
+                )}
+
+                <div className=" text-xs">{stories[storyIndex].userName}</div>
+              </div>
+              {stories[storyIndex].storyUrl.includes("image/") ? (
+                <img alt="Loading..." src={stories[storyIndex].storyUrl} />
+              ) : (
+                <video src={stories[storyIndex].storyUrl} />
+              )}
+            </div>
+          </div>
+          {/* canvas effect */}
+          <AnimatePresence>
+            <div className="h-full w-full absolute inset-0">
+              <CanvasRevealEffect
+                animationSpeed={5}
+                containerClassName="bg-transparent"
+                colors={[
+                  [59, 130, 246],
+                  [139, 92, 246],
+                ]}
+                opacities={[0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.4, 0.4, 0.4, 1]}
+                dotSize={2}
+              />
+            </div>
+          </AnimatePresence>
+        </section>
       )}
     </div>
   );

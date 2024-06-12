@@ -161,9 +161,10 @@ const CreatePost = (props: CreatePostProps) => {
   return (
     <div className=" absolute flex justify-center z-40 backdrop-blur-[7px] w-full min-h-full h-auto min-w-minContent overflow-y-auto">
       <div className=" absolute z-50 mx-auto flex flex-col w-[34rem] md:w-[40rem]">
-        <div onClick={() => props.setCreatePost(false)} className=" cursor-pointer self-end">
-          <MdOutlineCancelPresentation className="w-11 h-8 fill-white hover:fill-slate-300 mt-4" />
-        </div>
+        <MdOutlineCancelPresentation
+          onClick={() => props.setCreatePost(false)}
+          className="w-11 h-8 fill-white cursor-pointer self-end hover:fill-slate-300 mt-4"
+        />
         {/* create post form */}
         <form
           onSubmit={handleSubmit(onSubmit)}
