@@ -458,6 +458,10 @@ export const recentPosts = async (req: Request, res: Response): Promise<Response
         imageUrl: user.imageUrl,
         userName: user.userName,
         isSaved: sql<boolean>`CASE WHEN ${save.userId} = ${userId2} AND ${save.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
+        isLiked: sql<boolean>`CASE WHEN ${likes.userId} = ${userId2} AND ${likes.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
+        commentsCount: sql<number>`(SELECT COUNT(*) FROM ${comment} WHERE ${comment.postId} = ${post.id})`.as(
+          "comments_count"
+        ),
         category: post.category,
         title: post.title,
         mediaUrls: post.mediaUrls,
@@ -469,6 +473,7 @@ export const recentPosts = async (req: Request, res: Response): Promise<Response
       .from(post)
       .leftJoin(user, eq(post.userId, user.id))
       .leftJoin(save, and(eq(save.postId, post.id), eq(save.userId, userId2)))
+      .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, post.id)))
       .where(lt(post.createdAt, new Date(data.createdAt)))
       .orderBy(desc(post.createdAt))
       .limit(15)
@@ -510,6 +515,10 @@ export const trendingPosts = async (req: Request, res: Response): Promise<Respon
         imageUrl: user.imageUrl,
         userName: user.userName,
         isSaved: sql<boolean>`CASE WHEN ${save.userId} = ${userId2} AND ${save.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
+        isLiked: sql<boolean>`CASE WHEN ${likes.userId} = ${userId2} AND ${likes.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
+        commentsCount: sql<number>`(SELECT COUNT(*) FROM ${comment} WHERE ${comment.postId} = ${post.id})`.as(
+          "comments_count"
+        ),
         category: post.category,
         title: post.title,
         mediaUrls: post.mediaUrls,
@@ -521,6 +530,7 @@ export const trendingPosts = async (req: Request, res: Response): Promise<Respon
       .from(post)
       .leftJoin(user, eq(post.userId, user.id))
       .leftJoin(save, and(eq(save.postId, post.id), eq(save.userId, userId2)))
+      .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, post.id)))
       .where(lt(post.createdAt, new Date(data.createdAt)))
       .orderBy(desc(post.likesCount), desc(post.createdAt))
       .limit(15)
@@ -562,6 +572,10 @@ export const categoryPosts = async (req: Request, res: Response): Promise<Respon
         imageUrl: user.imageUrl,
         userName: user.userName,
         isSaved: sql<boolean>`CASE WHEN ${save.userId} = ${userId2} AND ${save.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
+        isLiked: sql<boolean>`CASE WHEN ${likes.userId} = ${userId2} AND ${likes.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
+        commentsCount: sql<number>`(SELECT COUNT(*) FROM ${comment} WHERE ${comment.postId} = ${post.id})`.as(
+          "comments_count"
+        ),
         category: post.category,
         title: post.title,
         mediaUrls: post.mediaUrls,
@@ -573,6 +587,7 @@ export const categoryPosts = async (req: Request, res: Response): Promise<Respon
       .from(post)
       .leftJoin(user, eq(post.userId, user.id))
       .leftJoin(save, and(eq(save.postId, post.id), eq(save.userId, userId2)))
+      .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, post.id)))
       .where(and(eq(post.category, data.category), lt(post.createdAt, new Date(data.createdAt))))
       .orderBy(desc(post.createdAt))
       .limit(15)

@@ -52,6 +52,8 @@ export type Post = {
   imageUrl?: string;
   userName: string;
   isSaved: boolean;
+  isLiked: boolean;
+  commentsCount: number;
   category: string;
   title?: string;
   mediaUrls: string[];
