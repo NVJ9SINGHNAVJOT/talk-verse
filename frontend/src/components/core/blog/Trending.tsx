@@ -1,4 +1,5 @@
 import PostLayout from "@/components/core/blog/post/PostLayout";
+import { useScrollTriggerVertical } from "@/hooks/useScrollTrigger";
 import { trendingPostsApi } from "@/services/operations/postApi";
 import { Post } from "@/types/apis/postApiRs";
 import { useEffect, useRef, useState } from "react";
@@ -11,8 +12,18 @@ const Trending = () => {
   const postContainer = useRef<HTMLDivElement>(null);
   const [trendingPosts, setTrendingPosts] = useState<Post[]>([]);
 
+  useScrollTriggerVertical(postContainer, setTrigger, stop, undefined, loading);
+
+  const removePost = (postId: number) => {
+    setTrendingPosts((prev) => prev.filter((post) => post.id !== postId));
+  };
+
   useEffect(() => {
     const getPosts = async () => {
+      if (loading) {
+        return;
+      }
+      setLoading(true);
       let lastCreatedAt;
       if (trendingPosts.length === 0) {
         lastCreatedAt = new Date().toISOString();
@@ -26,24 +37,30 @@ const Trending = () => {
           if (response.posts.length < 15) {
             setStop(true);
           }
-          setTrendingPosts(response.posts);
+          if (trendingPosts.length > 0) {
+            setTrendingPosts([...trendingPosts, ...response.posts]);
+          } else {
+            setTrendingPosts(response.posts);
+          }
         } else {
           setStop(true);
         }
       } else {
         toast.error("Error while getting trending post");
       }
+      setLoading(false);
     };
     getPosts();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trigger]);
 
   return (
-    <div className="w-full h-full flex flex-col items-center gap-y-5 overflow-y-scroll">
+    <div ref={postContainer} className="w-full h-full flex flex-col items-center gap-y-5 overflow-y-scroll">
       {trendingPosts.length !== 0 &&
         trendingPosts.map((post, index) => {
           return (
             <div key={index}>
-              <PostLayout post={post} />
+              <PostLayout post={post} removePost={removePost} />
             </div>
           );
         })}

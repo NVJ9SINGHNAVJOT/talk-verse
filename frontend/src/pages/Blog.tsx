@@ -206,8 +206,7 @@ const Blog = () => {
       {/* posts section */}
       <section className=" flex-grow flex-col bg-[#09131d] pt-1 px-4">
         {/* story section */}
-        <div className=" my-1 text-white">Stories</div>
-        <section className="w-full flex">
+        <section className="w-full flex mt-1 mb-5">
           {/* create story */}
           <div className="flex flex-col items-center gap-y-2 text-white">
             <div
@@ -223,9 +222,8 @@ const Blog = () => {
           <Stories />
         </section>
         {/* feeds section */}
-        <div className=" my-1 text-white">Feeds</div>
-        {/* height for below outlet after calculation can be 202.4px, for safety using 210px */}
-        <div className=" w-full h-[calc(100vh-210px)]">
+        {/* height for below outlet after calculation can be 170.4px, for safety using 154px */}
+        <div className=" w-full h-[calc(100vh-178px)]">
           <Outlet />
         </div>
       </section>

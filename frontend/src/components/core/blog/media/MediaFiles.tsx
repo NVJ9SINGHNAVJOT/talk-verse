@@ -22,7 +22,7 @@ const MediaFiles = (props: MediaFilesProps) => {
                 {file.type === "image" ? (
                   <img alt="Loading..." src={file.url} className=" max-w-full max-h-full w-auto aspect-auto" />
                 ) : (
-                  <video src={file.url} preload="none" controls className=" max-w-full max-h-full w-auto aspect-auto" />
+                  <video src={file.url} controls className=" max-w-full max-h-full w-auto aspect-auto" />
                 )}
               </div>
             </SwiperSlide>
