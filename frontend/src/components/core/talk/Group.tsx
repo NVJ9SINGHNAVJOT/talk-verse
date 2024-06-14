@@ -1,5 +1,5 @@
 import { useSocketContext } from "@/context/SocketContext";
-import useScrollTrigger from "@/hooks/useScrollTrigger";
+import { useScrollTriggerVertical } from "@/hooks/useScrollTrigger";
 import GpMessageCard from "@/components/core/talk/message/GpMessageCard";
 import OtherGpMessageCard from "@/components/core/talk/message/OtherGpMessageCard";
 import { setGroupToFirst } from "@/redux/slices/chatSlice";
@@ -47,7 +47,7 @@ const Group = () => {
   // initialLoad is for text input disable while messages re-render or render when groupId is changed
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
 
-  useScrollTrigger(scrollableDivRef, setTrigger, stop, toggleTrigger);
+  useScrollTriggerVertical(scrollableDivRef, setTrigger, stop, toggleTrigger);
   useScrollOnTop(scrollableDivRef);
 
   // clean up for group page

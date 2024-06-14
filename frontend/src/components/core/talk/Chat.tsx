@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAppSelector } from "@/redux/store";
 import { fileMessageApi, getMessagesApi } from "@/services/operations/chatApi";
 import { useNavigate, useParams } from "react-router-dom";
-import useScrollTrigger from "@/hooks/useScrollTrigger";
+import { useScrollTriggerVertical } from "@/hooks/useScrollTrigger";
 import { useDispatch } from "react-redux";
 import {
   addPMessages,
@@ -51,7 +51,7 @@ const Chat = () => {
   // initialLoad is for text input disable while messages re-render or render when chatId is changed
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
 
-  useScrollTrigger(scrollableDivRef, setTrigger, stop, toggleTrigger);
+  useScrollTriggerVertical(scrollableDivRef, setTrigger, stop, toggleTrigger);
   useScrollOnTop(scrollableDivRef);
 
   // clean up for chat page
