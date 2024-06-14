@@ -46,11 +46,12 @@ export type GetStoriesRs = {
 
 export type Post = {
   id: number;
-  userId: number;
+  isCurrentUser: boolean;
   firstName: string;
   lastName: string;
   imageUrl?: string;
   userName: string;
+  isSaved: boolean;
   category: string;
   title?: string;
   mediaUrls: string[];

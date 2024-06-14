@@ -1,4 +1,6 @@
 import { Post } from "@/types/apis/postApiRs";
+import { BsSaveFill } from "react-icons/bs";
+import { MdDeleteForever } from "react-icons/md";
 import { RxAvatar } from "react-icons/rx";
 
 type PostProps = {
@@ -19,10 +21,14 @@ const PostLayout = (props: PostProps) => {
           )}
           <div className=" flex flex-col text-xs ml-2 justify-between">
             <p className=" text-[0.9rem]">{post.firstName + " " + post.lastName}</p>
-            <p className=" text-snow-800" >{post.userName}</p>
+            <p className=" text-snow-800">{post.userName}</p>
           </div>
         </div>
-        <div>sdfs</div>
+        {post.isCurrentUser ? (
+          <MdDeleteForever className=" size-5 aspect-square cursor-pointer " />
+        ) : (
+          <BsSaveFill className={`size-5 aspect-square cursor-pointer ${post.isSaved && " opacity-45"}`} />
+        )}
       </div>
     </div>
   );
