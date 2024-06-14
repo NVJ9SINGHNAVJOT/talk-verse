@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { MdOutlineCancelPresentation } from "react-icons/md";
 import { toast } from "react-toastify";
-import MediaFiles from "@/components/core/blog/MediaFiles";
+import MediaFiles from "@/components/core/blog/media/MediaFiles";
 import { createPostApi } from "@/services/operations/postApi";
 
 const categories = [
