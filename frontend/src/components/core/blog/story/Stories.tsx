@@ -67,6 +67,8 @@ const Stories = () => {
           } else {
             setStories([...stories, ...response.stories]);
           }
+        } else {
+          setStop(true);
         }
       } else {
         toast.error("Error while getting stories");
@@ -94,17 +96,17 @@ const Stories = () => {
                     onClick={() => setStoryIndex(index)}
                     alt="Loading..."
                     src={story.imageUrl}
-                    className=" bg-slate-900 cursor-pointer rounded-full size-16 border-[2px]
+                    className=" bg-slate-900 cursor-pointer rounded-full size-12 border-[2px]
                     border-whitesmoke"
                   />
                 ) : (
                   <RxAvatar
                     onClick={() => setStoryIndex(index)}
-                    className=" bg-slate-900 cursor-pointer rounded-full size-16 border-[2px]
+                    className=" bg-slate-900 cursor-pointer rounded-full size-12 border-[2px]
                   border-whitesmoke"
                   />
                 )}
-                <div className=" text-xs w-16 truncate text-center mb-2">{story.userName}</div>
+                <div className=" text-[0.7rem] w-16 truncate text-center mb-2">{story.userName}</div>
               </div>
             );
           })}

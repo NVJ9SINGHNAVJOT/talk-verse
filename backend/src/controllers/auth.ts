@@ -179,6 +179,7 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
 
     const checkUser = await User.findOne({ email: data.email })
       .select({
+        userId2: true,
         email: true,
         password: true,
         firstName: true,
@@ -236,6 +237,7 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
             message: "user login successfull",
             user: {
               _id: checkUser._id,
+              id: checkUser.userId2,
               userName: checkUser.userName,
               firstName: checkUser.firstName,
               lastName: checkUser.lastName,
@@ -275,6 +277,7 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
 
     const user = await User.findById({ _id: `${userIds[0]}` })
       .select({
+        userId2: true,
         firstName: true,
         lastName: true,
         userName: true,

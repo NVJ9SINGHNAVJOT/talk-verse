@@ -204,27 +204,30 @@ const Blog = () => {
       </section>
 
       {/* posts section */}
-      <section className=" flex-grow flex-col bg-[#09131d] pt-2 px-4">
+      <section className=" flex-grow flex-col bg-[#09131d] pt-1 px-4">
         {/* story section */}
-        <div className=" my-2 text-white">Stories</div>
+        <div className=" my-1 text-white">Stories</div>
         <section className="w-full flex">
           {/* create story */}
           <div className="flex flex-col items-center gap-y-2 text-white">
             <div
               onClick={() => setCreateStory(true)}
-              className=" bg-slate-900 cursor-pointer flex justify-center items-center rounded-full size-16 border-[2px]
+              className=" bg-slate-900 cursor-pointer flex justify-center items-center rounded-full size-12 border-[2px]
             border-dotted border-whitesmoke"
             >
               <GoPlus className=" fill-white" />
             </div>
-            <div className=" text-xs">Add Story</div>
+            <div className=" text-[0.6rem]">Add Story</div>
           </div>
           {/* following user stories */}
           <Stories />
         </section>
         {/* feeds section */}
-        <div className=" my-2 text-white">Feeds</div>
-        <Outlet />
+        <div className=" my-1 text-white">Feeds</div>
+        {/* height for below outlet after calculation can be 202.4px, for safety using 210px */}
+        <div className=" w-full h-[calc(100vh-210px)]">
+          <Outlet />
+        </div>
       </section>
 
       {/* create post and friend suggestion */}

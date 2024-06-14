@@ -49,12 +49,13 @@ export type Post = {
   userId: number;
   firstName: string;
   lastName: string;
+  imageUrl?: string;
   userName: string;
   category: string;
   title?: string;
-  mediaUrls?: string[];
-  tags?: string[];
-  content?: string[];
+  mediaUrls: string[];
+  tags: string[];
+  content: string[];
   likesCount: number;
   createdAt: string;
 };
