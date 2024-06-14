@@ -1,3 +1,4 @@
+import { useScrollTriggerHorizontal } from "@/hooks/useScrollTrigger";
 import { CanvasReveal } from "@/lib/sections/CanvasReveal";
 import { getStoriesApi } from "@/services/operations/postApi";
 import { Story } from "@/types/apis/postApiRs";
@@ -10,7 +11,12 @@ import { toast } from "react-toastify";
 const Stories = () => {
   const [stories, setStories] = useState<Story[]>([]);
   const [storyIndex, setStoryIndex] = useState<number>(-1);
+  const [stop, setStop] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [trigger, setTrigger] = useState<boolean>(true);
   const storiesContainerRef = useRef<HTMLDivElement>(null);
+
+  useScrollTriggerHorizontal(storiesContainerRef, setTrigger, stop, undefined, loading);
 
   const scrollStories = (direction: "left" | "right") => {
     if (storiesContainerRef.current) {
@@ -38,6 +44,10 @@ const Stories = () => {
 
   useEffect(() => {
     const getStories = async () => {
+      if (loading) {
+        return;
+      }
+      setLoading(true);
       let lastCreatedAt;
       if (stories.length === 0) {
         lastCreatedAt = new Date().toISOString();
@@ -46,56 +56,62 @@ const Stories = () => {
       }
 
       const response = await getStoriesApi(lastCreatedAt);
+
       if (response) {
         if (response.stories) {
+          if (response.stories.length < 15) {
+            setStop(true);
+          }
           if (stories.length === 0) {
             setStories(response.stories);
-            return;
+          } else {
+            setStories([...stories, ...response.stories]);
           }
-          setStories([...stories, ...response.stories]);
         }
       } else {
         toast.error("Error while getting stories");
       }
+      setLoading(false);
     };
     getStories();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trigger]);
 
   return (
-    <div className="relative w-full ml-5">
-      {stories.length === 0 ? (
-        <div className=" mx-auto self-center text-white">It's a busy day</div>
-      ) : (
-        <div className=" w-full flex justify-between items-center">
-          <MdKeyboardArrowLeft onClick={() => scrollStories("left")} className=" size-10 fill-white cursor-pointer" />
-          {/* FIXME: in below div if w-1 is removed then overflow properties dosn't work, for now w-1 is used with flex grow */}
-          <div ref={storiesContainerRef} className="flex flex-grow w-1 gap-x-3 overflow-x-auto scroll-smooth">
-            {stories.map((story, index) => {
-              return (
-                <div key={index} className=" flex flex-col items-center gap-y-2 text-white">
-                  {story.imageUrl ? (
-                    <img
-                      onClick={() => setStoryIndex(index)}
-                      alt="Loading..."
-                      src={story.imageUrl}
-                      className=" bg-slate-900 cursor-pointer rounded-full size-16 border-[2px]
+    <div className="relative w-full flex ml-5">
+      <div className={`${stories.length === 0 ? "block" : "hidden"} mx-auto self-center text-white`}>
+        It's a busy day
+      </div>
+      <div className={`w-full ${stories.length === 0 ? "hidden" : "flex"} justify-between items-center`}>
+        <MdKeyboardArrowLeft onClick={() => scrollStories("left")} className=" size-10 fill-white cursor-pointer" />
+        {/* FIXME: in below div if w-1 is removed then overflow properties dosn't work, for now w-1 is used with flex grow */}
+        <div ref={storiesContainerRef} className="flex flex-grow w-1 gap-x-3 overflow-x-auto scroll-smooth">
+          {stories.map((story, index) => {
+            return (
+              <div key={index} className=" flex flex-col items-center gap-y-2 text-white">
+                {story.imageUrl ? (
+                  <img
+                    onClick={() => setStoryIndex(index)}
+                    alt="Loading..."
+                    src={story.imageUrl}
+                    className=" bg-slate-900 cursor-pointer rounded-full size-16 border-[2px]
                     border-whitesmoke"
-                    />
-                  ) : (
-                    <RxAvatar
-                      onClick={() => setStoryIndex(index)}
-                      className=" bg-slate-900 cursor-pointer rounded-full size-16 border-[2px]
+                  />
+                ) : (
+                  <RxAvatar
+                    onClick={() => setStoryIndex(index)}
+                    className=" bg-slate-900 cursor-pointer rounded-full size-16 border-[2px]
                   border-whitesmoke"
-                    />
-                  )}
-                  <div className=" text-xs w-16 truncate text-center mb-2">{story.userName}</div>
-                </div>
-              );
-            })}
-          </div>
-          <MdKeyboardArrowRight onClick={() => scrollStories("right")} className=" size-10 fill-white cursor-pointer" />
+                  />
+                )}
+                <div className=" text-xs w-16 truncate text-center mb-2">{story.userName}</div>
+              </div>
+            );
+          })}
         </div>
-      )}
+        <MdKeyboardArrowRight onClick={() => scrollStories("right")} className=" size-10 fill-white cursor-pointer" />
+      </div>
+
       {/* story view */}
       {storyIndex !== -1 && (
         <section className="fixed inset-0 z-50 top-16 backdrop-blur-sm max-w-maxContent">

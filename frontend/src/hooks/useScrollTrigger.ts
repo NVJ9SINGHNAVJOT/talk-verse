@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 
-const useScrollTrigger = (
+export const useScrollTriggerVertical = (
   ref: React.RefObject<HTMLDivElement>,
   setTrigger: React.Dispatch<React.SetStateAction<boolean>>,
   stop: boolean,
-  resetTrigger: boolean
+  resetTrigger?: boolean,
+  loading?: boolean
 ) => {
   useEffect(() => {
     if (!ref.current) {
@@ -19,22 +20,54 @@ const useScrollTrigger = (
 
       const { scrollTop, clientHeight, scrollHeight } = ref.current;
       const scrollPercentage = Math.floor(((clientHeight - scrollTop) / scrollHeight) * 100);
-
-      if (scrollPercentage > 85 && !stop) {
+      
+      if (scrollPercentage > 85 && !stop && !loading) {
         setTrigger((prev) => !prev);
       }
     }
 
-    if (ref.current) {
-      ref.current.addEventListener("scroll", handleScrollTrig);
-    }
+    ref.current.addEventListener("scroll", handleScrollTrig);
 
     return () => {
       currReft.removeEventListener("scroll", handleScrollTrig);
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ref, stop, resetTrigger]);
+  }, [ref, stop, resetTrigger, loading]);
 };
 
-export default useScrollTrigger;
+export const useScrollTriggerHorizontal = (
+  ref: React.RefObject<HTMLDivElement>,
+  setTrigger: React.Dispatch<React.SetStateAction<boolean>>,
+  stop: boolean,
+  resetTrigger?: boolean,
+  loading?: boolean
+) => {
+  useEffect(() => {
+    if (!ref.current) {
+      return;
+    }
+    const currReft = ref.current;
+
+    function handleScrollTrig() {
+      if (!ref.current) {
+        return;
+      }
+
+      const { scrollLeft, clientWidth, scrollWidth } = ref.current;
+      const scrollPercentage = Math.floor((scrollLeft / (scrollWidth - clientWidth)) * 100);
+
+      if (scrollPercentage > 85 && !stop && !loading) {
+        setTrigger((prev) => !prev);
+      }
+    }
+
+    ref.current.addEventListener("scroll", handleScrollTrig);
+
+    return () => {
+      currReft.removeEventListener("scroll", handleScrollTrig);
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ref, stop, resetTrigger, loading]);
+};

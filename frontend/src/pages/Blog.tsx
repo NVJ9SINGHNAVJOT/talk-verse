@@ -223,7 +223,7 @@ const Blog = () => {
           <Stories />
         </section>
         {/* feeds section */}
-        <div>Feeds</div>
+        <div className=" my-2 text-white">Feeds</div>
         <Outlet />
       </section>
 
