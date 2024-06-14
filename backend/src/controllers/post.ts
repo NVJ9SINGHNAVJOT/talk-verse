@@ -3,6 +3,7 @@ import { comment } from "@/db/postgresql/schema/comment";
 import { follow } from "@/db/postgresql/schema/follow";
 import { likes } from "@/db/postgresql/schema/likes";
 import { post } from "@/db/postgresql/schema/post";
+import { save } from "@/db/postgresql/schema/save";
 import { story } from "@/db/postgresql/schema/story";
 import { user } from "@/db/postgresql/schema/user";
 import {
@@ -411,6 +412,8 @@ export const getStories = async (req: Request, res: Response): Promise<Response>
 
 export const recentPosts = async (req: Request, res: Response): Promise<Response> => {
   try {
+    const userId2 = (req as CustomRequest).userId2;
+
     const recentPostsReq = GetCreatedAtReqSchema.safeParse(req.query);
     if (!recentPostsReq.success) {
       return errRes(res, 400, `invalid data for recentPosts, ${recentPostsReq.error.toString()}`);
@@ -421,11 +424,12 @@ export const recentPosts = async (req: Request, res: Response): Promise<Response
     const recentPosts = await db
       .select({
         id: post.id,
-        userId: post.userId,
+        isCurrentUser: sql<boolean>`CASE WHEN ${post.userId} = ${userId2} THEN TRUE ELSE FALSE END`,
         firstName: user.firstName,
         lastName: user.lastName,
         imageUrl: user.imageUrl,
         userName: user.userName,
+        isSaved: sql<boolean>`CASE WHEN ${save.userId} = ${userId2} AND ${save.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
         category: post.category,
         title: post.title,
         mediaUrls: post.mediaUrls,
@@ -436,6 +440,7 @@ export const recentPosts = async (req: Request, res: Response): Promise<Response
       })
       .from(post)
       .leftJoin(user, eq(post.userId, user.id))
+      .leftJoin(save, and(eq(save.postId, post.id), eq(save.userId, userId2)))
       .where(lt(post.createdAt, new Date(data.createdAt)))
       .orderBy(desc(post.createdAt))
       .limit(15)
@@ -459,6 +464,8 @@ export const recentPosts = async (req: Request, res: Response): Promise<Response
 
 export const trendingPosts = async (req: Request, res: Response): Promise<Response> => {
   try {
+    const userId2 = (req as CustomRequest).userId2;
+
     const trendingPostsReq = GetCreatedAtReqSchema.safeParse(req.query);
     if (!trendingPostsReq.success) {
       return errRes(res, 400, `invalid data for trendingPosts, ${trendingPostsReq.error.toString()}`);
@@ -469,11 +476,12 @@ export const trendingPosts = async (req: Request, res: Response): Promise<Respon
     const trendingPosts = await db
       .select({
         id: post.id,
-        userId: post.userId,
+        isCurrentUser: sql<boolean>`CASE WHEN ${post.userId} = ${userId2} THEN TRUE ELSE FALSE END`,
         firstName: user.firstName,
         lastName: user.lastName,
         imageUrl: user.imageUrl,
         userName: user.userName,
+        isSaved: sql<boolean>`CASE WHEN ${save.userId} = ${userId2} AND ${save.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
         category: post.category,
         title: post.title,
         mediaUrls: post.mediaUrls,
@@ -484,6 +492,7 @@ export const trendingPosts = async (req: Request, res: Response): Promise<Respon
       })
       .from(post)
       .leftJoin(user, eq(post.userId, user.id))
+      .leftJoin(save, and(eq(save.postId, post.id), eq(save.userId, userId2)))
       .where(lt(post.createdAt, new Date(data.createdAt)))
       .orderBy(desc(post.likesCount), desc(post.createdAt))
       .limit(15)
@@ -507,6 +516,8 @@ export const trendingPosts = async (req: Request, res: Response): Promise<Respon
 
 export const categoryPosts = async (req: Request, res: Response): Promise<Response> => {
   try {
+    const userId2 = (req as CustomRequest).userId2;
+
     const categoryPostsReq = CategoryPostsReqSchema.safeParse(req.query);
     if (!categoryPostsReq.success) {
       return errRes(res, 400, `invalid data for category post, ${categoryPostsReq.error.toString()}`);
@@ -517,11 +528,12 @@ export const categoryPosts = async (req: Request, res: Response): Promise<Respon
     const categoryPosts = await db
       .select({
         id: post.id,
-        userId: post.userId,
+        isCurrentUser: sql<boolean>`CASE WHEN ${post.userId} = ${userId2} THEN TRUE ELSE FALSE END`,
         firstName: user.firstName,
         lastName: user.lastName,
         imageUrl: user.imageUrl,
         userName: user.userName,
+        isSaved: sql<boolean>`CASE WHEN ${save.userId} = ${userId2} AND ${save.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
         category: post.category,
         title: post.title,
         mediaUrls: post.mediaUrls,
@@ -532,6 +544,7 @@ export const categoryPosts = async (req: Request, res: Response): Promise<Respon
       })
       .from(post)
       .leftJoin(user, eq(post.userId, user.id))
+      .leftJoin(save, and(eq(save.postId, post.id), eq(save.userId, userId2)))
       .where(and(eq(post.category, data.category), lt(post.createdAt, new Date(data.createdAt))))
       .orderBy(desc(post.createdAt))
       .limit(15)
