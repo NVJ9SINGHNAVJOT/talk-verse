@@ -9,6 +9,7 @@ import {
   deleteStory,
   getStories,
   recentPosts,
+  savePost,
   trendingPosts,
   updateLike,
 } from "@/controllers/post";
@@ -20,6 +21,7 @@ const router: Router = express.Router();
 
 router.post("/createPost", postFiles, auth, createPost);
 router.delete("/deletePost", auth, deletePost); // parameters: postId
+router.post("/savePost", auth, savePost);
 router.post("/createStory", storyFile, auth, createStory);
 router.delete("/deleteStory", auth, deleteStory); // parameters: storyId
 router.post("/updateLike", auth, updateLike); // parameters: postId, update

@@ -49,6 +49,7 @@ export const chatEndPoints = {
 export const postEndPoints = {
   CREATE_POST: BASE_URL_SERVER + "/posts/createPost",
   DELETE_POST: BASE_URL_SERVER + "/posts/deletePost", // parameters: postId
+  SAVE_POST: BASE_URL_SERVER + "/posts/savePost",
   CREATE_STORY: BASE_URL_SERVER + "/posts/createStory",
   DELETE_STORY: BASE_URL_SERVER + "/posts/deleteStory", // parameters: storyId
   UPDATE_LIKE: BASE_URL_SERVER + "/posts/updateLike", // parameters: postId, update

@@ -15,9 +15,31 @@ export const createPostApi = async (data: FormData): Promise<CreatePostRs> => {
   }
 };
 
-export const deletePostApi = async (postId: string): Promise<boolean> => {
+export const deletePostApi = async (postId: number): Promise<boolean> => {
   try {
-    const resData: CommonRs = await fetchApi("DELETE", postEndPoints.DELETE_POST, null, null, { postId: postId });
+    const resData: CommonRs = await fetchApi(
+      "DELETE",
+      postEndPoints.DELETE_POST,
+      { postId: postId },
+      { "Content-Type": "application/json" }
+    );
+    if (resData && resData.success === true) {
+      return true;
+    }
+    return false;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const savePostApi = async (postId: number): Promise<boolean> => {
+  try {
+    const resData: CommonRs = await fetchApi(
+      "POST",
+      postEndPoints.SAVE_POST,
+      { postId: postId },
+      { "Content-Type": "application/json" }
+    );
     if (resData && resData.success === true) {
       return true;
     }
@@ -39,9 +61,11 @@ export const createStoryApi = async (data: FormData): Promise<CreateStoryRs> => 
   }
 };
 
-export const deleteStoryApi = async (storyId: string): Promise<boolean> => {
+export const deleteStoryApi = async (storyId: number): Promise<boolean> => {
   try {
-    const resData: CommonRs = await fetchApi("DELETE", postEndPoints.DELETE_STORY, null, null, { storyId: storyId });
+    const resData: CommonRs = await fetchApi("DELETE", postEndPoints.DELETE_STORY, null, null, {
+      storyId: `${storyId}`,
+    });
     if (resData && resData.success === true) {
       return true;
     }
@@ -51,10 +75,10 @@ export const deleteStoryApi = async (storyId: string): Promise<boolean> => {
   }
 };
 
-export const updateLikeApi = async (postId: string, update: "add" | "delete"): Promise<boolean> => {
+export const updateLikeApi = async (postId: number, update: "add" | "delete"): Promise<boolean> => {
   try {
     const resData: CommonRs = await fetchApi("POST", postEndPoints.UPDATE_LIKE, null, null, {
-      postId: postId,
+      postId: `${postId}`,
       update: update,
     });
     if (resData && resData.success === true) {
@@ -66,7 +90,7 @@ export const updateLikeApi = async (postId: string, update: "add" | "delete"): P
   }
 };
 
-export const addCommentApi = async (postId: string, comment: string): Promise<AddCommentRs> => {
+export const addCommentApi = async (postId: number, comment: string): Promise<AddCommentRs> => {
   try {
     const resData: AddCommentRs = await fetchApi(
       "POST",
@@ -83,10 +107,10 @@ export const addCommentApi = async (postId: string, comment: string): Promise<Ad
   }
 };
 
-export const deleteCommentApi = async (commentId: string): Promise<boolean> => {
+export const deleteCommentApi = async (commentId: number): Promise<boolean> => {
   try {
     const resData: CommonRs = await fetchApi("DELETE", postEndPoints.DELETE_COMMENT, null, null, {
-      commentId: commentId,
+      commentId: `${commentId}`,
     });
     if (resData && resData.success === true) {
       return true;
