@@ -255,7 +255,9 @@ const CreatePost = (props: CreatePostProps) => {
             <textarea
               className=" h-[20rem] outline-none resize-none text-sm text-black rounded-lg p-2 bg-snow-600 focus:bg-transparent
                    focus:text-white transition-all ease-in-out duration-100"
-              {...register("content")}
+              {...register("content", {
+                maxLength: 1000,
+              })}
               placeholder="Content"
             />
           </div>

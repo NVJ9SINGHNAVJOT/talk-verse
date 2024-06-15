@@ -13,28 +13,46 @@ import { FaHeart } from "react-icons/fa";
 
 type PostProps = {
   post: Post;
+  // eslint-disable-next-line no-unused-vars
   removePost?: (postId: number) => void;
 };
 
 const PostLayout = (props: PostProps) => {
   const post = props.post;
+
   const [mediaUrls, setMediaUrls] = useState<FileUrl[]>([]);
   const [like, setLike] = useState<boolean>();
-  const [likesCount, setLikesCount] = useState<boolean>();
-  const [comments, setComments] = useState();
+  const [likeLoading, setLikeLoading] = useState<boolean>(false);
+  const [likesCount, setLikesCount] = useState<number>(0);
   const [commentsCount, setCommentsCount] = useState<number>();
+  const [toggleComments, setToggleComments] = useState<boolean>(false);
+  const [comments, setComments] = useState();
 
-  const likePost = async () => {
-    const response = await updateLikeApi(props.post.id, like === true ? "delete" : "add");
+  const updateLike = async () => {
+    setLikeLoading(true);
+    const update = like === true ? "delete" : "add";
+    const response = await updateLikeApi(props.post.id, update);
+    if (response) {
+      if (update === "add") {
+        setLike(true);
+        setLikesCount((prev) => prev + 1);
+      } else {
+        setLike(false);
+        setLikesCount((prev) => prev - 1);
+      }
+    } else {
+      toast.error("Error while updating like");
+    }
+    setLikeLoading(false);
   };
 
   const deletePost = async () => {
-    const response = await deletePostApi(post.id);
+    const response = await deletePostApi(props.post.id);
     if (response) {
-      if (props.removePost) {
-        props.removePost(post.id);
-      }
       toast.success("Post deleted");
+      if (props.removePost) {
+        props.removePost(props.post.id);
+      }
     } else {
       toast.error("Error while deleting post");
     }
@@ -42,22 +60,28 @@ const PostLayout = (props: PostProps) => {
 
   useEffect(() => {
     const postSetUp = () => {
-      if (props.post.mediaUrls.length > 0) {
-        const newMediaUrls: FileUrl[] = [];
-        props.post.mediaUrls.forEach((url) => {
-          const fileExt = url.split(".").pop();
-          if (validFiles.image.includes("image/" + fileExt)) {
-            newMediaUrls.push({ type: "image", url: url });
-          } else {
-            newMediaUrls.push({ type: "video", url: url });
-          }
-        });
-        setMediaUrls(newMediaUrls);
-      }
+      setLikesCount(props.post.likesCount);
+      setCommentsCount(props.post.commentsCount);
+      setLike(props.post.isLiked);
     };
     postSetUp();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.post]);
+  }, []);
+
+  useEffect(() => {
+    if (props.post.mediaUrls.length > 0) {
+      const newMediaUrls: FileUrl[] = [];
+      props.post.mediaUrls.forEach((url) => {
+        const fileExt = url.split(".").pop();
+        if (validFiles.image.includes("image/" + fileExt)) {
+          newMediaUrls.push({ type: "image", url: url });
+        } else {
+          newMediaUrls.push({ type: "video", url: url });
+        }
+      });
+      setMediaUrls(newMediaUrls);
+    }
+  }, [post]);
 
   return (
     <div className="w-[40rem] flex flex-col gap-y-4 text-white bg-neutral-950 p-2 rounded-xl">
@@ -89,13 +113,24 @@ const PostLayout = (props: PostProps) => {
       {mediaUrls.length > 0 && <MediaFiles className=" w-11/12 h-60 self-center" mediaUrls={mediaUrls} />}
       {/* bottom */}
       <div className=" flex gap-x-2">
-        <FaHeart className={` size-5 ${post?.isLiked === true ? " fill-red-600" : " fill-snow-500"}`} />
-        <div className=" mr-4 leading-[1.1rem]">{post?.likesCount}</div>
-        <BiSolidCommentDetail className=" size-5" />
-        <div className=" mr-4 leading-[1.1rem]">{post?.commentsCount}</div>
+        <button disabled={likeLoading} onClick={() => updateLike()}>
+          <FaHeart className={` size-5 ${like === true ? " fill-red-600" : " fill-snow-500"}`} />
+        </button>
+        <div className=" mr-4 leading-[1.1rem]">{likesCount}</div>
+        <button>
+          <BiSolidCommentDetail className=" size-5" />
+        </button>
+        <div className=" mr-4 leading-[1.1rem]">{commentsCount}</div>
       </div>
-      {post?.tags && post.tags.length > 0 && (
-        <div className=" w-full flex gap-x-2 gap-y-1 flex-wrap">{post?.tags.map((tag) => <div>{"#" + tag}</div>)}</div>
+      {/* open post with comments */}
+      {toggleComments === true && post?.tags && post.tags.length > 0 && (
+        <div className=" w-full flex gap-x-2 gap-y-1 flex-wrap">
+          {post?.tags.map((tag, index) => (
+            <div className=" px-3 py-[0.15rem] cursor-default bg-neutral-900 rounded-2xl" key={index}>
+              {"#" + tag}
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
