@@ -123,14 +123,18 @@ const PostLayout = (props: PostProps) => {
         <div className=" mr-4 leading-[1.1rem]">{commentsCount}</div>
       </div>
       {/* open post with comments */}
-      {toggleComments === true && post?.tags && post.tags.length > 0 && (
-        <div className=" w-full flex gap-x-2 gap-y-1 flex-wrap">
-          {post?.tags.map((tag, index) => (
-            <div className=" px-3 py-[0.15rem] cursor-default bg-neutral-900 rounded-2xl" key={index}>
-              {"#" + tag}
+      {toggleComments === true && (
+        <section>
+          {post.tags.length > 0 && (
+            <div className=" w-full flex gap-x-2 gap-y-1 flex-wrap">
+              {post?.tags.map((tag, index) => (
+                <div className=" px-3 py-[0.15rem] cursor-default bg-neutral-900 rounded-2xl" key={index}>
+                  {"#" + tag}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          )}
+        </section>
       )}
     </div>
   );

@@ -17,7 +17,7 @@ import {
   UpdateLikeReqSchema,
 } from "@/types/controllers/postReq";
 import { CustomRequest } from "@/types/custom";
-import { uploadMultiplesToCloudinary, uploadToCloudinary } from "@/utils/cloudinaryHandler";
+import { deleteFromCloudinay, uploadMultiplesToCloudinary, uploadToCloudinary } from "@/utils/cloudinaryHandler";
 import { deleteFile, deleteFiles } from "@/utils/deleteFile";
 import { errRes } from "@/utils/error";
 import { and, eq, sql, lt, desc, gt } from "drizzle-orm";
@@ -125,11 +125,17 @@ export const deletePost = async (req: Request, res: Response): Promise<Response>
     const postRes = await db
       .delete(post)
       .where(and(eq(post.id, data.postId), eq(post.userId, userId2)))
-      .returning({ id: post.id })
+      .returning({ id: post.id, mediaUrls: post.mediaUrls })
       .execute();
 
     // check query response
     if (postRes.length) {
+      // delete media from cloudinary
+      if (postRes[0] && postRes[0].mediaUrls.length > 0) {
+        postRes[0].mediaUrls.forEach((url) => {
+          deleteFromCloudinay(url);
+        });
+      }
       return res.status(200).json({
         success: true,
         message: "post deleted successfully",
@@ -223,11 +229,15 @@ export const deleteStory = async (req: Request, res: Response): Promise<Response
     const response = await db
       .delete(story)
       .where(and(eq(story.id, intStoryId), eq(story.userId, userId2)))
-      .returning({ id: story.id })
+      .returning({ id: story.id, storyUrl: story.storyUrl })
       .execute();
 
     // check query response
     if (response.length) {
+      // delete from cloundinary
+      if (response[0]) {
+        deleteFromCloudinay(response[0].storyUrl);
+      }
       return res.status(200).json({
         success: true,
         message: "story deleted successfully",
@@ -329,7 +339,12 @@ export const updateLike = async (req: Request, res: Response): Promise<Response>
       });
     }
     return errRes(res, 400, "no like is present for post by user");
-  } catch (error) {
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    if (error.code === "23503") {
+      return errRes(res, 500, "post does not exist or deleted by creator", error);
+    }
     return errRes(res, 500, "error while updating like for post", error);
   }
 };

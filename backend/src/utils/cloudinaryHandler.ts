@@ -61,6 +61,7 @@ export const uploadMultiplesToCloudinary = async (files: Express.Multer.File[]):
 
 export const deleteFromCloudinay = async (publicId: string) => {
   try {
+    // await is not used as not necessary for response
     cloudinary.api.delete_resources([publicId]);
   } catch (error) {
     logger.error("error while deleting file from cloudinary", { publicId: publicId, error: error });
