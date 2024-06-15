@@ -26,12 +26,13 @@ export const UpdateLikeReqSchema = z.object({
 export type UpdateLikeReq = z.infer<typeof UpdateLikeReqSchema>;
 
 export const AddCommentReqSchema = z.object({
-  postId: postgreSQLIdSchema,
+  postId: z.number().min(1),
   comment: z.string().min(1).max(100),
 });
 export type AddCommentReq = z.infer<typeof AddCommentReqSchema>;
 
 export const DeleteCommentReqSchema = z.object({
+  postId: z.number().min(1),
   commentId: postgreSQLIdSchema,
 });
 export type DeleteCommentReq = z.infer<typeof DeleteCommentReqSchema>;

@@ -311,7 +311,8 @@ export const updateLike = async (req: Request, res: Response): Promise<Response>
         await tx
           .update(post)
           .set({ likesCount: sql`${post.likesCount} - 1` })
-          .where(eq(post.id, intPostId));
+          .where(eq(post.id, intPostId))
+          .execute();
 
         return true;
       } else {
@@ -345,8 +346,14 @@ export const addComment = async (req: Request, res: Response): Promise<Response>
     const data = addCommentReq.data;
     const newComment = await db
       .insert(comment)
-      .values({ userId: userId2, postId: parseInt(data.postId), text: data.comment })
+      .values({ userId: userId2, postId: data.postId, text: data.comment })
       .returning({ id: comment.id, userId: comment.userId, text: comment.text, createdAt: comment.createdAt })
+      .execute();
+
+    await db
+      .update(post)
+      .set({ commentsCount: sql`${post.commentsCount} + 1` })
+      .where(eq(post.id, data.postId))
       .execute();
 
     return res.status(200).json({
@@ -377,6 +384,12 @@ export const deleteComment = async (req: Request, res: Response): Promise<Respon
       .execute();
 
     if (commentRes.length) {
+      await db
+        .update(post)
+        .set({ commentsCount: sql`${post.commentsCount} - 1` })
+        .where(eq(post.id, data.postId))
+        .execute();
+
       return res.status(200).json({
         success: true,
         message: "comment deleted",
@@ -459,9 +472,7 @@ export const recentPosts = async (req: Request, res: Response): Promise<Response
         userName: user.userName,
         isSaved: sql<boolean>`CASE WHEN ${save.userId} = ${userId2} AND ${save.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
         isLiked: sql<boolean>`CASE WHEN ${likes.userId} = ${userId2} AND ${likes.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
-        commentsCount: sql<number>`(SELECT COUNT(*) FROM ${comment} WHERE ${comment.postId} = ${post.id})`.as(
-          "comments_count"
-        ),
+        commentsCount: post.commentsCount,
         category: post.category,
         title: post.title,
         mediaUrls: post.mediaUrls,
@@ -516,9 +527,7 @@ export const trendingPosts = async (req: Request, res: Response): Promise<Respon
         userName: user.userName,
         isSaved: sql<boolean>`CASE WHEN ${save.userId} = ${userId2} AND ${save.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
         isLiked: sql<boolean>`CASE WHEN ${likes.userId} = ${userId2} AND ${likes.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
-        commentsCount: sql<number>`(SELECT COUNT(*) FROM ${comment} WHERE ${comment.postId} = ${post.id})`.as(
-          "comments_count"
-        ),
+        commentsCount: post.commentsCount,
         category: post.category,
         title: post.title,
         mediaUrls: post.mediaUrls,
@@ -573,9 +582,7 @@ export const categoryPosts = async (req: Request, res: Response): Promise<Respon
         userName: user.userName,
         isSaved: sql<boolean>`CASE WHEN ${save.userId} = ${userId2} AND ${save.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
         isLiked: sql<boolean>`CASE WHEN ${likes.userId} = ${userId2} AND ${likes.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
-        commentsCount: sql<number>`(SELECT COUNT(*) FROM ${comment} WHERE ${comment.postId} = ${post.id})`.as(
-          "comments_count"
-        ),
+        commentsCount: post.commentsCount,
         category: post.category,
         title: post.title,
         mediaUrls: post.mediaUrls,

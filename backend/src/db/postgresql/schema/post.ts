@@ -25,6 +25,7 @@ export const post = pgTable("post", {
     .notNull()
     .default(sql`ARRAY[]::text[]`),
   likesCount: integer("likes_count").notNull().default(0),
+  commentsCount: integer("comments_count").notNull().default(0),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
