@@ -29,6 +29,13 @@
       "when": 1718523229212,
       "tag": "0003_demonic_the_leader",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1718527602817,
+      "tag": "0004_silly_scarlet_witch",
+      "breakpoints": true
     }
   ]
 }

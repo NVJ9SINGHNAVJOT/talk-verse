@@ -11,9 +11,10 @@ import {
   CategoryPostsReqSchema,
   CreatePostReqSchema,
   DeleteCommentReqSchema,
+  DeletePostReqSchema,
   DeleteStoryReqSchema,
   GetCreatedAtReqSchema,
-  PostReqSchema,
+  SavePostReqSchema,
   UpdateLikeReqSchema,
 } from "@/types/controllers/postReq";
 import { CustomRequest } from "@/types/custom";
@@ -115,7 +116,7 @@ export const deletePost = async (req: Request, res: Response): Promise<Response>
   try {
     const userId2 = (req as CustomRequest).userId2;
 
-    const deletePostReq = PostReqSchema.safeParse(req.body);
+    const deletePostReq = DeletePostReqSchema.safeParse(req.body);
     if (!deletePostReq.success) {
       return errRes(res, 400, `invalid data for postId delete, ${deletePostReq.error.toString()}`);
     }
@@ -151,26 +152,42 @@ export const savePost = async (req: Request, res: Response): Promise<Response> =
   try {
     const userId2 = (req as CustomRequest).userId2;
 
-    const savePostReq = PostReqSchema.safeParse(req.body);
+    const savePostReq = SavePostReqSchema.safeParse(req.body);
     if (!savePostReq.success) {
       return errRes(res, 400, `invalid id to save post, ${savePostReq.error.toString()}`);
     }
 
     const data = savePostReq.data;
 
-    const checkSavedPost = await db
-      .insert(save)
-      .values({ userId: userId2, postId: data.postId })
-      .onConflictDoNothing({ target: [save.userId, save.postId] })
+    if (data.update === "add") {
+      const checkSavedPost = await db
+        .insert(save)
+        .values({ userId: userId2, postId: data.postId })
+        .onConflictDoNothing({ target: [save.userId, save.postId] })
+        .returning({ id: save.id });
+
+      if (checkSavedPost.length === 0) {
+        return errRes(res, 400, "invalid data, post is already saved by user");
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "post save for user",
+      });
+    }
+
+    const deleteSavedPost = await db
+      .delete(save)
+      .where(and(eq(save.userId, userId2), eq(save.postId, data.postId)))
       .returning({ id: save.id });
 
-    if (checkSavedPost.length === 0) {
-      return errRes(res, 400, "invalid data, post is already saved by user");
+    if (deleteSavedPost.length === 0) {
+      return errRes(res, 400, "invalid data, no post previously saved by user");
     }
 
     return res.status(200).json({
       success: true,
-      message: "post save for user",
+      message: "post removed from save for user",
     });
   } catch (error) {
     return errRes(res, 500, "error while save post for user", error);

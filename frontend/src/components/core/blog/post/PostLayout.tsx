@@ -1,4 +1,4 @@
-import { deletePostApi, updateLikeApi } from "@/services/operations/postApi";
+import { deletePostApi, savePostApi, updateLikeApi } from "@/services/operations/postApi";
 import { Post } from "@/types/apis/postApiRs";
 import { BsSaveFill } from "react-icons/bs";
 import { MdDeleteForever } from "react-icons/md";
@@ -11,6 +11,8 @@ import { validFiles } from "@/utils/constants";
 import { BiSolidCommentDetail } from "react-icons/bi";
 import { FaHeart } from "react-icons/fa";
 import Comments from "@/components/core/blog/post/Comments";
+import { useDispatch } from "react-redux";
+import { updateTotalPosts } from "@/redux/slices/postSlice";
 
 type PostProps = {
   post: Post;
@@ -21,12 +23,14 @@ type PostProps = {
 const PostLayout = (props: PostProps) => {
   const post = props.post;
 
+  const [isSaved, setIsSaved] = useState<boolean>(false);
   const [mediaUrls, setMediaUrls] = useState<FileUrl[]>([]);
   const [like, setLike] = useState<boolean>();
   const [likeLoading, setLikeLoading] = useState<boolean>(false);
   const [likesCount, setLikesCount] = useState<number>(0);
   const [commentsCount, setCommentsCount] = useState<number>();
   const [toggleComments, setToggleComments] = useState<boolean>(false);
+  const dispatch = useDispatch();
 
   const updateLike = async () => {
     setLikeLoading(true);
@@ -51,6 +55,7 @@ const PostLayout = (props: PostProps) => {
     if (response) {
       toast.success("Post deleted");
       if (props.removePost) {
+        dispatch(updateTotalPosts(-1));
         props.removePost(props.post.id);
       }
     } else {
@@ -58,8 +63,25 @@ const PostLayout = (props: PostProps) => {
     }
   };
 
+  const savePost = async () => {
+    const response = await savePostApi(props.post.id, isSaved === true ? "remove" : "add");
+    if (!response) {
+      toast.error("Error while saving post");
+      return;
+    }
+
+    if (isSaved) {
+      toast.success("Post removed");
+      setIsSaved(false);
+    } else {
+      toast.success("Post saved");
+      setIsSaved(true);
+    }
+  };
+
   useEffect(() => {
     const postSetUp = () => {
+      setIsSaved(props.post.isSaved);
       setLikesCount(props.post.likesCount);
       setCommentsCount(props.post.commentsCount);
       setLike(props.post.isLiked);
@@ -105,7 +127,8 @@ const PostLayout = (props: PostProps) => {
           />
         ) : (
           <BsSaveFill
-            className={`size-5 aspect-square cursor-pointer ${post.isSaved && " opacity-45"} hover:fill-snow-800 `}
+            onClick={() => savePost()}
+            className={`size-5 aspect-square cursor-pointer hover:opacity-100 ${isSaved === true ? "opacity-100" : "opacity-40"}`}
           />
         )}
       </div>

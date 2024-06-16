@@ -10,7 +10,7 @@ export const comment = pgTable("comment", {
     .references(() => user.id),
   postId: integer("post_id")
     .notNull()
-    .references(() => post.id),
+    .references(() => post.id, { onDelete: "cascade" }),
   commentText: varchar("comment_text").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

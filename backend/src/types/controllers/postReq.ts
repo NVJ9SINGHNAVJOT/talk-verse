@@ -9,10 +9,16 @@ export const CreatePostReqSchema = z.object({
 });
 export type CreatePostReq = z.infer<typeof CreatePostReqSchema>;
 
-export const PostReqSchema = z.object({
+export const DeletePostReqSchema = z.object({
   postId: z.number().min(1),
 });
-export type PostReq = z.infer<typeof PostReqSchema>;
+export type DeletePostReq = z.infer<typeof DeletePostReqSchema>;
+
+export const SavePostReqSchema = z.object({
+  postId: z.number().min(1),
+  update: z.enum(["add", "remove"]),
+});
+export type SavePostReq = z.infer<typeof SavePostReqSchema>;
 
 export const DeleteStoryReqSchema = z.object({
   storyId: postgreSQLIdSchema,

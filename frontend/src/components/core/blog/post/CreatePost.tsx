@@ -7,8 +7,7 @@ import { toast } from "react-toastify";
 import MediaFiles from "@/components/core/blog/media/MediaFiles";
 import { createPostApi } from "@/services/operations/postApi";
 import { useDispatch } from "react-redux";
-import { setTotalPosts } from "@/redux/slices/postSlice";
-import { useAppSelector } from "@/redux/store";
+import { updateTotalPosts } from "@/redux/slices/postSlice";
 
 const categories = [
   "Technology",
@@ -58,7 +57,6 @@ type PostData = {
 };
 
 const CreatePost = (props: CreatePostProps) => {
-  const userPosts = useAppSelector((state) => state.post.userTotalPosts);
   const [tags, setTags] = useState<string[]>([]);
   const mediaFilesInputRef = useRef<HTMLInputElement>(null);
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
@@ -158,7 +156,7 @@ const CreatePost = (props: CreatePostProps) => {
     toast.dismiss(tid);
     if (response) {
       toast.success("New post created");
-      dispatch(setTotalPosts(userPosts + 1));
+      dispatch(updateTotalPosts(1));
       return;
     }
     toast.error("Error creating post");

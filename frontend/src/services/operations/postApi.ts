@@ -32,12 +32,12 @@ export const deletePostApi = async (postId: number): Promise<boolean> => {
   }
 };
 
-export const savePostApi = async (postId: number): Promise<boolean> => {
+export const savePostApi = async (postId: number, update: "add" | "remove"): Promise<boolean> => {
   try {
     const resData: CommonRs = await fetchApi(
       "POST",
       postEndPoints.SAVE_POST,
-      { postId: postId },
+      { postId: postId, update: update },
       { "Content-Type": "application/json" }
     );
     if (resData && resData.success === true) {

@@ -20,7 +20,7 @@ export const useScrollTriggerVertical = (
 
       const { scrollTop, clientHeight, scrollHeight } = ref.current;
       const scrollPercentage = Math.floor(((clientHeight - scrollTop) / scrollHeight) * 100);
-      
+
       if (scrollPercentage > 85 && !stop && !loading) {
         setTrigger((prev) => !prev);
       }
