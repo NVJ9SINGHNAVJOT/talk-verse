@@ -52,6 +52,7 @@ export const postEndPoints = {
   SAVE_POST: BASE_URL_SERVER + "/posts/savePost",
   CREATE_STORY: BASE_URL_SERVER + "/posts/createStory",
   DELETE_STORY: BASE_URL_SERVER + "/posts/deleteStory", // parameters: storyId
+  USER_STORY: BASE_URL_SERVER + "/posts/userStory",
   UPDATE_LIKE: BASE_URL_SERVER + "/posts/updateLike", // parameters: postId, update
   ADD_COMMENT: BASE_URL_SERVER + "/posts/addComment",
   DELETE_COMMENT: BASE_URL_SERVER + "/posts/deleteComment", // parameters: commentId

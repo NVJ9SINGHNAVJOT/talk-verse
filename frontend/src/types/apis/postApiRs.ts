@@ -6,19 +6,28 @@ export type CreatePostRs = {
     userId: number;
     category: string;
     title?: string;
-    mediaUrls?: string[];
-    tags?: string[];
-    content?: string[];
+    mediaUrls: string[];
+    tags: string[];
+    content: string[];
     likesCount: number;
     createdAt: string;
   };
 } | null;
 
+export type UserStory = {
+  id: number;
+  storyUrl: string;
+};
 export type CreateStoryRs = {
   success: boolean;
   message: string;
-  id: number;
-  storyUrl: string;
+  story: UserStory;
+} | null;
+
+export type UserStoryRs = {
+  success: boolean;
+  message: string;
+  story?: UserStory;
 } | null;
 
 export type AddCommentRs = {

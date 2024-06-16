@@ -5,6 +5,7 @@ import {
   GetStoriesRs,
   PostCommentsRs,
   PostsRs,
+  UserStoryRs,
 } from "@/types/apis/postApiRs";
 import { fetchApi } from "@/services/fetchApi";
 import { postEndPoints } from "@/services/apis";
@@ -79,6 +80,18 @@ export const deleteStoryApi = async (storyId: number): Promise<boolean> => {
     return false;
   } catch (error) {
     return false;
+  }
+};
+
+export const userStoryApi = async (): Promise<UserStoryRs> => {
+  try {
+    const resData: UserStoryRs = await fetchApi("GET", postEndPoints.USER_STORY);
+    if (resData) {
+      return resData;
+    }
+    return null;
+  } catch (error) {
+    return null;
   }
 };
 

@@ -1,5 +1,6 @@
 import { CanvasReveal } from "@/lib/sections/CanvasReveal";
 import { createStoryApi } from "@/services/operations/postApi";
+import { UserStory } from "@/types/apis/postApiRs";
 import { maxFileSize, validFiles } from "@/utils/constants";
 import { AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
@@ -8,6 +9,7 @@ import { toast } from "react-toastify";
 
 type CreateStoryProps = {
   setCreateStory: React.Dispatch<React.SetStateAction<boolean>>;
+  setUserStory: React.Dispatch<React.SetStateAction<UserStory | undefined>>;
 };
 
 const CreateStory = (props: CreateStoryProps) => {
@@ -63,6 +65,7 @@ const CreateStory = (props: CreateStoryProps) => {
     toast.dismiss(tid);
     if (response) {
       toast.success("Story posted");
+      props.setUserStory(response.story);
     } else {
       toast.error("Error while posting story");
     }

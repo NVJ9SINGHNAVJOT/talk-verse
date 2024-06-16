@@ -214,14 +214,13 @@ export const createStory = async (req: Request, res: Response): Promise<Response
     const newStory = await db
       .insert(story)
       .values({ userId: userId2, storyUrl: secUrl })
-      .returning({ id: story.id })
+      .returning({ id: story.id, storyUrl: story.storyUrl })
       .execute();
 
     return res.status(200).json({
       success: true,
       message: "story created successfully",
-      id: newStory[0]?.id,
-      storyUrl: secUrl,
+      story: newStory[0],
     });
   } catch (error) {
     if (req.file) {
@@ -264,6 +263,34 @@ export const deleteStory = async (req: Request, res: Response): Promise<Response
     return errRes(res, 400, "stroyId is invalid for deleting story");
   } catch (error) {
     return errRes(res, 500, "error while deleting story", error);
+  }
+};
+
+export const userStory = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const userId2 = (req as CustomRequest).userId2;
+
+    const userStoryUrl = await db
+      .select({ id: story.id, storyUrl: story.storyUrl })
+      .from(story)
+      .where(eq(story.userId, userId2))
+      .limit(1)
+      .execute();
+
+    if (userStoryUrl.length === 0) {
+      return res.status(200).json({
+        success: false,
+        message: "not story for user",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "story for user",
+      story: userStoryUrl[0],
+    });
+  } catch (error) {
+    return errRes(res, 500, "error while getting user story", error);
   }
 };
 

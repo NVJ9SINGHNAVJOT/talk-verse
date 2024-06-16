@@ -13,6 +13,7 @@ import {
   savePost,
   trendingPosts,
   updateLike,
+  userStory,
 } from "@/controllers/post";
 import { auth } from "@/middlewares/auth";
 import { postFiles, storyFile } from "@/middlewares/multer";
@@ -25,6 +26,7 @@ router.delete("/deletePost", auth, deletePost); // parameters: postId
 router.post("/savePost", auth, savePost);
 router.post("/createStory", storyFile, auth, createStory);
 router.delete("/deleteStory", auth, deleteStory); // parameters: storyId
+router.get("/userStory", auth, userStory);
 router.post("/updateLike", auth, updateLike); // parameters: postId, update
 router.post("/addComment", auth, addComment);
 router.delete("/deleteComment", auth, deleteComment); // parameters: commentId
