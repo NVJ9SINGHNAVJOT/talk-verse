@@ -43,6 +43,12 @@ export const DeleteCommentReqSchema = z.object({
 });
 export type DeleteCommentReq = z.infer<typeof DeleteCommentReqSchema>;
 
+export const PostCommentsReqSchema = z.object({
+  postId: postgreSQLIdSchema,
+  createdAt: z.string().datetime(),
+});
+export type PostCommenstReq = z.infer<typeof PostCommentsReqSchema>;
+
 export const GetCreatedAtReqSchema = z.object({
   createdAt: z.string().datetime(),
 });

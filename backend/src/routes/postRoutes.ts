@@ -8,6 +8,7 @@ import {
   deletePost,
   deleteStory,
   getStories,
+  postComments,
   recentPosts,
   savePost,
   trendingPosts,
@@ -27,6 +28,7 @@ router.delete("/deleteStory", auth, deleteStory); // parameters: storyId
 router.post("/updateLike", auth, updateLike); // parameters: postId, update
 router.post("/addComment", auth, addComment);
 router.delete("/deleteComment", auth, deleteComment); // parameters: commentId
+router.get("/postComments", auth, postComments); // parameters: postId, createdAt
 router.get("/getStories", auth, getStories); // parameters: createdAt
 router.get("/recentPosts", auth, recentPosts); // parameters: createdAt
 router.get("/trendingPosts", auth, trendingPosts); // parameters: createdAt

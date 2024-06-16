@@ -45,7 +45,7 @@ export const chatEndPoints = {
   FILE_MESSAGE: BASE_URL_SERVER + "/chats/fileMessage",
 };
 
-// userPost endpoints
+// post endpoints
 export const postEndPoints = {
   CREATE_POST: BASE_URL_SERVER + "/posts/createPost",
   DELETE_POST: BASE_URL_SERVER + "/posts/deletePost", // parameters: postId
@@ -55,6 +55,7 @@ export const postEndPoints = {
   UPDATE_LIKE: BASE_URL_SERVER + "/posts/updateLike", // parameters: postId, update
   ADD_COMMENT: BASE_URL_SERVER + "/posts/addComment",
   DELETE_COMMENT: BASE_URL_SERVER + "/posts/deleteComment", // parameters: commentId
+  POST_COMMENTS: BASE_URL_SERVER + "/posts/postComments", // parameters: postId, createdAt
   GET_STORIES: BASE_URL_SERVER + "/posts/getStories", // parameters: createdAt
   RECENT_POSTS: BASE_URL_SERVER + "/posts/recentPosts", // parameters: createdAt
   TRENDING_POSTS: BASE_URL_SERVER + "/posts/trendingPosts", // parameters: createdAt

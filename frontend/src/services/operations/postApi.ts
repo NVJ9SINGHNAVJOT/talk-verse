@@ -1,4 +1,11 @@
-import { AddCommentRs, CreatePostRs, CreateStoryRs, GetStoriesRs, PostsRs } from "@/types/apis/postApiRs";
+import {
+  AddCommentRs,
+  CreatePostRs,
+  CreateStoryRs,
+  GetStoriesRs,
+  PostCommentsRs,
+  PostsRs,
+} from "@/types/apis/postApiRs";
 import { fetchApi } from "@/services/fetchApi";
 import { postEndPoints } from "@/services/apis";
 import { CommonRs } from "@/types/apis/common";
@@ -118,6 +125,22 @@ export const deleteCommentApi = async (commentId: number): Promise<boolean> => {
     return false;
   } catch (error) {
     return false;
+  }
+};
+
+export const postCommentsApi = async (postId: number, createdAt: string): Promise<PostCommentsRs> => {
+  try {
+    const resData: PostCommentsRs = await fetchApi("GET", postEndPoints.POST_COMMENTS, null, null, {
+      postId: `${postId}`,
+      createdAt: createdAt,
+    });
+
+    if (resData) {
+      return resData;
+    }
+    return null;
+  } catch (error) {
+    return null;
   }
 };
 

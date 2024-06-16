@@ -14,6 +14,7 @@ import {
   DeletePostReqSchema,
   DeleteStoryReqSchema,
   GetCreatedAtReqSchema,
+  PostCommentsReqSchema,
   SavePostReqSchema,
   UpdateLikeReqSchema,
 } from "@/types/controllers/postReq";
@@ -439,6 +440,48 @@ export const deleteComment = async (req: Request, res: Response): Promise<Respon
   }
 };
 
+export const postComments = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const userId2 = (req as CustomRequest).userId2;
+    const postCommentsReq = PostCommentsReqSchema.safeParse(req.query);
+
+    if (!postCommentsReq.success) {
+      return errRes(res, 400, `invalid data for getting post comments, ${postCommentsReq.error.toString()}`);
+    }
+
+    const data = postCommentsReq.data;
+    const beforeAt = new Date(`${data.createdAt}`);
+
+    const comments = await db
+      .select({
+        id: comment.id,
+        isCurrentUser: sql<boolean>`CASE WHEN ${comment.userId} = ${userId2} THEN TRUE ELSE FALSE END`,
+        userId: comment.userId,
+        imageUrl: user.imageUrl,
+        userName: user.userName,
+        commentText: comment.commentText,
+        createdAt: comment.createdAt,
+      })
+      .from(comment)
+      .leftJoin(user, eq(comment.userId, user.id))
+      .where(and(eq(comment.postId, parseInt(data.postId)), lt(comment.createdAt, beforeAt)));
+
+    if (comments.length === 0) {
+      return res.status(200).json({
+        success: false,
+        message: "no further comments for post",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "comments for post",
+      comments: comments,
+    });
+  } catch (error) {
+    return errRes(res, 500, "error while getting comments for post", error);
+  }
+};
 export const getStories = async (req: Request, res: Response): Promise<Response> => {
   try {
     const userId2 = (req as CustomRequest).userId2;

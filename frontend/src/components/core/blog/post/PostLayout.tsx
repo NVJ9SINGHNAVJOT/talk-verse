@@ -10,7 +10,7 @@ import { FileUrl } from "@/components/core/blog/post/CreatePost";
 import { validFiles } from "@/utils/constants";
 import { BiSolidCommentDetail } from "react-icons/bi";
 import { FaHeart } from "react-icons/fa";
-import Comments from "@/components/core/blog/post/Comments";
+import CommentsModal from "@/components/core/blog/post/CommentsModal";
 import { useDispatch } from "react-redux";
 import { updateTotalPosts } from "@/redux/slices/postSlice";
 
@@ -28,7 +28,7 @@ const PostLayout = (props: PostProps) => {
   const [like, setLike] = useState<boolean>();
   const [likeLoading, setLikeLoading] = useState<boolean>(false);
   const [likesCount, setLikesCount] = useState<number>(0);
-  const [commentsCount, setCommentsCount] = useState<number>();
+  const [commentsCount, setCommentsCount] = useState<number>(0);
   const [toggleComments, setToggleComments] = useState<boolean>(false);
   const dispatch = useDispatch();
 
@@ -176,7 +176,9 @@ const PostLayout = (props: PostProps) => {
         <div className=" mr-4 leading-[1.1rem]">{commentsCount}</div>
       </div>
       {/* open post comments */}
-      {toggleComments === true && <Comments id={post.id} setToggleComments={setToggleComments} />}
+      {toggleComments === true && (
+        <CommentsModal id={post.id} setToggleComments={setToggleComments} setCommentsCount={setCommentsCount} />
+      )}
     </div>
   );
 };

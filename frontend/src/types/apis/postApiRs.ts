@@ -44,6 +44,21 @@ export type GetStoriesRs = {
   stories?: Story[];
 } | null;
 
+export type Comment = {
+  id: number;
+  isCurrentUser: boolean;
+  userId: number;
+  imageUrl?: string;
+  userName: string;
+  commentText: string;
+  createdAt: string;
+};
+export type PostCommentsRs = {
+  success: boolean;
+  message: string;
+  comments?: Comment[];
+} | null;
+
 export type Post = {
   id: number;
   isCurrentUser: boolean;

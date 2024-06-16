@@ -1,32 +1,35 @@
-import { addCommentApi } from "@/services/operations/postApi";
+import { addCommentApi, postCommentsApi } from "@/services/operations/postApi";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { MdOutlineCancelPresentation } from "react-icons/md";
 import { toast } from "react-toastify";
+import { Comment } from "@/types/apis/postApiRs";
 
-type Comment = {
+type AddComment = {
   commentText: string;
 };
 
-type CommentsProps = {
+type CommentsModalProps = {
   id: number;
   setToggleComments: React.Dispatch<React.SetStateAction<boolean>>;
+  setCommentsCount: React.Dispatch<React.SetStateAction<number>>;
 };
 
-const Comments = (props: CommentsProps) => {
+const CommentsModal = (props: CommentsModalProps) => {
   const divRef = useRef<HTMLInputElement>(null);
   const [isFocused, setIsFocused] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [opacity, setOpacity] = useState(0);
-  const [comments, setComments] = useState();
-  const { register, handleSubmit, reset } = useForm<Comment>();
+  const [comments, setComments] = useState<Comment[]>([]);
+  const { register, handleSubmit, reset } = useForm<AddComment>();
 
-  const postComment = async (data: Comment) => {
+  const postComment = async (data: AddComment) => {
     reset();
     const response = await addCommentApi(props.id, data.commentText);
     if (!response) {
       toast.error("Error while adding comment");
     }
+    props.setCommentsCount((prev) => prev + 1);
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLInputElement>) => {
@@ -56,7 +59,25 @@ const Comments = (props: CommentsProps) => {
     setOpacity(0);
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const getComments = async () => {
+      let lastCreatedAt;
+      if (comments.length === 0) {
+        lastCreatedAt = new Date().toISOString();
+      } else {
+        lastCreatedAt = comments[comments.length - 1].createdAt;
+      }
+      const response = await postCommentsApi(props.id, lastCreatedAt);
+      if (response) {
+        if (response.comments) {
+          setComments(response.comments);
+        }
+      } else {
+        toast.error("Error while getting comments for post");
+      }
+    };
+    getComments();
+  }, []);
 
   return (
     <section className="fixed inset-0 z-50 top-16 backdrop-blur-sm max-w-maxContent">
@@ -102,4 +123,4 @@ const Comments = (props: CommentsProps) => {
   );
 };
 
-export default Comments;
+export default CommentsModal;
