@@ -1,6 +1,7 @@
 import CreatePost from "@/components/core/blog/post/CreatePost";
 import CreateStory from "@/components/core/blog/story/CreateStory";
 import Stories from "@/components/core/blog/story/Stories";
+import { setTotalPosts } from "@/redux/slices/postSlice";
 import { useAppSelector } from "@/redux/store";
 import {
   acceptFollowRequestApi,
@@ -11,12 +12,12 @@ import {
 } from "@/services/operations/notificationApi";
 import { userBlogProfileApi } from "@/services/operations/profileApi";
 import { UserSuggestion } from "@/types/apis/notificationApiRs";
-import { BlogProfile } from "@/types/apis/profileApiRs";
 import { useEffect, useState } from "react";
 import { CiCirclePlus } from "react-icons/ci";
 import { GoPlus } from "react-icons/go";
 import { HiOutlineUserAdd } from "react-icons/hi";
 import { RxAvatar } from "react-icons/rx";
+import { useDispatch } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -39,7 +40,9 @@ const categories = [
 
 const Blog = () => {
   const user = useAppSelector((state) => state.user.user);
-  const [blogProfile, setBlogProfile] = useState<BlogProfile>();
+  const userPosts = useAppSelector((state) => state.post.userTotalPosts);
+  const [following, setFollowing] = useState<number>(0);
+  const [followers, setFollowers] = useState<number>(0);
   const [postMenu, setPostMenu] = useState<string>();
   const [suggestions, setSuggestions] = useState<UserSuggestion[]>([]);
   const [followRequests, setFollowRequests] = useState<UserSuggestion[]>([]);
@@ -49,6 +52,7 @@ const Blog = () => {
   const [createPost, setCreatePost] = useState<boolean>(false);
   const [createStory, setCreateStory] = useState<boolean>(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const sendFollowRequest = async (reqUserId: number) => {
     setSendingReq(true);
@@ -67,10 +71,7 @@ const Blog = () => {
     const response = await acceptFollowRequestApi(reqUserId);
     if (response) {
       setFollowRequests((prev) => prev.filter((user) => user.id != reqUserId));
-      if (blogProfile) {
-        blogProfile.followersCount = blogProfile.followersCount + 1;
-        setBlogProfile(blogProfile);
-      }
+      setFollowers((prev) => prev + 1);
       toast.success("New follower added");
     } else {
       toast.error("Error while adding follower");
@@ -116,7 +117,9 @@ const Blog = () => {
   const getBlogProfile = async () => {
     const response = await userBlogProfileApi();
     if (response) {
-      setBlogProfile(response.blogProfile);
+      setFollowers(response.blogProfile.followersCount);
+      setFollowing(response.blogProfile.followingCount);
+      dispatch(setTotalPosts(response.blogProfile.totalPosts));
     } else {
       toast.error("Error while getting blogProfie data");
       navigate("/error");
@@ -152,15 +155,15 @@ const Blog = () => {
           {user && <p className=" text-[0.8rem]">{user.userName}</p>}
           <div className=" w-full flex mt-5 justify-between">
             <div className="flex flex-col items-center ml-1">
-              <p className="leading-4">{blogProfile?.totalPosts}</p>
+              <p className="leading-4">{userPosts}</p>
               <p className="text-xs leading-3">Post</p>
             </div>
             <div className="flex flex-col items-center">
-              <p className="leading-4">{blogProfile?.followersCount}</p>
+              <p className="leading-4">{followers}</p>
               <p className="text-xs leading-3">Followers</p>
             </div>
             <div className="flex flex-col items-center mr-1">
-              <p className="leading-4">{blogProfile?.followingCount}</p>
+              <p className="leading-4">{following}</p>
               <p className="text-xs leading-3">Following</p>
             </div>
           </div>
@@ -204,7 +207,7 @@ const Blog = () => {
       </section>
 
       {/* posts section */}
-      <section className=" flex-grow flex-col bg-[#09131d] pt-1 px-4">
+      <section className=" flex-grow flex flex-col bg-[#09131d] pt-1 px-4">
         {/* story section */}
         <section className="w-full flex mt-1 mb-5">
           {/* create story */}
@@ -222,8 +225,8 @@ const Blog = () => {
           <Stories />
         </section>
         {/* feeds section */}
-        {/* height for below outlet after calculation can be 170.4px, for safety using 154px */}
-        <div className=" w-full h-[calc(100vh-178px)]">
+        {/* height for below outlet after calculation can be 162.4px, for safety using 168px */}
+        <div className=" w-full h-[calc(100vh-168px)]">
           <Outlet />
         </div>
       </section>

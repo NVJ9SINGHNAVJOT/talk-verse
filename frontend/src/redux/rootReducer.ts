@@ -4,6 +4,7 @@ import userReducer from "@/redux/slices/userSlice";
 import loadingReducer from "@/redux/slices/loadingSlice";
 import chatReducer from "@/redux/slices/chatSlice";
 import messagesReducer from "@/redux/slices/messagesSlice";
+import postReducer from "@/redux/slices/postSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -11,6 +12,7 @@ const rootReducer = combineReducers({
   loading: loadingReducer,
   chat: chatReducer,
   messages: messagesReducer,
+  post: postReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
