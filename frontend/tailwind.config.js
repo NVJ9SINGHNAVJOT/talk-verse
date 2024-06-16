@@ -5,15 +5,10 @@ export default {
   content: ["./index.html", "./src/index.css", "./src/**/*.{js,ts,jsx,tsx}"],
   corePlugins: {},
   theme: {
-    screens: {
-      sm: "640px",
-      md: "768px",
-      lm: "900px",
-      lg: "1024px",
-      xl: "1280px",
-      "2xl": "1536px",
-    },
     extend: {
+      screens: {
+        lm: "900px",
+      },
       colors: {
         green: "#25b510",
         brightGreen: "rgba(0, 255, 115, 0.692)",
