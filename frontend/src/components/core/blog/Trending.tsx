@@ -55,7 +55,7 @@ const Trending = () => {
   }, [trigger]);
 
   return (
-    <div ref={postContainer} className="w-full h-full flex flex-col items-center gap-y-5 overflow-y-scroll">
+    <div ref={postContainer} className="w-full h-full flex flex-col items-center gap-y-5 overflow-y-auto">
       {trendingPosts.length !== 0 &&
         trendingPosts.map((post, index) => {
           return <PostLayout key={index} post={post} removePost={removePost} />;

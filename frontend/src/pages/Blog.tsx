@@ -10,8 +10,10 @@ import {
   followSuggestionsApi,
   sendFollowRequestApi,
 } from "@/services/operations/notificationApi";
+import { userStoryApi } from "@/services/operations/postApi";
 import { userBlogProfileApi } from "@/services/operations/profileApi";
 import { UserSuggestion } from "@/types/apis/notificationApiRs";
+import { UserStory } from "@/types/apis/postApiRs";
 import { useEffect, useState } from "react";
 import { CiCirclePlus } from "react-icons/ci";
 import { GoPlus } from "react-icons/go";
@@ -51,6 +53,7 @@ const Blog = () => {
   const [deletingReq, setDeletingReq] = useState<boolean>(false);
   const [createPost, setCreatePost] = useState<boolean>(false);
   const [createStory, setCreateStory] = useState<boolean>(false);
+  const [userStory, setUserStory] = useState<UserStory>();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -126,9 +129,20 @@ const Blog = () => {
     }
   };
 
+  const getUserStory = async () => {
+    const response = await userStoryApi();
+    if (response) {
+      if (response.success === true && response.story) {
+        setUserStory(response.story);
+      }
+    } else {
+      toast.error("Error while checking user story");
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
-      await Promise.all([getSuggestions(), getFollowRequests(), getBlogProfile()]);
+      await Promise.all([getSuggestions(), getFollowRequests(), getBlogProfile(), getUserStory()]);
     };
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -211,22 +225,39 @@ const Blog = () => {
         {/* story section */}
         <section className="w-full flex mt-1 mb-5">
           {/* create story */}
-          <div className="flex flex-col items-center gap-y-2 text-white">
-            <div
-              onClick={() => setCreateStory(true)}
-              className=" bg-slate-900 cursor-pointer flex justify-center items-center rounded-full size-12 border-[2px]
-            border-dotted border-whitesmoke"
-            >
-              <GoPlus className=" fill-white" />
+          {userStory !== undefined ? (
+            <div className="flex flex-col items-center gap-y-2 text-white">
+              {user && user.imageUrl ? (
+                <img
+                  alt="Loading.."
+                  src={user.imageUrl}
+                  className=" bg-slate-900 cursor-pointer rounded-full size-12 border-[2px]
+                  border-dotted border-whitesmoke"
+                />
+              ) : (
+                <RxAvatar />
+              )}
+
+              <div className=" text-[0.7rem] text-center mb-2">Add Story</div>
             </div>
-            <div className=" text-[0.6rem]">Add Story</div>
-          </div>
+          ) : (
+            <div className="flex flex-col items-center flex-shrink-0 gap-y-2 text-white">
+              <div
+                onClick={() => setCreateStory(true)}
+                className=" bg-slate-900 cursor-pointer flex justify-center items-center rounded-full size-12 border-[2px]
+                border-dotted border-whitesmoke"
+              >
+                <GoPlus className=" fill-white" />
+              </div>
+              <div className=" text-[0.6rem]">Add Story</div>
+            </div>
+          )}
           {/* following user stories */}
           <Stories />
         </section>
         {/* feeds section */}
-        {/* height for below outlet after calculation can be 162.4px, for safety using 168px */}
-        <div className=" w-full h-[calc(100vh-168px)]">
+        {/* height for below outlet after calculation can be 172.8px, for safety using 180px */}
+        <div className=" w-full h-[calc(100vh-180px)]">
           <Outlet />
         </div>
       </section>
@@ -235,13 +266,29 @@ const Blog = () => {
       <section className="hidden lm:flex lm:flex-col gap-y-4 w-56 px-1 bg-[#030609]">
         <div
           onClick={() => setCreatePost(true)}
-          className="relative h-12 w-10/12 mt-4 mx-auto p-2 flex justify-center items-center hover:border-sky-600 duration-500 group cursor-pointer text-sky-50  overflow-hidden rounded-md bg-sky-800"
+          className="relative h-12 w-10/12 mt-4 mx-auto p-2 flex justify-center items-center hover:border-sky-600 duration-500 
+          group cursor-pointer text-sky-50 overflow-hidden rounded-md bg-sky-800"
         >
-          <div className="absolute z-10 w-48 h-48 rounded-full group-hover:scale-150 transition-all  duration-500 ease-in-out bg-sky-900 delay-150 group-hover:delay-75"></div>
-          <div className="absolute z-10 w-40 h-40 rounded-full group-hover:scale-150 transition-all  duration-500 ease-in-out bg-sky-800 delay-150 group-hover:delay-100"></div>
-          <div className="absolute z-10 w-32 h-32 rounded-full group-hover:scale-150 transition-all  duration-500 ease-in-out bg-sky-700 delay-150 group-hover:delay-150"></div>
-          <div className="absolute z-10 w-24 h-24 rounded-full group-hover:scale-150 transition-all  duration-500 ease-in-out bg-sky-600 delay-150 group-hover:delay-200"></div>
-          <div className="absolute z-10 w-16 h-16 rounded-full group-hover:scale-150 transition-all  duration-500 ease-in-out bg-sky-500 delay-150 group-hover:delay-300"></div>
+          <div
+            className="absolute z-10 w-48 h-48 rounded-full group-hover:scale-150 transition-all
+           duration-500 ease-in-out bg-sky-900 delay-150 group-hover:delay-75"
+          ></div>
+          <div
+            className="absolute z-10 w-40 h-40 rounded-full group-hover:scale-150 transition-all
+           duration-500 ease-in-out bg-sky-800 delay-150 group-hover:delay-100"
+          ></div>
+          <div
+            className="absolute z-10 w-32 h-32 rounded-full group-hover:scale-150 transition-all
+           duration-500 ease-in-out bg-sky-700 delay-150 group-hover:delay-150"
+          ></div>
+          <div
+            className="absolute z-10 w-24 h-24 rounded-full group-hover:scale-150 transition-all
+           duration-500 ease-in-out bg-sky-600 delay-150 group-hover:delay-200"
+          ></div>
+          <div
+            className="absolute z-10 w-16 h-16 rounded-full group-hover:scale-150 transition-all
+           duration-500 ease-in-out bg-sky-500 delay-150 group-hover:delay-300"
+          ></div>
           <p className="z-10 text-white font-semibold">Create Post</p>
         </div>
         {/* follow suggestions */}
@@ -313,7 +360,7 @@ const Blog = () => {
       </section>
 
       {createPost && <CreatePost setCreatePost={setCreatePost} />}
-      {createStory && <CreateStory setCreateStory={setCreateStory} />}
+      {createStory && <CreateStory setCreateStory={setCreateStory} setUserStory={setUserStory} />}
     </div>
   );
 };

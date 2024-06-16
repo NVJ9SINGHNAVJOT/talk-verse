@@ -1,3 +1,4 @@
+import useScrollExists from "@/hooks/useScrollExists";
 import { useScrollTriggerHorizontal } from "@/hooks/useScrollTrigger";
 import { CanvasReveal } from "@/lib/sections/CanvasReveal";
 import { getStoriesApi } from "@/services/operations/postApi";
@@ -15,8 +16,10 @@ const Stories = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [trigger, setTrigger] = useState<boolean>(true);
   const storiesContainerRef = useRef<HTMLDivElement>(null);
+  const [scrollExist, setScrollExist] = useState<boolean>(false);
 
   useScrollTriggerHorizontal(storiesContainerRef, setTrigger, stop, undefined, loading);
+  useScrollExists(storiesContainerRef, scrollExist, setScrollExist);
 
   const scrollStories = (direction: "left" | "right") => {
     if (storiesContainerRef.current) {
@@ -80,14 +83,20 @@ const Stories = () => {
   }, [trigger]);
 
   return (
-    <div className="relative w-full flex ml-5">
+    <div className="relative flex-grow flex ml-5">
       <div className={`${stories.length === 0 ? "block" : "hidden"} mx-auto self-center text-white`}>
         It's a busy day
       </div>
       <div className={`w-full ${stories.length === 0 ? "hidden" : "flex"} justify-between items-center`}>
-        <MdKeyboardArrowLeft onClick={() => scrollStories("left")} className=" size-10 fill-white cursor-pointer" />
+        <MdKeyboardArrowLeft
+          onClick={() => scrollStories("left")}
+          className={`size-7 fill-white cursor-pointer ${!scrollExist && "hidden"}`}
+        />
         {/* FIXME: in below div if w-1 is removed then overflow properties dosn't work, for now w-1 is used with flex grow */}
-        <div ref={storiesContainerRef} className="flex flex-grow w-1 gap-x-3 overflow-x-auto scroll-smooth">
+        <div
+          ref={storiesContainerRef}
+          className={`flex-grow flex w-1 gap-x-3 overflow-x-auto scroll-smooth ${!scrollExist && "justify-center"}`}
+        >
           {stories.map((story, index) => {
             return (
               <div key={index} className=" flex flex-col items-center gap-y-2 text-white">
@@ -111,7 +120,10 @@ const Stories = () => {
             );
           })}
         </div>
-        <MdKeyboardArrowRight onClick={() => scrollStories("right")} className=" size-10 fill-white cursor-pointer" />
+        <MdKeyboardArrowRight
+          onClick={() => scrollStories("right")}
+          className={`size-7 fill-white cursor-pointer ${!scrollExist && "hidden"}`}
+        />
       </div>
 
       {/* story view */}
