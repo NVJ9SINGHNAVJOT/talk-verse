@@ -106,7 +106,7 @@ const CommentsModal = (props: CommentsModalProps) => {
   }, [trigger]);
 
   return (
-    <section className="fixed inset-0 z-50 top-16 backdrop-blur-[20px] max-w-maxContent">
+    <section className="fixed inset-0 z-50 top-16 backdrop-blur-[20px] max-w-maxContent overflow-y-auto">
       <div className="relative w-[28rem] lg:w-[38rem] flex flex-col mx-auto mt-16">
         <MdOutlineCancelPresentation
           onClick={() => props.setToggleComments(false)}

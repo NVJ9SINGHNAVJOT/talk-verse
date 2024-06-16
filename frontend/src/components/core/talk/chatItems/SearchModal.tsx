@@ -61,7 +61,7 @@ const SearchModal = (props: SearchModalProps) => {
   }, [query]);
 
   return (
-    <div className="fixed inset-0 w-screen h-screen backdrop-blur-[1px] bg-transparent z-[1000] flex justify-center items-center">
+    <div className="fixed inset-0 w-screen h-screen backdrop-blur-[1px] bg-transparent z-[1000] flex justify-center items-center overflow-y-auto">
       <div ref={refModal}>
         <div className="ct-searchInput relative flex justify-center">
           <input type="text" placeholder="Search Username" onChange={(event) => setQuery(event.target.value)} />

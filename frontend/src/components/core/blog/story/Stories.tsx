@@ -128,7 +128,7 @@ const Stories = () => {
 
       {/* story view */}
       {storyIndex !== -1 && (
-        <section className="fixed inset-0 z-50 top-16 backdrop-blur-sm max-w-maxContent">
+        <section className="fixed inset-0 z-50 top-16 backdrop-blur-sm max-w-maxContent overflow-y-auto">
           <div
             className=" relative mx-auto w-72 h-[28rem] border-[2px]
            border-whitesmoke mt-20 text-white flex items-center "

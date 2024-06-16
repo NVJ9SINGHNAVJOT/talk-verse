@@ -1,6 +1,7 @@
 import CreatePost from "@/components/core/blog/post/CreatePost";
 import CreateStory from "@/components/core/blog/story/CreateStory";
 import Stories from "@/components/core/blog/story/Stories";
+import { CanvasReveal } from "@/lib/sections/CanvasReveal";
 import { setTotalPosts } from "@/redux/slices/postSlice";
 import { useAppSelector } from "@/redux/store";
 import {
@@ -10,14 +11,16 @@ import {
   followSuggestionsApi,
   sendFollowRequestApi,
 } from "@/services/operations/notificationApi";
-import { userStoryApi } from "@/services/operations/postApi";
+import { deleteStoryApi, userStoryApi } from "@/services/operations/postApi";
 import { userBlogProfileApi } from "@/services/operations/profileApi";
 import { UserSuggestion } from "@/types/apis/notificationApiRs";
 import { UserStory } from "@/types/apis/postApiRs";
+import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { CiCirclePlus } from "react-icons/ci";
 import { GoPlus } from "react-icons/go";
 import { HiOutlineUserAdd } from "react-icons/hi";
+import { MdOutlineCancelPresentation } from "react-icons/md";
 import { RxAvatar } from "react-icons/rx";
 import { useDispatch } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -53,7 +56,9 @@ const Blog = () => {
   const [deletingReq, setDeletingReq] = useState<boolean>(false);
   const [createPost, setCreatePost] = useState<boolean>(false);
   const [createStory, setCreateStory] = useState<boolean>(false);
+  const [storyLoading, setStoryLoading] = useState<boolean>(true);
   const [userStory, setUserStory] = useState<UserStory>();
+  const [viewStory, setViewStory] = useState<boolean>(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -93,6 +98,22 @@ const Blog = () => {
     setDeletingReq(false);
   };
 
+  const deleteStory = async () => {
+    setStoryLoading(true);
+    setViewStory(false);
+
+    if (userStory) {
+      const response = await deleteStoryApi(userStory.id);
+      if (response) {
+        setUserStory(undefined);
+        toast.success("Story deleted");
+      } else {
+        toast.error("Error while deleting story");
+      }
+    }
+    setStoryLoading(false);
+  };
+
   const getSuggestions = async () => {
     const response = await followSuggestionsApi();
     if (response) {
@@ -101,7 +122,6 @@ const Blog = () => {
       }
     } else {
       toast.error("Error while getting followSuggestions");
-      navigate("/error");
     }
   };
 
@@ -113,7 +133,6 @@ const Blog = () => {
       }
     } else {
       toast.error("Error while getting follow requests");
-      navigate("/error");
     }
   };
 
@@ -138,6 +157,7 @@ const Blog = () => {
     } else {
       toast.error("Error while checking user story");
     }
+    setStoryLoading(false);
   };
 
   useEffect(() => {
@@ -221,34 +241,45 @@ const Blog = () => {
       </section>
 
       {/* posts section */}
-      <section className=" w-[calc(100vw-144px)] md:w-[calc(100vw-192px)] lm:w-[calc(100vw-(192px+224px))] flex flex-col bg-[#09131d] pt-1 px-4">
+      <section
+        className=" w-[calc(100vw-144px)] md:w-[calc(100vw-192px)] lm:w-[calc(100vw-(192px+224px))] flex flex-col
+       bg-[#09131d] pt-1 px-4"
+      >
         {/* story section */}
         <section className="w-full flex mt-1 mb-5">
           {/* create story */}
           {userStory !== undefined ? (
             <div className="flex flex-col items-center gap-y-2 text-white">
               {user && user.imageUrl ? (
-                <img
-                  alt="Loading.."
-                  src={user.imageUrl}
-                  className=" bg-slate-900 cursor-pointer rounded-full size-12 border-[2px]
-                  border-dotted border-whitesmoke"
-                />
+                <button type="button" disabled={storyLoading} onClick={() => setViewStory(true)}>
+                  <img
+                    alt="Loading.."
+                    src={user.imageUrl}
+                    className=" bg-slate-900 cursor-pointer rounded-full size-12 border-[2px]
+                    border-dotted border-whitesmoke"
+                  />
+                </button>
               ) : (
-                <RxAvatar />
+                <button type="button" disabled={storyLoading} onClick={() => setViewStory(true)}>
+                  <RxAvatar
+                    onClick={() => setViewStory(true)}
+                    className=" bg-slate-900 cursor-pointer rounded-full size-12 border-[2px]
+                    border-dotted border-whitesmoke"
+                  />
+                </button>
               )}
-
-              <div className=" text-[0.7rem] text-center mb-2">Add Story</div>
+              <div className=" text-[0.7rem] text-center mb-2">Your Story</div>
             </div>
           ) : (
             <div className="flex flex-col items-center flex-shrink-0 gap-y-2 text-white">
-              <div
-                onClick={() => setCreateStory(true)}
-                className=" bg-slate-900 cursor-pointer flex justify-center items-center rounded-full size-12 border-[2px]
+              <button type="button" disabled={storyLoading} onClick={() => setCreateStory(true)}>
+                <div
+                  className=" bg-slate-900 cursor-pointer flex justify-center items-center rounded-full size-12 border-[2px]
                 border-dotted border-whitesmoke"
-              >
-                <GoPlus className=" fill-white" />
-              </div>
+                >
+                  <GoPlus className=" fill-white" />
+                </div>
+              </button>
               <div className=" text-[0.6rem]">Add Story</div>
             </div>
           )}
@@ -343,10 +374,16 @@ const Blog = () => {
                     </div>
                     <div className="flex gap-x-1 mr-[0.4rem]">
                       <button disabled={acceptingReq} onClick={() => acceptRequest(followRequest.id)}>
-                        <CiCirclePlus className=" text-white size-6 aspect-auto cursor-pointer hover:bg-white hover:text-black rounded-full" />
+                        <CiCirclePlus
+                          className=" text-white size-6 aspect-auto cursor-pointer hover:bg-white hover:text-black
+                         rounded-full"
+                        />
                       </button>
                       <button disabled={deletingReq} onClick={() => deleteRequest(followRequest.id)}>
-                        <CiCirclePlus className=" text-white size-6 aspect-auto cursor-pointer rotate-45 hover:bg-white hover:text-black rounded-full" />
+                        <CiCirclePlus
+                          className=" text-white size-6 aspect-auto cursor-pointer rotate-45 hover:bg-white
+                         hover:text-black rounded-full"
+                        />
                       </button>
                     </div>
                   </div>
@@ -360,7 +397,50 @@ const Blog = () => {
       </section>
 
       {createPost && <CreatePost setCreatePost={setCreatePost} />}
-      {createStory && <CreateStory setCreateStory={setCreateStory} setUserStory={setUserStory} />}
+      {createStory && (
+        <CreateStory setCreateStory={setCreateStory} setUserStory={setUserStory} setStoryLoading={setStoryLoading} />
+      )}
+      {viewStory && (
+        <section
+          className="fixed inset-0 z-50 top-16 backdrop-blur-[20px] max-w-maxContent flex justify-center
+         items-center overflow-y-auto"
+        >
+          <div className="absolute z-50 w-72 h-[28rem] flex justify-center items-center bg-neutral-950">
+            <button
+              onClick={() => deleteStory()}
+              className="absolute w-fit px-4 py-1 bg-snow-500 text-neutral-950 rounded-lg -bottom-16"
+            >
+              Delete
+            </button>
+            <MdOutlineCancelPresentation
+              onClick={() => setViewStory(false)}
+              className=" w-11 h-8 absolute -right-16 lm:-right-28 -top-14 cursor-pointer fill-white hover:fill-slate-300"
+            />
+            {userStory &&
+              (userStory.storyUrl.includes("image/") ? (
+                <img alt="Loading..." src={userStory.storyUrl} />
+              ) : (
+                <video src={userStory.storyUrl} />
+              ))}
+          </div>
+
+          {/* canvas effect */}
+          <AnimatePresence>
+            <div className="h-full w-full absolute inset-0">
+              <CanvasReveal
+                animationSpeed={5}
+                containerClassName="bg-transparent"
+                colors={[
+                  [59, 130, 246],
+                  [139, 92, 246],
+                ]}
+                opacities={[0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.4, 0.4, 0.4, 1]}
+                dotSize={2}
+              />
+            </div>
+          </AnimatePresence>
+        </section>
+      )}
     </div>
   );
 };

@@ -101,7 +101,7 @@ const CreateGroupModal = (props: CreateGroupModalProps) => {
   return creatingGroup === true ? (
     <WorkModal title="Creating Group" />
   ) : (
-    <div className="fixed inset-0 w-screen h-screen backdrop-blur-[4px] bg-transparent z-[1000] flex justify-center items-center">
+    <div className="fixed inset-0 w-screen h-screen backdrop-blur-[4px] bg-transparent z-[1000] flex justify-center items-center overflow-y-auto">
       <div ref={refModal} className="flex flex-col gap-6 p-8">
         <form onSubmit={handleSubmit(createGroup)} className=" flex justify-center items-center gap-6 p-8">
           <div className="flex justify-center items-center relative size-11">

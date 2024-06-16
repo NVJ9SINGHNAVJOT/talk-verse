@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 type CreateStoryProps = {
   setCreateStory: React.Dispatch<React.SetStateAction<boolean>>;
   setUserStory: React.Dispatch<React.SetStateAction<UserStory | undefined>>;
+  setStoryLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const CreateStory = (props: CreateStoryProps) => {
@@ -54,11 +55,15 @@ const CreateStory = (props: CreateStoryProps) => {
   };
 
   const postStory = async () => {
+    if (!mediaFile) {
+      toast.info("Media file required for story");
+      return;
+    }
+
+    props.setStoryLoading(true);
     props.setCreateStory(false);
     const newData = new FormData();
-    if (mediaFile) {
-      newData.append("storyFile", mediaFile);
-    }
+    newData.append("storyFile", mediaFile);
     const tid = toast.loading("Posting story");
 
     const response = await createStoryApi(newData);
@@ -69,6 +74,7 @@ const CreateStory = (props: CreateStoryProps) => {
     } else {
       toast.error("Error while posting story");
     }
+    props.setStoryLoading(false);
   };
 
   return (
