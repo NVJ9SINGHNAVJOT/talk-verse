@@ -409,7 +409,6 @@ export const addComment = async (req: Request, res: Response): Promise<Response>
       .values({ userId: userId2, postId: data.postId, commentText: data.commentText })
       .returning({
         id: comment.id,
-        userId: comment.userId,
         commentText: comment.commentText,
         createdAt: comment.createdAt,
       })
@@ -435,7 +434,7 @@ export const deleteComment = async (req: Request, res: Response): Promise<Respon
   try {
     const userId2 = (req as CustomRequest).userId2;
 
-    const deleteCommentReq = DeleteCommentReqSchema.safeParse(req.query);
+    const deleteCommentReq = DeleteCommentReqSchema.safeParse(req.body);
     if (!deleteCommentReq.success) {
       return errRes(res, 400, `invalid data for deleting comment, ${deleteCommentReq.error.toString()}`);
     }
@@ -444,7 +443,7 @@ export const deleteComment = async (req: Request, res: Response): Promise<Respon
 
     const commentRes = await db
       .delete(comment)
-      .where(and(eq(comment.id, parseInt(data.commentId)), eq(comment.userId, userId2)))
+      .where(and(eq(comment.id, data.commentId), eq(comment.userId, userId2)))
       .returning({ id: comment.id })
       .execute();
 

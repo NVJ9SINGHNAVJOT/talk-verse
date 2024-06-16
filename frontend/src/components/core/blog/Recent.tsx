@@ -55,7 +55,7 @@ const Recent = () => {
   }, [trigger]);
 
   return (
-    <div ref={postContainer} className="w-full h-full flex flex-col items-center gap-y-5 overflow-y-scroll">
+    <div ref={postContainer} className="w-full h-full flex flex-col items-center gap-y-5 overflow-y-auto">
       {recentPost.length !== 0 &&
         recentPost.map((post, index) => {
           return <PostLayout key={index} post={post} removePost={removePost} />;

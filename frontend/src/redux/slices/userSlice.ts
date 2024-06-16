@@ -7,7 +7,7 @@ export type User = {
   userName: string;
   firstName: string;
   lastName: string;
-  imageUrl?: string | null;
+  imageUrl?: string;
   publicKey: string;
 };
 

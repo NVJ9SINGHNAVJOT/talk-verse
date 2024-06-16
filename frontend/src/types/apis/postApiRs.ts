@@ -35,9 +35,8 @@ export type AddCommentRs = {
   message: string;
   comment: {
     id: number;
-    userId: number;
-    text: string;
-    createdAt: Date;
+    commentText: string;
+    createdAt: string;
   };
 } | null;
 

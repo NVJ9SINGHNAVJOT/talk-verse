@@ -39,7 +39,7 @@ export type AddCommentReq = z.infer<typeof AddCommentReqSchema>;
 
 export const DeleteCommentReqSchema = z.object({
   postId: z.number().min(1),
-  commentId: postgreSQLIdSchema,
+  commentId: z.number().min(1),
 });
 export type DeleteCommentReq = z.infer<typeof DeleteCommentReqSchema>;
 

@@ -72,7 +72,7 @@ const Category = () => {
   }, [trigger, category]);
 
   return (
-    <div ref={categoryContainer} className="w-full h-full flex flex-col items-center gap-y-5 overflow-y-scroll">
+    <div ref={categoryContainer} className="w-full h-full flex flex-col items-center gap-y-5 overflow-y-auto">
       {categoriesPost.length !== 0 &&
         categoriesPost.map((post, index) => {
           return <PostLayout key={index} post={post} removePost={removePost} />;

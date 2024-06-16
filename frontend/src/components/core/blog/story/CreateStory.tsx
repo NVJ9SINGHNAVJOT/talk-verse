@@ -128,7 +128,7 @@ const CreateStory = (props: CreateStoryProps) => {
           >
             <div className="mb-4 text-2xl">Drop File</div>
             <div className=" text-xs">Image (jpeg, jpg, png)</div>
-            <div className=" text-xs">Vide (mp4, webm, oog)</div>
+            <div className=" text-xs">Video (mp4, webm, oog)</div>
             <p className=" text-xs">file can be of max size 5mb</p>
           </div>
         ) : mediaFile.type.includes("image") ? (

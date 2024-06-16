@@ -1,12 +1,13 @@
-import { addCommentApi, postCommentsApi } from "@/services/operations/postApi";
+import { addCommentApi, deleteCommentApi, postCommentsApi } from "@/services/operations/postApi";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import moment from "moment";
-import { MdOutlineCancelPresentation } from "react-icons/md";
+import { MdDeleteForever, MdOutlineCancelPresentation } from "react-icons/md";
 import { toast } from "react-toastify";
 import { Comment } from "@/types/apis/postApiRs";
 import { RxAvatar } from "react-icons/rx";
 import { useScrollTriggerVertical } from "@/hooks/useScrollTrigger";
+import { useAppSelector } from "@/redux/store";
 
 type AddComment = {
   commentText: string;
@@ -19,6 +20,7 @@ type CommentsModalProps = {
 };
 
 const CommentsModal = (props: CommentsModalProps) => {
+  const currUser = useAppSelector((state) => state.user.user);
   const inputRef = useRef<HTMLInputElement>(null);
   const commentsContainerRef = useRef<HTMLDivElement>(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -37,8 +39,34 @@ const CommentsModal = (props: CommentsModalProps) => {
     const response = await addCommentApi(props.id, data.commentText);
     if (!response) {
       toast.error("Error while adding comment");
+      return;
     }
+    if (!currUser) {
+      return;
+    }
+    const newComment: Comment = {
+      id: response.comment.id,
+      isCurrentUser: true,
+      userId: currUser.id,
+      userName: currUser.userName,
+      imageUrl: currUser.imageUrl,
+      commentText: response.comment.commentText,
+      createdAt: response.comment.createdAt,
+    };
+    comments.unshift(newComment);
+    setComments(comments);
     props.setCommentsCount((prev) => prev + 1);
+  };
+
+  const deleteComment = async (commentId: number) => {
+    const response = await deleteCommentApi(props.id, commentId);
+    if (!response) {
+      toast.error("Error while deleting comment");
+      return;
+    }
+
+    setComments((prev) => prev.filter((comment) => comment.id !== commentId));
+    props.setCommentsCount((prev) => prev - 1);
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLInputElement>) => {
@@ -167,7 +195,15 @@ const CommentsModal = (props: CommentsModalProps) => {
                     {comment.commentText}
                   </p>
                 </div>
-                <div className=" ml-1 text-[13.5px] text-richblack-500 ">{moment(comment.createdAt).fromNow()}</div>
+                <div className=" flex justify-between">
+                  <div className=" ml-1 text-[13.5px] text-richblack-500 ">{moment(comment.createdAt).fromNow()}</div>
+                  {comment.isCurrentUser === true && (
+                    <MdDeleteForever
+                      onClick={() => deleteComment(comment.id)}
+                      className=" size-5 aspect-square cursor-pointer hover:fill-red-600 mr-10 "
+                    />
+                  )}
+                </div>
               </div>
             ))}
         </div>

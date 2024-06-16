@@ -127,11 +127,14 @@ export const addCommentApi = async (postId: number, comment: string): Promise<Ad
   }
 };
 
-export const deleteCommentApi = async (commentId: number): Promise<boolean> => {
+export const deleteCommentApi = async (postId: number, commentId: number): Promise<boolean> => {
   try {
-    const resData: CommonRs = await fetchApi("DELETE", postEndPoints.DELETE_COMMENT, null, null, {
-      commentId: `${commentId}`,
-    });
+    const resData: CommonRs = await fetchApi(
+      "DELETE",
+      postEndPoints.DELETE_COMMENT,
+      { postId: postId, commentId: commentId },
+      { "Content-Type": "application/json" }
+    );
     if (resData && resData.success === true) {
       return true;
     }
