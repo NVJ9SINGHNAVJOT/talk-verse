@@ -149,7 +149,7 @@ const PostLayout = (props: PostProps) => {
             line === "" ? (
               <br key={index} />
             ) : (
-              <div key={index} className=" whitespace-pre text-wrap">
+              <div key={index} className=" whitespace-pre text-wrap break-words">
                 {line}
               </div>
             )
@@ -157,9 +157,9 @@ const PostLayout = (props: PostProps) => {
         </div>
       )}
       {post.tags.length > 0 && (
-        <div className=" w-full flex gap-x-2 gap-y-1 flex-wrap">
+        <div className=" w-full flex gap-x-2 gap-y-1 flex-wrap break-words">
           {post?.tags.map((tag, index) => (
-            <div key={index} className=" cursor-default text-blue-500 ">
+            <div key={index} className=" cursor-default text-blue-500 text-wrap">
               {"#" + tag}
             </div>
           ))}

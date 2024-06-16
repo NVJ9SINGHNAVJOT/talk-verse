@@ -22,7 +22,7 @@ import { CustomRequest } from "@/types/custom";
 import { deleteFromCloudinay, uploadMultiplesToCloudinary, uploadToCloudinary } from "@/utils/cloudinaryHandler";
 import { deleteFile, deleteFiles } from "@/utils/deleteFile";
 import { errRes } from "@/utils/error";
-import { and, eq, sql, lt, desc, gt } from "drizzle-orm";
+import { and, eq, sql, lt, desc, gt, asc } from "drizzle-orm";
 import { Request, Response } from "express";
 
 export const createPost = async (req: Request, res: Response): Promise<Response> => {
@@ -463,8 +463,11 @@ export const postComments = async (req: Request, res: Response): Promise<Respons
         createdAt: comment.createdAt,
       })
       .from(comment)
-      .leftJoin(user, eq(comment.userId, user.id))
-      .where(and(eq(comment.postId, parseInt(data.postId)), lt(comment.createdAt, beforeAt)));
+      .innerJoin(user, eq(comment.userId, user.id))
+      .where(and(eq(comment.postId, parseInt(data.postId)), lt(comment.createdAt, beforeAt)))
+      .orderBy(asc(comment.createdAt))
+      .limit(15)
+      .execute();
 
     if (comments.length === 0) {
       return res.status(200).json({
@@ -502,8 +505,8 @@ export const getStories = async (req: Request, res: Response): Promise<Response>
         createdAt: story.createdAt,
       })
       .from(story)
-      .leftJoin(follow, eq(story.userId, follow.followingId))
-      .leftJoin(user, eq(story.userId, user.id))
+      .innerJoin(follow, eq(story.userId, follow.followingId))
+      .innerJoin(user, eq(story.userId, user.id))
       .where(
         and(
           eq(follow.followerId, userId2),
@@ -562,7 +565,7 @@ export const recentPosts = async (req: Request, res: Response): Promise<Response
         createdAt: post.createdAt,
       })
       .from(post)
-      .leftJoin(user, eq(post.userId, user.id))
+      .innerJoin(user, eq(post.userId, user.id))
       .leftJoin(save, and(eq(save.postId, post.id), eq(save.userId, userId2)))
       .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, post.id)))
       .where(lt(post.createdAt, new Date(data.createdAt)))
@@ -617,7 +620,7 @@ export const trendingPosts = async (req: Request, res: Response): Promise<Respon
         createdAt: post.createdAt,
       })
       .from(post)
-      .leftJoin(user, eq(post.userId, user.id))
+      .innerJoin(user, eq(post.userId, user.id))
       .leftJoin(save, and(eq(save.postId, post.id), eq(save.userId, userId2)))
       .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, post.id)))
       .where(lt(post.createdAt, new Date(data.createdAt)))
@@ -672,7 +675,7 @@ export const categoryPosts = async (req: Request, res: Response): Promise<Respon
         createdAt: post.createdAt,
       })
       .from(post)
-      .leftJoin(user, eq(post.userId, user.id))
+      .innerJoin(user, eq(post.userId, user.id))
       .leftJoin(save, and(eq(save.postId, post.id), eq(save.userId, userId2)))
       .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, post.id)))
       .where(and(eq(post.category, data.category), lt(post.createdAt, new Date(data.createdAt))))

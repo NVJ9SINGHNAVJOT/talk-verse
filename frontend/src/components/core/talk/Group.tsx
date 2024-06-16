@@ -47,7 +47,7 @@ const Group = () => {
   // initialLoad is for text input disable while messages re-render or render when groupId is changed
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
 
-  useScrollTriggerVertical(scrollableDivRef, setTrigger, stop, toggleTrigger);
+  useScrollTriggerVertical(scrollableDivRef, "up", setTrigger, stop, toggleTrigger);
   useScrollOnTop(scrollableDivRef);
 
   // clean up for group page

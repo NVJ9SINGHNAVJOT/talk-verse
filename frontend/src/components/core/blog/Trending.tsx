@@ -12,7 +12,7 @@ const Trending = () => {
   const postContainer = useRef<HTMLDivElement>(null);
   const [trendingPosts, setTrendingPosts] = useState<Post[]>([]);
 
-  useScrollTriggerVertical(postContainer, setTrigger, stop, undefined, loading);
+  useScrollTriggerVertical(postContainer, "down", setTrigger, stop, undefined, loading);
 
   const removePost = (postId: number) => {
     setTrendingPosts((prev) => prev.filter((post) => post.id !== postId));

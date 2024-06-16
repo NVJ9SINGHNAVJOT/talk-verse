@@ -2,6 +2,7 @@ import { useEffect } from "react";
 
 export const useScrollTriggerVertical = (
   ref: React.RefObject<HTMLDivElement>,
+  direction: "up" | "down",
   setTrigger: React.Dispatch<React.SetStateAction<boolean>>,
   stop: boolean,
   resetTrigger?: boolean,
@@ -19,7 +20,9 @@ export const useScrollTriggerVertical = (
       }
 
       const { scrollTop, clientHeight, scrollHeight } = ref.current;
-      const scrollPercentage = Math.floor(((clientHeight - scrollTop) / scrollHeight) * 100);
+      const scrollPercentage = Math.floor(
+        ((direction === "up" ? clientHeight - scrollTop : clientHeight + scrollTop) / scrollHeight) * 100
+      );
 
       if (scrollPercentage > 85 && !stop && !loading) {
         setTrigger((prev) => !prev);

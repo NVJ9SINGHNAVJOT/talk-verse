@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import { MdOutlineCancelPresentation } from "react-icons/md";
 import { toast } from "react-toastify";
 import { Comment } from "@/types/apis/postApiRs";
+import { RxAvatar } from "react-icons/rx";
+import { useScrollTriggerVertical } from "@/hooks/useScrollTrigger";
 
 type AddComment = {
   commentText: string;
@@ -16,12 +18,18 @@ type CommentsModalProps = {
 };
 
 const CommentsModal = (props: CommentsModalProps) => {
-  const divRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const commentsContainerRef = useRef<HTMLDivElement>(null);
   const [isFocused, setIsFocused] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [opacity, setOpacity] = useState(0);
   const [comments, setComments] = useState<Comment[]>([]);
   const { register, handleSubmit, reset } = useForm<AddComment>();
+  const [stop, setStop] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [trigger, setTrigger] = useState<boolean>(true);
+
+  useScrollTriggerVertical(commentsContainerRef, "down", setTrigger, stop, undefined, loading);
 
   const postComment = async (data: AddComment) => {
     reset();
@@ -33,10 +41,10 @@ const CommentsModal = (props: CommentsModalProps) => {
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLInputElement>) => {
-    if (!divRef.current || isFocused) return;
+    if (!inputRef.current || isFocused) return;
 
-    const div = divRef.current;
-    const rect = div.getBoundingClientRect();
+    const inp = inputRef.current;
+    const rect = inp.getBoundingClientRect();
 
     setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
   };
@@ -61,32 +69,49 @@ const CommentsModal = (props: CommentsModalProps) => {
 
   useEffect(() => {
     const getComments = async () => {
+      if (loading) {
+        return;
+      }
+      setLoading(true);
       let lastCreatedAt;
       if (comments.length === 0) {
         lastCreatedAt = new Date().toISOString();
       } else {
         lastCreatedAt = comments[comments.length - 1].createdAt;
       }
+
       const response = await postCommentsApi(props.id, lastCreatedAt);
+
       if (response) {
         if (response.comments) {
-          setComments(response.comments);
+          if (response.comments.length < 15) {
+            setStop(true);
+          }
+          if (comments.length !== 0) {
+            setComments([...comments, ...response.comments]);
+          } else {
+            setComments(response.comments);
+          }
+        } else {
+          setStop(true);
         }
       } else {
         toast.error("Error while getting comments for post");
       }
+      setLoading(false);
     };
     getComments();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trigger]);
 
   return (
-    <section className="fixed inset-0 z-50 top-16 backdrop-blur-sm max-w-maxContent">
-      <div className="relative w-96 flex flex-col mx-auto mt-24">
+    <section className="fixed inset-0 z-50 top-16 backdrop-blur-[20px] max-w-maxContent">
+      <div className="relative w-[28rem] lg:w-[38rem] flex flex-col mx-auto mt-16">
         <MdOutlineCancelPresentation
           onClick={() => props.setToggleComments(false)}
-          className=" w-11 h-8 absolute -right-24 -top-14 cursor-pointer fill-white hover:fill-slate-300"
+          className=" w-11 h-8 absolute -right-14 lm:-right-24 -top-10 cursor-pointer fill-white hover:fill-slate-300"
         />
-        <form onSubmit={handleSubmit(postComment)} className="relative w-10/12">
+        <form onSubmit={handleSubmit(postComment)} className="relative w-10/12 self-center">
           <button type="submit" className=" w-0 h-0 absolute -z-10 ">
             Submit
           </button>
@@ -104,10 +129,12 @@ const CommentsModal = (props: CommentsModalProps) => {
             autoComplete="off"
             placeholder="Enter Comment Here"
             type="text"
-            className="h-12 w-full cursor-default rounded-md border border-gray-800 bg-gray-950 p-3.5 text-gray-100 transition-colors duration-500 placeholder:select-none  placeholder:text-gray-500 focus:border-[#8678F9] focus:outline-none"
+            className="h-12 w-full cursor-default rounded-md border border-gray-800 bg-gray-950 p-3.5 text-gray-100 
+            transition-colors duration-500 placeholder:select-none  placeholder:text-gray-500 focus:border-[#8678F9] 
+            focus:outline-none"
           />
           <input
-            ref={divRef}
+            ref={inputRef}
             disabled
             style={{
               border: "1px solid #8678F9",
@@ -115,9 +142,32 @@ const CommentsModal = (props: CommentsModalProps) => {
               WebkitMaskImage: `radial-gradient(30% 30px at ${position.x}px ${position.y}px, black 45%, transparent)`,
             }}
             aria-hidden="true"
-            className="pointer-events-none absolute left-0 top-0 z-10 h-12 w-full cursor-default rounded-md border border-[#8678F9] bg-[transparent] p-3.5 opacity-0  transition-opacity duration-500 placeholder:select-none"
+            className="pointer-events-none absolute left-0 top-0 z-10 h-12 w-full cursor-default rounded-md border border-[#8678F9]
+             bg-[transparent] p-3.5 opacity-0  transition-opacity duration-500 placeholder:select-none"
           />
         </form>
+        <div
+          ref={commentsContainerRef}
+          className=" flex flex-col gap-y-4 w-full h-[calc(100vh-30vh)] overflow-y-scroll mt-4"
+        >
+          {comments.length > 0 &&
+            comments.map((comment, index) => (
+              <div key={index} className="flex cursor-default">
+                <div className="flex">
+                  {comment.imageUrl ? (
+                    <img alt="Loading..." className=" size-8 rounded-full mr-2" src={comment.imageUrl} />
+                  ) : (
+                    <RxAvatar className=" size-8 rounded-full mr-2" />
+                  )}
+                </div>
+                <p className=" text-[0.9rem] mt-[0.15rem] break-words flex-grow w-fit ">
+                  <span className=" text-snow-800 ml-1 mr-4 text-[16px] ">{comment.userName}</span>
+                  {comment.commentText}
+                </p>
+                <div>{}</div>
+              </div>
+            ))}
+        </div>
       </div>
     </section>
   );
