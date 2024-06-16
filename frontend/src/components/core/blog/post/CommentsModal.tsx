@@ -1,6 +1,7 @@
 import { addCommentApi, postCommentsApi } from "@/services/operations/postApi";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import moment from "moment";
 import { MdOutlineCancelPresentation } from "react-icons/md";
 import { toast } from "react-toastify";
 import { Comment } from "@/types/apis/postApiRs";
@@ -152,19 +153,21 @@ const CommentsModal = (props: CommentsModalProps) => {
         >
           {comments.length > 0 &&
             comments.map((comment, index) => (
-              <div key={index} className="flex cursor-default">
+              <div key={index} className="flex flex-col gap-y-[0.2rem] cursor-default">
                 <div className="flex">
-                  {comment.imageUrl ? (
-                    <img alt="Loading..." className=" size-8 rounded-full mr-2" src={comment.imageUrl} />
-                  ) : (
-                    <RxAvatar className=" size-8 rounded-full mr-2" />
-                  )}
+                  <div>
+                    {comment.imageUrl ? (
+                      <img alt="Loading..." className=" size-8 rounded-full mr-2" src={comment.imageUrl} />
+                    ) : (
+                      <RxAvatar className=" size-8 rounded-full mr-2" />
+                    )}
+                  </div>
+                  <p className=" text-[0.9rem] mt-[0.15rem] break-words flex-grow w-fit ">
+                    <span className=" text-snow-800 ml-1 mr-4 text-[16px] ">{comment.userName}</span>
+                    {comment.commentText}
+                  </p>
                 </div>
-                <p className=" text-[0.9rem] mt-[0.15rem] break-words flex-grow w-fit ">
-                  <span className=" text-snow-800 ml-1 mr-4 text-[16px] ">{comment.userName}</span>
-                  {comment.commentText}
-                </p>
-                <div>{}</div>
+                <div className=" ml-1 text-[13.5px] text-richblack-500 ">{moment(comment.createdAt).fromNow()}</div>
               </div>
             ))}
         </div>

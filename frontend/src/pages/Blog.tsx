@@ -143,7 +143,7 @@ const Blog = () => {
   return (
     <div className="relative w-full flex h-[calc(100vh-4rem)] min-w-minContent">
       {/* user profile and category section  */}
-      <section className="w-48 h-full flex flex-col px-1 bg-[#030609]">
+      <section className="w-36 md:w-48 h-full flex flex-col px-1 bg-[#030609]">
         {/* user profile details */}
         <div className="flex flex-col mt-4 text-snow-200 font-be-veitnam-pro items-center gap-y-1">
           {user?.imageUrl ? (
@@ -153,8 +153,8 @@ const Blog = () => {
           )}
           {user && <p className=" text-[1rem]">{user?.firstName + " " + user?.lastName}</p>}
           {user && <p className=" text-[0.8rem]">{user.userName}</p>}
-          <div className=" w-full flex mt-5 justify-between">
-            <div className="flex flex-col items-center ml-1">
+          <div className=" w-full flex flex-col md:flex-row mt-2 gap-y-2 md:gap-y-0 md:mt-5 md:justify-between">
+            <div className="flex flex-col items-center md:ml-1">
               <p className="leading-4">{userPosts}</p>
               <p className="text-xs leading-3">Post</p>
             </div>
@@ -162,7 +162,7 @@ const Blog = () => {
               <p className="leading-4">{followers}</p>
               <p className="text-xs leading-3">Followers</p>
             </div>
-            <div className="flex flex-col items-center mr-1">
+            <div className="flex flex-col items-center md:mr-1">
               <p className="leading-4">{following}</p>
               <p className="text-xs leading-3">Following</p>
             </div>
@@ -207,7 +207,7 @@ const Blog = () => {
       </section>
 
       {/* posts section */}
-      <section className=" flex-grow flex flex-col bg-[#09131d] pt-1 px-4">
+      <section className=" w-[calc(100vw-144px)] md:w-[calc(100vw-192px)] lm:w-[calc(100vw-(192px+224px))] flex flex-col bg-[#09131d] pt-1 px-4">
         {/* story section */}
         <section className="w-full flex mt-1 mb-5">
           {/* create story */}

@@ -58,11 +58,7 @@ const Trending = () => {
     <div ref={postContainer} className="w-full h-full flex flex-col items-center gap-y-5 overflow-y-scroll">
       {trendingPosts.length !== 0 &&
         trendingPosts.map((post, index) => {
-          return (
-            <div key={index}>
-              <PostLayout post={post} removePost={removePost} />
-            </div>
-          );
+          return <PostLayout key={index} post={post} removePost={removePost} />;
         })}
     </div>
   );

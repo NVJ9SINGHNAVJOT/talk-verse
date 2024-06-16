@@ -106,7 +106,7 @@ const PostLayout = (props: PostProps) => {
   }, [post]);
 
   return (
-    <div className=" relative w-[40rem] flex flex-col gap-y-4 text-white bg-black p-2 rounded-xl">
+    <div className=" relative w-10/12 max-w-[44rem] flex flex-col gap-y-4 text-white bg-black p-3 rounded-xl">
       {/* top */}
       <div className=" flex justify-between">
         <div className=" flex">
@@ -149,7 +149,7 @@ const PostLayout = (props: PostProps) => {
             line === "" ? (
               <br key={index} />
             ) : (
-              <div key={index} className=" whitespace-pre text-wrap break-words">
+              <div key={index} className=" whitespace-pre max-w-full text-wrap break-words">
                 {line}
               </div>
             )
@@ -157,9 +157,9 @@ const PostLayout = (props: PostProps) => {
         </div>
       )}
       {post.tags.length > 0 && (
-        <div className=" w-full flex gap-x-2 gap-y-1 flex-wrap break-words">
+        <div className=" w-full flex gap-x-2 gap-y-1 flex-wrap">
           {post?.tags.map((tag, index) => (
-            <div key={index} className=" cursor-default text-blue-500 text-wrap">
+            <div key={index} className=" cursor-default max-w-full text-blue-500 text-wrap break-words">
               {"#" + tag}
             </div>
           ))}
