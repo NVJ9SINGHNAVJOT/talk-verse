@@ -273,7 +273,7 @@ export const userStory = async (req: Request, res: Response): Promise<Response> 
     const userStoryUrl = await db
       .select({ id: story.id, storyUrl: story.storyUrl })
       .from(story)
-      .where(eq(story.userId, userId2))
+      .where(and(eq(story.userId, userId2), gt(story.createdAt, sql`now() - interval '1 day'`)))
       .limit(1)
       .execute();
 

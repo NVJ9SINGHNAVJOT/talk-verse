@@ -242,8 +242,8 @@ const Blog = () => {
 
       {/* posts section */}
       <section
-        className=" w-[calc(100vw-144px)] md:w-[calc(100vw-192px)] lm:w-[calc(100vw-(192px+224px))] flex flex-col
-       bg-[#09131d] pt-1 px-4"
+        className={`w-[calc(100vw-144px)] md:w-[calc(100vw-192px)] lm:w-[calc(100vw-(192px+224px))] flex flex-col
+       bg-[#09131d] pt-1 px-4 ${postMenu === "trending" || postMenu === "recent" ? "ct-blogSection-bg-1" : "ct-blogSection-bg-2"}`}
       >
         {/* story section */}
         <section className="w-full flex mt-1 mb-5">
@@ -414,7 +414,7 @@ const Blog = () => {
             </button>
             <MdOutlineCancelPresentation
               onClick={() => setViewStory(false)}
-              className=" w-11 h-8 absolute -right-16 lm:-right-28 -top-14 cursor-pointer fill-white hover:fill-slate-300"
+              className=" w-11 h-8 absolute -right-16 lm:-right-28 -top-14 cursor-pointer fill-black hover:fill-slate-300"
             />
             {userStory &&
               (userStory.storyUrl.includes("image/") ? (
@@ -427,16 +427,7 @@ const Blog = () => {
           {/* canvas effect */}
           <AnimatePresence>
             <div className="h-full w-full absolute inset-0">
-              <CanvasReveal
-                animationSpeed={5}
-                containerClassName="bg-transparent"
-                colors={[
-                  [59, 130, 246],
-                  [139, 92, 246],
-                ]}
-                opacities={[0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.4, 0.4, 0.4, 1]}
-                dotSize={2}
-              />
+              <CanvasReveal animationSpeed={10} containerClassName="bg-sky-600" colors={[[125, 211, 252]]} />
             </div>
           </AnimatePresence>
         </section>

@@ -5,36 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1718030443595,
-      "tag": "0000_mushy_scarlet_spider",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1718425410287,
-      "tag": "0001_mushy_princess_powerful",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1718431392952,
-      "tag": "0002_abnormal_proemial_gods",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1718523229212,
-      "tag": "0003_demonic_the_leader",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1718527602817,
-      "tag": "0004_silly_scarlet_witch",
+      "when": 1718565666524,
+      "tag": "0000_lying_maginty",
       "breakpoints": true
     }
   ]

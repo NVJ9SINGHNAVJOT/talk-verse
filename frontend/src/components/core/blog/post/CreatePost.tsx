@@ -138,7 +138,7 @@ const CreatePost = (props: CreatePostProps) => {
     reset();
     props.setCreatePost(false);
     const newData = new FormData();
-    newData.append("category", data.category);
+    newData.append("category", data.category.toLowerCase());
     if (data.title) {
       newData.append("title", data.title);
     }

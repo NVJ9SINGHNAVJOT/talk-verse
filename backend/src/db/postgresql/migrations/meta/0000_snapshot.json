@@ -1,5 +1,5 @@
 {
-  "id": "8fc7d524-0614-451e-9c84-4ce0b3023f4b",
+  "id": "bbd70f03-f268-4239-aa7a-287cb56a6c9c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -26,8 +26,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "text": {
-          "name": "text",
+        "comment_text": {
+          "name": "comment_text",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
@@ -72,7 +72,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -219,7 +219,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -286,6 +286,13 @@
         },
         "likes_count": {
           "name": "likes_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "comments_count": {
+          "name": "comments_count",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
@@ -513,7 +520,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },

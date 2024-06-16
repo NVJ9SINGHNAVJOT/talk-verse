@@ -195,7 +195,7 @@ export const trendingPostsApi = async (createdAt: string): Promise<PostsRs> => {
   }
 };
 
-export const categoryPosts = async (category: string, createdAt: string): Promise<PostsRs> => {
+export const categoryPostsApi = async (category: string, createdAt: string): Promise<PostsRs> => {
   try {
     const resData: PostsRs = await fetchApi("GET", postEndPoints.CATEGORY_POSTS, null, null, {
       category: category,

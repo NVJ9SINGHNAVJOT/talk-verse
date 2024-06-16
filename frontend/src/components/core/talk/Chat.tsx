@@ -40,7 +40,7 @@ const Chat = () => {
   const [workModal, setWorkModal] = useState<boolean>(false);
   const [stop, setStop] = useState<boolean>(false);
   const [trigger, setTrigger] = useState<boolean>(true);
-  const [toggleTrigger, setToggleTrigger] = useState<boolean>(true);
+  const [resetTrigger, setResetTrigger] = useState<boolean>(true);
   const [firstMounting, setFirstMounting] = useState(true);
   const scrollableDivRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
@@ -51,7 +51,7 @@ const Chat = () => {
   // initialLoad is for text input disable while messages re-render or render when chatId is changed
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
 
-  useScrollTriggerVertical(scrollableDivRef, "up", setTrigger, stop, toggleTrigger);
+  useScrollTriggerVertical(scrollableDivRef, "up", setTrigger, stop, resetTrigger);
   useScrollOnTop(scrollableDivRef);
 
   // clean up for chat page
@@ -74,7 +74,7 @@ const Chat = () => {
       // reset unseenCount for chatId
       dispatch(resetUnseenMessage(chatId));
 
-      // this fucntion will only call api for a chatId messasges once
+      // this function will only call api for a chatId messasges once
       if (chatIdStart[chatId] !== true && apiCalls[`getMessagesApi-${chatId}`] !== true) {
         // api is getting called for first time for chatId and this hook will call this api only once
         /* NOTE: getMessagesApi api call state management */
@@ -126,7 +126,7 @@ const Chat = () => {
 
     return () => {
       setInitialLoad(true), setFirstMounting(true);
-      setStop(false), setToggleTrigger((prev) => !prev);
+      setStop(false), setResetTrigger((prev) => !prev);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatId]);

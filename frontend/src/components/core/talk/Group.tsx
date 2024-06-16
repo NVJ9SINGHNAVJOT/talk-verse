@@ -36,7 +36,7 @@ const Group = () => {
   const [workModal, setWorkModal] = useState<boolean>(false);
   const [stop, setStop] = useState<boolean>(false);
   const [trigger, setTrigger] = useState<boolean>(true);
-  const [toggleTrigger, setToggleTrigger] = useState<boolean>(true);
+  const [resetTrigger, setResetTrigger] = useState<boolean>(true);
   const [firstMounting, setFirstMounting] = useState(true);
   const dispatch = useDispatch();
   const { socket } = useSocketContext();
@@ -47,7 +47,7 @@ const Group = () => {
   // initialLoad is for text input disable while messages re-render or render when groupId is changed
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
 
-  useScrollTriggerVertical(scrollableDivRef, "up", setTrigger, stop, toggleTrigger);
+  useScrollTriggerVertical(scrollableDivRef, "up", setTrigger, stop, resetTrigger);
   useScrollOnTop(scrollableDivRef);
 
   // clean up for group page
@@ -121,7 +121,7 @@ const Group = () => {
 
     return () => {
       setInitialLoad(true), setFirstMounting(true), setStop(false);
-      setToggleTrigger((prev) => !prev);
+      setResetTrigger((prev) => !prev);
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

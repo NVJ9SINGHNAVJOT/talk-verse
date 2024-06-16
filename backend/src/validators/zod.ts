@@ -54,20 +54,20 @@ export const optSchema = z
 
 // category
 export const categoriesSchema = z.enum([
-  "Technology",
-  "Lifestyle",
-  "Blog",
-  "Nature",
-  "Music",
-  "Sports",
-  "Health",
-  "Finance",
-  "Art",
-  "History",
-  "Literature",
-  "Science",
-  "Business",
-  "Other",
+  "technology",
+  "lifestyle",
+  "blog",
+  "nature",
+  "music",
+  "sports",
+  "health",
+  "finance",
+  "art",
+  "history",
+  "literature",
+  "science",
+  "business",
+  "other",
 ]);
 
 // mongoose id
