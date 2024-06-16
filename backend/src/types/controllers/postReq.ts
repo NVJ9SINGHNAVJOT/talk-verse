@@ -27,7 +27,7 @@ export type UpdateLikeReq = z.infer<typeof UpdateLikeReqSchema>;
 
 export const AddCommentReqSchema = z.object({
   postId: z.number().min(1),
-  comment: z.string().min(1).max(100),
+  commentText: z.string().min(1).max(200),
 });
 export type AddCommentReq = z.infer<typeof AddCommentReqSchema>;
 

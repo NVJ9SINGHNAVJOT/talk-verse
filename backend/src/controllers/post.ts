@@ -361,8 +361,13 @@ export const addComment = async (req: Request, res: Response): Promise<Response>
     const data = addCommentReq.data;
     const newComment = await db
       .insert(comment)
-      .values({ userId: userId2, postId: data.postId, text: data.comment })
-      .returning({ id: comment.id, userId: comment.userId, text: comment.text, createdAt: comment.createdAt })
+      .values({ userId: userId2, postId: data.postId, commentText: data.commentText })
+      .returning({
+        id: comment.id,
+        userId: comment.userId,
+        commentText: comment.commentText,
+        createdAt: comment.createdAt,
+      })
       .execute();
 
     await db

@@ -1,15 +1,16 @@
 import { deletePostApi, updateLikeApi } from "@/services/operations/postApi";
 import { Post } from "@/types/apis/postApiRs";
 import { BsSaveFill } from "react-icons/bs";
-import { MdDeleteForever, MdOutlineCancelPresentation } from "react-icons/md";
+import { MdDeleteForever } from "react-icons/md";
 import { RxAvatar } from "react-icons/rx";
 import { toast } from "react-toastify";
 import MediaFiles from "@/components/core/blog/media/MediaFiles";
-import { useEffect, useRef, useState } from "react";
-import { FileUrl } from "./CreatePost";
+import { useEffect, useState } from "react";
+import { FileUrl } from "@/components/core/blog/post/CreatePost";
 import { validFiles } from "@/utils/constants";
 import { BiSolidCommentDetail } from "react-icons/bi";
 import { FaHeart } from "react-icons/fa";
+import Comments from "@/components/core/blog/post/Comments";
 
 type PostProps = {
   post: Post;
@@ -19,17 +20,13 @@ type PostProps = {
 
 const PostLayout = (props: PostProps) => {
   const post = props.post;
-  const divRef = useRef<HTMLInputElement>(null);
-  const [isFocused, setIsFocused] = useState(false);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [opacity, setOpacity] = useState(0);
+
   const [mediaUrls, setMediaUrls] = useState<FileUrl[]>([]);
   const [like, setLike] = useState<boolean>();
   const [likeLoading, setLikeLoading] = useState<boolean>(false);
   const [likesCount, setLikesCount] = useState<number>(0);
   const [commentsCount, setCommentsCount] = useState<number>();
   const [toggleComments, setToggleComments] = useState<boolean>(false);
-  const [comments, setComments] = useState();
 
   const updateLike = async () => {
     setLikeLoading(true);
@@ -59,33 +56,6 @@ const PostLayout = (props: PostProps) => {
     } else {
       toast.error("Error while deleting post");
     }
-  };
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLInputElement>) => {
-    if (!divRef.current || isFocused) return;
-
-    const div = divRef.current;
-    const rect = div.getBoundingClientRect();
-
-    setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-  };
-
-  const handleFocus = () => {
-    setIsFocused(true);
-    setOpacity(1);
-  };
-
-  const handleBlur = () => {
-    setIsFocused(false);
-    setOpacity(0);
-  };
-
-  const handleMouseEnter = () => {
-    setOpacity(1);
-  };
-
-  const handleMouseLeave = () => {
-    setOpacity(0);
   };
 
   useEffect(() => {
@@ -151,7 +121,17 @@ const PostLayout = (props: PostProps) => {
         </div>
       )}
       {post.content.length > 0 && (
-        <div>{post.content.map((line, index) => (line === "" ? <br /> : <div key={index}>{line}</div>))}</div>
+        <div>
+          {post.content.map((line, index) =>
+            line === "" ? (
+              <br key={index} />
+            ) : (
+              <div key={index} className=" whitespace-pre text-wrap">
+                {line}
+              </div>
+            )
+          )}
+        </div>
       )}
       {post.tags.length > 0 && (
         <div className=" w-full flex gap-x-2 gap-y-1 flex-wrap">
@@ -173,41 +153,7 @@ const PostLayout = (props: PostProps) => {
         <div className=" mr-4 leading-[1.1rem]">{commentsCount}</div>
       </div>
       {/* open post comments */}
-      {toggleComments === true && (
-        <section className="fixed inset-0 z-50 top-16 backdrop-blur-sm max-w-maxContent">
-          <div className="relative w-72 flex flex-col mx-auto mt-24">
-            <MdOutlineCancelPresentation
-              onClick={() => setToggleComments(false)}
-              className=" w-11 h-8 absolute -right-24 -top-14 cursor-pointer fill-white hover:fill-slate-300"
-            />
-            <div className="relative w-10/12">
-              <input
-                onMouseMove={handleMouseMove}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-                autoComplete="off"
-                placeholder="Enter Text Here"
-                type="email"
-                name="email"
-                className="h-12 w-full cursor-default rounded-md border border-gray-800 bg-gray-950 p-3.5 text-gray-100 transition-colors duration-500 placeholder:select-none  placeholder:text-gray-500 focus:border-[#8678F9] focus:outline-none"
-              />
-              <input
-                ref={divRef}
-                disabled
-                style={{
-                  border: "1px solid #8678F9",
-                  opacity,
-                  WebkitMaskImage: `radial-gradient(30% 30px at ${position.x}px ${position.y}px, black 45%, transparent)`,
-                }}
-                aria-hidden="true"
-                className="pointer-events-none absolute left-0 top-0 z-10 h-12 w-full cursor-default rounded-md border border-[#8678F9] bg-[transparent] p-3.5 opacity-0  transition-opacity duration-500 placeholder:select-none"
-              />
-            </div>
-          </div>
-        </section>
-      )}
+      {toggleComments === true && <Comments id={post.id} setToggleComments={setToggleComments} />}
     </div>
   );
 };

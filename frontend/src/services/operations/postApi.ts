@@ -95,7 +95,7 @@ export const addCommentApi = async (postId: number, comment: string): Promise<Ad
     const resData: AddCommentRs = await fetchApi(
       "POST",
       postEndPoints.ADD_COMMENT,
-      { postId: postId, comment: comment },
+      { postId: postId, commentText: comment },
       { "Content-Type": "application/json" }
     );
     if (resData && resData.success === true) {
