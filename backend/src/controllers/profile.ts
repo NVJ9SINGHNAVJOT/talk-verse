@@ -296,10 +296,11 @@ export const userFollowing = async (req: Request, res: Response): Promise<Respon
         lastName: user.lastName,
         imageUrl: user.imageUrl,
         userName: user.userName,
+        createdAt: follow.createdAt,
       })
       .from(follow)
       .innerJoin(user, eq(follow.followingId, user.id))
-      .where(and(eq(follow.followerId, userId2), lt(post.createdAt, new Date(data.createdAt))))
+      .where(and(eq(follow.followerId, userId2), lt(follow.createdAt, new Date(data.createdAt))))
       .limit(20)
       .orderBy(desc(follow.createdAt))
       .execute();
@@ -339,10 +340,11 @@ export const userFollowers = async (req: Request, res: Response): Promise<Respon
         lastName: user.lastName,
         imageUrl: user.imageUrl,
         userName: user.userName,
+        createdAt: follow.createdAt,
       })
       .from(follow)
       .innerJoin(user, eq(follow.followerId, user.id))
-      .where(and(eq(follow.followingId, userId2), lt(post.createdAt, new Date(data.createdAt))))
+      .where(and(eq(follow.followingId, userId2), lt(follow.createdAt, new Date(data.createdAt))))
       .limit(20)
       .orderBy(desc(follow.createdAt))
       .execute();
