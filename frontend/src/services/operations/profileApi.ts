@@ -158,3 +158,17 @@ export const unfollowUserApi = async (userId: number): Promise<boolean> => {
     return false;
   }
 };
+
+export const userSavedPostsApi = async (createdAt: string): Promise<PostsRs> => {
+  try {
+    const resData: PostsRs = await fetchApi("GET", profileEndPoints.POST_SAVES, null, null, {
+      createdAt: createdAt,
+    });
+    if (resData) {
+      return resData;
+    }
+    return null;
+  } catch (error) {
+    return null;
+  }
+};

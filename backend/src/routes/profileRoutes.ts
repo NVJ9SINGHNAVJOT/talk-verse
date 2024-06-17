@@ -13,6 +13,7 @@ import {
   userFollowers,
   userFollowing,
   userPosts,
+  userSavedPosts,
 } from "@/controllers/profile";
 
 const router: Router = express.Router();
@@ -27,5 +28,6 @@ router.get("/userFollowing", auth, userFollowing);
 router.get("/userFollowers", auth, userFollowers);
 router.delete("/removeFollower", auth, removeFollower);
 router.delete("/unfollowUser", auth, unfollowUser);
+router.get("/userSavedPosts", auth, userSavedPosts);
 
 export default router;
