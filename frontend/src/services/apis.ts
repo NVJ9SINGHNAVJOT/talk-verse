@@ -16,6 +16,11 @@ export const profileEndPoints = {
   SET_PROFILE_IMAGE: BASE_URL_SERVER + "/profiles/updateProfileImage",
   SET_PROFILE_DETAILS: BASE_URL_SERVER + "/profiles/updateProfile",
   USER_BLOG_PROFILE: BASE_URL_SERVER + "/profiles/userBlogProfile",
+  USER_POSTS: BASE_URL_SERVER + "/profiles/userPosts",
+  USER_FOLLOWING: BASE_URL_SERVER + "/profiles/userFollowing",
+  USER_FOLLOWERS: BASE_URL_SERVER + "/profiles/userFollowers",
+  REMOVE_FOLLOWER: BASE_URL_SERVER + "/profiles/removeFollower",
+  UNFOLLOW_FOLLOWING: BASE_URL_SERVER + "/profiles/unfollowUser",
 };
 
 // notification endpoints

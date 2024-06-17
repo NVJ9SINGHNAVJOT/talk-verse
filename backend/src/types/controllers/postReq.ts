@@ -49,11 +49,6 @@ export const PostCommentsReqSchema = z.object({
 });
 export type PostCommenstReq = z.infer<typeof PostCommentsReqSchema>;
 
-export const GetCreatedAtReqSchema = z.object({
-  createdAt: z.string().datetime(),
-});
-export type GetCreatedAtReq = z.infer<typeof GetCreatedAtReqSchema>;
-
 export const CategoryPostsReqSchema = z.object({
   category: categoriesSchema,
   createdAt: z.string().datetime(),

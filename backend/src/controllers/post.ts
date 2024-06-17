@@ -6,6 +6,7 @@ import { post } from "@/db/postgresql/schema/post";
 import { save } from "@/db/postgresql/schema/save";
 import { story } from "@/db/postgresql/schema/story";
 import { user } from "@/db/postgresql/schema/user";
+import { GetCreatedAtReqSchema } from "@/types/controllers/common";
 import {
   AddCommentReqSchema,
   CategoryPostsReqSchema,
@@ -13,7 +14,6 @@ import {
   DeleteCommentReqSchema,
   DeletePostReqSchema,
   DeleteStoryReqSchema,
-  GetCreatedAtReqSchema,
   PostCommentsReqSchema,
   SavePostReqSchema,
   UpdateLikeReqSchema,

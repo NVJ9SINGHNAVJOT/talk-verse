@@ -7,6 +7,7 @@ import {
   updateProfile,
   updateProfileImage,
   userBlogProfile,
+  userPosts,
 } from "@/controllers/profile";
 
 const router: Router = express.Router();
@@ -16,5 +17,6 @@ router.get("/getDetails", auth, getUserDetails);
 router.post("/updateProfileImage", imageFile, auth, updateProfileImage);
 router.post("/updateProfile", auth, updateProfile);
 router.get("/userBlogProfile", auth, userBlogProfile);
+router.get("/userPosts", auth, userPosts);
 
 export default router;

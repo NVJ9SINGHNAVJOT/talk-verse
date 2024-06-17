@@ -3,6 +3,7 @@ import { profileEndPoints } from "@/services/apis";
 import { fetchApi } from "@/services/fetchApi";
 import { CommonRs } from "@/types/apis/common";
 import { NewProfileData } from "@/components/core/profile/Settings";
+import { PostsRs } from "@/types/apis/postApiRs";
 
 export const checkUserNameApi = async (userName: string): Promise<CommonRs> => {
   try {
@@ -60,6 +61,20 @@ export const userBlogProfileApi = async (): Promise<UserBlogProfileRs> => {
   try {
     const resData: UserBlogProfileRs = await fetchApi("GET", profileEndPoints.USER_BLOG_PROFILE);
     if (resData && resData.success === true) {
+      return resData;
+    }
+    return null;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const userPostsApi = async (createdAt: string): Promise<PostsRs> => {
+  try {
+    const resData: PostsRs = await fetchApi("GET", profileEndPoints.USER_POSTS, null, null, {
+      createdAt: createdAt,
+    });
+    if (resData) {
       return resData;
     }
     return null;

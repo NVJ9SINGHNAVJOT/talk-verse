@@ -7,7 +7,6 @@ import { channels, groupIds, groupOffline, userSocketIDs } from "@/socket/index"
 import {
   CreateGroupReqSchema,
   OtherMongoUserIdReqSchema,
-  OtherPostgreSQLUserIdReqSchema,
   SetOrderReqSchema,
   SetUnseenCountReqSchema,
 } from "@/types/controllers/notificationReq";
@@ -27,6 +26,7 @@ import { user } from "@/db/postgresql/schema/user";
 import { follow } from "@/db/postgresql/schema/follow";
 import { and, eq, isNull, ne, sql } from "drizzle-orm";
 import { request } from "@/db/postgresql/schema/request";
+import { OtherPostgreSQLUserIdReqSchema } from "@/types/controllers/common";
 
 export const getUsers = async (req: Request, res: Response): Promise<Response> => {
   try {

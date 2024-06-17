@@ -1,13 +1,16 @@
 import User from "@/db/mongodb/models/User";
 import { db } from "@/db/postgresql/connection";
+import { likes } from "@/db/postgresql/schema/likes";
 import { post } from "@/db/postgresql/schema/post";
+import { save } from "@/db/postgresql/schema/save";
 import { user } from "@/db/postgresql/schema/user";
+import { GetCreatedAtReqSchema } from "@/types/controllers/common";
 import { CheckUserNameReqSchema, UpdateProfileReqSchema } from "@/types/controllers/profileReq";
 import { CustomRequest } from "@/types/custom";
 import { deleteFromCloudinay, uploadToCloudinary } from "@/utils/cloudinaryHandler";
 import { deleteFile } from "@/utils/deleteFile";
 import { errRes } from "@/utils/error";
-import { count, eq } from "drizzle-orm";
+import { count, desc, eq, sql, and, lt } from "drizzle-orm";
 import { Request, Response } from "express";
 
 export const checkUserName = async (req: Request, res: Response): Promise<Response> => {
@@ -216,5 +219,60 @@ export const userBlogProfile = async (req: Request, res: Response): Promise<Resp
     });
   } catch (error) {
     return errRes(res, 500, "error while getting userBlogProfile data", error);
+  }
+};
+
+export const userPosts = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const userId2 = (req as CustomRequest).userId2;
+
+    const userPostsReq = GetCreatedAtReqSchema.safeParse(req.query);
+    if (!userPostsReq.success) {
+      return errRes(res, 400, `invalid data for userPosts, ${userPostsReq.error.toString()}`);
+    }
+
+    const data = userPostsReq.data;
+
+    const currUserPosts = await db
+      .select({
+        id: post.id,
+        isCurrentUser: sql<boolean>`CASE WHEN ${post.userId} = ${userId2} THEN TRUE ELSE FALSE END`,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        imageUrl: user.imageUrl,
+        userName: user.userName,
+        isSaved: sql<boolean>`CASE WHEN ${save.userId} = ${userId2} AND ${save.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
+        isLiked: sql<boolean>`CASE WHEN ${likes.userId} = ${userId2} AND ${likes.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
+        commentsCount: post.commentsCount,
+        category: post.category,
+        title: post.title,
+        mediaUrls: post.mediaUrls,
+        tags: post.tags,
+        content: post.content,
+        likesCount: post.likesCount,
+        createdAt: post.createdAt,
+      })
+      .from(post)
+      .innerJoin(user, eq(post.userId, user.id))
+      .leftJoin(save, and(eq(save.postId, post.id), eq(save.userId, userId2)))
+      .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, post.id)))
+      .where(and(eq(post.userId, userId2), lt(post.createdAt, new Date(data.createdAt))))
+      .orderBy(desc(post.createdAt))
+      .limit(15)
+      .execute();
+
+    if (currUserPosts.length) {
+      return res.status(200).json({
+        success: true,
+        message: "user posts",
+        posts: currUserPosts,
+      });
+    }
+    return res.status(200).json({
+      success: false,
+      message: "no further user posts",
+    });
+  } catch (error) {
+    return errRes(res, 500, "error while getting user posts");
   }
 };

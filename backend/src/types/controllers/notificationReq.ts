@@ -23,11 +23,7 @@ export const SetOrderReqSchema = z.object({
 });
 export type SetOrderReq = z.infer<typeof SetOrderReqSchema>;
 
-export const OtherPostgreSQLUserIdReqSchema = z.object({
-  otherUserId: number().min(1),
-});
-export type OtherPostgreSQLUserIdReq = z.infer<typeof OtherPostgreSQLUserIdReqSchema>;
-
+// NOTE: currently not in use
 export const UpdateFollowSuggestionReqSchema = z.object({
   previousSuggestionsIds: number().min(1).array().length(4).optional(),
 });
