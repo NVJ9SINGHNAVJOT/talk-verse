@@ -49,15 +49,12 @@ const Category = () => {
       const response = await categoryPostsApi(category, lastCreatedAt);
       if (response) {
         if (response.posts) {
+          const withNewPosts = [...categoriesPost, ...response.posts];
           if (category === response.posts[0].category) {
             if (response.posts.length < 15) {
               setStop(true);
             }
-            if (categoriesPost.length > 0) {
-              setCategoriesPost([...categoriesPost, ...response.posts]);
-            } else {
-              setCategoriesPost(response.posts);
-            }
+            setCategoriesPost(withNewPosts);
           }
         } else {
           setStop(true);

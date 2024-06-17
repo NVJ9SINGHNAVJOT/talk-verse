@@ -34,14 +34,11 @@ const Recent = () => {
       const response = await recentPostsApi(lastCreatedAt);
       if (response) {
         if (response.posts) {
+          const withNewPosts = [...recentPost, ...response.posts];
           if (response.posts.length < 15) {
             setStop(true);
           }
-          if (recentPost.length > 0) {
-            setRecentPost([...recentPost, ...response.posts]);
-          } else {
-            setRecentPost(response.posts);
-          }
+          setRecentPost(withNewPosts);
         } else {
           setStop(true);
         }

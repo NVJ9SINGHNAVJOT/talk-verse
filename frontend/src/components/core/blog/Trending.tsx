@@ -34,14 +34,11 @@ const Trending = () => {
       const response = await trendingPostsApi(lastCreatedAt);
       if (response) {
         if (response.posts) {
+          const withNewPosts = [...trendingPosts, ...response.posts];
           if (response.posts.length < 15) {
             setStop(true);
           }
-          if (trendingPosts.length > 0) {
-            setTrendingPosts([...trendingPosts, ...response.posts]);
-          } else {
-            setTrendingPosts(response.posts);
-          }
+          setTrendingPosts(withNewPosts);
         } else {
           setStop(true);
         }
