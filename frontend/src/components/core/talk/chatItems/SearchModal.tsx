@@ -1,4 +1,4 @@
-import useOnClickOutside from "@/hooks/useOnClickOutside";
+import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 import { useRef } from "react";
 import { getUsersApi, sendRequestApi } from "@/services/operations/notificationApi";
 import { useEffect, useState } from "react";

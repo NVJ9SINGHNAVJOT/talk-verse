@@ -1,4 +1,4 @@
-import useOnClickOutside from "@/hooks/useOnClickOutside";
+import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 import WorkModal from "@/lib/modals/workmodal/WorkModal";
 import { addChatBarData, addGroup } from "@/redux/slices/chatSlice";
 import { setCreateGroupLoading } from "@/redux/slices/loadingSlice";

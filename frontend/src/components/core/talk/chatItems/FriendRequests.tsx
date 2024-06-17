@@ -1,4 +1,4 @@
-import useOnClickOutside from "@/hooks/useOnClickOutside";
+import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 import { deleteUserRequest, Friend, ChatBarData, addFriend, addChatBarData } from "@/redux/slices/chatSlice";
 import { addPublicKey, PublicKey, addNewUnseen } from "@/redux/slices/messagesSlice";
 import { useAppSelector } from "@/redux/store";

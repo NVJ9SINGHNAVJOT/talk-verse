@@ -1,4 +1,4 @@
-import useOnClickOutside from "@/hooks/useOnClickOutside";
+import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 import LogOutModal from "@/components/auth/LogOutModal";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";

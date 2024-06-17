@@ -1,7 +1,7 @@
 import CreatePost from "@/components/core/blog/post/CreatePost";
 import CreateStory from "@/components/core/blog/story/CreateStory";
 import Stories from "@/components/core/blog/story/Stories";
-import useOnClickOutside from "@/hooks/useOnClickOutside";
+import { useOnClickOutsideBlog } from "@/hooks/useOnClickOutside";
 import TalkVerseButton from "@/lib/buttons/talkversebutton/TalkVerseButton";
 import { CanvasReveal } from "@/lib/sections/CanvasReveal";
 import { setTotalPosts } from "@/redux/slices/postSlice";
@@ -67,7 +67,7 @@ const Blog = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  useOnClickOutside(sideSectionRef, () => setSideMenu(false), excludeTalkVerseButtonRef);
+  useOnClickOutsideBlog(sideSectionRef, () => setSideMenu(false), sideMenu, excludeTalkVerseButtonRef);
 
   const sendFollowRequest = async (reqUserId: number) => {
     setSendingReq(true);

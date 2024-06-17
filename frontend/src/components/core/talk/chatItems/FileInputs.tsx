@@ -3,7 +3,7 @@ import { RiFileVideoLine } from "react-icons/ri";
 import { FaRegFilePdf } from "react-icons/fa6";
 import { LiaFileAudio } from "react-icons/lia";
 import { useRef, useState } from "react";
-import useOnClickOutside from "@/hooks/useOnClickOutside";
+import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 import { MdAttachFile } from "react-icons/md";
 import { toast } from "react-toastify";
 import { maxFileSize, validFiles } from "@/utils/constants";
