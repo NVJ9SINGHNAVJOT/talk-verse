@@ -110,7 +110,7 @@ const UserInfo = () => {
           )}
         </div>
         {/* user Image */}
-        <div className=" relative flex flex-col gap-10  w-56">
+        <div className=" relative flex flex-col gap-10 self-center w-56 lg:mr-24">
           <input
             type="file"
             accept=".jpg ,.jpeg, .png"
@@ -120,8 +120,8 @@ const UserInfo = () => {
           />
           <div
             className=" bg-black  w-full rounded-xl flex justify-center items-center
-        [box-shadow:0px_0px_57px_9px_rgba(0,0,0,0.4)] hover:scale-110 transition-all ease-in-out
-         mx-auto"
+            [box-shadow:0px_0px_57px_9px_rgba(0,0,0,0.4)] hover:scale-110 transition-all ease-in-out
+            mx-auto"
           >
             {selectedFile ? (
               <img src={URL.createObjectURL(selectedFile)} alt="Loading..." className=" w-full h-64 aspect-auto " />

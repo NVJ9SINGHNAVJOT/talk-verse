@@ -54,7 +54,7 @@ const Profile = () => {
     <div className="w-full flex h-[calc(100vh-4rem)]">
       {/* left bar profile menu section*/}
       <section
-        className=" w-[9rem] md:w-[11rem] lg:w-[14rem] h-full bg-[#A69F96] max-w-maxContent
+        className=" w-[8rem] md:w-[11rem] lg:w-[14rem] h-full bg-[#A69F96] max-w-maxContent
        hover:bg-[#FBF4D0] transition-all ease-in-out"
       >
         <div className=" group flex flex-col w-full mt-28 gap-5">
@@ -77,12 +77,12 @@ const Profile = () => {
       {/* right bar chat main section */}
       {loading ? (
         <div
-          className=" w-[calc(100vw-9rem)] md:w-[calc(100vw-11rem)] lg:w-[calc(100vw-14rem)] max-w-maxContent overflow-y-auto 
+          className=" w-[calc(100vw-8rem)] md:w-[calc(100vw-11rem)] lg:w-[calc(100vw-14rem)] max-w-maxContent overflow-y-auto 
         ct-userInfoBack min-h-full blur-md"
         ></div>
       ) : (
         <section
-          className=" w-[calc(100vw-9rem)] md:w-[calc(100vw-11rem)] lg:w-[calc(100vw-14rem)] max-w-maxContent overflow-y-auto 
+          className=" w-[calc(100vw-8rem)] md:w-[calc(100vw-11rem)] lg:w-[calc(100vw-14rem)] max-w-maxContent overflow-y-auto 
       ct-userInfoBack min-h-full"
         >
           <Outlet />

@@ -52,7 +52,7 @@ const MyPosts = () => {
   }, [trigger]);
 
   return (
-    <div ref={postContainer} className="w-full h-full flex flex-col items-center mt-14 gap-y-5 overflow-y-auto">
+    <div ref={postContainer} className="w-full h-full flex flex-col items-center py-12 gap-y-5 overflow-y-auto">
       {myPosts.length !== 0 &&
         myPosts.map((post, index) => {
           return <PostLayout key={index} post={post} removePost={removePost} />;

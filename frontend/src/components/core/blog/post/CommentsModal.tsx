@@ -134,7 +134,11 @@ const CommentsModal = (props: CommentsModalProps) => {
   }, [trigger]);
 
   return (
-    <section className="fixed inset-0 z-50 top-16 backdrop-blur-[20px] max-w-maxContent overflow-y-auto">
+    <section
+      className={`fixed inset-0 z-50 top-16 backdrop-blur-[20px] max-w-maxContent overflow-y-auto
+      ${location.pathname.includes("/profile") && "ct-CommentModalBackground"}
+    `}
+    >
       <div className="relative w-[28rem] lg:w-[38rem] flex flex-col mx-auto mt-16">
         <MdOutlineCancelPresentation
           onClick={() => props.setToggleComments(false)}
