@@ -11,7 +11,7 @@ export const comment = pgTable("comment", {
   postId: integer("post_id")
     .notNull()
     .references(() => post.id, { onDelete: "cascade" }),
-  commentText: varchar("comment_text").notNull(),
+  commentText: varchar("comment_text", { length: 200 }).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

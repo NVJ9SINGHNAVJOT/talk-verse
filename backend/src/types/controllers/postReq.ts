@@ -3,7 +3,7 @@ import z from "zod";
 
 export const CreatePostReqSchema = z.object({
   category: categoriesSchema,
-  title: z.string().optional(),
+  title: z.string().min(1).max(100).optional(),
   tags: z.string().optional(), // JSON.stringify -> string[]
   content: z.string().optional(), // JSON.stringify -> string[]
 });

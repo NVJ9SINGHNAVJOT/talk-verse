@@ -22,6 +22,7 @@ import { CustomRequest } from "@/types/custom";
 import { deleteFromCloudinay, uploadMultiplesToCloudinary, uploadToCloudinary } from "@/utils/cloudinaryHandler";
 import { deleteFile, deleteFiles } from "@/utils/deleteFile";
 import { errRes } from "@/utils/error";
+import { checkContent, checkTags } from "@/utils/helpers";
 import { and, eq, sql, lt, desc, gt, asc } from "drizzle-orm";
 import { Request, Response } from "express";
 
@@ -42,69 +43,67 @@ export const createPost = async (req: Request, res: Response): Promise<Response>
 
     let tags;
     if (data.tags) {
-      const checkTags: string[] = JSON.parse(data.tags);
-      if (!checkTags || checkTags.length === 0 || checkTags.includes("")) {
+      tags = checkTags(data.tags);
+      if (tags.length === 0) {
         if (req.files?.length) {
           deleteFiles(req.files);
         }
-        return errRes(res, 400, "tags present in req, but invalid data in after parsing");
+        return errRes(res, 400, "tags present in req, but invalid data after parsing");
       }
-      tags = checkTags;
     }
 
     let content;
     if (data.content) {
-      const checkContent = JSON.parse(data.content);
-      if (!checkContent || checkContent.length === 0) {
+      content = checkContent(data.content);
+      if (content.length === 0) {
         if (req.files?.length) {
           deleteFiles(req.files);
         }
-        return errRes(res, 400, "content present in req, but invalid data in after parsing");
-      }
-      content = checkContent;
-    }
-
-    let secUrls;
-    if (req.files?.length) {
-      const files: Express.Multer.File[] = req.files as Express.Multer.File[];
-      const checkUpload = files.length;
-      secUrls = await uploadMultiplesToCloudinary(files);
-      if (secUrls.length < 1 || checkUpload !== secUrls.length) {
-        if (req.files?.length) {
-          deleteFiles(req.files);
-        }
-        return errRes(res, 500, "error while uploading files to cloudinay");
+        return errRes(res, 400, "content present in req, but invalid data after parsing");
       }
     }
 
-    const newPost = await db
-      .insert(post)
-      .values({
-        userId: userId2,
-        category: data.category,
-        title: data.title,
-        mediaUrls: secUrls && secUrls,
-        tags: tags && tags,
-        content: content && content,
-      })
-      .returning({
-        id: post.id,
-        userId: post.userId,
-        category: post.category,
-        title: post.title,
-        mediaUrls: post.mediaUrls,
-        tags: post.tags,
-        content: post.content,
-        likesCount: post.likesCount,
-        createdAt: post.createdAt,
-      })
-      .execute();
+    // let secUrls;
+    // if (req.files?.length) {
+    //   const files: Express.Multer.File[] = req.files as Express.Multer.File[];
+    //   const checkUpload = files.length;
+    //   secUrls = await uploadMultiplesToCloudinary(files);
+    //   if (secUrls.length < 1 || checkUpload !== secUrls.length) {
+    //     if (req.files?.length) {
+    //       deleteFiles(req.files);
+    //     }
+    //     return errRes(res, 500, "error while uploading files to cloudinay");
+    //   }
+    // }
 
-    return res.status(200).json({
-      success: true,
-      message: "post created",
-      post: newPost[0],
-    });
+    // const newPost = await db
+    //   .insert(post)
+    //   .values({
+    //     userId: userId2,
+    //     category: data.category,
+    //     title: data.title,
+    //     mediaUrls: secUrls && secUrls,
+    //     tags: tags && tags,
+    //     content: content && content,
+    //   })
+    //   .returning({
+    //     id: post.id,
+    //     userId: post.userId,
+    //     category: post.category,
+    //     title: post.title,
+    //     mediaUrls: post.mediaUrls,
+    //     tags: post.tags,
+    //     content: post.content,
+    //     likesCount: post.likesCount,
+    //     createdAt: post.createdAt,
+    //   })
+    //   .execute();
+
+    // return res.status(200).json({
+    //   success: true,
+    //   message: "post created",
+    //   post: newPost[0],
+    // });
   } catch (error) {
     if (req.files?.length) {
       deleteFiles(req.files);

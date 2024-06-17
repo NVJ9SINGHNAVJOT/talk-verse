@@ -10,20 +10,20 @@ export const post = pgTable("post", {
   userId: integer("user_id")
     .notNull()
     .references(() => user.id),
-  category: varchar("category").notNull(),
-  title: varchar("title"),
-  mediaUrls: varchar("media_urls")
+  category: varchar("category", { length: 255 }).notNull(),
+  title: varchar("title", { length: 100 }),
+  mediaUrls: varchar("media_urls", { length: 255 })
     .array()
     .notNull()
-    .default(sql`ARRAY[]::text[]`),
-  tags: varchar("tags")
+    .default(sql`ARRAY[]::varchar[]`),
+  tags: varchar("tags", { length: 255 })
     .array()
     .notNull()
-    .default(sql`ARRAY[]::text[]`),
+    .default(sql`ARRAY[]::varchar[]`),
   content: varchar("content")
     .array()
     .notNull()
-    .default(sql`ARRAY[]::text[]`),
+    .default(sql`ARRAY[]::varchar[]`),
   likesCount: integer("likes_count").notNull().default(0),
   commentsCount: integer("comments_count").notNull().default(0),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

@@ -134,6 +134,16 @@ const CreatePost = (props: CreatePostProps) => {
       toast.info("Either media or content is required for post");
       return;
     }
+    if (tags.length > 0) {
+      for (let index = 0; index < tags.length; index++) {
+        if (tags[index].length > 255) {
+          toast.info("Max length for a tag is 255");
+          return;
+        }
+      }
+    }
+
+    // validation done for form
     setMediaUrls([]);
     reset();
     props.setCreatePost(false);
@@ -202,8 +212,9 @@ const CreatePost = (props: CreatePostProps) => {
                    focus:text-white transition-all ease-in-out duration-100"
               {...register("title", {
                 minLength: 1,
-                maxLength: 200,
+                maxLength: 100,
               })}
+              maxLength={100}
               placeholder="Title"
             />
           </div>
@@ -262,6 +273,7 @@ const CreatePost = (props: CreatePostProps) => {
               {...register("content", {
                 maxLength: 1000,
               })}
+              maxLength={1000}
               placeholder="Content"
             />
           </div>
