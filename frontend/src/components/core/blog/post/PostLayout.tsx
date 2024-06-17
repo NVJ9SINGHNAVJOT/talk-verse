@@ -2,6 +2,7 @@ import { deletePostApi, savePostApi, updateLikeApi } from "@/services/operations
 import { Post } from "@/types/apis/postApiRs";
 import { BsSaveFill } from "react-icons/bs";
 import { MdDeleteForever } from "react-icons/md";
+import moment from "moment";
 import { RxAvatar } from "react-icons/rx";
 import { toast } from "react-toastify";
 import MediaFiles from "@/components/core/blog/media/MediaFiles";
@@ -103,6 +104,7 @@ const PostLayout = (props: PostProps) => {
       });
       setMediaUrls(newMediaUrls);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [post]);
 
   return (
@@ -120,17 +122,20 @@ const PostLayout = (props: PostProps) => {
             <p className=" text-snow-800">{post.userName}</p>
           </div>
         </div>
-        {post?.isCurrentUser ? (
-          <MdDeleteForever
-            onClick={() => deletePost()}
-            className=" size-5 aspect-square cursor-pointer hover:fill-snow-800 "
-          />
-        ) : (
-          <BsSaveFill
-            onClick={() => savePost()}
-            className={`size-5 aspect-square cursor-pointer hover:opacity-100 ${isSaved === true ? "opacity-100" : "opacity-40"}`}
-          />
-        )}
+        <div className=" flex flex-col justify-between items-end">
+          {post.isCurrentUser ? (
+            <MdDeleteForever
+              onClick={() => deletePost()}
+              className=" size-5 aspect-square cursor-pointer hover:fill-snow-800 "
+            />
+          ) : (
+            <BsSaveFill
+              onClick={() => savePost()}
+              className={`size-5 aspect-square cursor-pointer hover:opacity-100 ${isSaved === true ? "opacity-100" : "opacity-40"}`}
+            />
+          )}
+          <div className=" text-xs text-snow-800">{moment(post.createdAt).fromNow()}</div>
+        </div>
       </div>
       {/* middle */}
       {mediaUrls.length > 0 && <MediaFiles className=" w-11/12 h-60 self-center" mediaUrls={mediaUrls} />}
