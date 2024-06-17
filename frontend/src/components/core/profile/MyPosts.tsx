@@ -43,7 +43,7 @@ const MyPosts = () => {
           setStop(true);
         }
       } else {
-        toast.error("Error while getting recent post");
+        toast.error("Error while getting my post");
       }
       setLoading(false);
     };

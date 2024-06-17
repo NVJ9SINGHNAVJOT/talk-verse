@@ -43,7 +43,7 @@ const SavedPosts = () => {
           setStop(true);
         }
       } else {
-        toast.error("Error while getting recent post");
+        toast.error("Error while getting saved post");
       }
       setLoading(false);
     };

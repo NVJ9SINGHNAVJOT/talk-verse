@@ -26,11 +26,11 @@ export type UserBlogProfileRs = {
 export type UserFollowingRs = {
   success: boolean;
   message: string;
-  following?: UserSuggestion;
+  following?: (UserSuggestion & { createdAt: string })[];
 } | null;
 
 export type UserFollowersRs = {
   success: boolean;
   message: string;
-  followers?: UserSuggestion;
+  followers?: (UserSuggestion & { createdAt: string })[];
 } | null;
