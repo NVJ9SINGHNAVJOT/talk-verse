@@ -1,6 +1,8 @@
 import CreatePost from "@/components/core/blog/post/CreatePost";
 import CreateStory from "@/components/core/blog/story/CreateStory";
 import Stories from "@/components/core/blog/story/Stories";
+import useOnClickOutside from "@/hooks/useOnClickOutside";
+import TalkVerseButton from "@/lib/buttons/talkversebutton/TalkVerseButton";
 import { CanvasReveal } from "@/lib/sections/CanvasReveal";
 import { setTotalPosts } from "@/redux/slices/postSlice";
 import { useAppSelector } from "@/redux/store";
@@ -16,7 +18,7 @@ import { userBlogProfileApi } from "@/services/operations/profileApi";
 import { UserSuggestion } from "@/types/apis/notificationApiRs";
 import { UserStory } from "@/types/apis/postApiRs";
 import { AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CiCirclePlus } from "react-icons/ci";
 import { GoPlus } from "react-icons/go";
 import { HiOutlineUserAdd } from "react-icons/hi";
@@ -59,8 +61,13 @@ const Blog = () => {
   const [storyLoading, setStoryLoading] = useState<boolean>(true);
   const [userStory, setUserStory] = useState<UserStory>();
   const [viewStory, setViewStory] = useState<boolean>(false);
+  const [sideMenu, setSideMenu] = useState<boolean>(false);
+  const sideSectionRef = useRef<HTMLDivElement>(null);
+  const excludeTalkVerseButtonRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  useOnClickOutside(sideSectionRef, () => setSideMenu(false), excludeTalkVerseButtonRef);
 
   const sendFollowRequest = async (reqUserId: number) => {
     setSendingReq(true);
@@ -203,6 +210,9 @@ const Blog = () => {
           </div>
           <div className=" border-dashed border-[1px] border-snow-500 w-10/12 mt-2"></div>
         </div>
+        <div ref={excludeTalkVerseButtonRef} onClick={() => setSideMenu((prev) => !prev)} className="lm:hidden">
+          <TalkVerseButton className=" w-10/12 mt-2 mx-auto h-6 md:h-8" />
+        </div>
         {/* posts categories */}
         <div className=" flex flex-col text-snow-100 items-center my-6 overflow-y-auto">
           <div
@@ -294,7 +304,13 @@ const Blog = () => {
       </section>
 
       {/* create post and friend suggestion */}
-      <section className="hidden lm:flex lm:flex-col gap-y-4 w-56 px-1 bg-[#030609]">
+      <section
+        ref={sideSectionRef}
+        className={` ${
+          sideMenu === true ? "absolute right-0 bottom-0 top-0 z-40 flex flex-col " : "hidden lm:flex lm:flex-col"
+        } 
+          gap-y-4 w-56 px-1 bg-[#030609]`}
+      >
         <div
           onClick={() => setCreatePost(true)}
           className="relative h-12 w-10/12 mt-4 mx-auto p-2 flex justify-center items-center hover:border-sky-600 duration-500 
