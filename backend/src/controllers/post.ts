@@ -63,47 +63,47 @@ export const createPost = async (req: Request, res: Response): Promise<Response>
       }
     }
 
-    // let secUrls;
-    // if (req.files?.length) {
-    //   const files: Express.Multer.File[] = req.files as Express.Multer.File[];
-    //   const checkUpload = files.length;
-    //   secUrls = await uploadMultiplesToCloudinary(files);
-    //   if (secUrls.length < 1 || checkUpload !== secUrls.length) {
-    //     if (req.files?.length) {
-    //       deleteFiles(req.files);
-    //     }
-    //     return errRes(res, 500, "error while uploading files to cloudinay");
-    //   }
-    // }
+    let secUrls;
+    if (req.files?.length) {
+      const files: Express.Multer.File[] = req.files as Express.Multer.File[];
+      const checkUpload = files.length;
+      secUrls = await uploadMultiplesToCloudinary(files);
+      if (secUrls.length < 1 || checkUpload !== secUrls.length) {
+        if (req.files?.length) {
+          deleteFiles(req.files);
+        }
+        return errRes(res, 500, "error while uploading files to cloudinay");
+      }
+    }
 
-    // const newPost = await db
-    //   .insert(post)
-    //   .values({
-    //     userId: userId2,
-    //     category: data.category,
-    //     title: data.title,
-    //     mediaUrls: secUrls && secUrls,
-    //     tags: tags && tags,
-    //     content: content && content,
-    //   })
-    //   .returning({
-    //     id: post.id,
-    //     userId: post.userId,
-    //     category: post.category,
-    //     title: post.title,
-    //     mediaUrls: post.mediaUrls,
-    //     tags: post.tags,
-    //     content: post.content,
-    //     likesCount: post.likesCount,
-    //     createdAt: post.createdAt,
-    //   })
-    //   .execute();
+    const newPost = await db
+      .insert(post)
+      .values({
+        userId: userId2,
+        category: data.category,
+        title: data.title,
+        mediaUrls: secUrls && secUrls,
+        tags: tags && tags,
+        content: content && content,
+      })
+      .returning({
+        id: post.id,
+        userId: post.userId,
+        category: post.category,
+        title: post.title,
+        mediaUrls: post.mediaUrls,
+        tags: post.tags,
+        content: post.content,
+        likesCount: post.likesCount,
+        createdAt: post.createdAt,
+      })
+      .execute();
 
-    // return res.status(200).json({
-    //   success: true,
-    //   message: "post created",
-    //   post: newPost[0],
-    // });
+    return res.status(200).json({
+      success: true,
+      message: "post created",
+      post: newPost[0],
+    });
   } catch (error) {
     if (req.files?.length) {
       deleteFiles(req.files);

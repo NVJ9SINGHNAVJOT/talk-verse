@@ -6,6 +6,7 @@ export function errRes(
   res: Response,
   status: number,
   message: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   error?: any
 ): Response<unknown, Record<string, unknown>> {
   // log internal server error
