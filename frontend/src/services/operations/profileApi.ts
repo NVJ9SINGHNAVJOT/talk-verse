@@ -1,4 +1,10 @@
-import { ProfileRs, SetProfileImageRs, UserBlogProfileRs } from "@/types/apis/profileApiRs";
+import {
+  ProfileRs,
+  SetProfileImageRs,
+  UserBlogProfileRs,
+  UserFollowersRs,
+  UserFollowingRs,
+} from "@/types/apis/profileApiRs";
 import { profileEndPoints } from "@/services/apis";
 import { fetchApi } from "@/services/fetchApi";
 import { CommonRs } from "@/types/apis/common";
@@ -80,5 +86,75 @@ export const userPostsApi = async (createdAt: string): Promise<PostsRs> => {
     return null;
   } catch (error) {
     return null;
+  }
+};
+
+export const userFollowingApi = async (createdAt: string): Promise<UserFollowingRs> => {
+  try {
+    const resData: UserFollowingRs = await fetchApi("GET", profileEndPoints.USER_FOLLOWING, null, null, {
+      createdAt: createdAt,
+    });
+    if (resData) {
+      return resData;
+    }
+    return null;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const userfollowersApi = async (createdAt: string): Promise<UserFollowersRs> => {
+  try {
+    const resData: UserFollowersRs = await fetchApi("GET", profileEndPoints.USER_FOLLOWERS, null, null, {
+      createdAt: createdAt,
+    });
+    if (resData) {
+      return resData;
+    }
+    return null;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const removeFollowerApi = async (userId: number): Promise<boolean> => {
+  try {
+    const resData: CommonRs = await fetchApi(
+      "DELETE",
+      profileEndPoints.REMOVE_FOLLOWER,
+      {
+        otherUserId: userId,
+      },
+      {
+        "Content-Type": "application/json",
+      }
+    );
+    if (resData && resData.success === true) {
+      return true;
+    }
+    return false;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const unfollowUserApi = async (userId: number): Promise<boolean> => {
+  try {
+    const resData: CommonRs = await fetchApi(
+      "DELETE",
+      profileEndPoints.UNFOLLOW_FOLLOWING,
+      {
+        otherUserId: userId,
+      },
+      {
+        "Content-Type": "application/json",
+      }
+    );
+    if (resData && resData.success === true) {
+      return true;
+    }
+    return false;
+  } catch (error) {
+    return false;
   }
 };

@@ -1,10 +1,11 @@
 import User from "@/db/mongodb/models/User";
 import { db } from "@/db/postgresql/connection";
+import { follow } from "@/db/postgresql/schema/follow";
 import { likes } from "@/db/postgresql/schema/likes";
 import { post } from "@/db/postgresql/schema/post";
 import { save } from "@/db/postgresql/schema/save";
 import { user } from "@/db/postgresql/schema/user";
-import { GetCreatedAtReqSchema } from "@/types/controllers/common";
+import { GetCreatedAtReqSchema, OtherPostgreSQLUserIdReqSchema } from "@/types/controllers/common";
 import { CheckUserNameReqSchema, UpdateProfileReqSchema } from "@/types/controllers/profileReq";
 import { CustomRequest } from "@/types/custom";
 import { deleteFromCloudinay, uploadToCloudinary } from "@/utils/cloudinaryHandler";
@@ -274,5 +275,151 @@ export const userPosts = async (req: Request, res: Response): Promise<Response> 
     });
   } catch (error) {
     return errRes(res, 500, "error while getting user posts");
+  }
+};
+
+export const userFollowing = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const userId2 = (req as CustomRequest).userId2;
+
+    const userFollowingReq = GetCreatedAtReqSchema.safeParse(req.query);
+    if (!userFollowingReq.success) {
+      return errRes(res, 400, `invalid data for user following, ${userFollowingReq.error.toString()}`);
+    }
+
+    const data = userFollowingReq.data;
+
+    const following = await db
+      .select({
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        imageUrl: user.imageUrl,
+        userName: user.userName,
+      })
+      .from(follow)
+      .innerJoin(user, eq(follow.followingId, user.id))
+      .where(and(eq(follow.followerId, userId2), lt(post.createdAt, new Date(data.createdAt))))
+      .limit(20)
+      .orderBy(desc(follow.createdAt))
+      .execute();
+
+    if (following.length) {
+      return res.status(200).json({
+        success: true,
+        message: "user following",
+        following: following,
+      });
+    }
+
+    return res.status(200).json({
+      success: false,
+      message: "no further user following",
+    });
+  } catch (error) {
+    return errRes(res, 500, "error while getting user following");
+  }
+};
+
+export const userFollowers = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const userId2 = (req as CustomRequest).userId2;
+
+    const userFollowersReq = GetCreatedAtReqSchema.safeParse(req.query);
+    if (!userFollowersReq.success) {
+      return errRes(res, 400, `invalid data for user followers, ${userFollowersReq.error.toString()}`);
+    }
+
+    const data = userFollowersReq.data;
+
+    const followers = await db
+      .select({
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        imageUrl: user.imageUrl,
+        userName: user.userName,
+      })
+      .from(follow)
+      .innerJoin(user, eq(follow.followerId, user.id))
+      .where(and(eq(follow.followingId, userId2), lt(post.createdAt, new Date(data.createdAt))))
+      .limit(20)
+      .orderBy(desc(follow.createdAt))
+      .execute();
+
+    if (followers.length) {
+      return res.status(200).json({
+        success: true,
+        message: "user followers",
+        following: followers,
+      });
+    }
+
+    return res.status(200).json({
+      success: false,
+      message: "no further user followers",
+    });
+  } catch (error) {
+    return errRes(res, 500, "error while getting user followers");
+  }
+};
+
+export const removeFollower = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const userId2 = (req as CustomRequest).userId2;
+
+    const removeFollwerReq = OtherPostgreSQLUserIdReqSchema.safeParse(req.body);
+    if (!removeFollwerReq.success) {
+      return errRes(res, 400, `invalid data to remove follower, ${removeFollwerReq.error.toString()}`);
+    }
+
+    const data = removeFollwerReq.data;
+
+    const checkRemoveFollwer = await db
+      .delete(follow)
+      .where(and(eq(follow.followingId, userId2), eq(follow.followerId, data.otherUserId)))
+      .returning({ id: follow.id })
+      .execute();
+
+    if (checkRemoveFollwer.length !== 0) {
+      return res.status(200).json({
+        success: true,
+        message: "user removed from followers",
+      });
+    }
+
+    return errRes(res, 400, "invalid follower id, no follower exists for other userId");
+  } catch (error) {
+    return errRes(res, 500, "error while removing follower", error);
+  }
+};
+
+export const unfollowUser = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const userId2 = (req as CustomRequest).userId2;
+
+    const unfollowUserReq = OtherPostgreSQLUserIdReqSchema.safeParse(req.body);
+    if (!unfollowUserReq.success) {
+      return errRes(res, 400, `invalid data to unfollow user, ${unfollowUserReq.error.toString()}`);
+    }
+
+    const data = unfollowUserReq.data;
+
+    const checkUnfollowUser = await db
+      .delete(follow)
+      .where(and(eq(follow.followingId, data.otherUserId), eq(follow.followerId, userId2)))
+      .returning({ id: follow.id })
+      .execute();
+
+    if (checkUnfollowUser.length !== 0) {
+      return res.status(200).json({
+        success: true,
+        message: "other user unfollowed",
+      });
+    }
+
+    return errRes(res, 400, "invalid following id, no following exists for other userId");
+  } catch (error) {
+    return errRes(res, 500, "error while removing following other user", error);
   }
 };
