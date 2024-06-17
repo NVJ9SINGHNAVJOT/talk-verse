@@ -254,7 +254,7 @@ export const userPosts = async (req: Request, res: Response): Promise<Response> 
         createdAt: post.createdAt,
       })
       .from(post)
-      .innerJoin(user, eq(post.userId, user.id))
+      .innerJoin(user, and(eq(post.userId, user.id), eq(user.id, userId2)))
       .leftJoin(save, and(eq(save.postId, post.id), eq(save.userId, userId2)))
       .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, post.id)))
       .where(and(eq(post.userId, userId2), lt(post.createdAt, new Date(data.createdAt))))
@@ -421,5 +421,60 @@ export const unfollowUser = async (req: Request, res: Response): Promise<Respons
     return errRes(res, 400, "invalid following id, no following exists for other userId");
   } catch (error) {
     return errRes(res, 500, "error while removing following other user", error);
+  }
+};
+
+export const userSavedPosts = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const userId2 = (req as CustomRequest).userId2;
+
+    const userSavedPostsReq = GetCreatedAtReqSchema.safeParse(req.query);
+    if (!userSavedPostsReq.success) {
+      return errRes(res, 400, `invalid data for user saved posts, ${userSavedPostsReq.error.toString()}`);
+    }
+
+    const data = userSavedPostsReq.data;
+
+    const userSavedPosts = await db
+      .select({
+        id: post.id,
+        isCurrentUser: sql<boolean>`CASE WHEN ${post.userId} = ${userId2} THEN TRUE ELSE FALSE END`,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        imageUrl: user.imageUrl,
+        userName: user.userName,
+        isSaved: sql<boolean>`CASE WHEN ${save.userId} = ${userId2} AND ${save.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
+        isLiked: sql<boolean>`CASE WHEN ${likes.userId} = ${userId2} AND ${likes.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
+        commentsCount: post.commentsCount,
+        category: post.category,
+        title: post.title,
+        mediaUrls: post.mediaUrls,
+        tags: post.tags,
+        content: post.content,
+        likesCount: post.likesCount,
+        createdAt: post.createdAt,
+      })
+      .from(save)
+      .innerJoin(post, and(eq(post.id, save.postId), eq(save.userId, userId2)))
+      .innerJoin(user, eq(post.userId, user.id))
+      .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, post.id)))
+      .where(and(eq(save.userId, userId2), lt(post.createdAt, new Date(data.createdAt))))
+      .orderBy(desc(save.createdAt))
+      .limit(15)
+      .execute();
+
+    if (userSavedPosts.length) {
+      return res.status(200).json({
+        success: true,
+        message: "user saved posts",
+        posts: userSavedPosts,
+      });
+    }
+    return res.status(200).json({
+      success: false,
+      message: "no further user saved posts",
+    });
+  } catch (error) {
+    return errRes(res, 500, "error while getting user saved posts");
   }
 };
