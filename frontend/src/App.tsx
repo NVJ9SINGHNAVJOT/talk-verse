@@ -19,7 +19,6 @@ import { useDispatch } from "react-redux";
 import { setAuthUser } from "@/redux/slices/authSlice";
 import SiteLoadingModal from "@/components/common/SiteLoadingModal";
 import Profile from "@/pages/Profile";
-import Dashboard from "@/components/core/profile/Dashboard";
 import Settings from "@/components/core/profile/Settings";
 import UserInfo from "@/components/core/profile/UserInfo";
 import ChekKey from "@/pages/ChekKey";
@@ -28,6 +27,10 @@ import Blog from "@/pages/Blog";
 import Trending from "@/components/core/blog/Trending";
 import Recent from "@/components/core/blog/Recent";
 import Category from "@/components/core/blog/Category";
+import MyPosts from "@/components/core/profile/MyPosts";
+import Following from "@/components/core/profile/Following";
+import Followers from "@/components/core/profile/Followers";
+import SavedPosts from "@/components/core/profile/SavedPosts";
 
 function App() {
   const pageRenderDivRef = useRef<HTMLDivElement>(null);
@@ -99,8 +102,11 @@ function App() {
             }
           >
             <Route path="/profile" element={<UserInfo />} />
-            <Route path="/profile/dashboard" element={<Dashboard />} />
             <Route path="/profile/settings" element={<Settings />} />
+            <Route path="/profile/myposts" element={<MyPosts />} />
+            <Route path="/profile/following" element={<Following />} />
+            <Route path="/profile/followers" element={<Followers />} />
+            <Route path="/profile/saved" element={<SavedPosts />} />
           </Route>
           {/* checkkey page */}
           <Route
