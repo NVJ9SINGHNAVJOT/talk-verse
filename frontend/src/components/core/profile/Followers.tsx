@@ -4,6 +4,7 @@ import { UserSuggestion } from "@/types/apis/notificationApiRs";
 import { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
 import OtherUser from "./otheruser/OtherUser";
+import CubeLoader from "@/lib/loaders/cubeloader/CubeLoader";
 
 const Followers = () => {
   const [stop, setStop] = useState<boolean>(false);
@@ -57,10 +58,13 @@ const Followers = () => {
       className="w-full h-full flex flex-wrap justify-center py-6 px-8 lg:px-12 lg:p-12 gap-8
      overflow-y-auto bg-[linear-gradient(135deg,_#fdfcfb_0%,_#e2d1c3_100%)]"
     >
-      {followers.length > 0 &&
+      {followers.length > 0 ? (
         followers.map((otherUser, index) => (
           <OtherUser key={index} otherUser={otherUser} removeOtherUser={removeOtherUser} />
-        ))}
+        ))
+      ) : (
+        <CubeLoader />
+      )}
     </div>
   );
 };

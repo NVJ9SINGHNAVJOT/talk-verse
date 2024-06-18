@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const proifleMenu = ["Profile", "MyPosts", "Following", "Followers", "Saved", "Settings"];
+const proifleMenu = ["Profile", "MyPosts", "Following", "Followers", "Saved", "Settings", "Review"];
 
 const Profile = () => {
   const apiCalls = useAppSelector((state) => state.loading.apiCalls);
