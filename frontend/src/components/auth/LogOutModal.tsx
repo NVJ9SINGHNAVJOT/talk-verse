@@ -63,6 +63,7 @@ const LogOutModal = (props: LogOutModalPros) => {
           <button
             onClick={() => {
               props.setTogLogO(false);
+              props.setMenuOpen(false);
             }}
             className="relative inline-flex h-[3rem] w-fit items-center justify-center rounded-md
           bg-white px-4 font-medium text-gray-950 transition-colors"

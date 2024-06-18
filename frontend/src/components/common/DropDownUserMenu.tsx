@@ -39,7 +39,6 @@ const DropDownUserMenu = (props: DropDownUserMenuProps) => {
       </div>
       <div
         onClick={() => {
-          props.setMenuOpen(false);
           setTogLogO(true);
         }}
         className=" cursor-pointer bg-black hover:bg-grayblack py-1 px-6"
