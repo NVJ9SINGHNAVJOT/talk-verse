@@ -195,15 +195,21 @@ const Blog = () => {
           {user && <p className=" text-[1rem]">{user?.firstName + " " + user?.lastName}</p>}
           {user && <p className=" text-[0.8rem]">{user.userName}</p>}
           <div className=" w-full flex flex-col md:flex-row mt-2 gap-y-2 md:gap-y-0 md:mt-5 md:justify-between">
-            <div className="flex flex-col items-center md:ml-1">
+            <div
+              onClick={() => navigate("/profile/myposts")}
+              className="flex flex-col items-center cursor-pointer  md:ml-1"
+            >
               <p className="leading-4">{userPosts}</p>
               <p className="text-xs leading-3">Post</p>
             </div>
-            <div className="flex flex-col items-center">
+            <div onClick={() => navigate("/profile/followers")} className="flex flex-col items-center cursor-pointer ">
               <p className="leading-4">{followers}</p>
               <p className="text-xs leading-3">Followers</p>
             </div>
-            <div className="flex flex-col items-center md:mr-1">
+            <div
+              onClick={() => navigate("/profile/following")}
+              className="flex flex-col items-center cursor-pointer  md:mr-1"
+            >
               <p className="leading-4">{following}</p>
               <p className="text-xs leading-3">Following</p>
             </div>
