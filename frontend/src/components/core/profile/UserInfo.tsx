@@ -87,11 +87,18 @@ const UserInfo = () => {
               set bio
             </p>
           )}
-
           <p className=" text-xl font-semibold  mt-2">User Name</p>
           <p className=" text-[0.9rem]">{profile?.userName}</p>
           <p className=" text-xl font-semibold  mt-2">Email</p>
           <p className=" text-[0.9rem]">{profile?.email}</p>
+          <p className=" text-xl font-semibold  mt-2">BirthDay</p>
+          {profile?.dateOfBirth ? (
+            <p className=" text-[0.9rem]">{profile.dateOfBirth}</p>
+          ) : (
+            <p className=" text-[0.9rem] cursor-pointer w-fit" onClick={goSetting}>
+              set D.O.B
+            </p>
+          )}
           <p className=" text-xl font-semibold  mt-2">Gender</p>
           {profile?.gender ? (
             <p className=" text-[0.9rem]">{profile.gender}</p>

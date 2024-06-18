@@ -16,6 +16,7 @@ export type Profile = {
   userName: string;
   bio?: string;
   gender?: string;
+  dateOfBirth?: string;
   countryCode?: string;
   contactNumber?: number;
   updatedAt: string;

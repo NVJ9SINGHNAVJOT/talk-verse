@@ -2,7 +2,7 @@ import { countryCodes } from "@/assets/data/countryCodes";
 import { Profile, setProfile } from "@/redux/slices/userSlice";
 import { useAppSelector } from "@/redux/store";
 import { checkUserNameApi, setProfileDetailsApi } from "@/services/operations/profileApi";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaEdit } from "react-icons/fa";
 import { useDispatch } from "react-redux";
@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 export type NewProfileData = {
   userName?: string;
   gender?: string;
+  dateOfBirth?: string;
   countryCode?: string;
   contactNumber?: number;
   bio?: string;
@@ -24,6 +25,25 @@ const Settings = () => {
   const { register, handleSubmit, reset } = useForm<Profile>({
     defaultValues: profile ? profile : {},
   });
+  const datePickerRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const datePickerElement = datePickerRef.current;
+
+    const handleClick = () => {
+      datePickerRef.current?.showPicker();
+    };
+
+    if (datePickerElement) {
+      datePickerElement.addEventListener("click", handleClick);
+    }
+
+    return () => {
+      if (datePickerElement) {
+        datePickerElement.removeEventListener("click", handleClick);
+      }
+    };
+  }, []);
 
   const updateDisable = (value: string) => {
     if (disabled.includes(value)) {
@@ -61,6 +81,10 @@ const Settings = () => {
     }
     if (profile?.gender !== data.gender) {
       newProfileData.gender = data.gender;
+      change = true;
+    }
+    if (profile?.dateOfBirth !== data.dateOfBirth) {
+      newProfileData.dateOfBirth = data.dateOfBirth;
       change = true;
     }
     if (profile?.countryCode !== data.countryCode) {
@@ -115,7 +139,27 @@ const Settings = () => {
           />
           <FaEdit
             onClick={() => updateDisable("userName")}
-            className=" cursor-pointer size-4 fill-black hover:fill-white"
+            className={`cursor-pointer size-4 hover:fill-white ${disabled.includes("userName") ? "fill-white" : "fill-black"}`}
+          />
+        </div>
+
+        <div className=" flex gap-4 items-center">
+          <label className=" font-semibold">Date of Birth</label>
+          <input
+            type="date"
+            className=" bg-black text-white rounded-lg px-4 py-2 outline-none"
+            {...register("dateOfBirth", {
+              max: {
+                value: new Date().toISOString().split("T")[0],
+                message: "Date of Birth cannot be in the future.",
+              },
+            })}
+            disabled={!disabled.includes("dateOfBirth")}
+            placeholder="BirthDay"
+          />
+          <FaEdit
+            onClick={() => updateDisable("dateOfBirth")}
+            className={`cursor-pointer size-4 hover:fill-white ${disabled.includes("dateOfBirth") ? "fill-white" : "fill-black"}`}
           />
         </div>
 
@@ -132,7 +176,7 @@ const Settings = () => {
           />
           <FaEdit
             onClick={() => updateDisable("bio")}
-            className=" cursor-pointer size-4 fill-black hover:fill-white self-start"
+            className={`cursor-pointer size-4 hover:fill-white ${disabled.includes("bio") ? "fill-white" : "fill-black"}`}
           />
         </div>
 
@@ -173,7 +217,7 @@ const Settings = () => {
           </div>
           <FaEdit
             onClick={() => updateDisable("gender")}
-            className=" cursor-pointer size-4 fill-black hover:fill-white"
+            className={`cursor-pointer size-4 hover:fill-white ${disabled.includes("gender") ? "fill-white" : "fill-black"}`}
           />
         </div>
 
@@ -196,7 +240,7 @@ const Settings = () => {
           </select>
           <FaEdit
             onClick={() => updateDisable("countryCode")}
-            className=" cursor-pointer size-4 fill-black hover:fill-white"
+            className={`cursor-pointer size-4 hover:fill-white ${disabled.includes("countryCode") ? "fill-white" : "fill-black"}`}
           />
         </div>
 
@@ -222,7 +266,7 @@ const Settings = () => {
           />
           <FaEdit
             onClick={() => updateDisable("contactNumber")}
-            className=" cursor-pointer size-4 fill-black hover:fill-white"
+            className={`cursor-pointer size-4 hover:fill-white ${disabled.includes("contactNumber") ? "fill-white" : "fill-black"}`}
           />
         </div>
 

@@ -51,6 +51,7 @@ export const getUserDetails = async (req: Request, res: Response): Promise<Respo
         userName: true,
         bio: true,
         gender: true,
+        dateOfBirth: true,
         countryCode: true,
         contactNumber: true,
         about: true,
@@ -155,6 +156,9 @@ export const updateProfile = async (req: Request, res: Response): Promise<Respon
       }
       if (data.gender) {
         mongoUser.gender = data.gender;
+      }
+      if (data.dateOfBirth) {
+        mongoUser.dateOfBirth = data.dateOfBirth;
       }
       // check whether userName exist or not
       if (data.userName) {

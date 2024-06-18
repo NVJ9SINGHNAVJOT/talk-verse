@@ -20,6 +20,11 @@ input[type="number"]::-webkit-outer-spin-button {
   margin: 0; /* Remove any margin to avoid extra spacing */
 }
 
+/* datepicker colour change */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.5) sepia(1) saturate(5) hue-rotate(175deg);
+}
+
 /* ===== Scrollbar CSS ===== */
 /* Firefox */
 * {
