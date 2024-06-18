@@ -1,0 +1,1 @@
+ALTER TABLE "review" ADD COLUMN "approved" boolean DEFAULT false NOT NULL;

@@ -10,6 +10,7 @@ import chatRoutes from "@/routes/chatRoutes";
 import profileRoutes from "@/routes/profileRoutes";
 import postRoutes from "@/routes/postRoutes";
 import queryRoutes from "@/routes/queryRoutes";
+import reviewRoutes from "@/routes/reviewRoutes";
 import corsOptions from "@/config/corsOptions";
 import logging from "@/middlewares/logging";
 
@@ -36,6 +37,7 @@ app.use("/api/v1/chats", chatRoutes);
 app.use("/api/v1/profiles", profileRoutes);
 app.use("/api/v1/posts", postRoutes);
 app.use("/api/v1/queries", queryRoutes);
+app.use("/api/v1/reviews", reviewRoutes);
 
 app.get("/", (_req: Request, res: Response) => {
   res.json({

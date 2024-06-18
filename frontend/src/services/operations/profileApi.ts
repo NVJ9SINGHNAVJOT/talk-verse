@@ -172,22 +172,3 @@ export const userSavedPostsApi = async (createdAt: string): Promise<PostsRs> => 
     return null;
   }
 };
-
-export const postReviewApi = async (reviewText: string): Promise<boolean> => {
-  try {
-    const resData: CommonRs = await fetchApi(
-      "POST",
-      profileEndPoints.POST_REVIEW,
-      { reviewText: reviewText },
-      {
-        "Content-Type": "application/json",
-      }
-    );
-    if (resData) {
-      return true;
-    }
-    return false;
-  } catch (error) {
-    return false;
-  }
-};

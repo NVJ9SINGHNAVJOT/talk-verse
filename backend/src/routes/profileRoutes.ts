@@ -14,7 +14,6 @@ import {
   userFollowing,
   userPosts,
   userSavedPosts,
-  postReview,
 } from "@/controllers/profile";
 
 const router: Router = express.Router();
@@ -30,6 +29,5 @@ router.get("/userFollowers", auth, userFollowers);
 router.delete("/removeFollower", auth, removeFollower);
 router.delete("/unfollowUser", auth, unfollowUser);
 router.get("/userSavedPosts", auth, userSavedPosts);
-router.post("/postReview", auth, postReview);
 
 export default router;

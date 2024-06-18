@@ -4,39 +4,33 @@ import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 import { Autoplay, EffectCoverflow, Pagination } from "swiper/modules";
 import { RxAvatar } from "react-icons/rx";
+import { useEffect } from "react";
+import { useAppSelector } from "@/redux/store";
+import { getReviewsApi } from "@/services/operations/reviewApi";
+import { setReviews } from "@/redux/slices/commonSlice";
 
-type TesData = {
-  review: string;
-  firstName: string;
-  lastName: string;
-  imageUrl?: string;
-};
+import { useDispatch } from "react-redux";
+import { setApiCall } from "@/redux/slices/loadingSlice";
 
 const MainSliderTes = () => {
-  const data: TesData[] = [
-    {
-      review:
-        "A Digital Tapestry of Voices. Where connections bloom, effortlessly. Genuine interactions nurture lasting relationships.",
-      firstName: "Navjot",
-      lastName: "Singh",
-    },
-    {
-      review:
-        "Authentic Bonds Flourish. Diverse minds unite. From tech enthusiasts to poets, sparks of creativity ignite.",
-      firstName: "Navjot",
-      lastName: "Singh",
-    },
-    {
-      review: "Intuitive Navigation. Seamless interface. Focus on meaningful conversations within Talkverse.",
-      firstName: "Navjot",
-      lastName: "Singh",
-    },
-    {
-      review: "Amplifying Voices. Insights resonate. Empowering users to share and be heard.",
-      firstName: "Navjot",
-      lastName: "Singh",
-    },
-  ];
+  const reviews = useAppSelector((state) => state.common.reviews);
+  const apiCalls = useAppSelector((state) => state.loading.apiCalls);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const getReviews = async () => {
+      if (apiCalls["reviews"] !== true) {
+        dispatch(setApiCall({ api: "reviews", status: true }));
+
+        const response = await getReviewsApi();
+        if (response && response.reviews.length > 0) {
+          dispatch(setReviews(response.reviews));
+        }
+      }
+    };
+    getReviews();
+  }, []);
 
   return (
     // only give width and height to swiper (main container)
@@ -60,11 +54,11 @@ const MainSliderTes = () => {
       modules={[EffectCoverflow, Pagination, Autoplay]}
       className="mySwiper w-full h-[20rem] py-8"
     >
-      {data.map((value: TesData, index) => (
+      {reviews.map((value, index) => (
         <SwiperSlide key={index}>
           <div className="w-full h-full flex flex-col justify-evenly items-center p-2">
             {/* only edit content in this div */}
-            <div className=" text-white text-xs md:text-[1rem] ">{value.review}</div>
+            <div className=" text-white text-xs md:text-[1rem] ">{value.reviewText}</div>
             <div className=" self-start flex items-center text-white gap-4">
               {value.imageUrl ? (
                 <img className="w-10 h-10 lm:w-16 lm:h-16 aspect-auto rounded-full" alt="Loading..." />
