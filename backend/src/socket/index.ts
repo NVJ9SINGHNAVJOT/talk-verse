@@ -1,3 +1,4 @@
+/* eslint-disable drizzle/enforce-delete-with-where */
 import { Socket, Server } from "socket.io";
 import { createServer, Server as HTTPServer } from "http";
 import { Application } from "express";
@@ -12,7 +13,7 @@ import { logger } from "@/logger/logger";
 
 // store userIds with their current socketIds
 // userId -> socketId
-export const userSocketIDs = new Map<string, string>();
+export const userSocketIDs = new Map<string, string[]>();
 
 // store group members with groupId
 // groupId -> members
@@ -53,9 +54,18 @@ export const setupWebSocket = (app: Application): HTTPServer => {
       socket.disconnect();
     }
     logger.info(`a user connected id: ${userId} : ${socket.id}`);
+
     // set userId in userSocketIds and show friends that user in online
-    userSocketIDs.set(userId, socket.id);
-    showOnline(io, userId, true, socket);
+    const checkUserAlreadyConnected = userSocketIDs.get(userId);
+    // user is already connected
+    if (checkUserAlreadyConnected !== undefined && checkUserAlreadyConnected.length > 0) {
+      userSocketIDs.get(userId)?.push(socket.id);
+      showOnline(io, userId, false, true, socket);
+    } else {
+      // new user is connected
+      userSocketIDs.set(userId, [socket.id]);
+      showOnline(io, userId, true, true, socket);
+    }
 
     // register events
     registerNotificationEvents(socket, userId);
@@ -63,10 +73,20 @@ export const setupWebSocket = (app: Application): HTTPServer => {
 
     socket.on("disconnect", () => {
       logger.info(`a user disconnected id: ${userId} : ${socket.id}`);
-      // delete userId in userSocketIds and show friends that user if offline
-      // eslint-disable-next-line drizzle/enforce-delete-with-where
-      userSocketIDs.delete(userId);
-      showOnline(io, userId, false, socket);
+
+      // remove userId in userSocketIds
+      const checkUserAlreadyConnected = userSocketIDs.get(userId);
+      // check if this is the only socketId present for userId
+      if (checkUserAlreadyConnected && checkUserAlreadyConnected.length === 1) {
+        userSocketIDs.delete(userId);
+        showOnline(io, userId, false, false, socket);
+      } else {
+        // user is still connected with other socketIds
+        const afterRemovingSocketId = userSocketIDs.get(userId)?.filter((sId) => sId !== socket.id);
+        if (afterRemovingSocketId) {
+          userSocketIDs.set(userId, afterRemovingSocketId);
+        }
+      }
     });
   });
 
