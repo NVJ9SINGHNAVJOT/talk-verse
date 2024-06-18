@@ -21,3 +21,8 @@ export const CheckUserNameReqSchema = z.object({
   userName: fancyNameSchema,
 });
 export type CheckUserNameReq = z.infer<typeof CheckUserNameReqSchema>;
+
+export const PostReviewReqSchema = z.object({
+  reviewText: z.string().min(1).max(150),
+});
+export type PostReviewReq = z.infer<typeof PostReviewReqSchema>;

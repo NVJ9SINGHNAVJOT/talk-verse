@@ -22,6 +22,7 @@ export const profileEndPoints = {
   REMOVE_FOLLOWER: BASE_URL_SERVER + "/profiles/removeFollower",
   UNFOLLOW_FOLLOWING: BASE_URL_SERVER + "/profiles/unfollowUser",
   POST_SAVES: BASE_URL_SERVER + "/profiles/userSavedPosts",
+  POST_REVIEW: BASE_URL_SERVER + "/profiles/postReview",
 };
 
 // notification endpoints

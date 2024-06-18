@@ -10,6 +10,8 @@ import { follow, followsRelations } from "@/db/postgresql/schema/follow";
 import { save, savesRelations } from "@/db/postgresql/schema/save";
 import { request, requestsRelations } from "@/db/postgresql/schema/request";
 import { configDotenv } from "dotenv";
+import { query } from "./schema/query";
+import { review, reviewsRelations } from "./schema/review";
 
 configDotenv();
 
@@ -49,5 +51,8 @@ export const db = drizzle(pool, {
     savesRelations,
     request,
     requestsRelations,
+    query,
+    review,
+    reviewsRelations,
   },
 });

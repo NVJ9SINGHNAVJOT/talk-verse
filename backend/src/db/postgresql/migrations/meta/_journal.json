@@ -15,6 +15,13 @@
       "when": 1718617603297,
       "tag": "0001_polite_nextwave",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1718708669131,
+      "tag": "0002_supreme_wonder_man",
+      "breakpoints": true
     }
   ]
 }

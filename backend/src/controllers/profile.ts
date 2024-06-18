@@ -3,10 +3,11 @@ import { db } from "@/db/postgresql/connection";
 import { follow } from "@/db/postgresql/schema/follow";
 import { likes } from "@/db/postgresql/schema/likes";
 import { post } from "@/db/postgresql/schema/post";
+import { review } from "@/db/postgresql/schema/review";
 import { save } from "@/db/postgresql/schema/save";
 import { user } from "@/db/postgresql/schema/user";
 import { GetCreatedAtReqSchema, OtherPostgreSQLUserIdReqSchema } from "@/types/controllers/common";
-import { CheckUserNameReqSchema, UpdateProfileReqSchema } from "@/types/controllers/profileReq";
+import { CheckUserNameReqSchema, PostReviewReqSchema, UpdateProfileReqSchema } from "@/types/controllers/profileReq";
 import { CustomRequest } from "@/types/custom";
 import { deleteFromCloudinay, uploadToCloudinary } from "@/utils/cloudinaryHandler";
 import { deleteFile } from "@/utils/deleteFile";
@@ -482,5 +483,27 @@ export const userSavedPosts = async (req: Request, res: Response): Promise<Respo
     });
   } catch (error) {
     return errRes(res, 500, "error while getting user saved posts");
+  }
+};
+
+export const postReview = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const userId2 = (req as CustomRequest).userId2;
+
+    const postReviewReq = PostReviewReqSchema.safeParse(req.body);
+    if (!postReviewReq.success) {
+      return errRes(res, 400, `invalid data for posting review, ${postReviewReq.error.toString()}`);
+    }
+
+    const data = postReviewReq.data;
+
+    await db.insert(review).values({ reviewText: data.reviewText, userId: userId2 });
+
+    return res.status(200).json({
+      success: true,
+      message: "review posted",
+    });
+  } catch (error) {
+    return errRes(res, 500, "error while posting review");
   }
 };

@@ -1,3 +1,4 @@
+import ReviewModal from "@/components/core/profile/ReviewModal";
 import { setApiCall } from "@/redux/slices/loadingSlice";
 import { setProfile } from "@/redux/slices/userSlice";
 import { useAppSelector } from "@/redux/store";
@@ -13,10 +14,13 @@ const Profile = () => {
   const apiCalls = useAppSelector((state) => state.loading.apiCalls);
   const [loading, setLoading] = useState<boolean>(true);
   const [title, setTitle] = useState<string>();
+  const [openReviewModal, setOpenReviewModal] = useState<boolean>(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const goMenu = (menu: string) => {
-    if (menu === "Profile") {
+    if (menu === "Review") {
+      setOpenReviewModal(true);
+    } else if (menu === "Profile") {
       navigate("/profile");
     } else {
       navigate(`/profile/${menu.toLowerCase()}`);
@@ -88,6 +92,8 @@ const Profile = () => {
           <Outlet />
         </section>
       )}
+
+      {openReviewModal && <ReviewModal setOpenReviewModal={setOpenReviewModal} />}
     </div>
   );
 };

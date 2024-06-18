@@ -1,4 +1,4 @@
-import "@/lib/loaders/CubeLoader.css";
+import "@/lib/loaders/cubeloader/CubeLoader.css";
 
 const CubeLoader = () => {
   return (
