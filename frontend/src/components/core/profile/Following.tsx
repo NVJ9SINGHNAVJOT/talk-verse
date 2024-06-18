@@ -34,11 +34,11 @@ const Following = () => {
       const response = await userFollowingApi(lastCreatedAt);
       if (response) {
         if (response.following) {
-          const withNewPosts = [...following, ...response.following];
+          const withNewFollowing = [...following, ...response.following];
           if (response.following.length < 20) {
             setStop(true);
           }
-          setFollowing(withNewPosts);
+          setFollowing(withNewFollowing);
         } else {
           setStop(true);
         }
@@ -54,34 +54,13 @@ const Following = () => {
   return (
     <div
       ref={followingContainer}
-      className="w-full h-full flex flex-wrap justify-center p-7 lg:p-12 gap-4 lg:gap-7 xl:gap-10
+      className="w-full h-full flex flex-wrap justify-center py-6 px-8 lg:px-12 lg:p-12 gap-8
      overflow-y-auto bg-[linear-gradient(135deg,_#fdfcfb_0%,_#e2d1c3_100%)]"
     >
-      {following.length > 0 && following.map((otherUser, index) => <OtherUser key={index} />)}
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
-      <OtherUser />
+      {following.length > 0 &&
+        following.map((otherUser, index) => (
+          <OtherUser key={index} otherUser={otherUser} removeOtherUser={removeOtherUser} />
+        ))}
     </div>
   );
 };
