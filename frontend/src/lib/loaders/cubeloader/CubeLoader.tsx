@@ -1,8 +1,13 @@
 import "@/lib/loaders/cubeloader/CubeLoader.css";
+import { cn } from "@/utils/cn";
 
-const CubeLoader = () => {
+type CubeLoaderProps = {
+  className?: string;
+};
+
+const CubeLoader = (props: CubeLoaderProps) => {
   return (
-    <div className="cube-container self-center">
+    <div className={cn("cube-container", props.className)}>
       <div className="cube">
         <div className="face front"></div>
         <div className="face back"></div>

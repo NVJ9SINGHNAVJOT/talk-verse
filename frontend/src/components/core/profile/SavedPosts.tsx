@@ -4,6 +4,7 @@ import { Post } from "@/types/apis/postApiRs";
 import { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
 import PostLayout from "@/components/core/blog/post/PostLayout";
+import CubeLoader from "@/lib/loaders/cubeloader/CubeLoader";
 
 const SavedPosts = () => {
   const [stop, setStop] = useState<boolean>(false);
@@ -53,10 +54,13 @@ const SavedPosts = () => {
 
   return (
     <div ref={postContainer} className="w-full h-full flex flex-col items-center py-12 gap-y-5 overflow-y-auto">
-      {savedPosts.length !== 0 &&
+      {savedPosts.length !== 0 ? (
         savedPosts.map((post, index) => {
           return <PostLayout key={index} post={post} removePost={removePost} />;
-        })}
+        })
+      ) : (
+        <CubeLoader />
+      )}
     </div>
   );
 };

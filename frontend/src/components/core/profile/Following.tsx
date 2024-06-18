@@ -63,7 +63,7 @@ const Following = () => {
           <OtherUser key={index} otherUser={otherUser} removeOtherUser={removeOtherUser} />
         ))
       ) : (
-        <CubeLoader />
+        <CubeLoader className="self-center" />
       )}
     </div>
   );

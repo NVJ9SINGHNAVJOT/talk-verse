@@ -1,5 +1,6 @@
 import PostLayout from "@/components/core/blog/post/PostLayout";
 import { useScrollTriggerVertical } from "@/hooks/useScrollTrigger";
+import MultiCubeLoader from "@/lib/loaders/multicubeloader/MultiCubeLoader";
 import { trendingPostsApi } from "@/services/operations/postApi";
 import { Post } from "@/types/apis/postApiRs";
 import { useEffect, useRef, useState } from "react";
@@ -53,10 +54,13 @@ const Trending = () => {
 
   return (
     <div ref={postContainer} className="w-full h-full flex flex-col items-center gap-y-5 overflow-y-auto">
-      {trendingPosts.length !== 0 &&
+      {trendingPosts.length !== 0 ? (
         trendingPosts.map((post, index) => {
           return <PostLayout key={index} post={post} removePost={removePost} />;
-        })}
+        })
+      ) : (
+        <MultiCubeLoader className=" mt-[35vh]" />
+      )}
     </div>
   );
 };

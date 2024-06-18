@@ -59,7 +59,7 @@ const Profile = () => {
       {/* left bar profile menu section*/}
       <section
         className=" w-[8rem] md:w-[11rem] lg:w-[14rem] h-full bg-[#A69F96] max-w-maxContent
-       hover:bg-[#FBF4D0] transition-all ease-in-out"
+       hover:bg-[#FBF4D0] transition-all ease-in-out overflow-y-auto "
       >
         <div className=" group flex flex-col w-full mt-28 gap-5">
           {proifleMenu.map((menu, index) => {

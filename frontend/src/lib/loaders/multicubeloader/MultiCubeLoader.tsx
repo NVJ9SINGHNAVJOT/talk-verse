@@ -1,11 +1,17 @@
 import React from "react";
 import "@/lib/loaders/multicubeloader/MultiCubeLoader.css";
-const MultiCubeLoader = () => {
+import { cn } from "@/utils/cn";
+
+type MultiCubeLoaderProps = {
+  className?: string;
+};
+
+const MultiCubeLoader = (props: MultiCubeLoaderProps) => {
   const cubeRows = [-1, 0, 1];
   const cubeColumns = [3, 2, 1];
 
   return (
-    <div className="multiContainer self-center">
+    <div className={cn("multiContainer", props.className)}>
       {Array(3)
         .fill(null)
         .map((_, cubeIndex) => (

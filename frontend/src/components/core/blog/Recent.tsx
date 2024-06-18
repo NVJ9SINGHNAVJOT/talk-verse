@@ -1,5 +1,6 @@
 import PostLayout from "@/components/core/blog/post/PostLayout";
 import { useScrollTriggerVertical } from "@/hooks/useScrollTrigger";
+import MultiCubeLoader from "@/lib/loaders/multicubeloader/MultiCubeLoader";
 import { recentPostsApi } from "@/services/operations/postApi";
 import { Post } from "@/types/apis/postApiRs";
 import { useEffect, useRef, useState } from "react";
@@ -53,10 +54,13 @@ const Recent = () => {
 
   return (
     <div ref={postContainer} className="w-full h-full flex flex-col items-center gap-y-5 overflow-y-auto">
-      {recentPost.length !== 0 &&
+      {recentPost.length !== 0 ? (
         recentPost.map((post, index) => {
           return <PostLayout key={index} post={post} removePost={removePost} />;
-        })}
+        })
+      ) : (
+        <MultiCubeLoader className=" mt-[35vh]" />
+      )}
     </div>
   );
 };

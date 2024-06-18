@@ -61,7 +61,11 @@ const MainSliderTes = () => {
             <div className=" text-white text-xs md:text-[1rem] ">{value.reviewText}</div>
             <div className=" self-start flex items-center text-white gap-4">
               {value.imageUrl ? (
-                <img className="w-10 h-10 lm:w-16 lm:h-16 aspect-auto rounded-full" alt="Loading..." />
+                <img
+                  src={value.imageUrl}
+                  className="w-10 h-10 lm:w-16 lm:h-16 object-cover rounded-full"
+                  alt="Loading..."
+                />
               ) : (
                 <RxAvatar className="w-10 h-10 lm:w-16 lm:h-16" />
               )}

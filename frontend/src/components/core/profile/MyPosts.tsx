@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
 import PostLayout from "../blog/post/PostLayout";
 import { userPostsApi } from "@/services/operations/profileApi";
+import CubeLoader from "@/lib/loaders/cubeloader/CubeLoader";
 
 const MyPosts = () => {
   const [stop, setStop] = useState<boolean>(false);
@@ -53,10 +54,13 @@ const MyPosts = () => {
 
   return (
     <div ref={postContainer} className="w-full h-full flex flex-col items-center py-12 gap-y-5 overflow-y-auto">
-      {myPosts.length !== 0 &&
+      {myPosts.length !== 0 ? (
         myPosts.map((post, index) => {
           return <PostLayout key={index} post={post} removePost={removePost} />;
-        })}
+        })
+      ) : (
+        <CubeLoader className=" mt-[35vh]" />
+      )}
     </div>
   );
 };

@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 import { useAppSelector } from "@/redux/store";
 import { useDispatch } from "react-redux";
 import { setApiCall } from "@/redux/slices/loadingSlice";
+import MultiCubeLoader from "@/lib/loaders/multicubeloader/MultiCubeLoader";
 
 const Category = () => {
   const apiCalls = useAppSelector((state) => state.loading.apiCalls);
@@ -70,10 +71,13 @@ const Category = () => {
 
   return (
     <div ref={categoryContainer} className="w-full h-full flex flex-col items-center gap-y-5 overflow-y-auto">
-      {categoriesPost.length !== 0 &&
+      {categoriesPost.length !== 0 ? (
         categoriesPost.map((post, index) => {
           return <PostLayout key={index} post={post} removePost={removePost} />;
-        })}
+        })
+      ) : (
+        <MultiCubeLoader className=" mt-[35vh]" />
+      )}
     </div>
   );
 };
