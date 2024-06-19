@@ -44,7 +44,7 @@ const filterImage = (_req: Request, file: Express.Multer.File, cb: FileFilterCal
 };
 const filesFilter = (_req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
   if (
-    validFiles.audio.includes(file.mimetype) ||
+    validFiles.image.includes(file.mimetype) ||
     validFiles.pdf.includes(file.mimetype) ||
     validFiles.video.includes(file.mimetype) ||
     validFiles.audio.includes(file.mimetype)
