@@ -43,7 +43,7 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
       /* NOTE: fromText for currUser and toText for friend */
       const sId = getSingleSocket(data.to);
       io.to(socket.id).emit(clientE.MESSAGE_RECIEVED, newMessage);
-      if (sId) {
+      if (sId.length > 0) {
         // now send message to friend, text to changed to toText
         newMessage.text = data.toText;
         io.to(sId).emit(clientE.MESSAGE_RECIEVED, newMessage);
@@ -61,7 +61,7 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
           toText: data.toText,
           createdAt: createdAt,
         });
-        if (sId === undefined) {
+        if (sId.length === 0) {
           await UnseenCount.findOneAndUpdate({ userId: data.to, mainId: data.chatId }, { $inc: { count: 1 } });
         }
       } catch (error) {

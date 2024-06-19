@@ -12,7 +12,10 @@ import { showOnline } from "@/utils/onlineStatus";
 import { logger } from "@/logger/logger";
 
 // store userIds with their current socketIds
-// userId -> socketId
+// userId -> socketIds[]
+/* 
+  a user can join from multiple devices so it can have multiple socketIds for it's userId
+*/
 export const userSocketIDs = new Map<string, string[]>();
 
 // store group members with groupId
