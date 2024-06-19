@@ -45,6 +45,7 @@ const Profile = () => {
       dispatch(setApiCall({ api: "getProfileApi", status: false }));
     };
     getProfile();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

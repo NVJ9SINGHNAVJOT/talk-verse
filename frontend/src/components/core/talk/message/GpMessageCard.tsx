@@ -1,7 +1,6 @@
 import FileItem from "@/components/core/talk/message/FileItem";
 import { GroupMessages } from "@/redux/slices/messagesSlice";
 import { getDTimeStamp } from "@/utils/getTime";
-import { memo } from "react";
 
 type GpMessageCardProps = {
   message: GroupMessages;
@@ -20,4 +19,4 @@ const GpMessageCard = (props: GpMessageCardProps) => {
   );
 };
 
-export default memo(GpMessageCard);
+export default GpMessageCard;

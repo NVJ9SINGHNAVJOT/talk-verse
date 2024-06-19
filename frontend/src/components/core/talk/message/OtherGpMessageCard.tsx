@@ -2,7 +2,6 @@ import { GroupMessages } from "@/redux/slices/messagesSlice";
 import { getDTimeStamp } from "@/utils/getTime";
 import { RxAvatar } from "react-icons/rx";
 import FileItem from "@/components/core/talk/message/FileItem";
-import { memo } from "react";
 
 type OtherGpMessageCardProps = {
   message: GroupMessages;
@@ -33,7 +32,7 @@ const OtherGpMessageCard = (props: OtherGpMessageCardProps) => {
   );
 };
 
-export default memo(OtherGpMessageCard);
+export default OtherGpMessageCard;
 
 // {imageUrl ? (
 //   <img

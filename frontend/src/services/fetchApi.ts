@@ -44,21 +44,12 @@ export async function fetchApi(
 
     const response = await fetch(url, requestOptions);
 
-    const route = url.split("/");
-    console.log(route[route.length - 2] + "/" + route[route.length - 1]);
-
     if (response.ok && response.status === 200) {
       const resData = await response.json();
-      console.log("api data", resData);
       return resData;
-    } else {
-      console.log("api response", response);
-      const resData = await response.json();
-      console.log("api data", resData);
-      return null;
     }
+    return null;
   } catch (error) {
-    console.log("error in fetchapi");
     return null;
   }
 }

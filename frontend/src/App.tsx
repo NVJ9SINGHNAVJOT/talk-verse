@@ -54,6 +54,7 @@ function App() {
     };
 
     checkDefaultLogin();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return checkUser ? (

@@ -1,7 +1,7 @@
 import { validFiles } from "@/utils/constants";
 import { VscFilePdf } from "react-icons/vsc";
 import { CiFileOn } from "react-icons/ci";
-import { memo, useMemo } from "react";
+import { useMemo } from "react";
 
 type FileItemProps = {
   url: string;
@@ -27,4 +27,4 @@ const FileItem = ({ url }: FileItemProps) => {
   }
 };
 
-export default memo(FileItem);
+export default FileItem;

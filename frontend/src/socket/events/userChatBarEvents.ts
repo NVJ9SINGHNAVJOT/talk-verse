@@ -142,6 +142,7 @@ const useSocketEvents = (socket: Socket | null): void => {
       socket.off(clientE.SET_USER_ONLINE);
       socket.off(clientE.SET_USER_OFFLINE);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 };
 

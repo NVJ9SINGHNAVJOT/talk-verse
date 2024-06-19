@@ -58,6 +58,7 @@ const SearchModal = (props: SearchModalProps) => {
       }
     }, 1000);
     return () => clearTimeout(timeOutId);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
   return (

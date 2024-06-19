@@ -53,6 +53,7 @@ const Talk = () => {
       disconnectSocket();
       dispatch(setTalkPageLoading(true));
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // clean up for talk page

@@ -96,6 +96,7 @@ const CreateGroupModal = (props: CreateGroupModalProps) => {
       setGroupMembers([]);
       dispatch(setCreateGroupLoading(false));
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return creatingGroup === true ? (
