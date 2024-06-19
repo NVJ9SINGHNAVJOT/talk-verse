@@ -127,7 +127,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     const privateKeyPemOnly = lines.slice(1, -1).join("\n");
 
     /* NOTE: commented only for development purpose, remove comment in production */
-    // await sendPrivateKeyMail(data.email, privateKeyPemOnly);
+    await sendPrivateKeyMail(data.email, privateKeyPemOnly);
 
     return res.status(200).json({
       success: true,
@@ -155,7 +155,7 @@ export const sendOtp = async (req: Request, res: Response): Promise<Response> =>
     await Otp.create({ email: data.email, otpValue: newOtp });
 
     /* NOTE: commented only for development purpose, remove comment in production */
-    // await sendVerficationMail(data.email, newOtp);
+    await sendVerficationMail(data.email, newOtp);
 
     return res.status(200).json({
       success: true,
