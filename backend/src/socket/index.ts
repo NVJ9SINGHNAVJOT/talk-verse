@@ -58,7 +58,7 @@ export const setupWebSocket = (app: Application): HTTPServer => {
     // set userId in userSocketIds and show friends that user in online
     const checkUserAlreadyConnected = userSocketIDs.get(userId);
     // user is already connected
-    if (checkUserAlreadyConnected !== undefined && checkUserAlreadyConnected.length > 0) {
+    if (checkUserAlreadyConnected !== undefined) {
       userSocketIDs.get(userId)?.push(socket.id);
       showOnline(io, userId, false, true, socket);
     } else {
@@ -77,7 +77,7 @@ export const setupWebSocket = (app: Application): HTTPServer => {
       // remove userId in userSocketIds
       const checkUserAlreadyConnected = userSocketIDs.get(userId);
       // check if this is the only socketId present for userId
-      if (checkUserAlreadyConnected && checkUserAlreadyConnected.length === 1) {
+      if (checkUserAlreadyConnected?.length === 1) {
         userSocketIDs.delete(userId);
         showOnline(io, userId, false, false, socket);
       } else {
