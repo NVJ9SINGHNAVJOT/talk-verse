@@ -19,7 +19,7 @@ export function checkEnvVariables() {
     !process.env["POSTGRES_DB"] ||
     !process.env["POSTGRES_PASSWORD"]
   ) {
-    console.error("error in environment variables");
+    throw new Error("Invalid evironment variables");
     process.exit();
   }
 }
