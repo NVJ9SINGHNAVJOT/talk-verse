@@ -54,20 +54,20 @@ function App() {
     };
 
     checkDefaultLogin();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return checkUser ? (
     <SiteLoadingModal />
   ) : (
-    <div className="w-screen h-screen overflow-y-auto overflow-x-hidden max-w-maxContent min-w-minContent">
+    <div className="h-screen w-screen min-w-minContent max-w-maxContent overflow-y-auto overflow-x-hidden">
       {/* ===== main nav bar ===== */}
       <MainNavbar />
 
       {/* ===== all pages will be rendered below ===== */}
       <div
         ref={pageRenderDivRef}
-        className="w-screen h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden max-w-maxContent min-w-minContent scroll-smooth"
+        className="h-[calc(100vh-4rem)] w-screen min-w-minContent max-w-maxContent overflow-y-auto overflow-x-hidden scroll-smooth"
       >
         <Routes>
           <Route path="/" element={<Home />} />
@@ -75,9 +75,14 @@ function App() {
           <Route path="/contact" element={<Contact />} />
 
           {/* ===== open routes ===== */}
-          <Route element={<OpenRoute />}>
-            <Route path="/login" element={<Login />} />
-          </Route>
+          <Route
+            path="/login"
+            element={
+              <OpenRoute>
+                <Login />
+              </OpenRoute>
+            }
+          />
 
           {/* ===== private routes ===== */}
           {/* talk page */}

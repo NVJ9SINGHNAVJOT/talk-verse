@@ -1,10 +1,15 @@
 import { useAppSelector } from "@/redux/store";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
-const OpenRoute = () => {
+type OpenRouteProps = {
+  children: React.ReactNode;
+};
+
+const OpenRoute = (props: OpenRouteProps) => {
+  const children = props.children;
   const authUser = useAppSelector((state) => state.auth.authUser);
 
-  if (authUser === false) return <Outlet />;
+  if (authUser === false) return children;
   else return <Navigate to="/" />;
 };
 
