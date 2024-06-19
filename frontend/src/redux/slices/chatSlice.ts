@@ -116,7 +116,9 @@ const chatSlice = createSlice({
       state.onlineFriends = action.payload;
     },
     addOnlineFriend(state, action: PayloadAction<string>) {
-      state.onlineFriends.push(action.payload);
+      if (!state.onlineFriends.includes(action.payload)) {
+        state.onlineFriends.push(action.payload);
+      }
     },
     removeOnlineFriend(state, action: PayloadAction<string>) {
       state.onlineFriends = state.onlineFriends.filter((friendId) => friendId !== action.payload);
@@ -141,7 +143,9 @@ const chatSlice = createSlice({
       state.userTyping = [];
     },
     addUserTyping(state, action: PayloadAction<string>) {
-      state.userTyping.push(action.payload);
+      if (state.userTyping.includes(action.payload)) {
+        state.userTyping.push(action.payload);
+      }
     },
     removeUserTyping(state, action: PayloadAction<string>) {
       state.userTyping = state.userTyping.filter((userId) => userId !== action.payload);
