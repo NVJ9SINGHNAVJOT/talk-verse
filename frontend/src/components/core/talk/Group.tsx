@@ -2,7 +2,6 @@ import { useSocketContext } from "@/context/SocketContext";
 import { useScrollTriggerVertical } from "@/hooks/useScrollTrigger";
 import GpMessageCard from "@/components/core/talk/message/GpMessageCard";
 import OtherGpMessageCard from "@/components/core/talk/message/OtherGpMessageCard";
-import { setGroupToFirst } from "@/redux/slices/chatSlice";
 import {
   addGpMessages,
   resetUnseenMessage,
@@ -23,6 +22,7 @@ import FileInputs from "@/components/core/talk/chatItems/FileInputs";
 import WorkModal from "@/lib/modals/workmodal/WorkModal";
 import useScrollOnTop from "@/hooks/useScrollOnTop";
 import { setApiCall } from "@/redux/slices/loadingSlice";
+import { setChatBarDataToFirst } from "@/redux/slices/chatSlice";
 
 const Group = () => {
   const { register, handleSubmit, reset } = useForm<MessageText>();
@@ -210,8 +210,8 @@ const Group = () => {
       if (!response) {
         toast.error("Error while uploading file");
       } else {
-        if (!lastMainId || lastMainId !== groupId) {
-          dispatch(setGroupToFirst(groupId));
+        if (lastMainId !== groupId) {
+          dispatch(setChatBarDataToFirst(groupId));
         }
       }
     } else {
@@ -240,8 +240,8 @@ const Group = () => {
       currUser.imageUrl ? currUser.imageUrl : ""
     );
 
-    if (!lastMainId || lastMainId !== groupId) {
-      dispatch(setGroupToFirst(groupId));
+    if (lastMainId !== groupId) {
+      dispatch(setChatBarDataToFirst(groupId));
     }
   };
 

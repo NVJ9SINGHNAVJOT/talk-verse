@@ -20,11 +20,11 @@ import { MessageText } from "@/types/common";
 import { sendMessageEvent } from "@/socket/emitEvents/emitMessageEvents";
 import { useSocketContext } from "@/context/SocketContext";
 import { startTypingEvent, stopTypingEvent } from "@/socket/emitEvents/emitNotificationEvents";
-import { setFriendToFirst } from "@/redux/slices/chatSlice";
 import WorkModal from "@/lib/modals/workmodal/WorkModal";
 import FileInputs from "@/components/core/talk/chatItems/FileInputs";
 import { setApiCall } from "@/redux/slices/loadingSlice";
 import useScrollOnTop from "@/hooks/useScrollOnTop";
+import { setChatBarDataToFirst } from "@/redux/slices/chatSlice";
 
 const Chat = () => {
   const apiCalls = useAppSelector((state) => state.loading.apiCalls);
@@ -198,8 +198,8 @@ const Chat = () => {
       if (!response) {
         toast.error("Error while uploading file");
       } else {
-        if (!lastMainId || lastMainId !== chatId) {
-          dispatch(setFriendToFirst(chatId));
+        if (lastMainId !== chatId) {
+          dispatch(setChatBarDataToFirst(chatId));
         }
       }
     } else {
@@ -226,8 +226,8 @@ const Chat = () => {
     }
 
     sendMessageEvent(socket, chatId, currFriendId, data.text, myPublicKey, publicKeys[currFriendId]);
-    if (!lastMainId || lastMainId !== chatId) {
-      dispatch(setFriendToFirst(chatId));
+    if (lastMainId !== chatId) {
+      dispatch(setChatBarDataToFirst(chatId));
     }
   };
 

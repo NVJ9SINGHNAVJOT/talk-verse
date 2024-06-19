@@ -86,23 +86,16 @@ const chatSlice = createSlice({
       }
       state.chatBarData.unshift(action.payload);
     },
-    setFriendToFirst(state, action: PayloadAction<string>) {
-      setOrderApi(action.payload);
-      state.lastMainId = action.payload;
-      const dataIdToMove = action.payload;
-      const dataIndex = state.chatBarData.findIndex((data) => data.chatId === dataIdToMove);
-      if (dataIndex !== undefined && dataIndex !== -1) {
-        const data = state.chatBarData.splice(dataIndex, 1);
-        if (data !== undefined) {
-          state.chatBarData.unshift(data[0]);
-        }
+    setChatBarDataToFirst(state, action: PayloadAction<string>) {
+      if (state.chatBarData[0]._id === action.payload || state.chatBarData[0].chatId === action.payload) {
+        return;
       }
-    },
-    setGroupToFirst(state, action: PayloadAction<string>) {
       setOrderApi(action.payload);
       state.lastMainId = action.payload;
       const dataIdToMove = action.payload;
-      const dataIndex = state.chatBarData.findIndex((data) => data._id === dataIdToMove);
+      const dataIndex = state.chatBarData.findIndex(
+        (data) => data.chatId === dataIdToMove || data._id === dataIdToMove
+      );
       if (dataIndex !== undefined && dataIndex !== -1) {
         const data = state.chatBarData.splice(dataIndex, 1);
         if (data !== undefined) {
@@ -165,8 +158,7 @@ export const {
   addGroup,
   setChatBarData,
   addChatBarData,
-  setFriendToFirst,
-  setGroupToFirst,
+  setChatBarDataToFirst,
   setOnlineFriend,
   addOnlineFriend,
   removeOnlineFriend,
