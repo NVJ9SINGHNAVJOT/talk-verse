@@ -116,7 +116,7 @@ const messagesSlice = createSlice({
       }
 
       // update unseen count if current chat is not active on display
-      if (!state.mainChatId || (action.payload.chatId !== state.mainChatId && action.payload.from !== state.myId)) {
+      if (action.payload.from !== state.myId && (!state.mainChatId || action.payload.chatId !== state.mainChatId)) {
         const key = action.payload.chatId;
         setUnseenCount(key, state.unseenMessages[key] + 1);
         if (state.unseenMessages && key in state.unseenMessages) {
@@ -165,7 +165,7 @@ const messagesSlice = createSlice({
       }
 
       // update unseen count if current group is not active on display
-      if (!state.mainGroupId || (state.mainGroupId !== action.payload.to && action.payload.from._id !== state.myId)) {
+      if (action.payload.from._id !== state.myId && (!state.mainGroupId || state.mainGroupId !== action.payload.to)) {
         const key = action.payload.to;
         setUnseenCount(key, state.unseenMessages[key] + 1);
         if (state.unseenMessages && key in state.unseenMessages) {
