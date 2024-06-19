@@ -469,9 +469,6 @@ export const setUnseenCount = async (req: Request, res: Response): Promise<Respo
       return errRes(res, 400, `invalid data for setunseencount, ${setUnseenCountReq.error.toString()}`);
     }
     const data = setUnseenCountReq.data;
-    if (!isValidMongooseObjectId([data.mainId])) {
-      return errRes(res, 400, "invalid id for setting unseen count");
-    }
 
     await UnseenCount.findOneAndUpdate({ userId: userId, mainId: data.mainId }, { $set: { count: data.count } });
 
