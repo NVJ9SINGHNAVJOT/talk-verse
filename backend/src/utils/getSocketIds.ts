@@ -2,7 +2,7 @@ import { userSocketIDs } from "@/socket";
 
 export const getSingleSocket = (userId: string): string[] => {
   const socketIds = userSocketIDs.get(userId);
-  if (socketIds) {
+  if (socketIds && socketIds.length > 0) {
     return socketIds;
   }
   return [];

@@ -6,9 +6,9 @@ import { logger } from "@/logger/logger";
 export const registerNotificationEvents = (socket: Socket, userId: string): void => {
   socket.on(serverE.START_TYPING, (friendId: string) => {
     try {
-      const sId = getSingleSocket(friendId);
-      if (sId) {
-        socket.to(sId).emit(clientE.OTHER_START_TYPING, userId);
+      const friendSocketIds = getSingleSocket(friendId);
+      if (friendSocketIds.length > 0) {
+        socket.to(friendSocketIds).emit(clientE.OTHER_START_TYPING, userId);
       }
     } catch (error) {
       logger.error("error while emitting socket event for user typing", { error: error });
@@ -17,9 +17,9 @@ export const registerNotificationEvents = (socket: Socket, userId: string): void
 
   socket.on(serverE.STOP_TYPING, (friendId: string) => {
     try {
-      const sId = getSingleSocket(friendId);
-      if (sId) {
-        socket.to(sId).emit(clientE.OTHER_STOP_TYPING, userId);
+      const friendSocketIds = getSingleSocket(friendId);
+      if (friendSocketIds) {
+        socket.to(friendSocketIds).emit(clientE.OTHER_STOP_TYPING, userId);
       }
     } catch (error) {
       logger.error("error while emitting socket event for user stop typing", { error: error });

@@ -42,7 +42,7 @@ export const showOnline = async (
     });
 
     // if user is joining then join socketId to all group rooms
-    if (status) {
+    if (status && groupRooms.length > 0) {
       io.in(socket.id).socketsJoin(groupRooms);
     }
 
@@ -52,17 +52,18 @@ export const showOnline = async (
     if (newUserJoinng || !status) {
       // get user friends
       const userData = await User.findById({ _id: userId }).select({ friends: true }).exec();
-      if (userData?.friends.length === undefined || userData?.friends.length < 1) {
+      if (userData?.friends.length === undefined || userData?.friends.length === 0) {
         return;
       }
 
       // get online friends
       const onlineFriends: string[] = [];
       userData?.friends.forEach((friend) => {
-        const friendId: string = friend.friendId._id.toString();
-        if (friendId && userSocketIDs.has(friendId)) {
+        const friendId = friend.friendId._id.toString();
+        if (userSocketIDs.has(friendId)) {
           const socketIds = userSocketIDs.get(friendId);
           if (socketIds && socketIds.length > 0) {
+            // push all socketIds of friend in onlineFriens
             for (let index = 0; index < socketIds.length; index++) {
               const sId = socketIds[index];
               if (sId) {

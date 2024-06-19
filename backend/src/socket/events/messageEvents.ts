@@ -41,12 +41,16 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
         createdAt: createdAt.toISOString(),
       };
       /* NOTE: fromText for currUser and toText for friend */
-      const sId = getSingleSocket(data.to);
-      io.to(socket.id).emit(clientE.MESSAGE_RECIEVED, newMessage);
-      if (sId.length > 0) {
+      const currUserSocketIds = getSingleSocket(userId);
+      const friendSocketIds = getSingleSocket(data.to);
+
+      if (currUserSocketIds.length > 0) {
+        io.to(currUserSocketIds).emit(clientE.MESSAGE_RECIEVED, newMessage);
+      }
+      if (friendSocketIds.length > 0) {
         // now send message to friend, text to changed to toText
         newMessage.text = data.toText;
-        io.to(sId).emit(clientE.MESSAGE_RECIEVED, newMessage);
+        io.to(friendSocketIds).emit(clientE.MESSAGE_RECIEVED, newMessage);
       }
       // release channel
       channel.unlock();
@@ -61,7 +65,7 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
           toText: data.toText,
           createdAt: createdAt,
         });
-        if (sId.length === 0) {
+        if (friendSocketIds.length === 0) {
           await UnseenCount.findOneAndUpdate({ userId: data.to, mainId: data.chatId }, { $inc: { count: 1 } });
         }
       } catch (error) {
