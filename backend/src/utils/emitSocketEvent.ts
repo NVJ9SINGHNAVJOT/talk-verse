@@ -1,19 +1,22 @@
 import { logger } from "@/logger/logger";
+import {
+  SoAddedInGroup,
+  SoGroupMessageRecieved,
+  SoMessageRecieved,
+  SoRequestAccepted,
+  SoUserRequest,
+} from "@/types/socket/eventTypes";
 import { Request } from "express";
 
 const emitSocketEvent = (
   req: Request,
+  roomIds: string[],
   event: string,
-  sdata: unknown | string,
-  roomId: string | null,
-  roomIds?: string[]
+  // sdata can be only be of type data send to client by client events
+  sdata: string | SoUserRequest | SoRequestAccepted | SoAddedInGroup | SoMessageRecieved | SoGroupMessageRecieved
 ) => {
   try {
-    if (roomId) {
-      req.app.get("io").to(roomId).emit(event, sdata);
-    } else {
-      req.app.get("io").to(roomIds).emit(event, sdata);
-    }
+    req.app.get("io").to(roomIds).emit(event, sdata);
   } catch (error) {
     logger.error("error while emiting event from io", { error: error, data: sdata });
   }

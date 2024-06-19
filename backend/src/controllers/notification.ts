@@ -115,14 +115,14 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
     // update user with req
     await Notification.updateOne({ userId: data.otherUserId }, { $push: { friendRequests: userId } }).exec();
 
-    const socketId = getSingleSocket(data.otherUserId);
-    if (socketId) {
+    const socketIds = getSingleSocket(data.otherUserId);
+    if (socketIds) {
       const sdata: SoUserRequest = {
         _id: userId,
         userName: myDetails.userName,
         imageUrl: myDetails.imageUrl,
       };
-      emitSocketEvent(req, clientE.USER_REQUEST, sdata, socketId);
+      emitSocketEvent(req, socketIds, clientE.USER_REQUEST, sdata);
     }
 
     return res.status(200).json({
@@ -203,9 +203,9 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
 
     channels.set(chat._id.toString(), newChannel);
 
-    const socketId = getSingleSocket(data.otherUserId);
+    const socketIds = getSingleSocket(data.otherUserId);
 
-    if (socketId && user2) {
+    if (socketIds.length > 0 && user2) {
       const sdata: SoRequestAccepted = {
         _id: user2._id.toString(),
         chatId: chat._id.toString(),
@@ -214,14 +214,14 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
         imageUrl: user2.imageUrl,
         publicKey: user2.publicKey,
       };
-      emitSocketEvent(req, clientE.REQUEST_ACCEPTED, sdata, socketId);
-      emitSocketEvent(req, clientE.SET_USER_ONLINE, user2._id.toString(), socketId);
+      emitSocketEvent(req, socketIds, clientE.REQUEST_ACCEPTED, sdata);
+      emitSocketEvent(req, socketIds, clientE.SET_USER_ONLINE, user2._id.toString());
 
       // socketId is of other user, now send useronline to myself as other user is online and socketId is present
       // get mysocketId
-      const mySocketId = getSingleSocket(userId);
-      if (mySocketId && user1) {
-        emitSocketEvent(req, clientE.SET_USER_ONLINE, user1._id.toString(), mySocketId);
+      const mySocketIds = getSingleSocket(userId);
+      if (mySocketIds.length > 0 && user1) {
+        emitSocketEvent(req, mySocketIds, clientE.SET_USER_ONLINE, user1._id.toString());
       }
     }
 
@@ -374,14 +374,14 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
     );
 
     const memData = getMultiSockets(members, userId);
-    const mySocketId = getSingleSocket(userId);
+    const mySocketIds = getSingleSocket(userId);
 
     // set offline member for group
     groupOffline.set(newGroup._id.toString(), new Set(memData.offline));
 
     // join groupId room with all online members
-    if (mySocketId) {
-      req.app.get("io").in(mySocketId).socketsJoin(newGroup._id.toString());
+    if (mySocketIds.length > 0) {
+      req.app.get("io").in(mySocketIds).socketsJoin(newGroup._id.toString());
     }
 
     if (memData.online.length > 0) {
@@ -393,7 +393,7 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
         groupName: data.groupName,
         gpImageUrl: secUrl,
       };
-      emitSocketEvent(req, clientE.ADDED_IN_GROUP, sdata, null, memData.online);
+      emitSocketEvent(req, memData.online, clientE.ADDED_IN_GROUP, sdata);
     }
 
     return res.status(200).json({
@@ -439,7 +439,7 @@ export const checkOnlineFriends = async (req: Request, res: Response): Promise<R
       }
     });
 
-    if (onlineFriends?.length === undefined || onlineFriends?.length < 1) {
+    if (onlineFriends.length < 1) {
       return res.status(200).json({
         success: false,
         message: "no online friends",

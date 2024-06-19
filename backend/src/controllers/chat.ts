@@ -161,7 +161,7 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
         imageUrl: data.imageUrl,
       };
 
-      emitSocketEvent(req, clientE.GROUP_MESSAGE_RECIEVED, sdata, data.mainId);
+      emitSocketEvent(req, [data.mainId], clientE.GROUP_MESSAGE_RECIEVED, sdata);
 
       // release channel
       channel.unlock();
@@ -197,16 +197,8 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
       }
       // message through channel
       await channel.lock();
-      const combineSocketIds: string[] = [];
-      const mySocketId = getSingleSocket(userId);
-      const friendSocketId = getSingleSocket(data.to);
-
-      if (mySocketId) {
-        combineSocketIds.push(mySocketId);
-      }
-      if (friendSocketId) {
-        combineSocketIds.push(friendSocketId);
-      }
+      const mySocketIds = getSingleSocket(userId);
+      const friendSocketIds = getSingleSocket(data.to);
 
       const uuId = uuidv4();
       const createdAt = new Date();
@@ -218,8 +210,11 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
         text: secUrl,
         createdAt: createdAt.toISOString(),
       };
+
+      // join socketIds of current user and friend
+      const combineSocketIds = [...mySocketIds, ...friendSocketIds];
       if (combineSocketIds.length > 0) {
-        emitSocketEvent(req, clientE.MESSAGE_RECIEVED, sdata, null, combineSocketIds);
+        emitSocketEvent(req, combineSocketIds, clientE.MESSAGE_RECIEVED, sdata);
       }
       // release channel
       channel.unlock();
@@ -235,7 +230,7 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
           toText: secUrl,
           createdAt: createdAt,
         });
-        if (!friendSocketId) {
+        if (friendSocketIds.length === 0) {
           await UnseenCount.updateOne({ userId: data.to, mainId: data.mainId }, { $inc: { count: 1 } });
         }
       } catch (error) {
