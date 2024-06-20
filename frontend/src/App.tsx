@@ -114,6 +114,7 @@ function App() {
           {/* ===== private routes ===== */}
           {/* talk page */}
           <Route
+            path="/talk"
             element={
               <PrivateRoute>
                 <SocketProvider>
@@ -128,6 +129,7 @@ function App() {
           </Route>
           {/* profile page */}
           <Route
+            path="/profile"
             element={
               <PrivateRoute>
                 <Profile />
@@ -152,13 +154,14 @@ function App() {
           />
           {/* blog page */}
           <Route
+            path="/blog"
             element={
               <PrivateRoute>
                 <Blog />
               </PrivateRoute>
             }
           >
-            <Route path="/blog/trending" element={<Trending />} />
+            <Route path="/blog" element={<Trending />} />
             <Route path="/blog/recent" element={<Recent />} />
             <Route path="/blog/:category?" element={<Category />} />
           </Route>

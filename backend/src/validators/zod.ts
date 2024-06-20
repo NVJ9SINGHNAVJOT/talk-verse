@@ -56,7 +56,8 @@ export const optSchema = z
 export const categoriesSchema = z.enum([
   "technology",
   "lifestyle",
-  "blog",
+  "article",
+  "research",
   "nature",
   "music",
   "sports",

@@ -57,7 +57,7 @@ const MainNavbar = () => {
     if (menu) {
       setMenu(false);
     }
-    navigate("/blog/trending");
+    navigate("/blog");
   };
 
   return (

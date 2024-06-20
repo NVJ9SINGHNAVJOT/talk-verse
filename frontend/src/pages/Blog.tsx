@@ -17,6 +17,7 @@ import { deleteStoryApi, userStoryApi } from "@/services/operations/postApi";
 import { userBlogProfileApi } from "@/services/operations/profileApi";
 import { UserSuggestion } from "@/types/apis/notificationApiRs";
 import { UserStory } from "@/types/apis/postApiRs";
+import { categories } from "@/utils/constants";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { CiCirclePlus } from "react-icons/ci";
@@ -27,23 +28,6 @@ import { RxAvatar } from "react-icons/rx";
 import { useDispatch } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
-const categories = [
-  "Technology",
-  "Lifestyle",
-  "Blog",
-  "Nature",
-  "Music",
-  "Sports",
-  "Health",
-  "Finance",
-  "Art",
-  "History",
-  "Literature",
-  "Science",
-  "Business",
-  "Other",
-];
 
 const Blog = () => {
   const user = useAppSelector((state) => state.user.user);
@@ -177,74 +161,78 @@ const Blog = () => {
 
   useEffect(() => {
     const title = location.pathname.split("/").pop();
-    setPostMenu(title);
+    if (title === "blog") {
+      setPostMenu("trending");
+    } else {
+      setPostMenu(title);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
   return (
-    <div className="relative w-full flex h-[calc(100vh-4rem)] min-w-minContent">
+    <div className="relative flex h-[calc(100vh-4rem)] w-full min-w-minContent">
       {/* user profile and category section  */}
-      <section className="w-36 md:w-48 h-full flex flex-col px-1 bg-[#030609]">
+      <section className="flex h-full w-36 flex-col bg-[#030609] px-1 md:w-48">
         {/* user profile details */}
-        <div className="flex flex-col mt-4 text-snow-200 font-be-veitnam-pro items-center gap-y-1">
+        <div className="mt-4 flex flex-col items-center gap-y-1 font-be-veitnam-pro text-snow-200">
           {user?.imageUrl ? (
-            <img src={user?.imageUrl} alt="Loading..." className=" size-20 rounded-full aspect-auto" />
+            <img src={user?.imageUrl} alt="Loading..." className="aspect-auto size-20 rounded-full" />
           ) : (
-            <RxAvatar className="w-full size-20 rounded-full aspect-auto fill-slate-500" />
+            <RxAvatar className="aspect-auto size-20 w-full rounded-full fill-slate-500" />
           )}
-          {user && <p className=" text-[1rem]">{user?.firstName + " " + user?.lastName}</p>}
-          {user && <p className=" text-[0.8rem]">{user.userName}</p>}
-          <div className=" w-full flex flex-col md:flex-row mt-2 gap-y-2 md:gap-y-0 md:mt-5 md:justify-between">
+          {user && <p className="text-[1rem]">{user?.firstName + " " + user?.lastName}</p>}
+          {user && <p className="text-[0.8rem]">{user.userName}</p>}
+          <div className="mt-2 flex w-full flex-col gap-y-2 md:mt-5 md:flex-row md:justify-between md:gap-y-0">
             <div
               onClick={() => navigate("/profile/myposts")}
-              className="flex flex-col items-center cursor-pointer  md:ml-1"
+              className="flex cursor-pointer flex-col items-center md:ml-1"
             >
               <p className="leading-4">{userPosts}</p>
               <p className="text-xs leading-3">Post</p>
             </div>
-            <div onClick={() => navigate("/profile/followers")} className="flex flex-col items-center cursor-pointer ">
+            <div onClick={() => navigate("/profile/followers")} className="flex cursor-pointer flex-col items-center">
               <p className="leading-4">{followers}</p>
               <p className="text-xs leading-3">Followers</p>
             </div>
             <div
               onClick={() => navigate("/profile/following")}
-              className="flex flex-col items-center cursor-pointer  md:mr-1"
+              className="flex cursor-pointer flex-col items-center md:mr-1"
             >
               <p className="leading-4">{following}</p>
               <p className="text-xs leading-3">Following</p>
             </div>
           </div>
-          <div className=" border-dashed border-[1px] border-snow-500 w-10/12 mt-2"></div>
+          <div className="mt-2 w-10/12 border-[1px] border-dashed border-snow-500"></div>
         </div>
         <div ref={excludeTalkVerseButtonRef} onClick={() => setSideMenu((prev) => !prev)} className="lm:hidden">
-          <TalkVerseButton className=" w-10/12 mt-2 mx-auto h-6 md:h-8" />
+          <TalkVerseButton className="mx-auto mt-2 h-6 w-10/12 md:h-8" />
         </div>
         {/* posts categories */}
-        <div className=" flex flex-col text-snow-100 items-center my-6 overflow-y-auto">
+        <div className="my-6 flex flex-col items-center overflow-y-auto text-snow-100">
+          {/* trending */}
           <div
-            className={`w-full pl-6 rounded-sm cursor-pointer hover:bg-cyan-700
-              ${postMenu === "trending" && "bg-cyan-950"}`}
+            className={`w-full cursor-pointer rounded-sm pl-6 hover:bg-cyan-700 ${postMenu === "trending" && "bg-cyan-950"}`}
             onClick={() => {
-              navigate("/blog/trending");
+              navigate("/blog");
             }}
           >
             Trending
           </div>
+          {/* recent */}
           <div
-            className={`w-full pl-6 rounded-sm cursor-pointer hover:bg-cyan-700 mb-6
-            ${postMenu === "recent" && "bg-cyan-950"}`}
+            className={`mb-6 w-full cursor-pointer rounded-sm pl-6 hover:bg-cyan-700 ${postMenu === "recent" && "bg-cyan-950"}`}
             onClick={() => {
               navigate("/blog/recent");
             }}
           >
             Recent
           </div>
+          {/* categories */}
           {categories.map((category, index) => {
             return (
               <div
                 key={index}
-                className={`w-full pl-6 rounded-sm cursor-pointer hover:bg-cyan-700
-                  ${postMenu === category.toLowerCase() && "bg-cyan-950"}`}
+                className={`w-full cursor-pointer rounded-sm pl-6 hover:bg-cyan-700 ${postMenu === category.toLowerCase() && "bg-cyan-950"}`}
                 onClick={() => {
                   navigate(`/blog/${category.toLowerCase()}`);
                 }}
@@ -258,11 +246,11 @@ const Blog = () => {
 
       {/* posts section */}
       <section
-        className={`w-[calc(100vw-144px)] md:w-[calc(100vw-192px)] lm:w-[calc(100vw-(192px+224px))] flex flex-col
-       bg-[#09131d] pt-1 px-4 ${postMenu === "trending" || postMenu === "recent" ? "ct-blogSection-bg-1" : "ct-blogSection-bg-2"}`}
+        className={`flex w-[calc(100vw-144px)] flex-col bg-[#09131d] px-4 pt-1 md:w-[calc(100vw-192px)] lm:w-[calc(100vw-(192px+224px))] 
+        ${postMenu === "trending" || postMenu === "recent" ? "ct-blogSection-bg-1" : "ct-blogSection-bg-2"}`}
       >
         {/* story section */}
-        <section className="w-full flex mt-1 mb-5">
+        <section className="mb-5 mt-1 flex w-full">
           {/* create story */}
           {userStory !== undefined ? (
             <div className="flex flex-col items-center gap-y-2 text-white">
@@ -271,32 +259,28 @@ const Blog = () => {
                   <img
                     alt="Loading.."
                     src={user.imageUrl}
-                    className=" bg-slate-900 cursor-pointer rounded-full size-12 border-[2px]
-                    border-dotted border-whitesmoke"
+                    className="size-12 cursor-pointer rounded-full border-[2px] border-dotted border-whitesmoke bg-slate-900"
                   />
                 </button>
               ) : (
                 <button type="button" disabled={storyLoading} onClick={() => setViewStory(true)}>
                   <RxAvatar
                     onClick={() => setViewStory(true)}
-                    className=" bg-slate-900 cursor-pointer rounded-full size-12 border-[2px]
-                    border-dotted border-whitesmoke"
+                    className="size-12 cursor-pointer rounded-full border-[2px] border-dotted border-whitesmoke bg-slate-900"
                   />
                 </button>
               )}
-              <div className=" text-[0.7rem] text-center mb-2">Your Story</div>
+              <div className="mb-2 text-center text-[0.7rem]">Your Story</div>
             </div>
           ) : (
-            <div className="flex flex-col items-center flex-shrink-0 gap-y-2 text-white">
+            <div className="flex flex-shrink-0 flex-col items-center gap-y-2 text-white">
               <button type="button" disabled={storyLoading} onClick={() => setCreateStory(true)}>
-                <div
-                  className=" bg-slate-900 cursor-pointer flex justify-center items-center rounded-full size-12 border-[2px]
-                border-dotted border-whitesmoke"
-                >
-                  <GoPlus className=" fill-white" />
+                <div className="flex size-12 cursor-pointer items-center justify-center rounded-full border-[2px] border-dotted border-whitesmoke 
+                bg-slate-900">
+                  <GoPlus className="fill-white" />
                 </div>
               </button>
-              <div className=" text-[0.6rem]">Add Story</div>
+              <div className="text-[0.6rem]">Add Story</div>
             </div>
           )}
           {/* following user stories */}
@@ -304,7 +288,7 @@ const Blog = () => {
         </section>
         {/* feeds section */}
         {/* height for below outlet after calculation can be 172.8px, for safety using 180px */}
-        <div className=" w-full h-[calc(100vh-180px)]">
+        <div className="h-[calc(100vh-180px)] w-full">
           <Outlet />
         </div>
       </section>
@@ -313,106 +297,90 @@ const Blog = () => {
       <section
         ref={sideSectionRef}
         className={` ${
-          sideMenu === true ? "absolute right-0 bottom-0 top-0 z-40 flex flex-col " : "hidden lm:flex lm:flex-col"
-        } 
-          gap-y-4 w-56 px-1 bg-[#030609]`}
+          sideMenu === true ? "absolute bottom-0 right-0 top-0 z-40 flex flex-col" : "hidden lm:flex lm:flex-col"
+        } w-56 gap-y-4 bg-[#030609] px-1`}
       >
         <div
           onClick={() => setCreatePost(true)}
-          className="relative h-12 w-10/12 mt-4 mx-auto p-2 flex justify-center items-center hover:border-sky-600 duration-500 
-          group cursor-pointer text-sky-50 overflow-hidden rounded-md bg-sky-800"
+          className="group relative mx-auto mt-4 flex h-12 w-10/12 cursor-pointer items-center justify-center overflow-hidden rounded-md 
+          bg-sky-800 p-2 text-sky-50 duration-500 hover:border-sky-600"
         >
-          <div
-            className="absolute z-10 w-48 h-48 rounded-full group-hover:scale-150 transition-all
-           duration-500 ease-in-out bg-sky-900 delay-150 group-hover:delay-75"
-          ></div>
-          <div
-            className="absolute z-10 w-40 h-40 rounded-full group-hover:scale-150 transition-all
-           duration-500 ease-in-out bg-sky-800 delay-150 group-hover:delay-100"
-          ></div>
-          <div
-            className="absolute z-10 w-32 h-32 rounded-full group-hover:scale-150 transition-all
-           duration-500 ease-in-out bg-sky-700 delay-150 group-hover:delay-150"
-          ></div>
-          <div
-            className="absolute z-10 w-24 h-24 rounded-full group-hover:scale-150 transition-all
-           duration-500 ease-in-out bg-sky-600 delay-150 group-hover:delay-200"
-          ></div>
-          <div
-            className="absolute z-10 w-16 h-16 rounded-full group-hover:scale-150 transition-all
-           duration-500 ease-in-out bg-sky-500 delay-150 group-hover:delay-300"
-          ></div>
-          <p className="z-10 text-white font-semibold">Create Post</p>
+          <div className="absolute z-10 h-48 w-48 rounded-full bg-sky-900 transition-all delay-150 duration-500 ease-in-out group-hover:scale-150 
+          group-hover:delay-75"></div>
+          <div className="absolute z-10 h-40 w-40 rounded-full bg-sky-800 transition-all delay-150 duration-500 ease-in-out group-hover:scale-150 
+          group-hover:delay-100"></div>
+          <div className="absolute z-10 h-32 w-32 rounded-full bg-sky-700 transition-all delay-150 duration-500 ease-in-out group-hover:scale-150 
+          group-hover:delay-150"></div>
+          <div className="absolute z-10 h-24 w-24 rounded-full bg-sky-600 transition-all delay-150 duration-500 ease-in-out group-hover:scale-150 
+          group-hover:delay-200"></div>
+          <div className="absolute z-10 h-16 w-16 rounded-full bg-sky-500 transition-all delay-150 duration-500 ease-in-out group-hover:scale-150 
+          group-hover:delay-300"></div>
+          <p className="z-10 font-semibold text-white">Create Post</p>
         </div>
         {/* follow suggestions */}
-        <div className=" border-dashed border-[1px] border-snow-500 w-10/12 mx-auto"></div>
+        <div className="mx-auto w-10/12 border-[1px] border-dashed border-snow-500"></div>
         {/* all suggestions and requests */}
-        <div className="w-full flex flex-col gap-y-4 overflow-y-auto">
-          <div className=" text-stone-100 mt-2 ml-2 font-be-veitnam-pro">Suggestions</div>
-          <div className=" flex flex-col text-snow-50 gap-y-2">
+        <div className="flex w-full flex-col gap-y-4 overflow-y-auto">
+          <div className="ml-2 mt-2 font-be-veitnam-pro text-stone-100">Suggestions</div>
+          <div className="flex flex-col gap-y-2 text-snow-50">
             {suggestions.length ? (
               suggestions.map((suggestion, index) => {
                 return (
-                  <div key={index} className=" flex justify-between items-center">
+                  <div key={index} className="flex items-center justify-between">
                     <div className="flex items-center gap-x-1">
                       {suggestion.imageUrl ? (
-                        <img alt="Loading..." src={suggestion.imageUrl} className=" size-10 rounded-full" />
+                        <img alt="Loading..." src={suggestion.imageUrl} className="size-10 rounded-full" />
                       ) : (
-                        <RxAvatar className=" size-10 rounded-full" />
+                        <RxAvatar className="size-10 rounded-full" />
                       )}
-                      <div className=" flex flex-col ml-1">
+                      <div className="ml-1 flex flex-col">
                         <p className="text-[0.9rem]">{suggestion.firstName + " " + suggestion.lastName}</p>
-                        <p className=" text-neutral-500 text-[0.7rem]">{suggestion.userName}</p>
+                        <p className="text-[0.7rem] text-neutral-500">{suggestion.userName}</p>
                       </div>
                     </div>
                     <button disabled={sendingReq} onClick={() => sendFollowRequest(suggestion.id)}>
-                      <HiOutlineUserAdd className="size-6 hover:fill-white cursor-pointer mr-[0.4rem]" />
+                      <HiOutlineUserAdd className="mr-[0.4rem] size-6 cursor-pointer hover:fill-white" />
                     </button>
                   </div>
                 );
               })
             ) : (
-              <div className="text-xs mx-auto">No more Suggestions</div>
+              <div className="mx-auto text-xs">No more Suggestions</div>
             )}
           </div>
           {/* follow requests */}
-          <div className=" border-dashed border-[1px] border-snow-500 w-10/12 mx-auto"></div>
-          <div className=" text-stone-100 mt-2 ml-2 font-be-veitnam-pro">Follow Requests</div>
-          <div className=" flex flex-col text-snow-50 gap-y-2">
+          <div className="mx-auto w-10/12 border-[1px] border-dashed border-snow-500"></div>
+          <div className="ml-2 mt-2 font-be-veitnam-pro text-stone-100">Follow Requests</div>
+          <div className="flex flex-col gap-y-2 text-snow-50">
             {followRequests.length ? (
               followRequests.map((followRequest, index) => {
                 return (
-                  <div key={index} className=" flex justify-between items-center">
+                  <div key={index} className="flex items-center justify-between">
                     <div className="flex items-center gap-x-1">
                       {followRequest.imageUrl ? (
                         <img alt="Loading..." src={followRequest.imageUrl} className="size-10 rounded-full" />
                       ) : (
                         <RxAvatar className="size-10 rounded-full" />
                       )}
-                      <div className=" flex flex-col ml-1">
+                      <div className="ml-1 flex flex-col">
                         <p className="text-[0.9rem]">{followRequest.firstName + " " + followRequest.lastName}</p>
-                        <p className=" text-neutral-500 text-[0.7rem]">{followRequest.userName}</p>
+                        <p className="text-[0.7rem] text-neutral-500">{followRequest.userName}</p>
                       </div>
                     </div>
-                    <div className="flex gap-x-1 mr-[0.4rem]">
+                    <div className="mr-[0.4rem] flex gap-x-1">
                       <button disabled={acceptingReq} onClick={() => acceptRequest(followRequest.id)}>
-                        <CiCirclePlus
-                          className=" text-white size-6 aspect-auto cursor-pointer hover:bg-white hover:text-black
-                         rounded-full"
-                        />
+                        <CiCirclePlus className="aspect-auto size-6 cursor-pointer rounded-full text-white hover:bg-white hover:text-black" />
                       </button>
                       <button disabled={deletingReq} onClick={() => deleteRequest(followRequest.id)}>
-                        <CiCirclePlus
-                          className=" text-white size-6 aspect-auto cursor-pointer rotate-45 hover:bg-white
-                         hover:text-black rounded-full"
-                        />
+                        <CiCirclePlus className="aspect-auto size-6 rotate-45 cursor-pointer rounded-full text-white hover:bg-white 
+                        hover:text-black" />
                       </button>
                     </div>
                   </div>
                 );
               })
             ) : (
-              <div className="text-xs mx-auto">No follow Requests</div>
+              <div className="mx-auto text-xs">No follow Requests</div>
             )}
           </div>
         </div>
@@ -423,20 +391,17 @@ const Blog = () => {
         <CreateStory setCreateStory={setCreateStory} setUserStory={setUserStory} setStoryLoading={setStoryLoading} />
       )}
       {viewStory && (
-        <section
-          className="fixed inset-0 z-50 top-16 backdrop-blur-[20px] max-w-maxContent flex justify-center
-         items-center overflow-y-auto"
-        >
-          <div className="absolute z-50 w-72 h-[28rem] flex justify-center items-center bg-neutral-950">
+        <section className="fixed inset-0 top-16 z-50 flex max-w-maxContent items-center justify-center overflow-y-auto backdrop-blur-[20px]">
+          <div className="absolute z-50 flex h-[28rem] w-72 items-center justify-center bg-neutral-950">
             <button
               onClick={() => deleteStory()}
-              className="absolute w-fit px-4 py-1 bg-snow-500 text-neutral-950 rounded-lg -bottom-16"
+              className="absolute -bottom-16 w-fit rounded-lg bg-snow-500 px-4 py-1 text-neutral-950"
             >
               Delete
             </button>
             <MdOutlineCancelPresentation
               onClick={() => setViewStory(false)}
-              className=" w-11 h-8 absolute -right-16 lm:-right-28 -top-14 cursor-pointer fill-black hover:fill-slate-300"
+              className="absolute -right-16 -top-14 h-8 w-11 cursor-pointer fill-black hover:fill-slate-300 lm:-right-28"
             />
             {userStory &&
               (userStory.storyUrl.includes("image/") ? (
@@ -448,7 +413,7 @@ const Blog = () => {
 
           {/* canvas effect */}
           <AnimatePresence>
-            <div className="h-full w-full absolute inset-0">
+            <div className="absolute inset-0 h-full w-full">
               <CanvasReveal animationSpeed={10} containerClassName="bg-sky-600" colors={[[125, 211, 252]]} />
             </div>
           </AnimatePresence>

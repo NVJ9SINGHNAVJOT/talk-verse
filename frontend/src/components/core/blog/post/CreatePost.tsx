@@ -1,5 +1,5 @@
 import { BackgroundBeams } from "@/lib/sections/BackgroundBeams";
-import { maxFileSize, validFiles } from "@/utils/constants";
+import { categories, maxFileSize, validFiles } from "@/utils/constants";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { MdOutlineCancelPresentation } from "react-icons/md";
@@ -8,23 +8,6 @@ import MediaFiles from "@/components/core/blog/media/MediaFiles";
 import { createPostApi } from "@/services/operations/postApi";
 import { useDispatch } from "react-redux";
 import { updateTotalPosts } from "@/redux/slices/postSlice";
-
-const categories = [
-  "Technology",
-  "Lifestyle",
-  "Blog",
-  "Nature",
-  "Music",
-  "Sports",
-  "Health",
-  "Finance",
-  "Art",
-  "History",
-  "Literature",
-  "Science",
-  "Business",
-  "Other",
-];
 
 export type FileUrl = { type: string; url: string };
 
