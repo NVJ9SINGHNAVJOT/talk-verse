@@ -43,6 +43,9 @@ const LogIn = (props: SignInProps) => {
     dispatch(setLoading(false));
 
     if (response && response.success === true) {
+      // for multiple tabs set CHECK_USER_IN_MULTI_TAB to "true"
+      localStorage.setItem(process.env.CHECK_USER_IN_MULTI_TAB as string, JSON.stringify("true"));
+
       dispatch(setUser(response.user));
       navigate("/");
 
@@ -55,18 +58,17 @@ const LogIn = (props: SignInProps) => {
   };
 
   return (
-    <div className=" w-full flex flex-col justify-evenly items-center">
+    <div className="flex w-full flex-col items-center justify-evenly">
       <form
         onSubmit={handleSubmit(onSubmitForm)}
-        className="flex w-10/12 lm:w-7/12 flex-col justify-evenly items-center gap-4"
+        className="flex w-10/12 flex-col items-center justify-evenly gap-4 lm:w-7/12"
       >
-        <h2 className=" text-center text-xl text-white font-sans font-semibold">Log In to TalkVerse</h2>
+        <h2 className="text-center font-sans text-xl font-semibold text-white">Log In to TalkVerse</h2>
 
-        <div className="relative z-0 w-full mb-5 group">
+        <div className="group relative z-0 mb-5 w-full">
           <input
             type="email"
-            className=" text-white block py-2.5 px-0 w-full text-sm 
-            bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-sm text-white focus:border-blue-600 focus:outline-none focus:ring-0"
             placeholder=""
             required
             {...register("email", {
@@ -74,23 +76,17 @@ const LogIn = (props: SignInProps) => {
               pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
             })}
           />
-          {errors.email && <span className=" absolute text-red-600 text-[0.7rem]">Invalid format</span>}
+          {errors.email && <span className="absolute text-[0.7rem] text-red-600">Invalid format</span>}
 
-          <label
-            className=" text-white peer-focus:font-medium absolute text-sm  
-          duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 
-          rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto 
-          peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-          >
+          <label className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-sm text-white duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:font-medium rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4">
             Email address
           </label>
         </div>
 
-        <div className="relative z-0 w-full mb-5 grou pb-4">
+        <div className="grou relative z-0 mb-5 w-full pb-4">
           <input
             type="password"
-            className=" text-white block py-2.5 px-0 w-full text-sm 
-            bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-sm text-white focus:border-blue-600 focus:outline-none focus:ring-0"
             placeholder=""
             required
             {...register("password", {
@@ -101,26 +97,20 @@ const LogIn = (props: SignInProps) => {
             })}
           />
           {errors.password && (
-            <span className=" absolute text-red-600 text-[0.7rem]">
+            <span className="absolute text-[0.7rem] text-red-600">
               lowercase, uppercase, digit, special character and Length: min - 8, max - 20
             </span>
           )}
 
-          <label
-            className=" text-white peer-focus:font-medium absolute text-sm 
-            duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 
-            rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto 
-            peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-          >
+          <label className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-sm text-white duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:font-medium rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4">
             Password
           </label>
         </div>
 
-        <div className="relative z-0 w-full mb-5 group pb-4">
+        <div className="group relative z-0 mb-5 w-full pb-4">
           <input
             type="password"
-            className=" text-white block py-2.5 px-0 w-full text-sm 
-            bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-sm text-white focus:border-blue-600 focus:outline-none focus:ring-0"
             placeholder=""
             required
             {...register("confirmPassword", {
@@ -131,30 +121,25 @@ const LogIn = (props: SignInProps) => {
             })}
           />
           {errors.password && (
-            <span className=" absolute text-red-600 text-[0.7rem]">
+            <span className="absolute text-[0.7rem] text-red-600">
               lowercase, uppercase, digit, special character and Length: min - 8, max - 20
             </span>
           )}
 
-          <label
-            className=" text-white peer-focus:font-medium absolute text-sm
-            duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 
-            rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto
-            peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-          >
+          <label className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-sm text-white duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-6 peer-focus:scale-75 peer-focus:font-medium rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4">
             Confirm Password
           </label>
         </div>
 
-        <button disabled={isLogin} type="submit" className=" bg-white text-black p-1 rounded-sm w-full">
+        <button disabled={isLogin} type="submit" className="w-full rounded-sm bg-white p-1 text-black">
           Submit
         </button>
       </form>
 
       <div className="flex flex-col items-center gap-5">
-        <div className="text-white text-center ">Not a member yet? Join the conversation today!</div>
+        <div className="text-center text-white">Not a member yet? Join the conversation today!</div>
 
-        <button className=" bg-white text-black pl-4 pr-4 p-1 rounded-sm " onClick={toggleSignIn}>
+        <button className="rounded-sm bg-white p-1 pl-4 pr-4 text-black" onClick={toggleSignIn}>
           Sign Up
         </button>
       </div>

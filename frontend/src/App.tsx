@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import PrivateRoute from "@/components/auth/PrivateRoute";
 import OpenRoute from "@/components/auth/OpenRoute";
 import MainNavbar from "@/components/common/MainNavbar";
@@ -14,7 +14,7 @@ import SocketProvider from "@/context/SocketContext";
 import { useEffect, useRef, useState } from "react";
 import useScrollOnTop from "@/hooks/useScrollOnTop";
 import { checkUserApi } from "@/services/operations/authApi";
-import { setUser } from "@/redux/slices/userSlice";
+import { setProfile, setUser } from "@/redux/slices/userSlice";
 import { useDispatch } from "react-redux";
 import { setAuthUser } from "@/redux/slices/authSlice";
 import SiteLoadingModal from "@/components/common/SiteLoadingModal";
@@ -31,13 +31,40 @@ import MyPosts from "@/components/core/profile/MyPosts";
 import Following from "@/components/core/profile/Following";
 import Followers from "@/components/core/profile/Followers";
 import SavedPosts from "@/components/core/profile/SavedPosts";
+import { useAppSelector } from "./redux/store";
+import { setMyPrivateKey } from "./redux/slices/messagesSlice";
 
 function App() {
+  const authUser = useAppSelector((state) => state.auth.authUser);
   const pageRenderDivRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const [checkUser, setCheckUser] = useState<boolean>(true);
+  const navigate = useNavigate();
 
   useScrollOnTop(pageRenderDivRef);
+
+  useEffect(() => {
+    // function to check user login status for multiple tabs
+    const checkUserLoggedIn = () => {
+      const isMultiTabLoggedIn = localStorage.getItem(process.env.CHECK_USER_IN_MULTI_TAB as string);
+
+      if (isMultiTabLoggedIn && authUser && JSON.parse(isMultiTabLoggedIn) === "false") {
+        dispatch(setAuthUser(false));
+        navigate("/login");
+        dispatch(setProfile(null));
+        dispatch(setUser(null));
+        dispatch(setMyPrivateKey(undefined));
+      }
+    };
+
+    // event listeners for focus, to check user is still logged in
+    window.addEventListener("focus", checkUserLoggedIn);
+
+    return () => {
+      window.removeEventListener("focus", checkUserLoggedIn);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authUser]);
 
   useEffect(() => {
     const checkDefaultLogin = async () => {
