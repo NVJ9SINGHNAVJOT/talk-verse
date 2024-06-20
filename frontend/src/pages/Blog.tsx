@@ -298,7 +298,7 @@ const Blog = () => {
         ref={sideSectionRef}
         className={` ${
           sideMenu === true ? "absolute bottom-0 right-0 top-0 z-40 flex flex-col" : "hidden lm:flex lm:flex-col"
-        } w-56 gap-y-4 bg-[#030609] px-1`}
+        } w-56 gap-y-4 bg-[#030609] px-1 [box-shadow:-63px_0px_132px_12px_rgba(0,0,0,0.75)]`}
       >
         <div
           onClick={() => setCreatePost(true)}
