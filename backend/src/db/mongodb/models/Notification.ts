@@ -6,6 +6,7 @@ import { IUnseenCount } from "@/db/mongodb/models/UnseenCount";
 export interface INotification extends Document {
   _id: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId & IUser;
+  sentFriendRequests: mongoose.Types.ObjectId[] & IUser[];
   friendRequests: mongoose.Types.ObjectId[] & IUser[];
   unseenMessages: mongoose.Types.ObjectId[] & IUnseenCount[];
   createdAt: Date;
@@ -20,6 +21,12 @@ const notificationSchema = new Schema<INotification>(
       ref: "User",
       required: true,
     },
+    sentFriendRequests: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     friendRequests: [
       {
         type: Schema.Types.ObjectId,

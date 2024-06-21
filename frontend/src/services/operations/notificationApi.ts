@@ -8,12 +8,28 @@ import {
   FollowRequestsRs,
   FollowSuggestionsRs,
   GetAllNotificationsRs,
+  GetFollowUsersRs,
   GetUsersRs,
 } from "@/types/apis/notificationApiRs";
 
 export const getUsersApi = async (userName: string): Promise<GetUsersRs> => {
   try {
     const resData: GetUsersRs = await fetchApi("GET", notificationEndPoints.GET_USERS, null, null, {
+      userName: userName,
+    });
+    // success false is used in response
+    if (resData) {
+      return resData;
+    }
+    return null;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const getFollowUsers = async (userName: string): Promise<GetFollowUsersRs> => {
+  try {
+    const resData: GetFollowUsersRs = await fetchApi("GET", notificationEndPoints.GET_FOLLOW_USERS, null, null, {
       userName: userName,
     });
     // success false is used in response

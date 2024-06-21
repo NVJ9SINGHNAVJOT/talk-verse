@@ -10,8 +10,8 @@ import setupChannels from "@/socket/setupChannels";
 import { mongodbDatabaseConnect } from "@/db/mongodb/connection";
 import { postgresqlDatabaseConnect } from "@/db/postgresql/connection";
 import { checkEnvVariables } from "@/validators/checkEnvVariables";
-import { migratePostgreSQL } from "@/db/postgresql/migrate";
-import { setupPostgreSQLTriggers } from "@/db/postgresql/triggers";
+// import { migratePostgreSQL } from "@/db/postgresql/migrate";
+// import { setupPostgreSQLTriggers } from "@/db/postgresql/triggers";
 
 async function main() {
   // check environment variables
@@ -25,8 +25,8 @@ async function main() {
 
   /* NOTE: commented only for development purpose, remove comment in production */
   // postgresql migrations and triggers
-  await migratePostgreSQL();
-  await setupPostgreSQLTriggers();
+  // await migratePostgreSQL();
+  // await setupPostgreSQLTriggers();
 
   // get port number
   const PORT = parseInt(`${process.env["PORT"]}`) || 5000;

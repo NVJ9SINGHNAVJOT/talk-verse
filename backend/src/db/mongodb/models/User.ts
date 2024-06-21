@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 import { IToken } from "@/db/mongodb/models/Token";
 import { IChat } from "@/db/mongodb/models/Chat";
 
-interface CombineChatId {
+export interface CombineChatId {
   friendId: mongoose.Types.ObjectId & IUser;
   chatId: mongoose.Types.ObjectId & IChat;
 }

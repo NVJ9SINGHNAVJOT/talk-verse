@@ -3,7 +3,19 @@ import { UserRequest } from "@/redux/slices/chatSlice";
 export type GetUsersRs = {
   success: boolean;
   message: string;
-  users: UserRequest[];
+  users?: (UserRequest & { isAlreadyRequested: boolean })[];
+} | null;
+
+export type GetFollowUsersRs = {
+  success: boolean;
+  message: string;
+  followUsers?: {
+    id: number;
+    userName: string;
+    imageUrl?: string;
+    isFollowed: boolean;
+    isFollower: boolean;
+  }[];
 } | null;
 
 export type GetAllNotificationsRs = {

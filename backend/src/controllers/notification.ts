@@ -1,7 +1,7 @@
 import Chat from "@/db/mongodb/models/Chat";
 import Notification from "@/db/mongodb/models/Notification";
 import UnseenCount from "@/db/mongodb/models/UnseenCount";
-import User from "@/db/mongodb/models/User";
+import User, { CombineChatId } from "@/db/mongodb/models/User";
 import { clientE } from "@/socket/events";
 import { channels, groupIds, groupOffline, userSocketIDs } from "@/socket/index";
 import {
@@ -24,11 +24,18 @@ import { isValidMongooseObjectId } from "@/validators/mongooseId";
 import { db } from "@/db/postgresql/connection";
 import { user } from "@/db/postgresql/schema/user";
 import { follow } from "@/db/postgresql/schema/follow";
-import { and, eq, isNull, ne, sql } from "drizzle-orm";
+import { and, eq, ilike, isNull, ne, or, sql } from "drizzle-orm";
 import { request } from "@/db/postgresql/schema/request";
 import { OtherPostgreSQLUserIdReqSchema } from "@/types/controllers/common";
 import { checkGroupMembers } from "@/utils/helpers";
+import mongoose from "mongoose";
 
+type CustomIUser = {
+  _id: string;
+  userName: string;
+  imageUrl?: string;
+  isAlreadyRequested: boolean;
+};
 export const getUsers = async (req: Request, res: Response): Promise<Response> => {
   try {
     const userId = (req as CustomRequest).userId;
@@ -37,13 +44,11 @@ export const getUsers = async (req: Request, res: Response): Promise<Response> =
 
     // validation
     if (!userName) {
-      return res.status(400).json({
-        success: false,
-        message: "invalid username input",
-      });
+      return errRes(res, 400, "invalid userName for search");
     }
 
     const userFriends = await User.findById({ _id: userId }).select({ friends: true }).exec();
+    const sentRequests = await Notification.findOne({ userId: userId }).select({ sentFriendRequests: true }).exec();
 
     const excluedIds: string[] = [];
 
@@ -64,13 +69,71 @@ export const getUsers = async (req: Request, res: Response): Promise<Response> =
       });
     }
 
+    if (!sentRequests) {
+      return errRes(res, 400, "no notification exist for current user");
+    }
+
+    const newData: CustomIUser[] = [];
+
+    users.forEach((userSuggestion) => {
+      const data: CustomIUser = {
+        _id: userSuggestion._id.toString(),
+        userName: userSuggestion.userName,
+        imageUrl: userSuggestion.imageUrl,
+        isAlreadyRequested: sentRequests.sentFriendRequests.includes(userSuggestion._id),
+      };
+      newData.push(data);
+    });
+
     return res.status(200).json({
       success: true,
       message: "users",
-      users: users,
+      users: newData,
     });
   } catch (error) {
     return errRes(res, 500, "error while getting users");
+  }
+};
+
+export const getFollowUsers = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const userId2 = (req as CustomRequest).userId2;
+
+    const { userName } = req.query;
+
+    // validation
+    if (!userName) {
+      return errRes(res, 400, "invalid userName for search");
+    }
+
+    const followUsers = await db
+      .select({
+        id: user.id,
+        userName: user.userName,
+        imageUrl: user.imageUrl,
+        isFollowed: sql<boolean>`CASE WHEN ${follow.followerId} = ${userId2} THEN true ELSE false END`,
+        isFollower: sql<boolean>`CASE WHEN ${follow.followingId} = ${userId2} THEN true ELSE false END`,
+      })
+      .from(user)
+      .leftJoin(follow, or(eq(follow.followerId, user.id), eq(follow.followingId, user.id)))
+      .where(and(ilike(user.userName, `%${userName}%`), ne(user.id, userId2)))
+      .limit(25)
+      .execute();
+
+    if (followUsers.length === 0) {
+      return res.status(200).json({
+        success: false,
+        message: "no follow users for userName",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "follow users for userName",
+      followUsers: followUsers,
+    });
+  } catch (error) {
+    return errRes(res, 500, "error while getting follow users");
   }
 };
 
@@ -86,19 +149,28 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
     const data = otherUserIdReq.data;
 
     // check user exist or not for req id
-    const checkUser = await User.findById({ _id: data.otherUserId })
-      .select({ userName: true, imageUrl: true, friends: true })
-      .exec();
+    const checkOtherUser = await Notification.findOneAndUpdate(
+      {
+        userId: data.otherUserId,
+        friendRequests: { $nin: [userId] },
+      },
+      { $push: { friendRequests: userId } },
+      { new: true }
+    ).exec();
 
-    if (!checkUser) {
-      return errRes(res, 400, "user not present for given reqUserId");
+    if (!checkOtherUser) {
+      return errRes(res, 400, "other user does not exist or already have friend request for current user");
     }
 
     // check if current user is already a friend of user(otherUserId) to which request is send
-    if (checkUser.friends.length > 0) {
+    const myDetails = await User.findById({ _id: userId })
+      .select({ userName: true, imageUrl: true, friends: true, _id: false })
+      .exec();
+
+    if (myDetails && myDetails.friends.length > 0) {
       let errCheck: boolean = false;
-      checkUser.friends.forEach((item) => {
-        if (userId === item.friendId._id.toString()) {
+      myDetails.friends.forEach((item) => {
+        if (data.otherUserId === item.friendId._id.toString()) {
           errCheck = true;
           return;
         }
@@ -108,27 +180,12 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
       }
     }
 
-    // check if a request already exist of current user in otherUserId notification
-    const checkNotification = await Notification.findById(
-      { _id: data.otherUserId },
-      { friendRequests: { $in: data.otherUserId } }
-    );
-    if (checkNotification) {
-      return errRes(res, 400, "friend request already exits in otherUserId notification");
-    }
+    // in current user notifications in sentFriendRequests push otherUserId
+    await Notification.findOneAndUpdate({ userId: userId }, { $push: { sentFriendRequests: data.otherUserId } }).exec();
 
-    const myDetails = await User.findById({ _id: userId })
-      .select({ userName: true, imageUrl: true, _id: false })
-      .exec();
-    if (!myDetails) {
-      return errRes(res, 400, "could not found user details");
-    }
-
-    // update user with req
-    await Notification.updateOne({ userId: data.otherUserId }, { $push: { friendRequests: userId } }).exec();
-
+    // check if other user is online then emit user request event
     const socketIds = getSingleSocket(data.otherUserId);
-    if (socketIds) {
+    if (myDetails && socketIds) {
       const sdata: SoUserRequest = {
         _id: userId,
         userName: myDetails.userName,
@@ -157,21 +214,61 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
 
     const data = otherUserIdReq.data;
 
-    const otherUser = await User.findById({ _id: data.otherUserId })
-      .select({ firstName: true, lastName: true, imageUrl: true, publicKey: true, friends: true })
+    // check other user exist or not for otherUserId
+    const otherUser = await Notification.findOneAndUpdate(
+      {
+        userId: data.otherUserId,
+        sentFriendRequests: { $elemMatch: { $eq: userId } },
+      },
+      { $pull: { sentFriendRequests: userId, friendRequests: userId } },
+      { new: true }
+    )
+      .select({ userId: true, unseenMessages: true })
+      .populate({
+        path: "userId",
+        select: "firstName lastName imageUrl publicKey friends chatBarOrder",
+      })
       .exec();
 
-    // check user exist or not for req id
     if (!otherUser) {
-      return errRes(res, 400, "user not present for given id");
+      return errRes(
+        res,
+        400,
+        "user not present for given id or current user is not present in sentFriendRequests of otherUserId"
+      );
     }
 
-    // check if userId for accepting request is already a friend of current user
-    const checkAlreadyFriend = otherUser.friends.some((friend) => friend.friendId._id.toString() === data.otherUserId);
-    if (checkAlreadyFriend) {
-      return errRes(res, 400, "userId for accepting as friend is already a friend of current user");
+    // check if current user Notification contains otherUserId
+    const myDetails = await Notification.findOneAndUpdate(
+      {
+        userId: userId,
+        friendRequests: { $elemMatch: { $eq: data.otherUserId } },
+      },
+      { $pull: { friendRequests: data.otherUserId, sentFriendRequests: data.otherUserId } },
+      { new: true }
+    )
+      .select({ userId: true, unseenMessages: true })
+      .populate({
+        path: "userId",
+        select: "firstName lastName imageUrl publicKey friends chatBarOrder",
+      })
+      .exec();
+
+    if (!myDetails) {
+      return errRes(res, 400, "otherUserId not present in friendRequests for current user");
     }
-    /* 
+
+    // check if OtherUserId for accepting request is already a friend of current user
+    const checkAlreadyFriend =
+      otherUser.userId.friends.some((friend) => friend.friendId._id.toString() === userId) ||
+      myDetails.userId.friends.some((friend) => friend.friendId._id.toString() === data.otherUserId);
+
+    if (checkAlreadyFriend) {
+      return errRes(res, 400, "otherUserId for accepting as friend is already a friend of current user");
+    }
+
+    /*
+      verfication for making friend is done now create chat and channel 
       create chatId for both users and add both users in each others friends array
     */
 
@@ -182,40 +279,23 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
     const ucotherUser = await UnseenCount.create({ userId: data.otherUserId, mainId: chat._id });
     const ucUser = await UnseenCount.create({ userId: userId, mainId: chat._id });
 
-    // remove from notifications and set unseen messages count id
-    await Notification.findOneAndUpdate(
-      { userId: userId },
-      { $pull: { friendRequests: data.otherUserId }, $push: { unseenMessages: ucUser._id } }
-    ).exec();
+    // set unseen messages count id
+    otherUser.unseenMessages.push(ucotherUser._id);
+    myDetails.unseenMessages.push(ucUser._id);
 
-    await Notification.findOneAndUpdate(
-      { userId: data.otherUserId },
-      { $pull: { friendRequests: userId }, $push: { unseenMessages: ucotherUser._id } }
-    ).exec();
+    // update friends for both users
+    otherUser.userId.friends.push({ friendId: new mongoose.Types.ObjectId(userId), chatId: chat._id } as CombineChatId);
+    myDetails.userId.friends.push({
+      friendId: new mongoose.Types.ObjectId(data.otherUserId),
+      chatId: chat._id,
+    } as CombineChatId);
 
-    // now add userId in friend list of acceptUserId
-    const user1 = await User.findByIdAndUpdate(
-      { _id: data.otherUserId },
-      { $push: { friends: { friendId: userId, chatId: chat?._id } } },
-      { new: true }
-    )
-      .select({ chatBarOrder: true })
-      .exec();
+    otherUser.userId.chatBarOrder.unshift(chat._id.toString());
+    myDetails.userId.chatBarOrder.unshift(chat._id.toString());
 
-    // now add acceptUserId in friend list of user
-    const user2 = await User.findByIdAndUpdate(
-      { _id: userId },
-      { $push: { friends: { friendId: data.otherUserId, chatId: chat?._id } } },
-      { new: true }
-    )
-      .select({ chatBarOrder: true, firstName: true, lastName: true, imageUrl: true, publicKey: true })
-      .exec();
-
-    user1?.chatBarOrder.unshift(chat._id.toString());
-    await user1?.save();
-
-    user2?.chatBarOrder.unshift(chat._id.toString());
-    await user2?.save();
+    // save all updated data
+    const update = Promise.all([otherUser.save(), otherUser.userId.save(), myDetails.save(), myDetails.userId.save()]);
+    await update;
 
     // Create a new mutex instance
     const newChannel = new Channel();
@@ -225,32 +305,37 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
 
     const socketIds = getSingleSocket(data.otherUserId);
 
-    if (socketIds.length > 0 && user2) {
+    if (socketIds.length > 0) {
       const sdata: SoRequestAccepted = {
-        _id: user2._id.toString(),
+        _id: myDetails.userId._id.toString(),
         chatId: chat._id.toString(),
-        firstName: user2.firstName,
-        lastName: user2.lastName,
-        imageUrl: user2.imageUrl,
-        publicKey: user2.publicKey,
+        firstName: myDetails.userId.firstName,
+        lastName: myDetails.userId.lastName,
+        imageUrl: myDetails.userId.imageUrl,
+        publicKey: myDetails.userId.publicKey,
       };
       emitSocketEvent(req, socketIds, clientE.REQUEST_ACCEPTED, sdata);
-      emitSocketEvent(req, socketIds, clientE.SET_USER_ONLINE, user2._id.toString());
+      emitSocketEvent(req, socketIds, clientE.SET_USER_ONLINE, myDetails.userId._id.toString());
 
       // socketId is of other user, now send useronline to myself as other user is online and socketId is present
       // get mysocketId
       const mySocketIds = getSingleSocket(userId);
-      if (mySocketIds.length > 0 && user1) {
-        emitSocketEvent(req, mySocketIds, clientE.SET_USER_ONLINE, user1._id.toString());
+      if (mySocketIds.length > 0) {
+        emitSocketEvent(req, mySocketIds, clientE.SET_USER_ONLINE, otherUser.userId._id.toString());
       }
     }
 
     return res.status(200).json({
       success: true,
       message: "request accepted successfully",
-      newFriend: otherUser,
+      newFriend: {
+        _id: otherUser.userId._id,
+        firstName: otherUser.userId.firstName,
+        lastName: otherUser.userId.lastName,
+        imageUrl: otherUser.userId.imageUrl,
+      },
       newChatId: chat._id,
-      newFriendPublicKey: otherUser.publicKey,
+      newFriendPublicKey: otherUser.userId.publicKey,
     });
   } catch (error) {
     return errRes(res, 500, "error while accept request", error);
@@ -268,7 +353,21 @@ export const deleteRequest = async (req: Request, res: Response) => {
 
     const data = otherUserIdReq.data;
 
-    await Notification.findOneAndUpdate({ userId: userId }, { $pull: { friendRequests: data.otherUserId } }).exec();
+    const checkOtherUserExistAndNotification = await Notification.findOneAndUpdate(
+      { userId: data.otherUserId, sentFriendRequests: { $elemMatch: { $eq: userId } } },
+      { $pull: { sentFriendRequests: userId } }
+    ).exec();
+
+    if (!checkOtherUserExistAndNotification) {
+      return errRes(res, 400, "other user does not exist or no sent request exist in other user notification");
+    }
+
+    await Notification.findOneAndUpdate(
+      {
+        userId: userId,
+      },
+      { $pull: { friendRequests: data.otherUserId } }
+    ).exec();
 
     return res.status(200).json({
       success: true,
@@ -301,10 +400,6 @@ export const getAllNotifications = async (req: Request, res: Response): Promise<
       ])
       .exec();
 
-    if (!notifications) {
-      return errRes(res, 500, "error while getting notifications");
-    }
-
     if (notifications?.friendRequests.length === 0 && notifications.unseenMessages.length === 0) {
       return res.status(200).json({
         success: false,
@@ -315,8 +410,8 @@ export const getAllNotifications = async (req: Request, res: Response): Promise<
     return res.status(200).json({
       success: true,
       message: "notifications for user",
-      userReqs: notifications.friendRequests,
-      unseenMessages: notifications.unseenMessages,
+      userReqs: notifications?.friendRequests,
+      unseenMessages: notifications?.unseenMessages,
     });
   } catch (error) {
     return errRes(res, 500, "error while getting notifications", error);
