@@ -1,6 +1,7 @@
 import CreatePost from "@/components/core/blog/post/CreatePost";
 import CreateStory from "@/components/core/blog/story/CreateStory";
 import Stories from "@/components/core/blog/story/Stories";
+import SearchModal from "@/components/core/talk/chatItems/SearchModal";
 import { useOnClickOutsideBlog } from "@/hooks/useOnClickOutside";
 import TalkVerseButton from "@/lib/buttons/talkversebutton/TalkVerseButton";
 import { CanvasReveal } from "@/lib/sections/CanvasReveal";
@@ -37,15 +38,15 @@ const Blog = () => {
   const [postMenu, setPostMenu] = useState<string>();
   const [suggestions, setSuggestions] = useState<UserSuggestion[]>([]);
   const [followRequests, setFollowRequests] = useState<UserSuggestion[]>([]);
-  const [sendingReq, setSendingReq] = useState<boolean>(false);
-  const [acceptingReq, setAcceptingReq] = useState<boolean>(false);
-  const [deletingReq, setDeletingReq] = useState<boolean>(false);
+  const [sendingReq, setSendingReq] = useState<number[]>([]);
+  const [answeringReq, setAnsweringReq] = useState<number[]>([]);
   const [createPost, setCreatePost] = useState<boolean>(false);
   const [createStory, setCreateStory] = useState<boolean>(false);
   const [storyLoading, setStoryLoading] = useState<boolean>(true);
   const [userStory, setUserStory] = useState<UserStory>();
   const [viewStory, setViewStory] = useState<boolean>(false);
   const [sideMenu, setSideMenu] = useState<boolean>(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const sideSectionRef = useRef<HTMLDivElement>(null);
   const excludeTalkVerseButtonRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -54,19 +55,19 @@ const Blog = () => {
   useOnClickOutsideBlog(sideSectionRef, () => setSideMenu(false), sideMenu, excludeTalkVerseButtonRef);
 
   const sendFollowRequest = async (reqUserId: number) => {
-    setSendingReq(true);
+    setSendingReq([...sendingReq, reqUserId]);
     const response = await sendFollowRequestApi(reqUserId);
     if (response) {
       setSuggestions((prev) => prev.filter((user) => user.id !== reqUserId));
-      toast.success("Request send to follow");
+      toast.success("Follow request send successfully");
     } else {
       toast.error("Error while sending request");
     }
-    setSendingReq(false);
+    setSendingReq((prev) => prev.filter((otherUserId) => otherUserId !== reqUserId));
   };
 
   const acceptRequest = async (reqUserId: number) => {
-    setAcceptingReq(true);
+    setAnsweringReq([...answeringReq, reqUserId]);
     const response = await acceptFollowRequestApi(reqUserId);
     if (response) {
       setFollowRequests((prev) => prev.filter((user) => user.id != reqUserId));
@@ -75,18 +76,18 @@ const Blog = () => {
     } else {
       toast.error("Error while adding follower");
     }
-    setAcceptingReq(false);
+    setAnsweringReq((prev) => prev.filter((otherUserId) => otherUserId !== reqUserId));
   };
 
   const deleteRequest = async (reqUserId: number) => {
-    setDeletingReq(true);
+    setAnsweringReq([...answeringReq, reqUserId]);
     const response = await deletFollowRequestApi(reqUserId);
     if (response) {
       setFollowRequests((prev) => prev.filter((user) => user.id != reqUserId));
     } else {
       toast.error("Error while adding follower");
     }
-    setDeletingReq(false);
+    setAnsweringReq((prev) => prev.filter((otherUserId) => otherUserId !== reqUserId));
   };
 
   const deleteStory = async () => {
@@ -246,8 +247,7 @@ const Blog = () => {
 
       {/* posts section */}
       <section
-        className={`flex w-[calc(100vw-144px)] flex-col bg-[#09131d] px-4 pt-1 md:w-[calc(100vw-192px)] lm:w-[calc(100vw-(192px+224px))] 
-        ${postMenu === "trending" || postMenu === "recent" ? "ct-blogSection-bg-1" : "ct-blogSection-bg-2"}`}
+        className={`flex w-[calc(100vw-144px)] flex-col bg-[#09131d] px-4 pt-1 md:w-[calc(100vw-192px)] lm:w-[calc(100vw-(192px+224px))] ${postMenu === "trending" || postMenu === "recent" ? "ct-blogSection-bg-1" : "ct-blogSection-bg-2"}`}
       >
         {/* story section */}
         <section className="mb-5 mt-1 flex w-full">
@@ -275,8 +275,7 @@ const Blog = () => {
           ) : (
             <div className="flex flex-shrink-0 flex-col items-center gap-y-2 text-white">
               <button type="button" disabled={storyLoading} onClick={() => setCreateStory(true)}>
-                <div className="flex size-12 cursor-pointer items-center justify-center rounded-full border-[2px] border-dotted border-whitesmoke 
-                bg-slate-900">
+                <div className="flex size-12 cursor-pointer items-center justify-center rounded-full border-[2px] border-dotted border-whitesmoke bg-slate-900">
                   <GoPlus className="fill-white" />
                 </div>
               </button>
@@ -302,19 +301,13 @@ const Blog = () => {
       >
         <div
           onClick={() => setCreatePost(true)}
-          className="group relative mx-auto mt-4 flex h-12 w-10/12 cursor-pointer items-center justify-center overflow-hidden rounded-md 
-          bg-sky-800 p-2 text-sky-50 duration-500 hover:border-sky-600"
+          className="group relative mx-auto mt-4 flex h-12 w-10/12 cursor-pointer items-center justify-center overflow-hidden rounded-md bg-sky-800 p-2 text-sky-50 duration-500 hover:border-sky-600"
         >
-          <div className="absolute z-10 h-48 w-48 rounded-full bg-sky-900 transition-all delay-150 duration-500 ease-in-out group-hover:scale-150 
-          group-hover:delay-75"></div>
-          <div className="absolute z-10 h-40 w-40 rounded-full bg-sky-800 transition-all delay-150 duration-500 ease-in-out group-hover:scale-150 
-          group-hover:delay-100"></div>
-          <div className="absolute z-10 h-32 w-32 rounded-full bg-sky-700 transition-all delay-150 duration-500 ease-in-out group-hover:scale-150 
-          group-hover:delay-150"></div>
-          <div className="absolute z-10 h-24 w-24 rounded-full bg-sky-600 transition-all delay-150 duration-500 ease-in-out group-hover:scale-150 
-          group-hover:delay-200"></div>
-          <div className="absolute z-10 h-16 w-16 rounded-full bg-sky-500 transition-all delay-150 duration-500 ease-in-out group-hover:scale-150 
-          group-hover:delay-300"></div>
+          <div className="absolute z-10 h-48 w-48 rounded-full bg-sky-900 transition-all delay-150 duration-500 ease-in-out group-hover:scale-150 group-hover:delay-75"></div>
+          <div className="absolute z-10 h-40 w-40 rounded-full bg-sky-800 transition-all delay-150 duration-500 ease-in-out group-hover:scale-150 group-hover:delay-100"></div>
+          <div className="absolute z-10 h-32 w-32 rounded-full bg-sky-700 transition-all delay-150 duration-500 ease-in-out group-hover:scale-150 group-hover:delay-150"></div>
+          <div className="absolute z-10 h-24 w-24 rounded-full bg-sky-600 transition-all delay-150 duration-500 ease-in-out group-hover:scale-150 group-hover:delay-200"></div>
+          <div className="absolute z-10 h-16 w-16 rounded-full bg-sky-500 transition-all delay-150 duration-500 ease-in-out group-hover:scale-150 group-hover:delay-300"></div>
           <p className="z-10 font-semibold text-white">Create Post</p>
         </div>
         {/* follow suggestions */}
@@ -338,7 +331,10 @@ const Blog = () => {
                         <p className="text-[0.7rem] text-neutral-500">{suggestion.userName}</p>
                       </div>
                     </div>
-                    <button disabled={sendingReq} onClick={() => sendFollowRequest(suggestion.id)}>
+                    <button
+                      disabled={sendingReq.includes(suggestion.id)}
+                      onClick={() => sendFollowRequest(suggestion.id)}
+                    >
                       <HiOutlineUserAdd className="mr-[0.4rem] size-6 cursor-pointer hover:fill-white" />
                     </button>
                   </div>
@@ -368,12 +364,17 @@ const Blog = () => {
                       </div>
                     </div>
                     <div className="mr-[0.4rem] flex gap-x-1">
-                      <button disabled={acceptingReq} onClick={() => acceptRequest(followRequest.id)}>
+                      <button
+                        disabled={answeringReq.includes(followRequest.id)}
+                        onClick={() => acceptRequest(followRequest.id)}
+                      >
                         <CiCirclePlus className="aspect-auto size-6 cursor-pointer rounded-full text-white hover:bg-white hover:text-black" />
                       </button>
-                      <button disabled={deletingReq} onClick={() => deleteRequest(followRequest.id)}>
-                        <CiCirclePlus className="aspect-auto size-6 rotate-45 cursor-pointer rounded-full text-white hover:bg-white 
-                        hover:text-black" />
+                      <button
+                        disabled={answeringReq.includes(followRequest.id)}
+                        onClick={() => deleteRequest(followRequest.id)}
+                      >
+                        <CiCirclePlus className="aspect-auto size-6 rotate-45 cursor-pointer rounded-full text-white hover:bg-white hover:text-black" />
                       </button>
                     </div>
                   </div>
@@ -390,6 +391,11 @@ const Blog = () => {
       {createStory && (
         <CreateStory setCreateStory={setCreateStory} setUserStory={setUserStory} setStoryLoading={setStoryLoading} />
       )}
+      {isSearchOpen && (
+        <SearchModal setIsSearchOpen={setIsSearchOpen} requestType="follow" sendFollowRequest={sendFollowRequest} />
+      )}
+
+      {/* view following user story */}
       {viewStory && (
         <section className="fixed inset-0 top-16 z-50 flex max-w-maxContent items-center justify-center overflow-y-auto backdrop-blur-[20px]">
           <div className="absolute z-50 flex h-[28rem] w-72 items-center justify-center bg-neutral-950">
