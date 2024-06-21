@@ -1,6 +1,8 @@
 export function checkEnvVariables() {
   if (
     !process.env["ENVIRONMENT"] ||
+    !process.env["ALLOWED_ORIGINS"] ||
+    process.env["ALLOWED_ORIGINS"].split(",").map((origin) => origin.trim()).length === 0 ||
     !process.env["SERVER_KEY"] ||
     !process.env["PORT"] ||
     !process.env["MAIL_HOST"] ||
