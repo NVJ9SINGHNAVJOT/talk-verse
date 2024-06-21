@@ -48,11 +48,11 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
       })
       .exec();
 
-    const groups = await Group.find({ members: { $in: [userId] } })
+    const groups = await Group.find({ members: { $elemMatch: { $eq: userId } } })
       .select({ groupName: true, gpImageUrl: true })
       .exec();
 
-    if (userFriends?.friends?.length !== undefined && userFriends?.friends?.length < 1 && groups.length === 0) {
+    if (userFriends?.friends?.length !== undefined && userFriends.friends.length === 0 && groups.length === 0) {
       return res.status(200).json({
         success: false,
         message: "user have no chat bar data",

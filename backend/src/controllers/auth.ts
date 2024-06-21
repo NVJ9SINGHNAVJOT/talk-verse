@@ -96,7 +96,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     });
 
     // create notification model for user
-    await Notification.create({ userId: newUser?._id });
+    await Notification.create({ userId: newUser._id });
 
     // create user in postgreSQL database
     const newUser2 = await db
