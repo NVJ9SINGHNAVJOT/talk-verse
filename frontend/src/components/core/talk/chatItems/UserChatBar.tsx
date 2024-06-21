@@ -25,27 +25,16 @@ const UserChatBar = () => {
 
   userChatBarEvents(socket);
 
-  const toggleSearchModal = () => {
-    setIsSearchOpen(!isSearchOpen);
-  };
-
-  const toggelCreateGroupModal = () => {
-    setIsCreateGroupOpen(!isCreateGroupOpen);
-  };
-
   return (
-    <div className="w-full h-full bg-[#0D1117]">
+    <div className="h-full w-full bg-[#0D1117]">
       {/* chat top bar */}
-      <div
-        className="w-full h-[4rem] flex justify-around items-center py-2 border-b-[1px]
-         border-b-whitesmoke border-r-[3px] border-r-black "
-      >
-        <IoSearchOutline onClick={toggleSearchModal} className=" text-white text-2xl cursor-pointer" />
-        <FiPlus onClick={toggelCreateGroupModal} className=" text-white text-2xl cursor-pointer" />
-        <div className=" relative">
+      <div className="flex h-[4rem] w-full items-center justify-around border-b-[1px] border-r-[3px] border-b-whitesmoke border-r-black py-2">
+        <IoSearchOutline onClick={() => setIsSearchOpen(true)} className="cursor-pointer text-2xl text-white" />
+        <FiPlus onClick={() => setIsCreateGroupOpen(true)} className="cursor-pointer text-2xl text-white" />
+        <div className="relative">
           <div ref={excSeeNotifRef}>
             <FaRegBell
-              className={` ${userRequests.length === 0 ? "text-white" : "text-yellow-400 "} text-2xl cursor-pointer`}
+              className={` ${userRequests.length === 0 ? "text-white" : "text-yellow-400"} cursor-pointer text-2xl`}
               onClick={() => setSeeNotif((prev) => !prev)}
             />
           </div>
@@ -54,7 +43,7 @@ const UserChatBar = () => {
       </div>
 
       {/* chat user component */}
-      <div className="w-full h-[calc(100vh-8rem)] overflow-y-scroll scroll-smooth">
+      <div className="h-[calc(100vh-8rem)] w-full overflow-y-scroll scroll-smooth">
         {chatBarData?.map((data, index) => (
           <div key={index}>
             {data.chatId !== undefined ? (
@@ -67,8 +56,8 @@ const UserChatBar = () => {
       </div>
 
       {/* modals for search user and create group */}
-      {isSearchOpen && <SearchModal toggleSearchModal={toggleSearchModal} />}
-      {isCreateGroupOpen && <CreateGroup toggelCreateGroupModal={toggelCreateGroupModal} />}
+      {isSearchOpen && <SearchModal setIsSearchOpen={setIsSearchOpen} requestType="friend" />}
+      {isCreateGroupOpen && <CreateGroup setIsCreateGroupOpen={setIsCreateGroupOpen} />}
     </div>
   );
 };

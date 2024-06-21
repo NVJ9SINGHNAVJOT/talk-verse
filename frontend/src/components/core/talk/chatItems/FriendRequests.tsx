@@ -59,30 +59,31 @@ const FriendRequests = (props: FriendRequestsProps) => {
   return (
     <div
       ref={seeNotifRef}
-      className=" absolute z-[500] -top-3 -right-[18rem] rounded-xl gap-y-3 text-white flex flex-col px-5 py-2 bg-black"
+      className="absolute -right-[18rem] -top-3 z-[500] flex max-h-[60vh] flex-col gap-y-3 overflow-y-auto rounded-xl 
+      bg-black px-5 py-2 text-white"
     >
       {userRequests?.length === 0 ? (
-        <div className=" bg-black px-3 py-1 text-white text-center w-[12rem]">No Requests</div>
+        <div className="w-[12rem] bg-black px-3 py-1 text-center text-white">No Requests</div>
       ) : (
         userRequests?.map((user, index) => {
           return (
             <div
               key={index}
-              className=" flex w-fit items-center gap-x-3 bg-black hover:bg-gray-800 px-3 py-1 rounded-lg"
+              className="flex w-fit items-center gap-x-3 rounded-lg bg-black px-3 py-1 hover:bg-gray-800"
             >
               {user.imageUrl ? (
-                <img src={user.imageUrl} className=" rounded-full w-10 h-10 aspect-auto" alt="Loading..." />
+                <img src={user.imageUrl} className="aspect-auto h-10 w-10 rounded-full" alt="Loading..." />
               ) : (
-                <RxAvatar className="w-10 h-10 aspect-auto" />
+                <RxAvatar className="aspect-auto h-10 w-10" />
               )}
-              <div className=" truncate">{user.userName}</div>
+              <div className="truncate">{user.userName}</div>
               <CiCirclePlus
                 onClick={() => acceptReq(user._id)}
-                className=" text-white w-8 h-8 aspect-auto cursor-pointer hover:bg-white hover:text-black rounded-full"
+                className="aspect-auto h-8 w-8 cursor-pointer rounded-full text-white hover:bg-white hover:text-black"
               />
               <CiCirclePlus
                 onClick={() => deleteReq(user._id)}
-                className=" text-white w-8 h-8 aspect-auto cursor-pointer rotate-45 hover:bg-white hover:text-black rounded-full"
+                className="aspect-auto h-8 w-8 rotate-45 cursor-pointer rounded-full text-white hover:bg-white hover:text-black"
               />
             </div>
           );

@@ -27,6 +27,7 @@ import { follow } from "@/db/postgresql/schema/follow";
 import { and, eq, isNull, ne, sql } from "drizzle-orm";
 import { request } from "@/db/postgresql/schema/request";
 import { OtherPostgreSQLUserIdReqSchema } from "@/types/controllers/common";
+import { checkGroupMembers } from "@/utils/helpers";
 
 export const getUsers = async (req: Request, res: Response): Promise<Response> => {
   try {
@@ -56,7 +57,7 @@ export const getUsers = async (req: Request, res: Response): Promise<Response> =
       .limit(25)
       .exec();
 
-    if (users.length < 1) {
+    if (users.length === 0) {
       return res.status(200).json({
         success: false,
         message: "no user found for given username",
@@ -89,20 +90,31 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
       .select({ userName: true, imageUrl: true, friends: true })
       .exec();
 
-    let errCheck: boolean = false;
-    checkUser?.friends?.forEach((item) => {
-      if (userId === item.friendId._id.toString()) {
-        errCheck = true;
-        return;
-      }
-    });
-
-    if (errCheck) {
-      return errRes(res, 400, "requested user is already friend of user");
-    }
-
     if (!checkUser) {
       return errRes(res, 400, "user not present for given reqUserId");
+    }
+
+    // check if current user is already a friend of user(otherUserId) to which request is send
+    if (checkUser.friends.length > 0) {
+      let errCheck: boolean = false;
+      checkUser.friends.forEach((item) => {
+        if (userId === item.friendId._id.toString()) {
+          errCheck = true;
+          return;
+        }
+      });
+      if (errCheck) {
+        return errRes(res, 400, "requested user is already friend of current user");
+      }
+    }
+
+    // check if a request already exist of current user in otherUserId notification
+    const checkNotification = await Notification.findById(
+      { _id: data.otherUserId },
+      { friendRequests: { $in: data.otherUserId } }
+    );
+    if (checkNotification) {
+      return errRes(res, 400, "friend request already exits in otherUserId notification");
     }
 
     const myDetails = await User.findById({ _id: userId })
@@ -145,16 +157,24 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
 
     const data = otherUserIdReq.data;
 
-    // check user exist or not for req id
     const otherUser = await User.findById({ _id: data.otherUserId })
-      .select({ firstName: true, lastName: true, imageUrl: true, publicKey: true })
+      .select({ firstName: true, lastName: true, imageUrl: true, publicKey: true, friends: true })
       .exec();
 
+    // check user exist or not for req id
     if (!otherUser) {
       return errRes(res, 400, "user not present for given id");
     }
 
-    // create chatId for both users
+    // check if userId for accepting request is already a friend of current user
+    const checkAlreadyFriend = otherUser.friends.some((friend) => friend.friendId._id.toString() === data.otherUserId);
+    if (checkAlreadyFriend) {
+      return errRes(res, 400, "userId for accepting as friend is already a friend of current user");
+    }
+    /* 
+      create chatId for both users and add both users in each others friends array
+    */
+
     // user 1 is who initially sent request and user 2 is who accepted that request
     const chat = await Chat.create({ user1: data.otherUserId, user2: userId });
 
@@ -325,8 +345,9 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
 
     const data = createGroupReq.data;
 
-    const members: string[] = JSON.parse(data.userIdsInGroup);
-    if (!members || members.length < 1 || !isValidMongooseObjectId(members)) {
+    // check groupMembers for creating group
+    const members = checkGroupMembers(data.userIdsInGroup);
+    if (members.length === 0) {
       if (req.file) {
         deleteFile(req.file);
       }

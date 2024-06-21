@@ -14,7 +14,7 @@ import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
 type CreateGroupModalProps = {
-  toggelCreateGroupModal: () => void;
+  setIsCreateGroupOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 type CreateGroupData = {
@@ -26,12 +26,11 @@ const CreateGroupModal = (props: CreateGroupModalProps) => {
   const [groupMembers, setGroupMembers] = useState<string[]>([]);
   const friends = useAppSelector((state) => state.chat.friends);
   const creatingGroup = useAppSelector((state) => state.loading.createGroupLd);
-  const { toggelCreateGroupModal } = props;
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const refModal = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useOnClickOutside(refModal, toggelCreateGroupModal);
+  useOnClickOutside(refModal, () => props.setIsCreateGroupOpen(false));
 
   const addMember = (_id: string) => {
     if (!groupMembers.includes(_id)) {
@@ -65,6 +64,11 @@ const CreateGroupModal = (props: CreateGroupModalProps) => {
       toast.info("Minimum 3 members required for group");
       return;
     }
+    if (groupMembers.length > 50) {
+      toast.info("Maximum 50 members are allowed for group");
+      return;
+    }
+
     dispatch(setCreateGroupLoading(true));
     reset();
     const newFormData = new FormData();
@@ -84,7 +88,7 @@ const CreateGroupModal = (props: CreateGroupModalProps) => {
     } else {
       toast.error("Error while creating group");
     }
-    toggelCreateGroupModal();
+    props.setIsCreateGroupOpen(false);
   };
 
   const handleimgTagRefClick = () => {
@@ -96,21 +100,21 @@ const CreateGroupModal = (props: CreateGroupModalProps) => {
       setGroupMembers([]);
       dispatch(setCreateGroupLoading(false));
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return creatingGroup === true ? (
     <WorkModal title="Creating Group" />
   ) : (
-    <div className="fixed inset-0 w-screen h-screen backdrop-blur-[4px] bg-transparent z-[1000] flex justify-center items-center overflow-y-auto">
+    <div className="fixed inset-0 z-[1000] flex h-screen w-screen items-center justify-center overflow-y-auto bg-transparent backdrop-blur-[4px]">
       <div ref={refModal} className="flex flex-col gap-6 p-8">
-        <form onSubmit={handleSubmit(createGroup)} className=" flex justify-center items-center gap-6 p-8">
-          <div className="flex justify-center items-center relative size-11">
+        <form onSubmit={handleSubmit(createGroup)} className="flex items-center justify-center gap-6 p-8">
+          <div className="relative flex size-11 items-center justify-center">
             <input
               id="imgInput"
               name="imageInput"
               ref={fileInputRef}
-              className="absolute w-5 h-5  hidden"
+              className="absolute hidden h-5 w-5"
               type="file"
               accept=".jpg ,.jpeg, .png"
               onChange={handleImageChange}
@@ -119,15 +123,13 @@ const CreateGroupModal = (props: CreateGroupModalProps) => {
             {selectedFile === null ? (
               <CiImageOn
                 onClick={handleimgTagRefClick}
-                className="block   absolute size-11 rounded bg-richblack-300 
-            cursor-pointer"
+                className="absolute block size-11 cursor-pointer rounded bg-richblack-300"
               />
             ) : (
               <img
                 src={URL.createObjectURL(selectedFile)}
                 onClick={handleimgTagRefClick}
-                className="block
-              absolute size-11 object-cover rounded bg-richblack-300 cursor-pointer"
+                className="absolute block size-11 cursor-pointer rounded bg-richblack-300 object-cover"
                 alt="Avatar"
               />
             )}
@@ -135,8 +137,7 @@ const CreateGroupModal = (props: CreateGroupModalProps) => {
           <input
             type="text"
             placeholder="Create Group"
-            className=" w-[10rem] h-[3rem] bg-black p-4 text-white 
-         rounded-md focus:border-[#8678F9] border-transparent border-2 focus:outline-none"
+            className="h-[3rem] w-[10rem] rounded-md border-2 border-transparent bg-black p-4 text-white focus:border-[#8678F9] focus:outline-none"
             {...register("groupName", {
               required: true,
               pattern: /^[a-zA-Z][a-zA-Z0-9_-]{2,}$/,
@@ -147,42 +148,35 @@ const CreateGroupModal = (props: CreateGroupModalProps) => {
           <button
             disabled={creatingGroup}
             type="submit"
-            className="relative inline-flex h-[3rem] w-fit items-center justify-center rounded-md
-          bg-white px-4 font-medium text-gray-950 transition-colors"
+            className="relative inline-flex h-[3rem] w-fit items-center justify-center rounded-md bg-white px-4 font-medium text-gray-950 transition-colors"
           >
-            <div
-              className="absolute -inset-0.5 -z-10 rounded-lg bg-gradient-to-b from-[#c7d2fe]
-           to-[#8678f9] opacity-75 blur"
-            />
+            <div className="absolute -inset-0.5 -z-10 rounded-lg bg-gradient-to-b from-[#c7d2fe] to-[#8678f9] opacity-75 blur" />
             Create
           </button>
         </form>
         {/* friends */}
-        <div
-          className=" flex flex-wrap justify-center items-start gap-7 w-[35rem]  max-w-[40rem] text-white 
-           max-h-[calc(100vh-50vh)] overflow-y-scroll"
-        >
+        <div className="flex max-h-[calc(100vh-50vh)] w-[35rem] max-w-[40rem] flex-wrap items-start justify-center gap-7 overflow-y-scroll text-white">
           {friends.map((friend, index) => {
             return (
-              <div key={index} className=" flex w-fit items-center gap-x-3 bg-black text-white px-3 py-1 rounded-lg">
+              <div key={index} className="flex w-fit items-center gap-x-3 rounded-lg bg-black px-3 py-1 text-white">
                 {friend.imageUrl ? (
-                  <img src={friend.imageUrl} className=" rounded-full  size-8 aspect-auto" alt="Loading..." />
+                  <img src={friend.imageUrl} className="aspect-auto size-8 rounded-full" alt="Loading..." />
                 ) : (
-                  <RxAvatar className=" size-8 aspect-auto" />
+                  <RxAvatar className="aspect-auto size-8" />
                 )}
-                <div className=" flex justify-center items-center gap-x-2 text-white text-xs">
+                <div className="flex items-center justify-center gap-x-2 text-xs text-white">
                   <div>{friend.firstName}</div>
                   <div>{friend.lastName}</div>
                 </div>
                 {groupMembers.includes(friend._id) ? (
                   <CiCircleMinus
                     onClick={() => addMember(friend._id)}
-                    className="text-black size-6 aspect-auto cursor-pointer bg-white  rounded-full"
+                    className="aspect-auto size-6 cursor-pointer rounded-full bg-white text-black"
                   />
                 ) : (
                   <CiCirclePlus
                     onClick={() => addMember(friend._id)}
-                    className=" text-white size-6 aspect-auto cursor-pointer hover:bg-white hover:text-black rounded-full"
+                    className="aspect-auto size-6 cursor-pointer rounded-full text-white hover:bg-white hover:text-black"
                   />
                 )}
               </div>
