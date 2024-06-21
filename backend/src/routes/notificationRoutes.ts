@@ -9,6 +9,7 @@ import {
   followRequests,
   followSuggestions,
   getAllNotifications,
+  getFollowUsers,
   getUsers,
   sendFollowRequest,
   sendRequest,
@@ -22,6 +23,7 @@ import express, { Router } from "express";
 const router: Router = express.Router();
 
 router.get("/getUsers", auth, getUsers); // parameters: userName
+router.get("/getFollowUsers", auth, getFollowUsers); // parameters: userName
 router.post("/sendRequest", auth, sendRequest);
 router.post("/acceptRequest", auth, acceptRequest);
 router.delete("/deleteRequest", auth, deleteRequest);

@@ -27,6 +27,7 @@ export const profileEndPoints = {
 // notification endpoints
 export const notificationEndPoints = {
   GET_USERS: BASE_URL_SERVER + "/notifications/getUsers", // parameters: userName
+  GET_FOLLOW_USERS: BASE_URL_SERVER + "/notifications/getFollowUsers", // parameters: userName
   SEND_REQUEST: BASE_URL_SERVER + "/notifications/sendRequest",
   ACCEPT_REQUEST: BASE_URL_SERVER + "/notifications/acceptRequest",
   DELETE_REQUESET: BASE_URL_SERVER + "/notifications/deleteRequest",
