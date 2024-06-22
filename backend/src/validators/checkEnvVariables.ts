@@ -6,7 +6,6 @@ export function checkEnvVariables() {
     !process.env["SERVER_KEY"] ||
     !process.env["PORT"] ||
     !process.env["MAIL_HOST"] ||
-    !process.env["POSTGRES_PORT"] ||
     !process.env["MAIL_USER"] ||
     !process.env["MAIL_PASS"] ||
     !process.env["JWT_SECRET"] ||

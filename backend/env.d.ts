@@ -21,7 +21,6 @@ declare namespace NodeJS {
     MONGODB_URL: string;
 
     POSTGRES_HOST: string;
-    POSTGRES_PORT: string;
     POSTGRES_USER: string;
     POSTGRES_DB: string;
     POSTGRES_PASSWORD: string;
