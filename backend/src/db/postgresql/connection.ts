@@ -17,6 +17,7 @@ configDotenv();
 
 export const pool = new Pool({
   host: `${process.env["POSTGRES_HOST"]}`,
+  port: parseInt(`${process.env["POSTGRES_POST"]}`),
   user: `${process.env["POSTGRES_USER"]}`,
   database: `${process.env["POSTGRES_DB"]}`,
   password: `${process.env["POSTGRES_PASSWORD"]}`,
