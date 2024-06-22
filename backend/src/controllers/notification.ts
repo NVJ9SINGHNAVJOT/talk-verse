@@ -113,9 +113,11 @@ export const getFollowUsers = async (req: Request, res: Response): Promise<Respo
         imageUrl: user.imageUrl,
         isFollowed: sql<boolean>`CASE WHEN ${follow.followerId} = ${userId2} THEN true ELSE false END`,
         isFollower: sql<boolean>`CASE WHEN ${follow.followingId} = ${userId2} THEN true ELSE false END`,
+        isRequested: sql<boolean>`CASE WHEN ${request.fromId} = ${userId2} THEN true ELSE false END`,
       })
       .from(user)
       .leftJoin(follow, or(eq(follow.followerId, user.id), eq(follow.followingId, user.id)))
+      .leftJoin(request, and(eq(request.toId, user.id), eq(request.fromId, userId2)))
       .where(and(ilike(user.userName, `%${userName}%`), ne(user.id, userId2)))
       .limit(25)
       .execute();

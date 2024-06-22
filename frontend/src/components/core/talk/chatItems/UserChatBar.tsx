@@ -1,7 +1,7 @@
 import { IoSearchOutline } from "react-icons/io5";
 import { FiPlus } from "react-icons/fi";
 import { FaRegBell } from "react-icons/fa";
-import SearchModal from "@/components/core/talk/chatItems/SearchModal";
+import SearchModal from "@/components/common/SearchModal";
 import CreateGroup from "@/components/core/talk/chatItems/CreateGroupModal";
 import { useSocketContext } from "@/context/SocketContext";
 import userChatBarEvents from "@/socket/events/userChatBarEvents";

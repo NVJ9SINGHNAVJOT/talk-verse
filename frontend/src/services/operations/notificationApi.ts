@@ -27,7 +27,7 @@ export const getUsersApi = async (userName: string): Promise<GetUsersRs> => {
   }
 };
 
-export const getFollowUsers = async (userName: string): Promise<GetFollowUsersRs> => {
+export const getFollowUsersApi = async (userName: string): Promise<GetFollowUsersRs> => {
   try {
     const resData: GetFollowUsersRs = await fetchApi("GET", notificationEndPoints.GET_FOLLOW_USERS, null, null, {
       userName: userName,

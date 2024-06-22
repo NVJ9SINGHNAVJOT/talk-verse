@@ -6,16 +6,18 @@ export type GetUsersRs = {
   users?: (UserRequest & { isAlreadyRequested: boolean })[];
 } | null;
 
+export type FollowUsers = {
+  id: number;
+  userName: string;
+  imageUrl?: string;
+  isFollowed: boolean;
+  isFollower: boolean;
+  isRequested: boolean;
+};
 export type GetFollowUsersRs = {
   success: boolean;
   message: string;
-  followUsers?: {
-    id: number;
-    userName: string;
-    imageUrl?: string;
-    isFollowed: boolean;
-    isFollower: boolean;
-  }[];
+  followUsers?: FollowUsers[];
 } | null;
 
 export type GetAllNotificationsRs = {
