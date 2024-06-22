@@ -5,9 +5,9 @@ import { IUser } from "@/db/mongodb/models/User";
 export interface IGroup extends Document {
   _id: mongoose.Types.ObjectId;
   groupName: string;
-  gpCreater: mongoose.Types.ObjectId & IUser;
+  gpCreater: mongoose.Types.ObjectId | IUser;
   gpImageUrl: string;
-  members: mongoose.Types.ObjectId[] & IUser[];
+  members: (mongoose.Types.ObjectId | IUser)[];
   createdAt: Date;
   updatedAt: Date;
 }

@@ -3,8 +3,8 @@ import { IToken } from "@/db/mongodb/models/Token";
 import { IChat } from "@/db/mongodb/models/Chat";
 
 export interface CombineChatId {
-  friendId: mongoose.Types.ObjectId & IUser;
-  chatId: mongoose.Types.ObjectId & IChat;
+  friendId: mongoose.Types.ObjectId | IUser;
+  chatId: mongoose.Types.ObjectId | IChat;
 }
 
 // Define interfaces for each model to represent the document structure
@@ -23,7 +23,7 @@ export interface IUser extends Document {
   countryCode: string;
   contactNumber?: number;
   imageUrl?: string;
-  userToken?: mongoose.Types.ObjectId & IToken;
+  userToken?: mongoose.Types.ObjectId | IToken;
   friends: CombineChatId[];
   chatBarOrder: string[];
   createdAt: Date;

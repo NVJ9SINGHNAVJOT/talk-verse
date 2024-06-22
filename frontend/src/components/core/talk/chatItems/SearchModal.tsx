@@ -6,28 +6,34 @@ import { toast } from "react-toastify";
 import { RxAvatar } from "react-icons/rx";
 import { UserRequest } from "@/redux/slices/chatSlice";
 import { CiCirclePlus } from "react-icons/ci";
-import { useAppSelector } from "@/redux/store";
+import { UserSuggestion } from "@/types/apis/notificationApiRs";
 
 type SearchModalProps = {
-  toggleSearchModal: () => void;
+  setIsSearchOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  requestType: "friend" | "follow";
+  // eslint-disable-next-line no-unused-vars
+  sendFollowRequest?: (reqUserId: number) => Promise<void>;
 };
 
 const SearchModal = (props: SearchModalProps) => {
-  const { toggleSearchModal } = props;
   const refModal = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState<string>("");
-  const [users, setUsers] = useState<UserRequest[]>([]);
-  const myFriends = useAppSelector((state) => state.chat.friends);
+  const [users, setUsers] = useState<(UserRequest & { isAlreadyRequested: boolean })[]>([]);
+  const [followUsers, setFollowUsers] = useState<UserSuggestion[]>([]);
 
-  useOnClickOutside(refModal, toggleSearchModal);
+  useOnClickOutside(refModal, () => props.setIsSearchOpen(false));
 
   const sendRequest = async (userId: string) => {
     setUsers((prev) => prev.filter((user) => user._id !== userId));
-    const response = await sendRequestApi(userId);
-    if (response) {
-      toast.success("Request send successfully");
-    } else {
-      toast.error("Error while sending request");
+    if (props.requestType === "friend") {
+      const response = await sendRequestApi(userId);
+      if (response) {
+        toast.success("Request send successfully");
+      } else {
+        toast.error("Error while sending request");
+      }
+    } else if (props.sendFollowRequest) {
+      await props.sendFollowRequest(userId);
     }
   };
 
@@ -36,21 +42,13 @@ const SearchModal = (props: SearchModalProps) => {
       if (query) {
         const response = await getUsersApi(query);
 
-        if (response && response.success == true) {
+        if (response) {
           if (response.users) {
-            const newUsers: UserRequest[] = response.users.filter(
-              (newUser) => !myFriends.some((friend) => newUser._id === friend._id)
-            );
-            if (newUsers.length === 0) {
-              toast.info("No new users for this username");
-            }
-            setUsers(newUsers);
+            setUsers(response.users);
           } else {
+            setUsers([]);
             toast.error("No user exist for such name");
           }
-        } else if (response && response.success === false) {
-          toast.info("No user exist for such name");
-          setUsers([]);
         } else {
           toast.error("error while checking user name");
           setUsers([]);
@@ -58,32 +56,29 @@ const SearchModal = (props: SearchModalProps) => {
       }
     }, 1000);
     return () => clearTimeout(timeOutId);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
   return (
-    <div className="fixed inset-0 w-screen h-screen backdrop-blur-[1px] bg-transparent z-[1000] flex justify-center items-center overflow-y-auto">
+    <div className="fixed inset-0 z-[1000] flex h-screen w-screen items-center justify-center overflow-y-auto bg-transparent backdrop-blur-[1px]">
       <div ref={refModal}>
         <div className="ct-searchInput relative flex justify-center">
           <input type="text" placeholder="Search Username" onChange={(event) => setQuery(event.target.value)} />
 
           {users.length > 0 && (
-            <div
-              className=" absolute flex flex-wrap justify-center gap-7 top-24 w-[35rem]  max-w-[40rem] text-white 
-          max-h-[calc(100vh-62vh)] overflow-y-scroll"
-            >
+            <div className="absolute top-24 flex max-h-[calc(100vh-62vh)] w-[35rem] max-w-[40rem] flex-wrap justify-center gap-7 overflow-y-scroll text-white">
               {users.map((user, index) => {
                 return (
-                  <div key={index} className=" flex w-fit items-center gap-x-3 bg-black  px-3 py-1 rounded-lg">
+                  <div key={index} className="flex w-fit items-center gap-x-3 rounded-lg bg-black px-3 py-1">
                     {user.imageUrl ? (
-                      <img src={user.imageUrl} className=" rounded-full w-10 h-10 aspect-auto" alt="Loading..." />
+                      <img src={user.imageUrl} className="aspect-auto h-10 w-10 rounded-full" alt="Loading..." />
                     ) : (
-                      <RxAvatar className="w-10 h-10 aspect-auto" />
+                      <RxAvatar className="aspect-auto h-10 w-10" />
                     )}
-                    <div className=" truncate">{user.userName}</div>
+                    <div className="truncate">{user.userName}</div>
                     <CiCirclePlus
                       onClick={() => sendRequest(user._id)}
-                      className=" text-white w-8 h-8 aspect-auto cursor-pointer hover:bg-white hover:text-black rounded-full"
+                      className="aspect-auto h-8 w-8 cursor-pointer rounded-full text-white hover:bg-white hover:text-black"
                     />
                   </div>
                 );

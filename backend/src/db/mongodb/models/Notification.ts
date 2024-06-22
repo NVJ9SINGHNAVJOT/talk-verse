@@ -6,9 +6,9 @@ import { IUnseenCount } from "@/db/mongodb/models/UnseenCount";
 export interface INotification extends Document {
   _id: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId & IUser;
-  sentFriendRequests: mongoose.Types.ObjectId[] & IUser[];
-  friendRequests: mongoose.Types.ObjectId[] & IUser[];
-  unseenMessages: mongoose.Types.ObjectId[] & IUnseenCount[];
+  sentFriendRequests: (mongoose.Types.ObjectId | IUser)[];
+  friendRequests: (mongoose.Types.ObjectId | IUser)[];
+  unseenMessages: (mongoose.Types.ObjectId | IUnseenCount)[];
   createdAt: Date;
   updatedAt: Date;
 }

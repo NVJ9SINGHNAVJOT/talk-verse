@@ -2,7 +2,7 @@ import GpMessage from "@/db/mongodb/models/GpMessage";
 import Group from "@/db/mongodb/models/Group";
 import Message from "@/db/mongodb/models/Message";
 import UnseenCount from "@/db/mongodb/models/UnseenCount";
-import User from "@/db/mongodb/models/User";
+import User, { IUser } from "@/db/mongodb/models/User";
 import { channels, groupIds, groupOffline } from "@/socket";
 import { clientE } from "@/socket/events";
 import { ChatMessagesReqSchema, FileMessageReqSchema, GroupMessagesReqSchema } from "@/types/controllers/chatReq";
@@ -11,7 +11,7 @@ import { SoGroupMessageRecieved, SoMessageRecieved } from "@/types/socket/eventT
 import { uploadToCloudinary } from "@/utils/cloudinaryHandler";
 import emitSocketEvent from "@/utils/emitSocketEvent";
 import { errRes } from "@/utils/error";
-import { getSingleSocket } from "@/utils/getSocketIds";
+import { getSingleUserSockets } from "@/utils/getSocketIds";
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { deleteFile } from "@/utils/deleteFile";
@@ -67,13 +67,13 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
     const friends = userFriends?.friends?.map((item) => {
       const newValue: BarData = {
         _id: item.friendId._id.toString(),
-        firstName: item.friendId.firstName,
-        lastName: item.friendId.lastName,
-        imageUrl: item.friendId.imageUrl,
+        firstName: (item.friendId as IUser).firstName,
+        lastName: (item.friendId as IUser).lastName,
+        imageUrl: (item.friendId as IUser).imageUrl,
         chatId: item.chatId._id.toString(),
       };
       chatBar.push(newValue);
-      friendPublicKeys.push({ friendId: item.friendId._id.toString(), publicKey: item.friendId.publicKey });
+      friendPublicKeys.push({ friendId: item.friendId._id.toString(), publicKey: (item.friendId as IUser).publicKey });
       return newValue;
     });
 
@@ -197,8 +197,8 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
       }
       // message through channel
       await channel.lock();
-      const mySocketIds = getSingleSocket(userId);
-      const friendSocketIds = getSingleSocket(data.to);
+      const mySocketIds = getSingleUserSockets(userId);
+      const friendSocketIds = getSingleUserSockets(data.to);
 
       const uuId = uuidv4();
       const createdAt = new Date();

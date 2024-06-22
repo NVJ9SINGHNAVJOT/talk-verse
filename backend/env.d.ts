@@ -1,7 +1,7 @@
 declare namespace NodeJS {
   export interface ProcessEnv {
     ENVIRONMENT: string;
-    ALLOWED_ORIGINS:string;
+    ALLOWED_ORIGINS: string;
     SERVER_KEY: string;
     PORT: string;
 

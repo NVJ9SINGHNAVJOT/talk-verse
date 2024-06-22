@@ -15,7 +15,7 @@ import Channel from "@/types/channel";
 import { SoAddedInGroup, SoRequestAccepted, SoUserRequest } from "@/types/socket/eventTypes";
 import emitSocketEvent from "@/utils/emitSocketEvent";
 import { errRes } from "@/utils/error";
-import { getMultiSockets, getSingleSocket } from "@/utils/getSocketIds";
+import { getMultiUsersSockets, getSingleUserSockets } from "@/utils/getSocketIds";
 import { Request, Response } from "express";
 import { uploadToCloudinary } from "@/utils/cloudinaryHandler";
 import Group from "@/db/mongodb/models/Group";
@@ -149,27 +149,32 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
     const data = otherUserIdReq.data;
 
     // check user exist or not for req id
-    const checkOtherUser = await Notification.findOneAndUpdate(
-      {
-        userId: data.otherUserId,
-        friendRequests: { $nin: [userId] },
-      },
-      { $push: { friendRequests: userId } },
-      { new: true }
-    ).exec();
+    const checkOtherUser = await Notification.findOne({
+      userId: data.otherUserId,
+      friendRequests: { $nin: [userId] },
+    }).exec();
 
     if (!checkOtherUser) {
       return errRes(res, 400, "other user does not exist or already have friend request for current user");
     }
 
-    // check if current user is already a friend of user(otherUserId) to which request is send
-    const myDetails = await User.findById({ _id: userId })
-      .select({ userName: true, imageUrl: true, friends: true, _id: false })
+    // check if otherUserId already present in current user sentFriendRequests
+    const myDetails = await Notification.findOne({ userId: userId, sentFriendRequests: { $nin: [data.otherUserId] } })
+      .select({ userId: true })
+      .populate({
+        path: "userId",
+        select: "userName imageUrl friends",
+      })
       .exec();
 
-    if (myDetails && myDetails.friends.length > 0) {
+    if (!myDetails) {
+      return errRes(res, 400, "otherUserId already present in sentFriendRequests of current user");
+    }
+
+    // check if current user is already a friend of user(otherUserId) to which request is send
+    if (myDetails.userId.friends.length > 0) {
       let errCheck: boolean = false;
-      myDetails.friends.forEach((item) => {
+      myDetails.userId.friends.forEach((item) => {
         if (data.otherUserId === item.friendId._id.toString()) {
           errCheck = true;
           return;
@@ -180,16 +185,21 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
       }
     }
 
-    // in current user notifications in sentFriendRequests push otherUserId
-    await Notification.findOneAndUpdate({ userId: userId }, { $push: { sentFriendRequests: data.otherUserId } }).exec();
+    // in other user notification in friendRequests push userId
+    checkOtherUser.friendRequests.push(new mongoose.Types.ObjectId(userId));
+    // in current user notification in sentFriendRequests push otherUserId
+    myDetails.sentFriendRequests.push(new mongoose.Types.ObjectId(data.otherUserId));
+
+    // save updated data
+    await Promise.all([checkOtherUser.save(), myDetails.save()]);
 
     // check if other user is online then emit user request event
-    const socketIds = getSingleSocket(data.otherUserId);
+    const socketIds = getSingleUserSockets(data.otherUserId);
     if (myDetails && socketIds) {
       const sdata: SoUserRequest = {
         _id: userId,
-        userName: myDetails.userName,
-        imageUrl: myDetails.imageUrl,
+        userName: myDetails.userId.userName,
+        imageUrl: myDetails.userId.imageUrl,
       };
       emitSocketEvent(req, socketIds, clientE.USER_REQUEST, sdata);
     }
@@ -215,15 +225,11 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
     const data = otherUserIdReq.data;
 
     // check other user exist or not for otherUserId
-    const otherUser = await Notification.findOneAndUpdate(
-      {
-        userId: data.otherUserId,
-        sentFriendRequests: { $elemMatch: { $eq: userId } },
-      },
-      { $pull: { sentFriendRequests: userId, friendRequests: userId } },
-      { new: true }
-    )
-      .select({ userId: true, unseenMessages: true })
+    const otherUser = await Notification.findOne({
+      userId: data.otherUserId,
+      sentFriendRequests: { $elemMatch: { $eq: userId } },
+    })
+      .select({ userId: true, unseenMessages: true, friendRequests: true, sentFriendRequests: true })
       .populate({
         path: "userId",
         select: "firstName lastName imageUrl publicKey friends chatBarOrder",
@@ -234,20 +240,16 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
       return errRes(
         res,
         400,
-        "user not present for given id or current user is not present in sentFriendRequests of otherUserId"
+        "user not present for given id or current user id is not present in sentFriendRequests of otherUserId"
       );
     }
 
     // check if current user Notification contains otherUserId
-    const myDetails = await Notification.findOneAndUpdate(
-      {
-        userId: userId,
-        friendRequests: { $elemMatch: { $eq: data.otherUserId } },
-      },
-      { $pull: { friendRequests: data.otherUserId, sentFriendRequests: data.otherUserId } },
-      { new: true }
-    )
-      .select({ userId: true, unseenMessages: true })
+    const myDetails = await Notification.findOne({
+      userId: userId,
+      friendRequests: { $elemMatch: { $eq: data.otherUserId } },
+    })
+      .select({ userId: true, unseenMessages: true, friendRequests: true, sentFriendRequests: true })
       .populate({
         path: "userId",
         select: "firstName lastName imageUrl publicKey friends chatBarOrder",
@@ -272,6 +274,22 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
       create chatId for both users and add both users in each others friends array
     */
 
+    // now remove userId from otherUser sentFriendRequests and otherUserId from myDetails friendRequests
+    otherUser.sentFriendRequests = otherUser.sentFriendRequests.filter(
+      (sentFriendRequestUserId) => sentFriendRequestUserId.toString() !== userId
+    );
+    myDetails.friendRequests = myDetails.friendRequests.filter(
+      (friendRequestUserId) => friendRequestUserId.toString() !== data.otherUserId
+    );
+
+    // for safety if current user also have sent a friend request in past then remove request vice versa for both user
+    otherUser.friendRequests = otherUser.friendRequests.filter(
+      (friendRequestUserId) => friendRequestUserId.toString() !== userId
+    );
+    myDetails.sentFriendRequests = myDetails.sentFriendRequests.filter(
+      (sentFriendRequestUserId) => sentFriendRequestUserId.toString() !== data.otherUserId
+    );
+
     // user 1 is who initially sent request and user 2 is who accepted that request
     const chat = await Chat.create({ user1: data.otherUserId, user2: userId });
 
@@ -293,18 +311,19 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
     otherUser.userId.chatBarOrder.unshift(chat._id.toString());
     myDetails.userId.chatBarOrder.unshift(chat._id.toString());
 
-    // save all updated data
-    const update = Promise.all([otherUser.save(), otherUser.userId.save(), myDetails.save(), myDetails.userId.save()]);
-    await update;
-
-    // Create a new mutex instance
+    // create a new channel instance
     const newChannel = new Channel();
-    // set newmutex for new chatid
-
+    // set channel for new chatid
     channels.set(chat._id.toString(), newChannel);
 
-    const socketIds = getSingleSocket(data.otherUserId);
+    /* 
+      save all updated data
+    */
+    await Promise.all([otherUser.save(), otherUser.userId.save(), myDetails.save(), myDetails.userId.save()]);
 
+    const socketIds = getSingleUserSockets(data.otherUserId);
+
+    // send notification for request accepted if otherUser is online
     if (socketIds.length > 0) {
       const sdata: SoRequestAccepted = {
         _id: myDetails.userId._id.toString(),
@@ -319,7 +338,7 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
 
       // socketId is of other user, now send useronline to myself as other user is online and socketId is present
       // get mysocketId
-      const mySocketIds = getSingleSocket(userId);
+      const mySocketIds = getSingleUserSockets(userId);
       if (mySocketIds.length > 0) {
         emitSocketEvent(req, mySocketIds, clientE.SET_USER_ONLINE, otherUser.userId._id.toString());
       }
@@ -353,21 +372,36 @@ export const deleteRequest = async (req: Request, res: Response) => {
 
     const data = otherUserIdReq.data;
 
-    const checkOtherUserExistAndNotification = await Notification.findOneAndUpdate(
-      { userId: data.otherUserId, sentFriendRequests: { $elemMatch: { $eq: userId } } },
-      { $pull: { sentFriendRequests: userId } }
-    ).exec();
-
-    if (!checkOtherUserExistAndNotification) {
+    const checkOther = await Notification.findOneAndUpdate({
+      userId: data.otherUserId,
+      sentFriendRequests: { $elemMatch: { $eq: userId } },
+    })
+      .select({ sentFriendRequests: true })
+      .exec();
+    if (!checkOther) {
       return errRes(res, 400, "other user does not exist or no sent request exist in other user notification");
     }
 
-    await Notification.findOneAndUpdate(
-      {
-        userId: userId,
-      },
-      { $pull: { friendRequests: data.otherUserId } }
-    ).exec();
+    const myDetails = await Notification.findOneAndUpdate({
+      userId: userId,
+      friendRequests: { $elemMatch: { $eq: data.otherUserId } },
+    })
+      .select({ friendRequests: true })
+      .exec();
+    if (!myDetails) {
+      return errRes(res, 400, "otherUserId does not exist in friendRequests of current user");
+    }
+
+    // now update data
+    checkOther.sentFriendRequests = checkOther.sentFriendRequests.filter(
+      (sentFriendRequestsUserId) => sentFriendRequestsUserId._id.toString() !== userId
+    );
+    myDetails.friendRequests = myDetails.friendRequests.filter(
+      (friendRequestUserId) => friendRequestUserId._id.toString() !== data.otherUserId
+    );
+
+    // save updated data
+    await Promise.all([checkOther.save(), myDetails.save()]);
 
     return res.status(200).json({
       success: true,
@@ -489,8 +523,8 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
       })
     );
 
-    const memData = getMultiSockets(members, userId);
-    const mySocketIds = getSingleSocket(userId);
+    const memData = getMultiUsersSockets(members, userId);
+    const mySocketIds = getSingleUserSockets(userId);
 
     // set offline member for group
     groupOffline.set(newGroup._id.toString(), new Set(memData.offline));
@@ -533,10 +567,6 @@ export const checkOnlineFriends = async (req: Request, res: Response): Promise<R
   try {
     const userId = (req as CustomRequest).userId;
 
-    if (!userId) {
-      return errRes(res, 400, "user id not present");
-    }
-
     const userData = await User.findById({ _id: userId }).select({ friends: true }).exec();
 
     if (userData?.friends.length === undefined || userData?.friends.length < 1) {
@@ -575,9 +605,6 @@ export const checkOnlineFriends = async (req: Request, res: Response): Promise<R
 export const setUnseenCount = async (req: Request, res: Response): Promise<Response> => {
   try {
     const userId = (req as CustomRequest).userId;
-    if (!userId) {
-      return errRes(res, 400, "user id not present");
-    }
 
     const setUnseenCountReq = SetUnseenCountReqSchema.safeParse(req.body);
 
@@ -600,9 +627,7 @@ export const setUnseenCount = async (req: Request, res: Response): Promise<Respo
 export const setOrder = async (req: Request, res: Response): Promise<Response> => {
   try {
     const userId = (req as CustomRequest).userId;
-    if (!userId) {
-      return errRes(res, 400, "user id not present");
-    }
+
     const setOrderReq = SetOrderReqSchema.safeParse(req.body);
     if (!setOrderReq.success) {
       return errRes(res, 400, `invalid data for setunseencount, ${setOrderReq.error.toString()}`);

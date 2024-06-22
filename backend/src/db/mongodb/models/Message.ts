@@ -7,9 +7,9 @@ export interface IMessage extends Document {
   _id: mongoose.Types.ObjectId;
   uuId: string;
   isFile: boolean;
-  chatId: mongoose.Types.ObjectId & IChat;
-  from: mongoose.Types.ObjectId & IUser;
-  to: mongoose.Types.ObjectId & IUser;
+  chatId: mongoose.Types.ObjectId | IChat;
+  from: mongoose.Types.ObjectId | IUser;
+  to: mongoose.Types.ObjectId | IUser;
   fromText: string;
   toText: string;
   createdAt: Date;

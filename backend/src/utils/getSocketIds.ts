@@ -1,6 +1,6 @@
 import { userSocketIDs } from "@/socket";
 
-export const getSingleSocket = (userId: string): string[] => {
+export const getSingleUserSockets = (userId: string): string[] => {
   const socketIds = userSocketIDs.get(userId);
   if (socketIds && socketIds.length > 0) {
     return socketIds;
@@ -15,7 +15,7 @@ export type Members = {
   offline: string[];
 };
 
-export const getMultiSockets = (users: string[], currUserId?: string): Members => {
+export const getMultiUsersSockets = (users: string[], currUserId?: string): Members => {
   const online: string[][] = [];
   const offline: string[] = [];
 

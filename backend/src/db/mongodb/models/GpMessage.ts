@@ -7,8 +7,8 @@ export interface IGpMessage extends Document {
   _id: mongoose.Types.ObjectId;
   uuId: string;
   isFile: boolean;
-  from: mongoose.Types.ObjectId & IUser;
-  to: mongoose.Types.ObjectId & IGroup;
+  from: mongoose.Types.ObjectId | IUser;
+  to: mongoose.Types.ObjectId | IGroup;
   text: string;
   createdAt: Date;
   updatedAt: Date;

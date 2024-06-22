@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { clientE, serverE } from "@/socket/events";
-import { getSingleSocket } from "@/utils/getSocketIds";
+import { getSingleUserSockets } from "@/utils/getSocketIds";
 import {
   SoGroupMessageRecieved,
   SoMessageRecieved,
@@ -41,8 +41,8 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
         createdAt: createdAt.toISOString(),
       };
       /* NOTE: fromText for currUser and toText for friend */
-      const currUserSocketIds = getSingleSocket(userId);
-      const friendSocketIds = getSingleSocket(data.to);
+      const currUserSocketIds = getSingleUserSockets(userId);
+      const friendSocketIds = getSingleUserSockets(data.to);
 
       if (currUserSocketIds.length > 0) {
         io.to(currUserSocketIds).emit(clientE.MESSAGE_RECIEVED, newMessage);

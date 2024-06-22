@@ -1,12 +1,12 @@
 import { Socket } from "socket.io";
 import { clientE, serverE } from "@/socket/events";
-import { getSingleSocket } from "@/utils/getSocketIds";
+import { getSingleUserSockets } from "@/utils/getSocketIds";
 import { logger } from "@/logger/logger";
 
 export const registerNotificationEvents = (socket: Socket, userId: string): void => {
   socket.on(serverE.START_TYPING, (friendId: string) => {
     try {
-      const friendSocketIds = getSingleSocket(friendId);
+      const friendSocketIds = getSingleUserSockets(friendId);
       if (friendSocketIds.length > 0) {
         socket.to(friendSocketIds).emit(clientE.OTHER_START_TYPING, userId);
       }
@@ -17,7 +17,7 @@ export const registerNotificationEvents = (socket: Socket, userId: string): void
 
   socket.on(serverE.STOP_TYPING, (friendId: string) => {
     try {
-      const friendSocketIds = getSingleSocket(friendId);
+      const friendSocketIds = getSingleUserSockets(friendId);
       if (friendSocketIds) {
         socket.to(friendSocketIds).emit(clientE.OTHER_STOP_TYPING, userId);
       }

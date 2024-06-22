@@ -1,4 +1,4 @@
-import Token from "@/db/mongodb/models/Token";
+import Token, { IToken } from "@/db/mongodb/models/Token";
 import User from "@/db/mongodb/models/User";
 import { CustomPayload } from "@/types/custom";
 import jwt, { JwtPayload } from "jsonwebtoken";
@@ -23,7 +23,7 @@ export const jwtVerify = async (token: string): Promise<(string | number)[] | nu
     .populate({ path: "userToken", select: "tokenValue" })
     .exec();
 
-  if (!checkUser || !checkUser?.userToken || checkUser.userToken.tokenValue !== token) {
+  if (!checkUser || !checkUser?.userToken || (checkUser.userToken as IToken).tokenValue !== token) {
     return null;
   }
 
