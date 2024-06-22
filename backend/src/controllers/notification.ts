@@ -1,7 +1,7 @@
 import Chat from "@/db/mongodb/models/Chat";
 import Notification from "@/db/mongodb/models/Notification";
 import UnseenCount from "@/db/mongodb/models/UnseenCount";
-import User, { CombineChatId } from "@/db/mongodb/models/User";
+import User from "@/db/mongodb/models/User";
 import { clientE } from "@/socket/events";
 import { channels, groupIds, groupOffline, userSocketIDs } from "@/socket/index";
 import {
@@ -302,11 +302,8 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
     myDetails.unseenMessages.push(ucUser._id);
 
     // update friends for both users
-    otherUser.userId.friends.push({ friendId: new mongoose.Types.ObjectId(userId), chatId: chat._id } as CombineChatId);
-    myDetails.userId.friends.push({
-      friendId: new mongoose.Types.ObjectId(data.otherUserId),
-      chatId: chat._id,
-    } as CombineChatId);
+    otherUser.userId.friends.push({ friendId: new mongoose.Types.ObjectId(userId), chatId: chat._id });
+    myDetails.userId.friends.push({ friendId: new mongoose.Types.ObjectId(data.otherUserId), chatId: chat._id });
 
     otherUser.userId.chatBarOrder.unshift(chat._id.toString());
     myDetails.userId.chatBarOrder.unshift(chat._id.toString());
