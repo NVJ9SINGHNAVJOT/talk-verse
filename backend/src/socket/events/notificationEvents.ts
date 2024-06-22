@@ -18,7 +18,7 @@ export const registerNotificationEvents = (socket: Socket, userId: string): void
   socket.on(serverE.STOP_TYPING, (friendId: string) => {
     try {
       const friendSocketIds = getSingleUserSockets(friendId);
-      if (friendSocketIds) {
+      if (friendSocketIds.length > 0) {
         socket.to(friendSocketIds).emit(clientE.OTHER_STOP_TYPING, userId);
       }
     } catch (error) {

@@ -36,7 +36,7 @@ export const createPost = async (req: Request, res: Response): Promise<Response>
       if (req.files?.length) {
         deleteFiles(req.files);
       }
-      return errRes(res, 400, `invalid data for post creation, ${createPostReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for post creation, ${createPostReq.error.message}`);
     }
 
     const data = createPostReq.data;
@@ -118,7 +118,7 @@ export const deletePost = async (req: Request, res: Response): Promise<Response>
 
     const deletePostReq = DeletePostReqSchema.safeParse(req.body);
     if (!deletePostReq.success) {
-      return errRes(res, 400, `invalid data for postId delete, ${deletePostReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for postId delete, ${deletePostReq.error.message}`);
     }
 
     const data = deletePostReq.data;
@@ -154,7 +154,7 @@ export const savePost = async (req: Request, res: Response): Promise<Response> =
 
     const savePostReq = SavePostReqSchema.safeParse(req.body);
     if (!savePostReq.success) {
-      return errRes(res, 400, `invalid id to save post, ${savePostReq.error.toString()}`);
+      return errRes(res, 400, `invalid id to save post, ${savePostReq.error.message}`);
     }
 
     const data = savePostReq.data;
@@ -235,7 +235,7 @@ export const deleteStory = async (req: Request, res: Response): Promise<Response
 
     const deleteStoryReq = DeleteStoryReqSchema.safeParse(req.query);
     if (!deleteStoryReq.success) {
-      return errRes(res, 400, `invalid data for storyId delete, ${deleteStoryReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for storyId delete, ${deleteStoryReq.error.message}`);
     }
 
     const data = deleteStoryReq.data;
@@ -300,7 +300,7 @@ export const updateLike = async (req: Request, res: Response): Promise<Response>
     const updateLikeReq = UpdateLikeReqSchema.safeParse(req.query);
 
     if (!updateLikeReq.success) {
-      return errRes(res, 400, `invalid data for update like, ${updateLikeReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for update like, ${updateLikeReq.error.message}`);
     }
 
     const data = updateLikeReq.data;
@@ -383,12 +383,7 @@ export const updateLike = async (req: Request, res: Response): Promise<Response>
       });
     }
     return errRes(res, 400, "no like is present for post by user");
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    if (error.code === "23503") {
-      return errRes(res, 500, "post does not exist or deleted by creator", error);
-    }
+  } catch (error) {
     return errRes(res, 500, "error while updating like for post", error);
   }
 };
@@ -399,7 +394,7 @@ export const addComment = async (req: Request, res: Response): Promise<Response>
 
     const addCommentReq = AddCommentReqSchema.safeParse(req.body);
     if (!addCommentReq.success) {
-      return errRes(res, 400, `invalid data for comment, ${addCommentReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for comment, ${addCommentReq.error.message}`);
     }
 
     const data = addCommentReq.data;
@@ -435,7 +430,7 @@ export const deleteComment = async (req: Request, res: Response): Promise<Respon
 
     const deleteCommentReq = DeleteCommentReqSchema.safeParse(req.body);
     if (!deleteCommentReq.success) {
-      return errRes(res, 400, `invalid data for deleting comment, ${deleteCommentReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for deleting comment, ${deleteCommentReq.error.message}`);
     }
 
     const data = deleteCommentReq.data;
@@ -471,7 +466,7 @@ export const postComments = async (req: Request, res: Response): Promise<Respons
     const postCommentsReq = PostCommentsReqSchema.safeParse(req.query);
 
     if (!postCommentsReq.success) {
-      return errRes(res, 400, `invalid data for getting post comments, ${postCommentsReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for getting post comments, ${postCommentsReq.error.message}`);
     }
 
     const data = postCommentsReq.data;
@@ -517,7 +512,7 @@ export const getStories = async (req: Request, res: Response): Promise<Response>
     const getStoriesReq = GetCreatedAtReqSchema.safeParse(req.query);
 
     if (!getStoriesReq.success) {
-      return errRes(res, 400, `invalid data for getting stories, ${getStoriesReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for getting stories, ${getStoriesReq.error.message}`);
     }
     const data = getStoriesReq.data;
 
@@ -565,7 +560,7 @@ export const recentPosts = async (req: Request, res: Response): Promise<Response
 
     const recentPostsReq = GetCreatedAtReqSchema.safeParse(req.query);
     if (!recentPostsReq.success) {
-      return errRes(res, 400, `invalid data for recentPosts, ${recentPostsReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for recentPosts, ${recentPostsReq.error.message}`);
     }
 
     const data = recentPostsReq.data;
@@ -620,7 +615,7 @@ export const trendingPosts = async (req: Request, res: Response): Promise<Respon
 
     const trendingPostsReq = GetCreatedAtReqSchema.safeParse(req.query);
     if (!trendingPostsReq.success) {
-      return errRes(res, 400, `invalid data for trendingPosts, ${trendingPostsReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for trendingPosts, ${trendingPostsReq.error.message}`);
     }
 
     const data = trendingPostsReq.data;
@@ -675,7 +670,7 @@ export const categoryPosts = async (req: Request, res: Response): Promise<Respon
 
     const categoryPostsReq = CategoryPostsReqSchema.safeParse(req.query);
     if (!categoryPostsReq.success) {
-      return errRes(res, 400, `invalid data for category post, ${categoryPostsReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for category post, ${categoryPostsReq.error.message}`);
     }
 
     const data = categoryPostsReq.data;

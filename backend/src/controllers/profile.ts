@@ -18,7 +18,7 @@ export const checkUserName = async (req: Request, res: Response): Promise<Respon
   try {
     const checkUserNameReq = CheckUserNameReqSchema.safeParse(req.query);
     if (!checkUserNameReq.success) {
-      return errRes(res, 400, `invalid data for checkUserName, ${checkUserNameReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for checkUserName, ${checkUserNameReq.error.message}`);
     }
 
     const data = checkUserNameReq.data;
@@ -128,7 +128,7 @@ export const updateProfile = async (req: Request, res: Response): Promise<Respon
 
     const updateProfileReq = UpdateProfileReqSchema.safeParse(req.body);
     if (!updateProfileReq.success) {
-      return errRes(res, 400, `invalid data for pofile update, ${updateProfileReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for pofile update, ${updateProfileReq.error.message}`);
     }
     const data = updateProfileReq.data;
 
@@ -233,7 +233,7 @@ export const userPosts = async (req: Request, res: Response): Promise<Response> 
 
     const userPostsReq = GetCreatedAtReqSchema.safeParse(req.query);
     if (!userPostsReq.success) {
-      return errRes(res, 400, `invalid data for userPosts, ${userPostsReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for userPosts, ${userPostsReq.error.message}`);
     }
 
     const data = userPostsReq.data;
@@ -288,7 +288,7 @@ export const userFollowing = async (req: Request, res: Response): Promise<Respon
 
     const userFollowingReq = GetCreatedAtReqSchema.safeParse(req.query);
     if (!userFollowingReq.success) {
-      return errRes(res, 400, `invalid data for user following, ${userFollowingReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for user following, ${userFollowingReq.error.message}`);
     }
 
     const data = userFollowingReq.data;
@@ -332,7 +332,7 @@ export const userFollowers = async (req: Request, res: Response): Promise<Respon
 
     const userFollowersReq = GetCreatedAtReqSchema.safeParse(req.query);
     if (!userFollowersReq.success) {
-      return errRes(res, 400, `invalid data for user followers, ${userFollowersReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for user followers, ${userFollowersReq.error.message}`);
     }
 
     const data = userFollowersReq.data;
@@ -376,7 +376,7 @@ export const removeFollower = async (req: Request, res: Response): Promise<Respo
 
     const removeFollwerReq = OtherPostgreSQLUserIdReqSchema.safeParse(req.body);
     if (!removeFollwerReq.success) {
-      return errRes(res, 400, `invalid data to remove follower, ${removeFollwerReq.error.toString()}`);
+      return errRes(res, 400, `invalid data to remove follower, ${removeFollwerReq.error.message}`);
     }
 
     const data = removeFollwerReq.data;
@@ -406,7 +406,7 @@ export const unfollowUser = async (req: Request, res: Response): Promise<Respons
 
     const unfollowUserReq = OtherPostgreSQLUserIdReqSchema.safeParse(req.body);
     if (!unfollowUserReq.success) {
-      return errRes(res, 400, `invalid data to unfollow user, ${unfollowUserReq.error.toString()}`);
+      return errRes(res, 400, `invalid data to unfollow user, ${unfollowUserReq.error.message}`);
     }
 
     const data = unfollowUserReq.data;
@@ -436,7 +436,7 @@ export const userSavedPosts = async (req: Request, res: Response): Promise<Respo
 
     const userSavedPostsReq = GetCreatedAtReqSchema.safeParse(req.query);
     if (!userSavedPostsReq.success) {
-      return errRes(res, 400, `invalid data for user saved posts, ${userSavedPostsReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for user saved posts, ${userSavedPostsReq.error.message}`);
     }
 
     const data = userSavedPostsReq.data;

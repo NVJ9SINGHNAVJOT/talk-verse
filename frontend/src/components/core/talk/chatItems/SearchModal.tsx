@@ -32,9 +32,7 @@ const SearchModal = (props: SearchModalProps) => {
       } else {
         toast.error("Error while sending request");
       }
-    } else if (props.sendFollowRequest) {
-      await props.sendFollowRequest(userId);
-    }
+    } 
   };
 
   useEffect(() => {

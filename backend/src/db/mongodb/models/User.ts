@@ -96,26 +96,32 @@ const userSchema = new Schema<IUser>(
       type: Schema.Types.ObjectId,
       ref: "Token",
     },
-    friends: [
-      {
-        friendId: {
-          type: Schema.Types.ObjectId,
-          ref: "User",
+    friends: {
+      type: [
+        {
+          friendId: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+          },
+          chatId: {
+            type: Schema.Types.ObjectId,
+            ref: "Chat",
+          },
         },
-        chatId: {
-          type: Schema.Types.ObjectId,
-          ref: "Chat",
+      ],
+      default: [],
+    },
+    chatBarOrder: {
+      type: [
+        {
+          // type: Schema.Types.ObjectId stored as string
+          // ref: Chat._id
+          // ref: Group._id
+          type: String,
         },
-      },
-    ],
-    chatBarOrder: [
-      {
-        // type: Schema.Types.ObjectId
-        // ref: Chat
-        // ref: Group
-        type: String,
-      },
-    ],
+      ],
+      default: [],
+    },
   },
   { timestamps: true }
 );

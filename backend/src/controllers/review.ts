@@ -13,7 +13,7 @@ export const postReview = async (req: Request, res: Response): Promise<Response>
 
     const postReviewReq = PostReviewReqSchema.safeParse(req.body);
     if (!postReviewReq.success) {
-      return errRes(res, 400, `invalid data for posting review, ${postReviewReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for posting review, ${postReviewReq.error.message}`);
     }
 
     const data = postReviewReq.data;

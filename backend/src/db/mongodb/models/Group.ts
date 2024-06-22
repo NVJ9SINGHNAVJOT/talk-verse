@@ -29,12 +29,15 @@ const groupSchema = new Schema<IGroup>(
       type: String,
       trim: true,
     },
-    members: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
+    members: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+        },
+      ],
+      default: [],
+    },
   },
   { timestamps: true }
 );

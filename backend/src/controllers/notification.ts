@@ -143,7 +143,7 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
     const otherUserIdReq = OtherMongoUserIdReqSchema.safeParse(req.body);
 
     if (!otherUserIdReq.success) {
-      return errRes(res, 400, `invalid data for sending request, ${otherUserIdReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for sending request, ${otherUserIdReq.error.message}`);
     }
 
     const data = otherUserIdReq.data;
@@ -152,7 +152,13 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
     const checkOtherUser = await Notification.findOne({
       userId: data.otherUserId,
       friendRequests: { $nin: [userId] },
-    }).exec();
+    })
+      .select({ userId: true, friendRequests: true })
+      .populate({
+        path: "userId",
+        select: "friends",
+      })
+      .exec();
 
     if (!checkOtherUser) {
       return errRes(res, 400, "other user does not exist or already have friend request for current user");
@@ -160,7 +166,7 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
 
     // check if otherUserId already present in current user sentFriendRequests
     const myDetails = await Notification.findOne({ userId: userId, sentFriendRequests: { $nin: [data.otherUserId] } })
-      .select({ userId: true })
+      .select({ userId: true, sentFriendRequests: true })
       .populate({
         path: "userId",
         select: "userName imageUrl friends",
@@ -172,17 +178,12 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
     }
 
     // check if current user is already a friend of user(otherUserId) to which request is send
-    if (myDetails.userId.friends.length > 0) {
-      let errCheck: boolean = false;
-      myDetails.userId.friends.forEach((item) => {
-        if (data.otherUserId === item.friendId._id.toString()) {
-          errCheck = true;
-          return;
-        }
-      });
-      if (errCheck) {
-        return errRes(res, 400, "requested user is already friend of current user");
-      }
+    const checkAlreadyFrineds =
+      checkOtherUser.userId.friends.some((item) => userId === item.friendId._id.toString()) ||
+      myDetails.userId.friends.some((item) => data.otherUserId === item.friendId._id.toString());
+
+    if (checkAlreadyFrineds) {
+      return errRes(res, 400, "requested user is already friend of current user");
     }
 
     // in other user notification in friendRequests push userId
@@ -195,7 +196,7 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
 
     // check if other user is online then emit user request event
     const socketIds = getSingleUserSockets(data.otherUserId);
-    if (myDetails && socketIds) {
+    if (socketIds.length > 0) {
       const sdata: SoUserRequest = {
         _id: userId,
         userName: myDetails.userId.userName,
@@ -219,7 +220,7 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
     const otherUserIdReq = OtherMongoUserIdReqSchema.safeParse(req.body);
 
     if (!otherUserIdReq.success) {
-      return errRes(res, 400, `invalid data for accepting request, ${otherUserIdReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for accepting request, ${otherUserIdReq.error.message}`);
     }
 
     const data = otherUserIdReq.data;
@@ -364,7 +365,7 @@ export const deleteRequest = async (req: Request, res: Response) => {
     const otherUserIdReq = OtherMongoUserIdReqSchema.safeParse(req.body);
 
     if (!otherUserIdReq.success) {
-      return errRes(res, 400, `invalid data for deleting request, ${otherUserIdReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for deleting request, ${otherUserIdReq.error.message}`);
     }
 
     const data = otherUserIdReq.data;
@@ -413,10 +414,6 @@ export const getAllNotifications = async (req: Request, res: Response): Promise<
   try {
     const userId = (req as CustomRequest).userId;
 
-    if (!userId) {
-      return errRes(res, 400, "user id not present");
-    }
-
     const notifications = await Notification.findOne({ userId: userId })
       .select({ friendRequest: true, unseenMessages: true })
       .populate([
@@ -453,12 +450,6 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
   try {
     const userId = (req as CustomRequest).userId;
     // validation
-    if (!userId) {
-      if (req.file) {
-        deleteFile(req.file);
-      }
-      return errRes(res, 400, "user id not present");
-    }
 
     const createGroupReq = CreateGroupReqSchema.safeParse(req.body);
 
@@ -466,7 +457,7 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
       if (req.file) {
         deleteFile(req.file);
       }
-      return errRes(res, 400, `invalid data for creating group, ${createGroupReq.data}`);
+      return errRes(res, 400, `invalid data for creating group, ${createGroupReq.error.message}`);
     }
 
     const data = createGroupReq.data;
@@ -576,7 +567,7 @@ export const checkOnlineFriends = async (req: Request, res: Response): Promise<R
     const onlineFriends: string[] = [];
 
     userData?.friends.forEach((friend) => {
-      const friendId: string = friend.friendId._id.toString();
+      const friendId = friend.friendId._id.toString();
       if (userSocketIDs.has(friendId)) {
         onlineFriends.push(friendId);
       }
@@ -606,7 +597,7 @@ export const setUnseenCount = async (req: Request, res: Response): Promise<Respo
     const setUnseenCountReq = SetUnseenCountReqSchema.safeParse(req.body);
 
     if (!setUnseenCountReq.success) {
-      return errRes(res, 400, `invalid data for setunseencount, ${setUnseenCountReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for setunseencount, ${setUnseenCountReq.error.message}`);
     }
     const data = setUnseenCountReq.data;
 
@@ -627,7 +618,7 @@ export const setOrder = async (req: Request, res: Response): Promise<Response> =
 
     const setOrderReq = SetOrderReqSchema.safeParse(req.body);
     if (!setOrderReq.success) {
-      return errRes(res, 400, `invalid data for setunseencount, ${setOrderReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for setunseencount, ${setOrderReq.error.message}`);
     }
     const data = setOrderReq.data;
     if (!isValidMongooseObjectId([data.mainId])) {
@@ -664,7 +655,7 @@ export const sendFollowRequest = async (req: Request, res: Response): Promise<Re
     const sendFollowRequestReq = OtherPostgreSQLUserIdReqSchema.safeParse(req.body);
 
     if (!sendFollowRequestReq.success) {
-      return errRes(res, 400, `invalid otherUserId for follow req, ${sendFollowRequestReq.error.toString()}`);
+      return errRes(res, 400, `invalid otherUserId for follow req, ${sendFollowRequestReq.error.message}`);
     }
 
     const data = sendFollowRequestReq.data;
@@ -711,7 +702,7 @@ export const deleteFollowRequest = async (req: Request, res: Response): Promise<
     const deleteFollowRequestReq = OtherPostgreSQLUserIdReqSchema.safeParse(req.body);
 
     if (!deleteFollowRequestReq.success) {
-      return errRes(res, 400, `invalid data for deleting follow request, ${deleteFollowRequestReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for deleting follow request, ${deleteFollowRequestReq.error.message}`);
     }
 
     const data = deleteFollowRequestReq.data;
@@ -740,7 +731,7 @@ export const acceptFollowRequest = async (req: Request, res: Response): Promise<
     const acceptFollowRequestReq = OtherPostgreSQLUserIdReqSchema.safeParse(req.body);
 
     if (!acceptFollowRequestReq.success) {
-      return errRes(res, 400, `invalid data for accepting follow request, ${acceptFollowRequestReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for accepting follow request, ${acceptFollowRequestReq.error.message}`);
     }
 
     const data = acceptFollowRequestReq.data;

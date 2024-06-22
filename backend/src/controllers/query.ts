@@ -9,7 +9,7 @@ export const sendQuery = async (req: Request, res: Response): Promise<Response> 
     const sendQueryReq = SendQueryReqSchema.safeParse(req.body);
 
     if (!sendQueryReq.success) {
-      return errRes(res, 400, `invalid data for sending query, ${sendQueryReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for sending query, ${sendQueryReq.error.message}`);
     }
 
     const data = sendQueryReq.data;

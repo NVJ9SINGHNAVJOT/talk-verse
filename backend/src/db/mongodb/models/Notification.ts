@@ -21,24 +21,33 @@ const notificationSchema = new Schema<INotification>(
       ref: "User",
       required: true,
     },
-    sentFriendRequests: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-    friendRequests: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-    unseenMessages: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "UnseenCount",
-      },
-    ],
+    sentFriendRequests: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+        },
+      ],
+      default: [],
+    },
+    friendRequests: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+        },
+      ],
+      default: [],
+    },
+    unseenMessages: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "UnseenCount",
+        },
+      ],
+      default: [],
+    },
   },
   { timestamps: true }
 );

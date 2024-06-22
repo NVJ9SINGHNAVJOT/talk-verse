@@ -118,10 +118,18 @@ const messagesSlice = createSlice({
       // update unseen count if current chat is not active on display
       if (action.payload.from !== state.myId && (!state.mainChatId || action.payload.chatId !== state.mainChatId)) {
         const key = action.payload.chatId;
-        setUnseenCount(key, state.unseenMessages[key] + 1);
         if (state.unseenMessages && key in state.unseenMessages) {
           state.unseenMessages[key] += 1;
+          setUnseenCount(key, state.unseenMessages[key] + 1);
         }
+        /*
+          TODO: if chat with friend is not present in unseenMessages,
+          it means this current tab is not having chatBarData for friend,
+          but friend exist.
+          this also means that either user have opened multiple tabs and while new friend
+          is added but not in this tab.
+          FIXME: new friend to be added in multiple tabs
+        */
       }
     },
 
@@ -167,10 +175,18 @@ const messagesSlice = createSlice({
       // update unseen count if current group is not active on display
       if (action.payload.from._id !== state.myId && (!state.mainGroupId || state.mainGroupId !== action.payload.to)) {
         const key = action.payload.to;
-        setUnseenCount(key, state.unseenMessages[key] + 1);
         if (state.unseenMessages && key in state.unseenMessages) {
           state.unseenMessages[key] += 1;
+          setUnseenCount(key, state.unseenMessages[key] + 1);
         }
+        /*
+          TODO: if group chat is not present in unseenMessages,
+          it means this current tab is not having chatBarData for group,
+          but group exist with current user as member of group.
+          this also means that either user have opened multiple tabs and while new gorup
+          is added but not in this tab.
+          FIXME: new group to be added in multiple tabs
+        */
       }
     },
 

@@ -110,15 +110,15 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
 export const fileMessage = async (req: Request, res: Response): Promise<Response> => {
   try {
     const userId = (req as CustomRequest).userId;
-    const fileMessageReq = FileMessageReqSchema.safeParse(req.body);
 
     // validation
     if (!req.file) {
       return errRes(res, 400, "file not present for message");
     }
+    const fileMessageReq = FileMessageReqSchema.safeParse(req.body);
     if (!fileMessageReq.success) {
       deleteFile(req.file);
-      return errRes(res, 400, `invalid data for filemessage, ${fileMessageReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for filemessage, ${fileMessageReq.error.message}`);
     }
     const data = fileMessageReq.data;
 
@@ -257,7 +257,7 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
     const chatMessagesReq = ChatMessagesReqSchema.safeParse(req.query);
 
     if (!chatMessagesReq.success) {
-      return errRes(res, 400, `invalid data for chat messages, ${chatMessagesReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for chat messages, ${chatMessagesReq.error.message}`);
     }
 
     const data = chatMessagesReq.data;
@@ -317,7 +317,7 @@ export const groupMessages = async (req: Request, res: Response): Promise<Respon
     const groupMessagesReq = GroupMessagesReqSchema.safeParse(req.query);
 
     if (!groupMessagesReq.success) {
-      return errRes(res, 400, `invalid data for group messages, ${groupMessagesReq.error.toString()}`);
+      return errRes(res, 400, `invalid data for group messages, ${groupMessagesReq.error.message}`);
     }
 
     const data = groupMessagesReq.data;

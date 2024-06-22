@@ -24,7 +24,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
       if (req.file) {
         deleteFile(req.file);
       }
-      return errRes(res, 400, `invalid data, ${signUpReq.error.toString()}`);
+      return errRes(res, 400, `invalid data, ${signUpReq.error.message}`);
     }
 
     const data = signUpReq.data;
@@ -146,7 +146,7 @@ export const sendOtp = async (req: Request, res: Response): Promise<Response> =>
     // validation
     const sendOtpReq = SendOtpReqSchema.safeParse(req.body);
     if (!sendOtpReq.success) {
-      return errRes(res, 400, `invalid email id, ${sendOtpReq.error.toString()}`);
+      return errRes(res, 400, `invalid email id, ${sendOtpReq.error.message}`);
     }
 
     const data = sendOtpReq.data;
@@ -172,7 +172,7 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
 
     // validation
     if (!logInReq.success) {
-      return errRes(res, 400, `invalid data, ${logInReq.error.toString()}`);
+      return errRes(res, 400, `invalid data, ${logInReq.error.message}`);
     }
 
     const data = logInReq.data;
