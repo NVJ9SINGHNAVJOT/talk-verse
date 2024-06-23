@@ -8,5 +8,6 @@
   ],
   "installCommand": "npm install",
   "outputDirectory": "dist",
-  "buildCommand": "esbuild ./src/index.ts --bundle --outdir=./dist --minify --platform=node --packages=external"
+  "buildCommand": "esbuild ./src/index.ts --bundle --outdir=./dist --minify --platform=node --packages=external",
+  "startCommand": "node ./dist/index.js"
 }
