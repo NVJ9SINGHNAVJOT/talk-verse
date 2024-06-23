@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "dist/index.js"
+    }
+  ],
+  "installCommand": "npm install",
+  "buildCommand": "esbuild ./src/index.ts --bundle --outdir=./dist --minify --platform=node --packages=external"
+}
