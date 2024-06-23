@@ -1,5 +1,5 @@
 import { relations, sql } from "drizzle-orm";
-import { pgTable, integer, serial, timestamp, varchar } from "drizzle-orm/pg-core";
+import { pgTable, integer, serial, timestamp, varchar, boolean } from "drizzle-orm/pg-core";
 import { comment } from "@/db/postgresql/schema/comment";
 import { user } from "@/db/postgresql/schema/user";
 import { save } from "@/db/postgresql/schema/save";
@@ -7,6 +7,7 @@ import { likes } from "@/db/postgresql/schema/likes";
 
 export const post = pgTable("post", {
   id: serial("id").primaryKey(),
+  isPostDeleted: boolean("is_post_deleted").notNull().default(false),
   userId: integer("user_id")
     .notNull()
     .references(() => user.id),

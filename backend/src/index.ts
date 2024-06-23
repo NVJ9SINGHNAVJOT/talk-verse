@@ -23,8 +23,8 @@ async function main() {
   await mongodbDatabaseConnect();
   await postgresqlDatabaseConnect();
 
-  /* NOTE: commented only for development purpose, remove comment in production */
   // postgresql migrations and triggers
+  /* NOTE: commented only for development purpose, remove comment in production */
   await migratePostgreSQL();
   await setupPostgreSQLTriggers();
 

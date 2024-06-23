@@ -20,7 +20,8 @@ export const pool = new Pool({
   user: `${process.env["POSTGRES_USER"]}`,
   database: `${process.env["POSTGRES_DB"]}`,
   password: `${process.env["POSTGRES_PASSWORD"]}`,
-  ssl: { rejectUnauthorized: false },
+  /* NOTE: commented only for development purpose, remove comment in production */
+  // ssl: { rejectUnauthorized: false },
 });
 
 export async function postgresqlDatabaseConnect() {
