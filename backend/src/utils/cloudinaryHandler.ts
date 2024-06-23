@@ -69,7 +69,7 @@ export const deleteFromCloudinay = async (cloudinaryUrl: string) => {
       await is not used as response is not required.
     */
     /* NOTE: commented only for development purpose, remove comment in production */
-    // cloudinary.uploader.destroy(publicId);
+    cloudinary.uploader.destroy(publicId);
 
     /* 
       NOTE: below method is note used in production, as it delete file from cloudinary cache as well.
@@ -77,7 +77,7 @@ export const deleteFromCloudinay = async (cloudinaryUrl: string) => {
       await is not used as response is not required.
     */
     /* NOTE: commented only for production purpose, remove comment in development */
-    cloudinary.api.delete_resources([publicId]);
+    // cloudinary.api.delete_resources([publicId]);
   } catch (error) {
     logger.error("error while deleting file from cloudinary", { cloudinaryUrl: cloudinaryUrl, error: error });
   }
