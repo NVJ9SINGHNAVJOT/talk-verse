@@ -43,11 +43,11 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
       - talkverse-proxy
-    ports: [5432:5432]
+    # ports: [5432:5432]
 
   mongo:
     container_name: talkverse-mongo
-    image: mongo:5.0
+    image: mongo:7.0
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
@@ -55,4 +55,4 @@ services:
     env_file: .env
     networks:
       - talkverse-proxy
-    ports: [27017:27017]
+    # ports: [27017:27017]

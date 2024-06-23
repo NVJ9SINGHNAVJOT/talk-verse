@@ -19,5 +19,9 @@ COPY . .
 
 RUN npm run postgresqldb:generate
 RUN npm run build
+# Make the wait-for.sh script executable
+RUN chmod +x start.sh wait-for.sh
 
 EXPOSE 5000
+
+ENTRYPOINT  [ node, dist/index.js]
