@@ -240,7 +240,7 @@ const SignUp = (props: SignInProps) => {
           rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto 
           peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
           >
-            User Name
+            Username
           </label>
         </div>
 
