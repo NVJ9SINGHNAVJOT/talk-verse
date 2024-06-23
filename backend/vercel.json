@@ -1,19 +1,11 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "src/index.ts",
-      "use": "@vercel/node"
-    }
-  ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "src/index.ts"
+      "dest": "dist/index.js"
     }
   ],
-  "scripts": {
-    "build": "esbuild ./src/index.ts --bundle --outdir=./dist --minify --platform=node --packages=external",
-    "start": "node ./dist/index.js"
-  }
+  "installCommand": "npm install",
+  "buildCommand": "esbuild ./src/index.ts --bundle --outdir=./dist --minify --platform=node --packages=external"
 }
