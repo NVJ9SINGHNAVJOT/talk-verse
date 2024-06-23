@@ -31,8 +31,8 @@ import MyPosts from "@/components/core/profile/MyPosts";
 import Following from "@/components/core/profile/Following";
 import Followers from "@/components/core/profile/Followers";
 import SavedPosts from "@/components/core/profile/SavedPosts";
-import { useAppSelector } from "./redux/store";
-import { setMyPrivateKey } from "./redux/slices/messagesSlice";
+import { useAppSelector } from "@/redux/store";
+import { setMyId, setMyPrivateKey } from "@/redux/slices/messagesSlice";
 
 function App() {
   const authUser = useAppSelector((state) => state.auth.authUser);
@@ -54,6 +54,7 @@ function App() {
         dispatch(setProfile(null));
         dispatch(setUser(null));
         dispatch(setMyPrivateKey(undefined));
+        dispatch(setMyId(undefined));
       }
     };
 
@@ -73,6 +74,7 @@ function App() {
       if (response && response.success === true) {
         dispatch(setUser(response.user));
         dispatch(setAuthUser(true));
+        dispatch(setMyId(response.user._id));
       }
 
       setTimeout(() => {

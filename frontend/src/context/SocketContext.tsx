@@ -1,5 +1,21 @@
-import { setChatBarData, setFriends, setGroups, setOnlineFriend, setUserRequests } from "@/redux/slices/chatSlice";
-import { PublicKeys, setMyId, setPublicKeys, setUnseenMessages, UnseenMessages } from "@/redux/slices/messagesSlice";
+import {
+  resetTyping,
+  setChatBarData,
+  setFriends,
+  setGroups,
+  setLastMainId,
+  setOnlineFriend,
+  setUserRequests,
+} from "@/redux/slices/chatSlice";
+import {
+  PublicKeys,
+  resetChatIdAndGroupIdPoints,
+  resetGpMess,
+  resetPMess,
+  setPublicKeys,
+  setUnseenMessages,
+  UnseenMessages,
+} from "@/redux/slices/messagesSlice";
 import { setTalkPageLoading } from "@/redux/slices/loadingSlice";
 import { chatBarDataApi } from "@/services/operations/chatApi";
 import { checkOnlineFriendsApi, getAllNotificationsApi } from "@/services/operations/notificationApi";
@@ -8,7 +24,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { io, Socket } from "socket.io-client";
-import { useAppSelector } from "@/redux/store";
+import { clientE } from "@/socket/events";
 
 interface SocketContextInterface {
   socket: Socket | null;
@@ -33,19 +49,30 @@ export const useSocketContext = (): SocketContextInterface => {
 };
 
 export default function SocketProvider({ children }: ContextProviderProps) {
-  const myUserId = useAppSelector((state) => state.user.user?._id);
   const [socket, setSocket] = useState<Socket | null>(null);
   const socketRef = useRef<Socket | null>(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const talkPageCleanUp = () => {
+    // chatSlice
+    dispatch(setChatBarData([]));
+    dispatch(setFriends([]));
+    dispatch(setGroups([]));
+    dispatch(setOnlineFriend([]));
+    dispatch(setUnseenMessages({}));
+    dispatch(resetTyping());
+    dispatch(setLastMainId(undefined));
+    dispatch(setUserRequests([]));
+
+    // messagesSlice
+    dispatch(setPublicKeys({}));
+    dispatch(resetPMess());
+    dispatch(resetGpMess());
+    dispatch(resetChatIdAndGroupIdPoints());
+  };
+
   const setupSocketConnection = async () => {
-    if (!myUserId) {
-      toast.error("Error while connecting");
-      navigate("/error");
-      return;
-    }
-    dispatch(setMyId(myUserId));
     try {
       const socketInstance = io(process.env.REACT_APP_BASE_URL_SOCKET_IO_SERVER as string, {
         withCredentials: true,
@@ -63,18 +90,6 @@ export default function SocketProvider({ children }: ContextProviderProps) {
       ]);
 
       if (res1 && res2 && res3) {
-        // all response are valid for talk page, now connect to web socket server
-        socketRef.current = socketInstance.connect();
-        socketRef.current.on("connect", () => {
-          setSocket(socketInstance);
-        });
-        socketRef.current.on("connect_error", () => {
-          setSocket(null);
-          socketRef.current = null;
-          toast.error("Error in connection");
-          navigate("/error");
-        });
-
         if (res1.success === true) {
           if (res1.unseenMessages) {
             const newUnseenMessages: UnseenMessages = {};
@@ -105,11 +120,27 @@ export default function SocketProvider({ children }: ContextProviderProps) {
           dispatch(setOnlineFriend(res3.onlineFriends));
         }
 
-        setTimeout(() => {
-          dispatch(setTalkPageLoading(false));
-        }, 500);
+        // all response are valid for talk page, now connect to web socket server
+        socketRef.current = socketInstance.connect();
+        socketRef.current.on("connect", () => {
+          setSocket(socketInstance);
+          setTimeout(() => {
+            dispatch(setTalkPageLoading(false));
+          }, 700);
+        });
+        socketRef.current.on("connect_error", () => {
+          setSocket(null);
+          socketRef.current = null;
+          toast.error("Error in connection");
+          // set talk page loading true
+          dispatch(setTalkPageLoading(true));
+          navigate("/error");
+
+          // if error in connection then clear all state for talk page
+          talkPageCleanUp();
+        });
       } else {
-        toast.error("Error while connecting");
+        toast.error("Error while getting talk page data");
         navigate("/error");
       }
     } catch (error) {
@@ -119,9 +150,21 @@ export default function SocketProvider({ children }: ContextProviderProps) {
   };
 
   const disconnectSocket = (): void => {
+    if (socket) {
+      socket.off(clientE.USER_REQUEST);
+      socket.off(clientE.REQUEST_ACCEPTED);
+      socket.off(clientE.ADDED_IN_GROUP);
+      socket.off(clientE.GROUP_MESSAGE_RECIEVED);
+      socket.off(clientE.MESSAGE_RECIEVED);
+      socket.off(clientE.OTHER_START_TYPING);
+      socket.off(clientE.OTHER_STOP_TYPING);
+      socket.off(clientE.SET_USER_ONLINE);
+      socket.off(clientE.SET_USER_OFFLINE);
+    }
     socketRef.current?.disconnect();
     socketRef.current = null;
     setSocket(null);
+    talkPageCleanUp();
   };
 
   return (

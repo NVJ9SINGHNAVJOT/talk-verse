@@ -1,37 +1,41 @@
 import { useAppSelector } from "@/redux/store";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import DropDownUserMenu from "@/components/common/DropDownUserMenu";
+import { useSocketContext } from "@/context/SocketContext";
 
 const UserMenu = () => {
   const user = useAppSelector((state) => state.user.user);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const { disconnectSocket } = useSocketContext();
 
   const toggleMenu = () => {
     setMenuOpen((prev) => !prev);
   };
 
-  if (!user) {
-    return <div>Error</div>;
-  }
+  useEffect(() => {
+    return () => {
+      disconnectSocket();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <div ref={userMenuRef} className=" relative flex justify-evenly items-center">
-      {user.imageUrl ? (
+    <div ref={userMenuRef} className="relative flex items-center justify-evenly">
+      {user?.imageUrl ? (
         <img
           onClick={toggleMenu}
-          className="w-10 h-10 rounded aspect-auto cursor-pointer"
+          className="aspect-auto h-10 w-10 cursor-pointer rounded"
           src={user?.imageUrl as string}
           alt="Loading..."
         ></img>
       ) : (
         <div
           onClick={toggleMenu}
-          className=" peer bg-richblue-500 text-white w-10 h-10 rounded flex 
-                    cursor-pointer justify-center items-center gap-1 hover:bg-transparent"
+          className="peer flex h-10 w-10 cursor-pointer items-center justify-center gap-1 rounded bg-richblue-500 text-white hover:bg-transparent"
         >
-          <span className=" uppercase text-white text-xl">{user.firstName.charAt(0)}</span>
-          <span className=" uppercase text-white text-xl">{user.lastName.charAt(0)}</span>
+          <span className="text-xl uppercase text-white">{user?.firstName.charAt(0)}</span>
+          <span className="text-xl uppercase text-white">{user?.lastName.charAt(0)}</span>
         </div>
       )}
       {/* drop down menu */}

@@ -200,7 +200,7 @@ const messagesSlice = createSlice({
     setMainGroupId(state, action: PayloadAction<string>) {
       state.mainGroupId = action.payload;
     },
-    setMyId(state, action: PayloadAction<string>) {
+    setMyId(state, action: PayloadAction<string | undefined>) {
       state.myId = action.payload;
     },
 
@@ -231,12 +231,6 @@ const messagesSlice = createSlice({
     },
 
     // start and end points of chatId
-    resetChatIdStart(state) {
-      state.chatIdStart = {} as ChatIdStart;
-    },
-    resetChatIdEnd(state) {
-      state.chatIdEnd = {} as ChatIdEnd;
-    },
     setChatIdStart(state, action: PayloadAction<string>) {
       state.chatIdStart[action.payload] = true;
     },
@@ -245,17 +239,19 @@ const messagesSlice = createSlice({
     },
 
     // start and end points of groupId
-    resetGroupIdStart(state) {
-      state.groupIdStart = {} as GroupIdStart;
-    },
-    resetGroupIdEnd(state) {
-      state.groupIdEnd = {} as GroupIdEnd;
-    },
     setGroupIdStart(state, action: PayloadAction<string>) {
       state.groupIdStart[action.payload] = true;
     },
     setGroupIdEnd(state, action: PayloadAction<string>) {
       state.groupIdEnd[action.payload] = true;
+    },
+
+    // reset points for chat and group
+    resetChatIdAndGroupIdPoints(state) {
+      state.chatIdEnd = {} as ChatIdEnd;
+      state.chatIdStart = {} as ChatIdStart;
+      state.groupIdStart = {} as GroupIdStart;
+      state.groupIdEnd = {} as GroupIdEnd;
     },
   },
 });
@@ -279,11 +275,8 @@ export const {
   setMyPrivateKey,
   setChatIdStart,
   setChatIdEnd,
-  resetChatIdStart,
-  resetChatIdEnd,
   setGroupIdStart,
   setGroupIdEnd,
-  resetGroupIdStart,
-  resetGroupIdEnd,
+  resetChatIdAndGroupIdPoints,
 } = messagesSlice.actions;
 export default messagesSlice.reducer;

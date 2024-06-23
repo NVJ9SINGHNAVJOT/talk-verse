@@ -4,7 +4,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 export type ChatBarData = {
-  // common
+  // common -> friend id or group id
   _id: string;
 
   // friend
@@ -145,7 +145,7 @@ const chatSlice = createSlice({
     },
 
     // set lastMainId
-    setLastMainId(state, action: PayloadAction<string>) {
+    setLastMainId(state, action: PayloadAction<string | undefined>) {
       state.lastMainId = action.payload;
     },
   },

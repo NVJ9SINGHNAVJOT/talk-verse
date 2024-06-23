@@ -1,5 +1,5 @@
 import { setAuthUser } from "@/redux/slices/authSlice";
-import { setMyPrivateKey } from "@/redux/slices/messagesSlice";
+import { setMyId, setMyPrivateKey } from "@/redux/slices/messagesSlice";
 import { setProfile, setUser } from "@/redux/slices/userSlice";
 import { logOutApi } from "@/services/operations/authApi";
 import { useState } from "react";
@@ -39,6 +39,7 @@ const LogOutModal = (props: LogOutModalPros) => {
       dispatch(setUser(null));
       dispatch(setAuthUser(false));
       dispatch(setMyPrivateKey(undefined));
+      dispatch(setMyId(undefined));
     }, 500);
   };
 
