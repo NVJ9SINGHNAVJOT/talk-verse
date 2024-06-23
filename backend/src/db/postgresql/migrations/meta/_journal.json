@@ -5,36 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1718565666524,
-      "tag": "0000_lying_maginty",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1718617603297,
-      "tag": "0001_polite_nextwave",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1718708669131,
-      "tag": "0002_supreme_wonder_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1718709469732,
-      "tag": "0003_clammy_hulk",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1719119674620,
-      "tag": "0004_broad_squirrel_girl",
+      "when": 1719141918173,
+      "tag": "0000_lyrical_anthem",
       "breakpoints": true
     }
   ]

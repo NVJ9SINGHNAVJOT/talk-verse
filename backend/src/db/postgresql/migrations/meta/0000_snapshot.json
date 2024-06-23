@@ -1,5 +1,5 @@
 {
-  "id": "bbd70f03-f268-4239-aa7a-287cb56a6c9c",
+  "id": "ed7c2dd7-6856-4754-ba5a-b77c21476197",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -28,7 +28,7 @@
         },
         "comment_text": {
           "name": "comment_text",
-          "type": "varchar",
+          "type": "varchar(200)",
           "primaryKey": false,
           "notNull": true
         },
@@ -245,6 +245,13 @@
           "primaryKey": true,
           "notNull": true
         },
+        "is_post_deleted": {
+          "name": "is_post_deleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
         "user_id": {
           "name": "user_id",
           "type": "integer",
@@ -253,36 +260,36 @@
         },
         "category": {
           "name": "category",
-          "type": "varchar",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         },
         "title": {
           "name": "title",
-          "type": "varchar",
+          "type": "varchar(100)",
           "primaryKey": false,
           "notNull": false
         },
         "media_urls": {
           "name": "media_urls",
-          "type": "varchar[]",
+          "type": "varchar(255)[]",
           "primaryKey": false,
           "notNull": true,
-          "default": "ARRAY[]::text[]"
+          "default": "ARRAY[]::varchar[]"
         },
         "tags": {
           "name": "tags",
-          "type": "varchar[]",
+          "type": "varchar(255)[]",
           "primaryKey": false,
           "notNull": true,
-          "default": "ARRAY[]::text[]"
+          "default": "ARRAY[]::varchar[]"
         },
         "content": {
           "name": "content",
           "type": "varchar[]",
           "primaryKey": false,
           "notNull": true,
-          "default": "ARRAY[]::text[]"
+          "default": "ARRAY[]::varchar[]"
         },
         "likes_count": {
           "name": "likes_count",
@@ -356,7 +363,7 @@
         },
         "query_text": {
           "name": "query_text",
-          "type": "varchar[]",
+          "type": "varchar(450)[]",
           "primaryKey": false,
           "notNull": true
         },
@@ -458,6 +465,69 @@
         }
       }
     },
+    "review": {
+      "name": "review",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "review_text": {
+          "name": "review_text",
+          "type": "varchar(150)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "approved": {
+          "name": "approved",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "review_user_id_user_id_fk": {
+          "name": "review_user_id_user_id_fk",
+          "tableFrom": "review",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "save": {
       "name": "save",
       "schema": "",
@@ -554,7 +624,7 @@
         },
         "story_url": {
           "name": "story_url",
-          "type": "varchar",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         },
@@ -604,31 +674,31 @@
         },
         "ref_id": {
           "name": "ref_id",
-          "type": "varchar",
+          "type": "char(24)",
           "primaryKey": false,
           "notNull": true
         },
         "first_name": {
           "name": "first_name",
-          "type": "varchar",
+          "type": "varchar(15)",
           "primaryKey": false,
           "notNull": true
         },
         "last_name": {
           "name": "last_name",
-          "type": "varchar",
+          "type": "varchar(15)",
           "primaryKey": false,
           "notNull": true
         },
         "user_name": {
           "name": "user_name",
-          "type": "varchar",
+          "type": "varchar(15)",
           "primaryKey": false,
           "notNull": true
         },
         "image_url": {
           "name": "image_url",
-          "type": "varchar",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false
         },
