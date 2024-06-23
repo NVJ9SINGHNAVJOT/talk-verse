@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1719141918173,
+      "tag": "0000_lyrical_anthem",
+      "breakpoints": true
+    }
+  ]
+}

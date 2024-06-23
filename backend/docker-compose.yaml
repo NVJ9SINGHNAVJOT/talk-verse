@@ -1,0 +1,58 @@
+---
+version: '3.8'
+
+volumes:
+  talkverse-app:
+  talkverse-pg:
+  talkverse-mongo:
+
+networks:
+  talkverse-proxy:
+  proxy:
+    external: true
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: talkverse-app
+    volumes:
+      - talkverse-app:/usr/src/app
+    networks:
+      - talkverse-proxy
+    ports: [5000:5000]
+    env_file: .env
+    depends_on:
+      - postgres
+      - mongo
+    entrypoint: ['/app/wait-for.sh', 'postgres:5432', '--', '/app/start.sh']
+    command: [ 'node', 'dist/index.js']
+
+  postgres:
+    container_name: talkverse-postgres
+    image: postgres:16-alpine
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - talkverse-pg:/var/lib/postgresql/data
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - talkverse-proxy
+    # ports: [5432:5432]
+
+  mongo:
+    container_name: talkverse-mongo
+    image: mongo:7.0
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - talkverse-mongo:/var/lib/mongodb/data
+    env_file: .env
+    networks:
+      - talkverse-proxy
+    # ports: [27017:27017]

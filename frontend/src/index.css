@@ -1,0 +1,374 @@
+/* ===== google fonts ===== */
+@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== standardizing elements ===== */
+* {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
+/* Hide the spinner arrows for number input */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0; /* Remove any margin to avoid extra spacing */
+}
+
+/* datepicker colour change */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.5) sepia(1) saturate(5) hue-rotate(175deg);
+}
+
+/* ===== Scrollbar CSS ===== */
+/* Firefox */
+* {
+  scrollbar-width: auto;
+  scrollbar-color: #afb2bf;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #000814;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #afb2bf;
+  border-radius: 10px;
+  visibility: hidden;
+}
+
+*:active::-webkit-scrollbar-thumb,
+*:focus::-webkit-scrollbar-thumb,
+*:hover::-webkit-scrollbar-thumb {
+  visibility: visible;
+}
+
+/* ===== css configuration for design components ===== */
+/* custom classes naming start with ct eg: ct-logoShine */
+
+/* main logo button */
+.ct-mainLogoButton {
+  -webkit-user-select: none;
+  display: block;
+  padding: 0.2em 0.5em;
+  border: none;
+  outline: none;
+  color: rgb(255, 255, 255);
+  background: #111;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.ct-mainLogoButton:before {
+  -webkit-filter: blur(5px);
+  content: "";
+  background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  background-size: 400%;
+  z-index: -1;
+  filter: blur(5px);
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  animation: glowing-mainLogoButton 20s linear infinite;
+  transition: opacity 0.3s ease-in-out;
+  border-radius: 10px;
+}
+
+.ct-mainLogoButton:after {
+  z-index: -1;
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #222;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+}
+
+@keyframes glowing-mainLogoButton {
+  0% {
+    background-position: 0 0;
+  }
+
+  50% {
+    background-position: 400% 0;
+  }
+
+  100% {
+    background-position: 0 0;
+  }
+}
+
+/* users search input box */
+.ct-searchInput {
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #23272f 0%, #14161a 100%);
+  box-shadow:
+    10px 10px 20px #0e1013,
+    -10px -10px 40px #383e4b;
+  padding: 0.3rem;
+  gap: 0.3rem;
+}
+
+.ct-searchInput input {
+  border-radius: 0.8rem;
+  background: #23272f;
+  box-shadow:
+    inset 5px 5px 10px #0e1013,
+    inset -5px -5px 10px #383e4b,
+    0px 0px 100px rgba(255, 212, 59, 0),
+    0px 0px 100px rgba(255, 102, 0, 0);
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  border: 1px solid transparent;
+  color: white;
+  transition: all 0.2s ease-in-out;
+}
+
+.ct-searchInput input:focus {
+  border: 1px solid #ffd43b;
+  outline: none;
+  box-shadow:
+    inset 0px 0px 10px rgba(255, 102, 0, 0.5),
+    inset 0px 0px 10px rgba(255, 212, 59, 0.5),
+    0px 0px 100px rgba(255, 212, 59, 0.5),
+    0px 0px 100px rgba(255, 102, 0, 0.5);
+}
+
+/* message card */
+.ct-message {
+  position: relative;
+  margin: 10px 4px;
+  background: none;
+  border: 1px solid #353535;
+  outline: none;
+  padding: 4px 16px;
+  border-top-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  color: rgb(255, 255, 255);
+  box-shadow:
+    rgb(81 81 81 / 23%) 0px -36px 30px 0px inset,
+    rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset,
+    rgba(0, 0, 0, 0.06) 0px 2px 1px,
+    rgba(0, 0, 0, 0.09) 0px 4px 2px,
+    rgba(0, 0, 0, 0.09) 0px 8px 4px,
+    rgba(0, 0, 0, 0.09) 0px 16px 8px,
+    rgba(0, 0, 0, 0.09) 0px 32px 16px;
+}
+
+.ct-message :after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 15px solid #252525;
+  border-right: 15px solid transparent;
+  border-left: 15px solid #252525;
+  top: 0;
+  right: -15px;
+}
+
+.ct-message :before {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 17px solid #353535;
+  border-right: 16px solid transparent;
+  border-left: 16px solid transparent;
+  top: -0.5px;
+  right: -17px;
+}
+
+/* other message card */
+.ct-othermessage {
+  position: relative;
+  margin: 10px 4px;
+  background: black;
+  border: 1px solid #353535;
+  outline: none;
+  padding: 4px 16px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  color: rgb(227, 227, 227);
+  filter: brightness(1.1);
+  filter: contrast(1.5);
+  box-shadow:
+    rgb(81 81 81 / 23%) 0px -36px 30px 0px inset,
+    rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset,
+    rgba(0, 0, 0, 0.06) 0px 2px 1px,
+    rgba(0, 0, 0, 0.09) 0px 4px 2px,
+    rgba(0, 0, 0, 0.09) 0px 8px 4px,
+    rgba(0, 0, 0, 0.09) 0px 16px 8px,
+    rgba(0, 0, 0, 0.09) 0px 32px 16px;
+}
+
+.ct-othermessage:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 15px solid #000000;
+  border-left: 15px solid transparent;
+  border-right: 15px solid #000000;
+  top: 0;
+  left: -15px;
+}
+
+.ct-othermessage:before {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 17px solid #353535;
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+  top: -0.5px;
+  left: -17px;
+}
+
+/* checkKey page background */
+.ct-checkPgBack {
+  background-image: linear-gradient(
+    45deg,
+    hsl(270deg 100% 7%) 1%,
+    hsl(222deg 49% 17%) 44%,
+    hsl(207deg 50% 24%) 50%,
+    hsl(199deg 42% 32%) 51%,
+    hsl(191deg 31% 42%) 50%,
+    hsl(181deg 22% 53%) 49%,
+    hsl(166deg 26% 66%) 50%,
+    hsl(144deg 34% 81%) 56%,
+    hsl(104deg 100% 95%) 99%
+  );
+}
+
+/* userInfo background */
+.ct-userInfoBack {
+  background-image: linear-gradient(
+    210deg,
+    hsl(0deg 0% 0%) 0%,
+    hsl(0deg 0% 0%) 11%,
+    hsl(0deg 0% 0%) 13%,
+    hsl(0deg 0% 0%) 15%,
+    hsl(0deg 1% 4%) 16%,
+    hsl(0deg 4% 11%) 17%,
+    hsl(0deg 8% 18%) 19%,
+    hsl(0deg 11% 25%) 20%,
+    hsl(10deg 9% 35%) 22%,
+    hsl(19deg 8% 46%) 25%,
+    hsl(29deg 8% 56%) 28%,
+    hsl(36deg 11% 66%) 33%,
+    hsl(41deg 20% 74%) 39%,
+    hsl(46deg 38% 82%) 49%,
+    hsl(50deg 84% 90%) 74%
+  );
+  background-attachment: fixed;
+}
+
+/* logging out shinning */
+.ct-shinningLogOutTitle {
+  animation: logOut-background-shine 2s linear infinite;
+}
+
+@keyframes logOut-background-shine {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* blog middle section */
+.ct-blogSection-bg-1 {
+  background-image: linear-gradient(
+    0deg,
+    hsl(210deg 74% 35%) 0%,
+    hsl(210deg 73% 33%) 0%,
+    hsl(211deg 71% 30%) 2%,
+    hsl(211deg 69% 28%) 4%,
+    hsl(212deg 66% 24%) 8%,
+    hsl(213deg 61% 21%) 16%,
+    hsl(216deg 51% 17%) 31%,
+    hsl(248deg 17% 9%) 98%
+  );
+}
+
+.ct-blogSection-bg-2 {
+  background-image: linear-gradient(
+    145deg,
+    hsl(270deg 100% 7%) 0%,
+    hsl(258deg 44% 12%) 5%,
+    hsl(259deg 31% 16%) 10%,
+    hsl(259deg 23% 20%) 15%,
+    hsl(258deg 18% 24%) 20%,
+    hsl(257deg 13% 28%) 24%,
+    hsl(256deg 10% 32%) 29%,
+    hsl(253deg 8% 37%) 33%,
+    hsl(249deg 5% 41%) 37%,
+    hsl(241deg 4% 46%) 40%,
+    hsl(228deg 3% 50%) 44%,
+    hsl(207deg 2% 54%) 47%,
+    hsl(171deg 2% 59%) 50%,
+    hsl(144deg 4% 64%) 52%,
+    hsl(128deg 6% 69%) 54%,
+    hsl(118deg 9% 74%) 56%,
+    hsl(112deg 14% 80%) 57%,
+    hsl(108deg 23% 85%) 58%,
+    hsl(106deg 42% 90%) 57%,
+    hsl(104deg 100% 95%) 56%
+  );
+}
+
+/* comment modal background in profile view */
+.ct-CommentModalBackground {
+  background-image: linear-gradient(
+    180deg,
+    hsl(0deg 0% 100%) 0%,
+    hsl(56deg 100% 95%) 0%,
+    hsl(56deg 100% 90%) 0%,
+    hsl(56deg 100% 85%) 0%,
+    hsl(56deg 100% 80%) 1%,
+    hsl(57deg 100% 75%) 1%,
+    hsl(57deg 100% 70%) 1%,
+    hsl(57deg 100% 63%) 2%,
+    hsl(56deg 84% 61%) 3%,
+    hsl(56deg 61% 60%) 4%,
+    hsl(55deg 39% 59%) 5%,
+    hsl(55deg 20% 56%) 6%,
+    hsl(75deg 4% 53%) 7%,
+    hsl(218deg 13% 49%) 9%,
+    hsl(216deg 36% 43%) 11%,
+    hsl(211deg 71% 34%) 14%,
+    hsl(213deg 63% 31%) 17%,
+    hsl(214deg 56% 28%) 21%,
+    hsl(216deg 50% 24%) 26%,
+    hsl(219deg 43% 21%) 32%,
+    hsl(222deg 36% 17%) 41%,
+    hsl(228deg 27% 13%) 55%,
+    hsl(248deg 17% 9%) 98%
+  );
+}

@@ -1,0 +1,8 @@
+build
+dist
+logs
+node_modules
+uploadStorage
+src/db/postgresql/migrations
+.prettierc
+.prettierignore
