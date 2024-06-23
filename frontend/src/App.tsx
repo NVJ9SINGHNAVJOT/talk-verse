@@ -88,14 +88,14 @@ function App() {
   return checkUser ? (
     <SiteLoadingModal />
   ) : (
-    <div className="h-screen w-screen min-w-minContent max-w-maxContent overflow-y-auto overflow-x-hidden">
+    <div className="h-screen w-screen min-w-minContent bg-black">
       {/* ===== main nav bar ===== */}
       <MainNavbar />
 
       {/* ===== all pages will be rendered below ===== */}
       <div
         ref={pageRenderDivRef}
-        className="h-[calc(100vh-4rem)] w-screen min-w-minContent max-w-maxContent overflow-y-auto overflow-x-hidden scroll-smooth"
+        className="mx-auto h-[calc(100vh-4rem)] w-full min-w-minContent max-w-maxContent overflow-y-auto overflow-x-hidden scroll-smooth"
       >
         <Routes>
           <Route path="/" element={<Home />} />
