@@ -1,14 +1,10 @@
-// import { createLogger, transports, format } from "winston";
+import { createLogger } from "winston";
 
+/* NOTE: currently no logger configurations are provided for production */
 const productionLogger = () => {
-  // Return a no-op logger function
-  return {
-    log: () => {},
-  };
-  // return createLogger({
-  //   transports: [new transports.Http()],
-  //   format: format.combine(format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }), format.json()),
-  // });
+  return createLogger({
+    silent: true,
+  });
 };
 
 export default productionLogger;
