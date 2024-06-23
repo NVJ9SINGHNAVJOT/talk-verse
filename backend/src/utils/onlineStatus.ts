@@ -73,8 +73,11 @@ export const showOnline = async (
         if (newUserJoinng) {
           socket.to(allSocketIdsOfFriends).emit(clientE.SET_USER_ONLINE, userId);
         }
+
         // user is getting disconnected
-        socket.to(allSocketIdsOfFriends).emit(clientE.SET_USER_OFFLINE, userId);
+        if (!status) {
+          socket.to(allSocketIdsOfFriends).emit(clientE.SET_USER_OFFLINE, userId);
+        }
       }
     }
   } catch (error) {
