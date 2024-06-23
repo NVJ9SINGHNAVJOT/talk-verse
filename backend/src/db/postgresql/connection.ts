@@ -21,7 +21,7 @@ export const pool = new Pool({
   database: `${process.env["POSTGRES_DB"]}`,
   password: `${process.env["POSTGRES_PASSWORD"]}`,
   /* NOTE: commented only for development purpose, remove comment in production */
-  // ssl: { rejectUnauthorized: false },
+  ssl: { rejectUnauthorized: false },
 });
 
 export async function postgresqlDatabaseConnect() {

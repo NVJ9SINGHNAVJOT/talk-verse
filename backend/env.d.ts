@@ -17,7 +17,6 @@ declare namespace NodeJS {
     API_KEY: string;
     API_SECRET: string;
 
-    MONGO_INITDB_DATABASE: string;
     MONGODB_URL: string;
 
     POSTGRES_HOST: string;
