@@ -15,10 +15,10 @@ const About = () => {
   // Use the custom hook
   useCountOnView(countRef, setUserCount);
   return (
-    <div className=" w-full">
+    <div className=" w-full bg-white">
       <div className=" w-10/12 mx-auto mb-20">
         {/* section 1 */}
-        <section className=" w-full mt-8 flex flex-col items-center">
+        <section className=" w-full pt-8 flex flex-col items-center">
           <div className="h-[0.1rem] w-full bg-black"></div>
           <div className="text-7xl  lm:text-9xl font-be-veitnam-pro py-2 font-bold">ABOUT US</div>
           <div className="h-[0.1rem] w-full bg-black"></div>
