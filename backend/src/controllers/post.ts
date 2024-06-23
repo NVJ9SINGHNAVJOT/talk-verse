@@ -123,9 +123,11 @@ export const deletePost = async (req: Request, res: Response): Promise<Response>
 
     const data = deletePostReq.data;
 
+    // set isPostDeleted to true for post
     const postRes = await db
-      .delete(post)
-      .where(and(eq(post.id, data.postId), eq(post.userId, userId2)))
+      .update(post)
+      .set({ isPostDeleted: true })
+      .where(and(eq(post.id, data.postId), eq(post.userId, userId2), eq(post.isPostDeleted, false)))
       .returning({ id: post.id, mediaUrls: post.mediaUrls })
       .execute();
 
@@ -588,7 +590,7 @@ export const recentPosts = async (req: Request, res: Response): Promise<Response
       .innerJoin(user, eq(post.userId, user.id))
       .leftJoin(save, and(eq(save.postId, post.id), eq(save.userId, userId2)))
       .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, post.id)))
-      .where(lt(post.createdAt, new Date(data.createdAt)))
+      .where(and(lt(post.createdAt, new Date(data.createdAt)), eq(post.isPostDeleted, false)))
       .orderBy(desc(post.createdAt))
       .limit(15)
       .execute();
@@ -643,7 +645,7 @@ export const trendingPosts = async (req: Request, res: Response): Promise<Respon
       .innerJoin(user, eq(post.userId, user.id))
       .leftJoin(save, and(eq(save.postId, post.id), eq(save.userId, userId2)))
       .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, post.id)))
-      .where(lt(post.createdAt, new Date(data.createdAt)))
+      .where(and(lt(post.createdAt, new Date(data.createdAt)), eq(post.isPostDeleted, false)))
       .orderBy(desc(post.likesCount), desc(post.createdAt))
       .limit(15)
       .execute();
@@ -698,7 +700,13 @@ export const categoryPosts = async (req: Request, res: Response): Promise<Respon
       .innerJoin(user, eq(post.userId, user.id))
       .leftJoin(save, and(eq(save.postId, post.id), eq(save.userId, userId2)))
       .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, post.id)))
-      .where(and(eq(post.category, data.category), lt(post.createdAt, new Date(data.createdAt))))
+      .where(
+        and(
+          eq(post.category, data.category),
+          lt(post.createdAt, new Date(data.createdAt)),
+          eq(post.isPostDeleted, false)
+        )
+      )
       .orderBy(desc(post.createdAt))
       .limit(15)
       .execute();

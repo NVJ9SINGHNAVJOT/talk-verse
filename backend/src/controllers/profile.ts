@@ -101,8 +101,7 @@ export const updateProfileImage = async (req: Request, res: Response): Promise<R
     }
 
     if (getUser.imageUrl) {
-      const publicId = `${process.env["FOLDER_NAME"]}` + "/" + getUser.imageUrl.split("/").pop()?.split(".")[0];
-      await deleteFromCloudinay(publicId);
+      deleteFromCloudinay(getUser.imageUrl);
     }
 
     getUser.imageUrl = secUrl;
@@ -261,7 +260,7 @@ export const userPosts = async (req: Request, res: Response): Promise<Response> 
       .innerJoin(user, and(eq(post.userId, user.id), eq(user.id, userId2)))
       .leftJoin(save, and(eq(save.postId, post.id), eq(save.userId, userId2)))
       .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, post.id)))
-      .where(and(eq(post.userId, userId2), lt(post.createdAt, new Date(data.createdAt))))
+      .where(and(eq(post.userId, userId2), lt(post.createdAt, new Date(data.createdAt)), eq(post.isPostDeleted, false)))
       .orderBy(desc(post.createdAt))
       .limit(15)
       .execute();
@@ -464,7 +463,7 @@ export const userSavedPosts = async (req: Request, res: Response): Promise<Respo
       .innerJoin(post, and(eq(post.id, save.postId), eq(save.userId, userId2)))
       .innerJoin(user, eq(post.userId, user.id))
       .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, post.id)))
-      .where(and(eq(save.userId, userId2), lt(post.createdAt, new Date(data.createdAt))))
+      .where(and(eq(save.userId, userId2), lt(post.createdAt, new Date(data.createdAt)), eq(post.isPostDeleted, false)))
       .orderBy(desc(save.createdAt))
       .limit(15)
       .execute();

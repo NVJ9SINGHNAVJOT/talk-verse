@@ -59,11 +59,26 @@ export const uploadMultiplesToCloudinary = async (files: Express.Multer.File[]):
   }
 };
 
-export const deleteFromCloudinay = async (publicId: string) => {
+export const deleteFromCloudinay = async (cloudinaryUrl: string) => {
   try {
-    // await is not used as not necessary for response
+    const publicId = `${process.env["FOLDER_NAME"]}` + "/" + cloudinaryUrl.split("/").pop()?.split(".")[0];
+    /* 
+      NOTE: below method is used in production, as it delete file from cloudinary but not from cloudinary cache.
+      so, if link is in use by user's browser then file will be displayed, as file can be still accessed by link till it is 
+      present in cloundinary cache.
+      await is not used as response is not required.
+    */
+    /* NOTE: commented only for development purpose, remove comment in production */
+    // cloudinary.uploader.destroy(publicId);
+
+    /* 
+      NOTE: below method is note used in production, as it delete file from cloudinary cache as well.
+      so, if link is in use by user's browser then file will not be displayed.
+      await is not used as response is not required.
+    */
+    /* NOTE: commented only for production purpose, remove comment in development */
     cloudinary.api.delete_resources([publicId]);
   } catch (error) {
-    logger.error("error while deleting file from cloudinary", { publicId: publicId, error: error });
+    logger.error("error while deleting file from cloudinary", { cloudinaryUrl: cloudinaryUrl, error: error });
   }
 };
