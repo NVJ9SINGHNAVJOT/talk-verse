@@ -6,7 +6,6 @@ import UserMenu from "@/components/common/UserMenu";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { useRef, useState } from "react";
 import SideMenu from "@/components/common/SideMenu";
-import SocketProvider from "@/context/SocketContext";
 
 const MainNavbar = () => {
   const navigate = useNavigate();
@@ -108,9 +107,7 @@ const MainNavbar = () => {
       {/* sign in buttons or user logo */}
       {user ? (
         <div className={`mr-8 flex items-center justify-evenly gap-x-2 md:gap-2`}>
-          <SocketProvider>
             <UserMenu />
-          </SocketProvider>
           <div ref={menuRefExclude} onClick={toogleMenu} className="md:hidden">
             <GiHamburgerMenu className="ml-2 aspect-auto h-8 w-6 cursor-pointer rounded-sm text-white" />
           </div>

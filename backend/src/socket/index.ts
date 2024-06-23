@@ -61,13 +61,13 @@ export const setupWebSocket = (app: Application): HTTPServer => {
     // set userId in userSocketIds and show friends that user in online
     const checkUserAlreadyConnected = userSocketIDs.get(userId);
     // user is already connected
-    if (checkUserAlreadyConnected !== undefined) {
-      userSocketIDs.get(userId)?.push(socket.id);
-      showOnline(io, userId, false, true, socket);
-    } else {
+    if (checkUserAlreadyConnected === undefined) {
       // new user is connected
       userSocketIDs.set(userId, [socket.id]);
       showOnline(io, userId, true, true, socket);
+    } else {
+      userSocketIDs.get(userId)?.push(socket.id);
+      showOnline(io, userId, false, true, socket);
     }
 
     // register events

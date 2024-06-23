@@ -55,6 +55,9 @@ export default function SocketProvider({ children }: ContextProviderProps) {
   const dispatch = useDispatch();
 
   const talkPageCleanUp = () => {
+    // set talk page loading true
+    dispatch(setTalkPageLoading(true));
+
     // chatSlice
     dispatch(setChatBarData([]));
     dispatch(setFriends([]));
@@ -132,10 +135,7 @@ export default function SocketProvider({ children }: ContextProviderProps) {
           setSocket(null);
           socketRef.current = null;
           toast.error("Error in connection");
-          // set talk page loading true
-          dispatch(setTalkPageLoading(true));
           navigate("/error");
-
           // if error in connection then clear all state for talk page
           talkPageCleanUp();
         });

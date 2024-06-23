@@ -23,7 +23,7 @@ export const getMultiUsersSockets = (users: string[], currUserId?: string): Memb
     users.forEach((user) => {
       if (user !== currUserId) {
         const socketIds = userSocketIDs.get(user);
-        if (socketIds !== undefined) {
+        if (socketIds !== undefined && socketIds.length > 0) {
           online.push(socketIds);
         } else {
           offline.push(user);
@@ -32,9 +32,9 @@ export const getMultiUsersSockets = (users: string[], currUserId?: string): Memb
     });
   } else {
     users.forEach((user) => {
-      const socketId = userSocketIDs.get(user);
-      if (socketId !== undefined) {
-        online.push(socketId);
+      const socketIds = userSocketIDs.get(user);
+      if (socketIds !== undefined && socketIds.length > 0) {
+        online.push(socketIds);
       } else {
         offline.push(user);
       }

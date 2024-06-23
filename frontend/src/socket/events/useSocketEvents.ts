@@ -33,11 +33,14 @@ import {
 // Custom hook to manage socket event listeners
 const useSocketEvents = (socket: Socket | null): void => {
   const dispatch = useDispatch();
-
   useEffect(() => {
     if (!socket) {
       return;
     }
+
+    /*
+      all event listeners are registered here
+    */
     socket.on(clientE.USER_REQUEST, (data: SoUserRequest) => {
       dispatch(
         addUserRequest({
@@ -65,7 +68,6 @@ const useSocketEvents = (socket: Socket | null): void => {
           imageUrl: data.imageUrl,
         })
       );
-
       dispatch(
         addChatBarData({
           _id: data._id,
@@ -75,9 +77,7 @@ const useSocketEvents = (socket: Socket | null): void => {
           imageUrl: data.imageUrl,
         })
       );
-
       dispatch(addNewUnseen(data.chatId));
-
       toast.success("New friend added");
     });
 
@@ -131,19 +131,8 @@ const useSocketEvents = (socket: Socket | null): void => {
       dispatch(removeOnlineFriend(friendId));
     });
 
-    return () => {
-      socket.off(clientE.USER_REQUEST);
-      socket.off(clientE.REQUEST_ACCEPTED);
-      socket.off(clientE.ADDED_IN_GROUP);
-      socket.off(clientE.GROUP_MESSAGE_RECIEVED);
-      socket.off(clientE.MESSAGE_RECIEVED);
-      socket.off(clientE.OTHER_START_TYPING);
-      socket.off(clientE.OTHER_STOP_TYPING);
-      socket.off(clientE.SET_USER_ONLINE);
-      socket.off(clientE.SET_USER_OFFLINE);
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
 };
 
 export default useSocketEvents;

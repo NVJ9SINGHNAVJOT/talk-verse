@@ -15,10 +15,10 @@ const Talk = () => {
     const getWebSocketConnected = async () => {
       try {
         // only make connection if user is getting connected for first loading of talk page
-        if (myPrivateKey !== undefined && talkPageLd === true) {
-          await setupSocketConnection();
-        } else {
+        if (myPrivateKey === undefined) {
           navigate("/checkKey");
+        } else if (talkPageLd === true) {
+          await setupSocketConnection();
         }
       } catch (error) {
         toast.error("Error while connecting");

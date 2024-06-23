@@ -136,7 +136,7 @@ const chatSlice = createSlice({
       state.userTyping = [];
     },
     addUserTyping(state, action: PayloadAction<string>) {
-      if (state.userTyping.includes(action.payload)) {
+      if (!state.userTyping.includes(action.payload)) {
         state.userTyping.push(action.payload);
       }
     },

@@ -10,7 +10,6 @@ import Group from "@/components/core/talk/Group";
 import Error from "@/pages/Error";
 import Talk from "@/pages/Talk";
 import Welcome from "@/components/core/talk/Welcome";
-import SocketProvider from "@/context/SocketContext";
 import { useEffect, useRef, useState } from "react";
 import useScrollOnTop from "@/hooks/useScrollOnTop";
 import { checkUserApi } from "@/services/operations/authApi";
@@ -119,9 +118,7 @@ function App() {
             path="/talk"
             element={
               <PrivateRoute>
-                <SocketProvider>
-                  <Talk />
-                </SocketProvider>
+                <Talk />
               </PrivateRoute>
             }
           >

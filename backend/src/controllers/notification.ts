@@ -559,7 +559,7 @@ export const checkOnlineFriends = async (req: Request, res: Response): Promise<R
 
     const userData = await User.findById({ _id: userId }).select({ friends: true }).exec();
 
-    if (userData?.friends.length === undefined || userData?.friends.length < 1) {
+    if (userData?.friends.length === undefined || userData?.friends.length === 0) {
       return res.status(200).json({
         success: false,
         message: "user have no friends",

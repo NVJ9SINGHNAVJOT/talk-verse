@@ -1,9 +1,10 @@
 /* eslint-disable drizzle/enforce-delete-with-where */
 import { Server, Socket } from "socket.io";
 import User from "@/db/mongodb/models/User";
-import { groupIds, groupOffline, userSocketIDs } from "@/socket/index";
+import { groupIds, groupOffline } from "@/socket/index";
 import { clientE } from "@/socket/events";
 import { logger } from "@/logger/logger";
+import { getSingleUserSockets } from "./getSocketIds";
 
 export const showOnline = async (
   io: Server,
@@ -56,34 +57,27 @@ export const showOnline = async (
         return;
       }
 
-      // get online friends
-      const onlineFriends: string[] = [];
-      userData?.friends.forEach((friend) => {
-        const friendId = friend.friendId._id.toString();
-        if (userSocketIDs.has(friendId)) {
-          const socketIds = userSocketIDs.get(friendId);
-          if (socketIds && socketIds.length > 0) {
-            // push all socketIds of friend in onlineFriens
-            for (let index = 0; index < socketIds.length; index++) {
-              const sId = socketIds[index];
-              if (sId) {
-                onlineFriends.push(sId);
-              }
-            }
-          }
+      // get online friends socketIds
+      const onlineFriends: string[][] = [];
+      userData.friends.forEach((friend) => {
+        const friendSocketIds = getSingleUserSockets(friend.friendId._id.toString());
+        if (friendSocketIds.length > 0) {
+          onlineFriends.push(friendSocketIds);
         }
       });
 
-      if (onlineFriends.length > 0) {
+      const allSocketIdsOfFriends = onlineFriends.flat();
+
+      if (allSocketIdsOfFriends.length > 0) {
         // if new user is joining
         if (newUserJoinng) {
-          socket.to(onlineFriends).emit(clientE.SET_USER_ONLINE, userId);
+          socket.to(allSocketIdsOfFriends).emit(clientE.SET_USER_ONLINE, userId);
         }
         // user is getting disconnected
-        socket.to(onlineFriends).emit(clientE.SET_USER_OFFLINE, userId);
+        socket.to(allSocketIdsOfFriends).emit(clientE.SET_USER_OFFLINE, userId);
       }
     }
   } catch (error) {
-    logger.error("errow while setting user status for online friends", { error: error });
+    logger.error("errow while setting user status", { error: error });
   }
 };
