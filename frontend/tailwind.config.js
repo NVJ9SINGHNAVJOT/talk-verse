@@ -87,7 +87,7 @@ export default {
         },
       },
       maxWidth: {
-        maxContent: "1600px",
+        maxContent: "2000px",
       },
       minWidth: {
         minContent: "640px",
