@@ -36,8 +36,9 @@ export const checkUserName = async (req: Request, res: Response): Promise<Respon
       success: true,
       message: "userName doesn't exits",
     });
-  } catch (error) {
-    return errRes(res, 500, "error while checking userName", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while checking userName", error.message);
   }
 };
 
@@ -69,8 +70,9 @@ export const getUserDetails = async (req: Request, res: Response): Promise<Respo
       message: "user profile data",
       userData: userData,
     });
-  } catch (error) {
-    return errRes(res, 500, "error while getting user profile data", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while getting user profile data", error.message);
   }
 };
 
@@ -113,11 +115,12 @@ export const updateProfileImage = async (req: Request, res: Response): Promise<R
       message: "user profile image uploaded successfully",
       imageUrl: secUrl,
     });
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     if (req.file) {
       deleteFile(req.file);
     }
-    return errRes(res, 500, "error while uploading user profile image", error);
+    return errRes(res, 500, "error while uploading user profile image", error.message);
   }
 };
 
@@ -194,8 +197,9 @@ export const updateProfile = async (req: Request, res: Response): Promise<Respon
       success: false,
       message: "invalid data for user profile update",
     });
-  } catch (error) {
-    return errRes(res, 500, "error while updating user details", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while updating user details", error.message);
   }
 };
 
@@ -221,8 +225,9 @@ export const userBlogProfile = async (req: Request, res: Response): Promise<Resp
         totalPosts: totalPosts[0]?.count,
       },
     });
-  } catch (error) {
-    return errRes(res, 500, "error while getting userBlogProfile data", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while getting userBlogProfile data", error.message);
   }
 };
 
@@ -276,7 +281,8 @@ export const userPosts = async (req: Request, res: Response): Promise<Response> 
       success: false,
       message: "no further user posts",
     });
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     return errRes(res, 500, "error while getting user posts");
   }
 };
@@ -320,7 +326,8 @@ export const userFollowing = async (req: Request, res: Response): Promise<Respon
       success: false,
       message: "no further user following",
     });
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     return errRes(res, 500, "error while getting user following");
   }
 };
@@ -364,7 +371,8 @@ export const userFollowers = async (req: Request, res: Response): Promise<Respon
       success: false,
       message: "no further user followers",
     });
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     return errRes(res, 500, "error while getting user followers");
   }
 };
@@ -394,8 +402,9 @@ export const removeFollower = async (req: Request, res: Response): Promise<Respo
     }
 
     return errRes(res, 400, "invalid follower id, no follower exists for other userId");
-  } catch (error) {
-    return errRes(res, 500, "error while removing follower", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while removing follower", error.message);
   }
 };
 
@@ -424,8 +433,9 @@ export const unfollowUser = async (req: Request, res: Response): Promise<Respons
     }
 
     return errRes(res, 400, "invalid following id, no following exists for other userId");
-  } catch (error) {
-    return errRes(res, 500, "error while removing following other user", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while removing following other user", error.message);
   }
 };
 
@@ -479,7 +489,8 @@ export const userSavedPosts = async (req: Request, res: Response): Promise<Respo
       success: false,
       message: "no further user saved posts",
     });
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     return errRes(res, 500, "error while getting user saved posts");
   }
 };

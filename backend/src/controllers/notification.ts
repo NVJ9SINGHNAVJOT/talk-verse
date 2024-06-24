@@ -90,7 +90,8 @@ export const getUsers = async (req: Request, res: Response): Promise<Response> =
       message: "users",
       users: newData,
     });
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     return errRes(res, 500, "error while getting users");
   }
 };
@@ -134,7 +135,8 @@ export const getFollowUsers = async (req: Request, res: Response): Promise<Respo
       message: "follow users for userName",
       followUsers: followUsers,
     });
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     return errRes(res, 500, "error while getting follow users");
   }
 };
@@ -211,8 +213,9 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
       success: true,
       message: "request send successfully",
     });
-  } catch (error) {
-    return errRes(res, 500, "error while sending request", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while sending request", error.message);
   }
 };
 
@@ -356,8 +359,9 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
       newChatId: chat._id,
       newFriendPublicKey: otherUser.userId.publicKey,
     });
-  } catch (error) {
-    return errRes(res, 500, "error while accept request", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while accept request", error.message);
   }
 };
 
@@ -407,8 +411,9 @@ export const deleteRequest = async (req: Request, res: Response) => {
       success: true,
       message: "req deleted successfully",
     });
-  } catch (error) {
-    return errRes(res, 500, "error while deleting request", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while deleting request", error.message);
   }
 };
 
@@ -443,8 +448,9 @@ export const getAllNotifications = async (req: Request, res: Response): Promise<
       userReqs: notifications?.friendRequests,
       unseenMessages: notifications?.unseenMessages,
     });
-  } catch (error) {
-    return errRes(res, 500, "error while getting notifications", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while getting notifications", error.message);
   }
 };
 
@@ -545,11 +551,12 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
         gpImageUrl: newGroup.gpImageUrl,
       },
     });
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     if (req.file) {
       deleteFile(req.file);
     }
-    return errRes(res, 500, "error while creating group", error);
+    return errRes(res, 500, "error while creating group", error.message);
   }
 };
 
@@ -587,8 +594,9 @@ export const checkOnlineFriends = async (req: Request, res: Response): Promise<R
       message: "online friends",
       onlineFriends: onlineFriends,
     });
-  } catch (error) {
-    return errRes(res, 500, "error while getting online friends", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while getting online friends", error.message);
   }
 };
 
@@ -609,8 +617,9 @@ export const setUnseenCount = async (req: Request, res: Response): Promise<Respo
       success: true,
       message: "unseen count updated successfully",
     });
-  } catch (error) {
-    return errRes(res, 400, "error while setting unseen count", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 400, "error while setting unseen count", error.message);
   }
 };
 
@@ -646,8 +655,9 @@ export const setOrder = async (req: Request, res: Response): Promise<Response> =
       success: true,
       message: "order updated successfully",
     });
-  } catch (error) {
-    return errRes(res, 500, "error while setting order", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while setting order", error.message);
   }
 };
 
@@ -693,8 +703,9 @@ export const sendFollowRequest = async (req: Request, res: Response): Promise<Re
       success: true,
       message: "requeset submitted successfully",
     });
-  } catch (error) {
-    return errRes(res, 500, "error while sending follow request", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while sending follow request", error.message);
   }
 };
 
@@ -722,8 +733,9 @@ export const deleteFollowRequest = async (req: Request, res: Response): Promise<
       success: true,
       message: "follow request deleted successfully",
     });
-  } catch (error) {
-    return errRes(res, 500, "error while deleting follow request", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while deleting follow request", error.message);
   }
 };
 
@@ -780,8 +792,9 @@ export const acceptFollowRequest = async (req: Request, res: Response): Promise<
       success: true,
       messasge: "user followed other user",
     });
-  } catch (error) {
-    return errRes(res, 500, "error while following user", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while following user", error.message);
   }
 };
 
@@ -814,8 +827,9 @@ export const followRequests = async (req: Request, res: Response): Promise<Respo
       message: "follow requests for user",
       followRequests: followRequests,
     });
-  } catch (error) {
-    return errRes(res, 500, "error while getting follow request for user", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while getting follow request for user", error.message);
   }
 };
 
@@ -850,7 +864,8 @@ export const followSuggestions = async (req: Request, res: Response): Promise<Re
       success: false,
       message: "no follow suggestions for user",
     });
-  } catch (error) {
-    return errRes(res, 500, "error while getting follow suggestions", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while getting follow suggestions", error.message);
   }
 };

@@ -24,7 +24,8 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     (req as CustomRequest).userId2 = userIds[1] as number;
 
     next();
-  } catch (error) {
-    return errRes(res, 500, "user authorization failed", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "user authorization failed", error.message);
   }
 };

@@ -45,7 +45,8 @@ export const setupWebSocket = (app: Application): HTTPServer => {
         logger.error("socket authorization failed", { socketId: socket.id });
         next(new Error("authorization invalid, access denied"));
       }
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       logger.error("socket authorization failed", { socketId: socket.id });
       next(new Error("error which checking user authenticaton for socket connection"));
     }

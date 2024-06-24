@@ -6,7 +6,8 @@ export const checkTags = (tags: string): string[] => {
 
   try {
     checkTags = JSON.parse(tags);
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     // If JSON.parse fails, return an empty array
     logger.error("error while parsing tags", { tags: tags });
     return [];
@@ -32,7 +33,8 @@ export const checkContent = (content: string): string[] => {
 
   try {
     checkContent = JSON.parse(content);
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     // If JSON.parse fails, return an empty array
     logger.error("error while parsing content", { content: content });
     return [];
@@ -62,7 +64,8 @@ export const checkGroupMembers = (groupMembers: string): string[] => {
 
   try {
     checkMembers = JSON.parse(groupMembers);
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     // If JSON.parse fails, return an empty array
     logger.error("error while parsing content", { groupMembers: groupMembers });
     return [];

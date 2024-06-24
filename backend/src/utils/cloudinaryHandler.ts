@@ -18,8 +18,9 @@ export const uploadToCloudinary = async (file: Express.Multer.File): Promise<str
     });
 
     return secureUrl.secure_url;
-  } catch (error) {
-    logger.error("error while uploading file to cloudinary", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    logger.error("error while uploading file to cloudinary", error.message);
     if (fs.existsSync(file.path)) {
       fs.unlink(file.path, (unlinkError) => {
         if (unlinkError) {
@@ -50,11 +51,12 @@ export const uploadMultiplesToCloudinary = async (files: Express.Multer.File[]):
     }
 
     return confirmUrls;
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     if (files) {
       deleteFiles(files);
     }
-    logger.error("error uploading multiple files to cloudinary", error);
+    logger.error("error uploading multiple files to cloudinary", error.message);
     return [];
   }
 };
@@ -78,7 +80,8 @@ export const deleteFromCloudinay = async (cloudinaryUrl: string) => {
     */
     /* NOTE: commented only for production purpose, remove comment in development */
     // cloudinary.api.delete_resources([publicId]);
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     logger.error("error while deleting file from cloudinary", { cloudinaryUrl: cloudinaryUrl, error: error });
   }
 };

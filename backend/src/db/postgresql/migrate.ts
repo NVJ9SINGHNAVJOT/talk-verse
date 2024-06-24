@@ -11,8 +11,9 @@ export async function migratePostgreSQL() {
     await migrate(db, { migrationsFolder: "src/db/postgresql/migrations" });
 
     logger.info("All migrations have been done, exiting...");
-  } catch (error) {
-    logger.error("error while postgresql migration", { error: error });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    logger.error("error while postgresql migration", { error: error.message });
     await pool.end();
     process.exit();
   }
