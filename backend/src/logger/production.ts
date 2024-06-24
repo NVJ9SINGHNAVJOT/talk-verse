@@ -1,9 +1,23 @@
-import { createLogger } from "winston";
+import { createLogger, format, transports } from "winston";
 
-/* NOTE: currently no logger configurations are provided for production */
 const productionLogger = () => {
   return createLogger({
-    silent: true,
+    transports: [
+      // printed on console
+      new transports.Console({
+        level: "error",
+        format: format.combine(
+          format.json(),
+          format.prettyPrint(),
+          format.colorize(),
+          format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+          format.printf(({ timestamp, level, message, ...args }) => {
+            return `[${timestamp}] ${level}: ${message}. data: ${JSON.stringify(args)}`;
+          })
+        ),
+      }),
+    ],
+    // silent: true,
   });
 };
 
