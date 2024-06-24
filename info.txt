@@ -1,4 +1,4 @@
 version-1 inprogress
 
 pro-talk-verse  
-responsive from 640px to 1600px
+responsive from 640px to 2000px
