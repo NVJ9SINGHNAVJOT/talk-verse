@@ -9,8 +9,9 @@ export const cloudinaryConnect = (): void => {
       api_secret: `${process.env["API_SECRET"]}`,
       secure: true,
     });
-  } catch (error) {
-    logger.error("error while connection cloudinary", { error: error });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    logger.error("error while connection cloudinary", { error: error.message });
     process.exit();
   }
 };

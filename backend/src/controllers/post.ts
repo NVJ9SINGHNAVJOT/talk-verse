@@ -104,11 +104,12 @@ export const createPost = async (req: Request, res: Response): Promise<Response>
       message: "post created",
       post: newPost[0],
     });
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     if (req.files?.length) {
       deleteFiles(req.files);
     }
-    return errRes(res, 500, "error while creating post", error);
+    return errRes(res, 500, "error while creating post", error.message);
   }
 };
 
@@ -145,8 +146,9 @@ export const deletePost = async (req: Request, res: Response): Promise<Response>
       });
     }
     return errRes(res, 400, "postId is invalid, no post present for postId to delete");
-  } catch (error) {
-    return errRes(res, 500, "error while deleting post", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while deleting post", error.message);
   }
 };
 
@@ -191,8 +193,9 @@ export const savePost = async (req: Request, res: Response): Promise<Response> =
       success: true,
       message: "post removed from save for user",
     });
-  } catch (error) {
-    return errRes(res, 500, "error while save post for user", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while save post for user", error.message);
   }
 };
 
@@ -223,11 +226,12 @@ export const createStory = async (req: Request, res: Response): Promise<Response
       message: "story created successfully",
       story: newStory[0],
     });
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     if (req.file) {
       deleteFile(req.file);
     }
-    return errRes(res, 500, "error while creating story", error);
+    return errRes(res, 500, "error while creating story", error.message);
   }
 };
 
@@ -262,8 +266,9 @@ export const deleteStory = async (req: Request, res: Response): Promise<Response
       });
     }
     return errRes(res, 400, "stroyId is invalid for deleting story");
-  } catch (error) {
-    return errRes(res, 500, "error while deleting story", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while deleting story", error.message);
   }
 };
 
@@ -290,8 +295,9 @@ export const userStory = async (req: Request, res: Response): Promise<Response> 
       message: "story for user",
       story: userStoryUrl[0],
     });
-  } catch (error) {
-    return errRes(res, 500, "error while getting user story", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while getting user story", error.message);
   }
 };
 
@@ -385,8 +391,9 @@ export const updateLike = async (req: Request, res: Response): Promise<Response>
       });
     }
     return errRes(res, 400, "no like is present for post by user");
-  } catch (error) {
-    return errRes(res, 500, "error while updating like for post", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while updating like for post", error.message);
   }
 };
 
@@ -421,8 +428,9 @@ export const addComment = async (req: Request, res: Response): Promise<Response>
       message: "comment added",
       comment: newComment[0],
     });
-  } catch (error) {
-    return errRes(res, 500, "error while adding comment for post", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while adding comment for post", error.message);
   }
 };
 
@@ -457,8 +465,9 @@ export const deleteComment = async (req: Request, res: Response): Promise<Respon
     }
 
     return errRes(res, 400, "invalid id for deleting comment");
-  } catch (error) {
-    return errRes(res, 500, "error while deleting comment for post", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while deleting comment for post", error.message);
   }
 };
 
@@ -503,8 +512,9 @@ export const postComments = async (req: Request, res: Response): Promise<Respons
       message: "comments for post",
       comments: comments,
     });
-  } catch (error) {
-    return errRes(res, 500, "error while getting comments for post", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while getting comments for post", error.message);
   }
 };
 export const getStories = async (req: Request, res: Response): Promise<Response> => {
@@ -551,8 +561,9 @@ export const getStories = async (req: Request, res: Response): Promise<Response>
       success: false,
       message: "no further stories for user",
     });
-  } catch (error) {
-    return errRes(res, 500, "error while getting stories", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while getting stories", error.message);
   }
 };
 
@@ -606,7 +617,8 @@ export const recentPosts = async (req: Request, res: Response): Promise<Response
       success: false,
       message: "no further recent posts",
     });
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     return errRes(res, 500, "error while getting trending posts");
   }
 };
@@ -661,7 +673,8 @@ export const trendingPosts = async (req: Request, res: Response): Promise<Respon
       success: false,
       message: "no further trending posts",
     });
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     return errRes(res, 500, "error while getting trending posts");
   }
 };
@@ -722,7 +735,8 @@ export const categoryPosts = async (req: Request, res: Response): Promise<Respon
       success: false,
       message: "no further category posts",
     });
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     return errRes(res, 500, "error while getting category posts");
   }
 };

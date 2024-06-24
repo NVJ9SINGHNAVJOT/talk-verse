@@ -133,11 +133,12 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
       success: true,
       message: "user registered successfully",
     });
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     if (req.file) {
       deleteFile(req.file);
     }
-    return errRes(res, 500, "error while creating user", error);
+    return errRes(res, 500, "error while creating user", error.message);
   }
 };
 
@@ -161,8 +162,9 @@ export const sendOtp = async (req: Request, res: Response): Promise<Response> =>
       success: true,
       message: "otp send successfully",
     });
-  } catch (error) {
-    return errRes(res, 500, "error while sending otp", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while sending otp", error.message);
   }
 };
 
@@ -251,8 +253,9 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
     } else {
       return errRes(res, 500, "error while generating token");
     }
-  } catch (error) {
-    return errRes(res, 500, "error while user login", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while user login", error.message);
   }
 };
 
@@ -295,8 +298,9 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
       message: "user check successfull",
       user: user,
     });
-  } catch (error) {
-    return errRes(res, 500, "error while user check", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while user check", error.message);
   }
 };
 
@@ -332,7 +336,8 @@ export const logOut = async (req: Request, res: Response): Promise<Response> => 
       success: true,
       message: "User logged out successfully",
     });
-  } catch (error) {
-    return errRes(res, 500, "error while user log out", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while user log out", error.message);
   }
 };

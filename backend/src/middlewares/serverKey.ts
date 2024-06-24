@@ -9,7 +9,8 @@ function serverKey(req: Request, res: Response, next: NextFunction) {
     } else {
       return errRes(res, 401, "unauthorized access denied for server", { ip: req.ip, serverKey: serverKey });
     }
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     return errRes(res, 401, "errror while checking authorization of serverKey");
   }
 }

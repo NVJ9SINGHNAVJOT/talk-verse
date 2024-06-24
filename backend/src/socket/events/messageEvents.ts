@@ -68,11 +68,13 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
         if (friendSocketIds.length === 0) {
           await UnseenCount.findOneAndUpdate({ userId: data.to, mainId: data.chatId }, { $inc: { count: 1 } });
         }
-      } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
         logger.error("error while creating message", { error: error, data: data, newMessage: newMessage });
       }
-    } catch (error) {
-      logger.error("error while sending message for chat", { error: error });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      logger.error("error while sending message for chat", { error: error.message });
     }
   });
 
@@ -125,11 +127,13 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
         } else {
           logger.error("no offline set present for groupId", { data: data, newGpMessage: newGpMessage });
         }
-      } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
         logger.error("error while creating goupMessage", { error: error, data: data, newGpMessage: newGpMessage });
       }
-    } catch (error) {
-      logger.error("error while sending group message", { error: error });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      logger.error("error while sending group message", { error: error.message });
     }
   });
 };

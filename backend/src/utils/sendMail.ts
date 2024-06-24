@@ -27,8 +27,9 @@ const sendMail = async (email: string, title: string, body: string): Promise<nod
     };
 
     await transporter.sendMail(mailOptions);
-  } catch (error) {
-    logger.error("error while sending mail", { error: error });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    logger.error("error while sending mail", { error: error.message });
     throw error;
   }
 };
@@ -36,7 +37,8 @@ const sendMail = async (email: string, title: string, body: string): Promise<nod
 export const sendVerficationMail = async (email: string, otp: string) => {
   try {
     await sendMail(email, "Verification Email", verificationTemplate(otp));
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     logger.error("error while sending verification mail", { error: error, email: email });
     throw error;
   }
@@ -45,7 +47,8 @@ export const sendVerficationMail = async (email: string, otp: string) => {
 export const sendPasswordUpdatedMail = async (userName: string, email: string) => {
   try {
     await sendMail(email, "Password Updated", passwordUpdatedTemplate(userName, email));
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     logger.error("error while sending password updated mail", { error: error, email: email });
     throw error;
   }
@@ -54,7 +57,8 @@ export const sendPasswordUpdatedMail = async (userName: string, email: string) =
 export const sendPrivateKeyMail = async (email: string, privateKey: string) => {
   try {
     await sendMail(email, "Private Key - TalkVerse", privateKeyTemplate(email, privateKey));
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     logger.error("error while sending private key mail", { error: error, email: email });
     throw error;
   }

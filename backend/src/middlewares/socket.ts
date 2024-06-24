@@ -53,7 +53,8 @@ export const checkUserSocket = async (socket: Socket): Promise<boolean> => {
     (socket as CustomSocket).userId = userIds[0] as string;
 
     return true;
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     return false;
   }
 };

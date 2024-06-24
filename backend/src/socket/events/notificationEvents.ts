@@ -10,8 +10,9 @@ export const registerNotificationEvents = (socket: Socket, userId: string): void
       if (friendSocketIds.length > 0) {
         socket.to(friendSocketIds).emit(clientE.OTHER_START_TYPING, userId);
       }
-    } catch (error) {
-      logger.error("error while emitting socket event for user typing", { error: error });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      logger.error("error while emitting socket event for user typing", { error: error.message });
     }
   });
 
@@ -21,8 +22,9 @@ export const registerNotificationEvents = (socket: Socket, userId: string): void
       if (friendSocketIds.length > 0) {
         socket.to(friendSocketIds).emit(clientE.OTHER_STOP_TYPING, userId);
       }
-    } catch (error) {
-      logger.error("error while emitting socket event for user stop typing", { error: error });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      logger.error("error while emitting socket event for user stop typing", { error: error.message });
     }
   });
 };

@@ -28,8 +28,9 @@ export async function postgresqlDatabaseConnect() {
   try {
     await pool.connect();
     logger.info("postgresql database connected");
-  } catch (error) {
-    logger.error("error while connecting postgresql database", { error: error });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    logger.error("error while connecting postgresql database", { error: error.message });
     await pool.end();
     process.exit();
   }

@@ -80,7 +80,8 @@ export const showOnline = async (
         }
       }
     }
-  } catch (error) {
-    logger.error("errow while setting user status", { error: error });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    logger.error("errow while setting user status", { error: error.message });
   }
 };
