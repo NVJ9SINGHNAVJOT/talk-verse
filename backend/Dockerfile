@@ -24,4 +24,4 @@ RUN chmod +x start.sh wait-for.sh
 
 EXPOSE 5000
 
-ENTRYPOINT  [ node, dist/index.js]
+ENTRYPOINT  ["node", "dist/index.js"]
