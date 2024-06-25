@@ -1,5 +1,4 @@
-import { Request, Response } from "express";
-import express, { Express } from "express";
+import express, { Request, Response } from "express";
 import { cloudinaryConnect } from "@/config/cloudinary";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -11,12 +10,18 @@ import profileRoutes from "@/routes/profileRoutes";
 import postRoutes from "@/routes/postRoutes";
 import queryRoutes from "@/routes/queryRoutes";
 import reviewRoutes from "@/routes/reviewRoutes";
-import corsOptions from "@/config/corsOptions";
 import logging from "@/middlewares/logging";
+import { origins } from "@/config/corsOptions";
 
-const app: Express = express();
+const app = express();
 
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: origins,
+    credentials: true,
+    methods: ["PUT", "PATCH", "POST", "GET", "DELETE"],
+  })
+);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());

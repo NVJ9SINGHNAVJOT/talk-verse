@@ -1,6 +1,9 @@
+import { configDotenv } from "dotenv";
 import { logger } from "@/logger/logger";
 import nodemailer from "nodemailer";
 import { passwordUpdatedTemplate, privateKeyTemplate, verificationTemplate } from "@/utils/templates";
+
+configDotenv();
 
 type MailOptions = {
   from: string;

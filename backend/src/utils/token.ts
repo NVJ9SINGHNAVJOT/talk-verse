@@ -23,7 +23,7 @@ export const jwtVerify = async (token: string): Promise<(string | number)[] | nu
     .populate({ path: "userToken", select: "tokenValue" })
     .exec();
 
-  if (!checkUser || !checkUser?.userToken || (checkUser.userToken as IToken).tokenValue !== token) {
+  if (!checkUser || !checkUser.userToken || (checkUser.userToken as IToken).tokenValue !== token) {
     return null;
   }
 

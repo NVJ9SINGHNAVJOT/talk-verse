@@ -6,10 +6,10 @@ import { registerMessageEvents } from "@/socket/events/messageEvents";
 import { registerNotificationEvents } from "@/socket/events/notificationEvents";
 import { checkUserSocket } from "@/middlewares/socket";
 import { CustomSocket } from "@/types/custom";
-import corsOptions from "@/config/corsOptions";
 import Channel from "@/types/channel";
 import { showOnline } from "@/utils/onlineStatus";
 import { logger } from "@/logger/logger";
+import { origins } from "@/config/corsOptions";
 
 // store userIds with their current socketIds
 // userId -> socketIds[]
@@ -32,7 +32,11 @@ export const channels: Map<string, Channel> = new Map();
 export const setupWebSocket = (app: Application): HTTPServer => {
   const httpServer: HTTPServer = createServer(app);
   const io: Server = new Server(httpServer, {
-    cors: corsOptions,
+    cors: {
+      origin: origins,
+      credentials: true,
+      methods: ["PUT", "PATCH", "POST", "GET", "DELETE"],
+    },
   });
 
   app.set("io", io);

@@ -1,0 +1,23 @@
+---
+version: '3.8'
+
+volumes:
+  talkverse-frontend:
+
+networks:
+  proxy:
+    external: true
+
+services:
+
+  talkverse-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: talkverse-frontend
+    volumes:
+      - talkverse-frontend:/usr/src/app
+    networks:
+      - proxy
+    ports: [ 4173:4173 ]
+    env_file: .env

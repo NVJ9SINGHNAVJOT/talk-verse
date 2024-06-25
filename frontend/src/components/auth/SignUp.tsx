@@ -27,7 +27,7 @@ const SignUp = (props: SignInProps) => {
   const [signingUp, setSigningUp] = useState<boolean>(false);
   const [signUp, setSignUp] = useState<FormData>();
   const [toggleOtp, setToggleOtp] = useState<boolean>(false);
-  const isLogin = useAppSelector((state) => state.auth.loading);
+  const signupLoading = useAppSelector((state) => state.auth.loading);
   const dispatch = useDispatch();
 
   const { toggleSignIn } = props;
@@ -109,13 +109,12 @@ const SignUp = (props: SignInProps) => {
     reset();
     setSelectedFile(null);
 
-    setSignUp(newSignUpData);
-
     const response = await sendOtpApi(data.email);
-    setToggleOtp(true);
     toast.dismiss(tid);
     if (response) {
+      setSignUp(newSignUpData);
       toast.info("Check your mail for otp");
+      setToggleOtp(true);
     } else {
       toast.error("Error while sending otp");
     }
@@ -124,23 +123,23 @@ const SignUp = (props: SignInProps) => {
   return toggleOtp ? (
     <OtpInput submitOtp={signUpUser} />
   ) : (
-    <div className=" w-full flex flex-col justify-evenly items-center">
+    <div className="flex w-full flex-col items-center justify-evenly">
       <form
         onSubmit={handleSubmit(sendOtp)}
-        className="flex w-10/12 lm:w-7/12 flex-col justify-evenly items-center gap-2"
+        className="flex w-10/12 flex-col items-center justify-evenly gap-2 lm:w-7/12"
       >
-        <h2 className=" text-center text-base text-white font-sans font-semibold">Sign Up to TalkVerse</h2>
-        <p className="text-white text-xs text-center">
+        <h2 className="text-center font-sans text-base font-semibold text-white">Sign Up to TalkVerse</h2>
+        <p className="text-center text-xs text-white">
           Enter the realm of endless dialogue and discovery. Your journey begins here!
         </p>
 
         {/* image input */}
-        <div className="flex justify-center items-center relative w-16 h-16">
+        <div className="relative flex h-16 w-16 items-center justify-center">
           <input
             id="imgInput"
             name="imageInput"
             ref={imageInputRef}
-            className="absolute w-5 h-5  hidden"
+            className="absolute hidden h-5 w-5"
             type="file"
             accept=".jpg ,.jpeg, .png"
             onChange={handleImageChange}
@@ -149,27 +148,25 @@ const SignUp = (props: SignInProps) => {
           {selectedFile === null ? (
             <RxAvatar
               onClick={handleimgTagRefClick}
-              className="block   absolute w-16 h-16 rounded bg-richblack-300 
-              cursor-pointer"
+              className="absolute block h-16 w-16 cursor-pointer rounded bg-richblack-300"
             />
           ) : (
             <img
               src={URL.createObjectURL(selectedFile)}
               onClick={handleimgTagRefClick}
-              className="block
-                absolute w-16 h-16 object-cover rounded bg-richblack-300 cursor-pointer"
+              className="absolute block h-16 w-16 cursor-pointer rounded bg-richblack-300 object-cover"
               alt="Avatar"
             />
           )}
         </div>
 
         {/* signup data */}
-        <div className=" flex items-center gap-2 w-full pt-4">
-          <div className="relative z-0 w-1/2 mb-5 group">
+        <div className="flex w-full items-center gap-2 pt-4">
+          <div className="group relative z-0 mb-5 w-1/2">
             <input
               type="text"
-              className=" text-white block py-2.5 px-0 w-full text-sm 
-            bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 
+              text-sm text-white focus:border-blue-600 focus:outline-none focus:ring-0"
               placeholder=""
               required
               {...register("firstName", {
@@ -179,23 +176,22 @@ const SignUp = (props: SignInProps) => {
                 pattern: /^[a-zA-Z]{2,}$/,
               })}
             />
-            {errors.firstName && <span className=" absolute text-red-600 text-[0.7rem]">Letters, min 2</span>}
+            {errors.firstName && <span className="absolute text-[0.7rem] text-red-600">Letters, min 2</span>}
 
             <label
-              className=" text-white peer-focus:font-medium absolute text-sm   
-          duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 
-          rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto 
-          peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-sm text-white 
+            duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-6 
+            peer-focus:scale-75 peer-focus:font-medium rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4"
             >
               First Name
             </label>
           </div>
 
-          <div className="relative z-0 w-1/2 mb-5 group">
+          <div className="group relative z-0 mb-5 w-1/2">
             <input
               type="text"
-              className=" text-white block py-2.5 px-0 w-full text-sm 
-            bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-sm 
+              text-white focus:border-blue-600 focus:outline-none focus:ring-0"
               placeholder=""
               required
               {...register("lastName", {
@@ -205,24 +201,23 @@ const SignUp = (props: SignInProps) => {
                 pattern: /^[a-zA-Z]{2,}$/,
               })}
             />
-            {errors.lastName && <span className=" absolute text-red-600 text-[0.7rem]">Letters, min 2</span>}
+            {errors.lastName && <span className="absolute text-[0.7rem] text-red-600">Letters, min 2</span>}
 
             <label
-              className=" text-white peer-focus:font-medium absolute text-sm   
-          duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 
-          rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto 
-          peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-sm text-white duration-300 
+            peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-6 
+            peer-focus:scale-75 peer-focus:font-medium rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4"
             >
               Last Name
             </label>
           </div>
         </div>
 
-        <div className="relative z-0 w-full mb-5 group pb-1">
+        <div className="group relative z-0 mb-5 w-full pb-1">
           <input
             type="text"
-            className=" text-white block py-2.5 px-0 w-full text-sm 
-            bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-sm 
+            text-white focus:border-blue-600 focus:outline-none focus:ring-0"
             placeholder=""
             required
             {...register("userName", {
@@ -232,23 +227,22 @@ const SignUp = (props: SignInProps) => {
               minLength: 3,
             })}
           />
-          {errors.userName && <span className=" absolute text-red-600 text-[0.7rem]"> Characters, min 3 & max 10</span>}
+          {errors.userName && <span className="absolute text-[0.7rem] text-red-600"> Characters, min 3 & max 10</span>}
 
           <label
-            className=" text-white peer-focus:font-medium absolute text-sm   
-          duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 
-          rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto 
-          peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-sm text-white duration-300 
+          peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-6 
+          peer-focus:scale-75 peer-focus:font-medium rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4"
           >
             Username
           </label>
         </div>
 
-        <div className="relative z-0 w-full mb-5 group pb-1">
+        <div className="group relative z-0 mb-5 w-full pb-1">
           <input
             type="email"
-            className=" text-white block py-2.5 px-0 w-full text-sm 
-            bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-sm 
+            text-white focus:border-blue-600 focus:outline-none focus:ring-0"
             placeholder=""
             required
             {...register("email", {
@@ -256,23 +250,22 @@ const SignUp = (props: SignInProps) => {
               pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
             })}
           />
-          {errors.email && <span className=" absolute text-red-600 text-[0.7rem]">Invalid format</span>}
+          {errors.email && <span className="absolute text-[0.7rem] text-red-600">Invalid format</span>}
 
           <label
-            className=" text-white peer-focus:font-medium absolute text-sm   
-          duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 
-          rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto 
-          peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-sm text-white duration-300 
+          peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-6 
+          peer-focus:scale-75 peer-focus:font-medium rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4"
           >
             Email Address
           </label>
         </div>
 
-        <div className="relative z-0 w-full mb-5 group pb-4">
+        <div className="group relative z-0 mb-5 w-full pb-4">
           <input
             type="password"
-            className=" text-white block py-2.5 px-0 w-full text-sm 
-            bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-sm 
+            text-white focus:border-blue-600 focus:outline-none focus:ring-0"
             placeholder=""
             required
             {...register("password", {
@@ -283,26 +276,25 @@ const SignUp = (props: SignInProps) => {
             })}
           />
           {errors.password && (
-            <span className=" absolute text-red-600 text-[0.7rem]">
+            <span className="absolute text-[0.7rem] text-red-600">
               lowercase, uppercase, digit, special character and Length: min - 8, max - 20
             </span>
           )}
 
           <label
-            className=" text-white peer-focus:font-medium absolute text-sm   
-          duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 
-          rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto 
-          peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-sm text-white duration-300 
+          peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-6 
+          peer-focus:scale-75 peer-focus:font-medium rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4"
           >
             Password
           </label>
         </div>
 
-        <div className="relative z-0 w-full mb-5 group pb-4">
+        <div className="group relative z-0 mb-5 w-full pb-4">
           <input
             type="password"
-            className=" text-white block py-2.5 px-0 w-full text-sm 
-            bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-sm 
+            text-white focus:border-blue-600 focus:outline-none focus:ring-0"
             placeholder=""
             required
             {...register("confirmPassword", {
@@ -313,29 +305,28 @@ const SignUp = (props: SignInProps) => {
             })}
           />
           {errors.confirmPassword && (
-            <span className=" absolute text-red-600 text-[0.7rem]">
+            <span className="absolute text-[0.7rem] text-red-600">
               lowercase, uppercase, digit, special character and Length: min - 8, max - 20
             </span>
           )}
 
           <label
-            className=" text-white peer-focus:font-medium absolute text-sm   
-          duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 
-          rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto 
-          peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-sm text-white duration-300 
+          peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-6 
+          peer-focus:scale-75 peer-focus:font-medium rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4"
           >
             Confirm Password
           </label>
         </div>
 
-        <button disabled={isLogin} type="submit" className=" bg-white text-black p-1 rounded-sm w-full">
+        <button disabled={signupLoading} type="submit" className="w-full rounded-sm bg-white p-1 text-black">
           Submit
         </button>
       </form>
 
       <div className="flex flex-col items-center gap-5">
-        <div className="text-white text-center ">Already have an account?</div>
-        <button className=" bg-white text-black pl-4 pr-4 p-1 rounded-sm " onClick={toggleSignIn}>
+        <div className="text-center text-white">Already have an account?</div>
+        <button className="rounded-sm bg-white p-1 pl-4 pr-4 text-black" onClick={toggleSignIn}>
           Log In
         </button>
       </div>
