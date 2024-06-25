@@ -10,7 +10,8 @@
     "prettier-check": "npx prettier . --check",
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "vite preview --host"
   },
   "dependencies": {
     "@react-three/fiber": "^8.16.8",

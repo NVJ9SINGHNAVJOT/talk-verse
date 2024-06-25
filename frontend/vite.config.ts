@@ -19,8 +19,5 @@ export default defineConfig(({ command, mode }) => {
       "process.env.REACT_APP_BASE_URL_SOCKET_IO_SERVER": JSON.stringify(env.REACT_APP_BASE_URL_SOCKET_IO_SERVER),
       "process.env.REACT_APP_BASE_URL_SERVER": JSON.stringify(env.REACT_APP_BASE_URL_SERVER),
     },
-    server: {
-      open: true,
-    },
   };
 });

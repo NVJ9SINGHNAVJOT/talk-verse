@@ -16,6 +16,5 @@
   "tabWidth": 2,
   "trailingComma": "es5",
   "useTabs": false,
-  "embeddedLanguageFormatting": "auto",
-  "plugins": ["prettier-plugin-tailwindcss"]
+  "embeddedLanguageFormatting": "auto"
 }

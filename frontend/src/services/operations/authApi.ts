@@ -37,7 +37,7 @@ export const logInApi = async (data: object): Promise<CheckUserRs> => {
     const resData: CheckUserRs = await fetchApi("POST", authEndPoints.LOGIN, data, {
       "Content-Type": "application/json",
     });
-    if (resData && resData.success === true) {
+    if (resData) {
       return resData;
     }
     return null;

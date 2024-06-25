@@ -198,61 +198,54 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
 
     // check password and generate token
     let newUserToken: string;
-    if (await bcrypt.compare(data.password, `${checkUser.password}`)) {
+    if (await bcrypt.compare(data.password, checkUser.password)) {
       newUserToken = jwt.sign({ userId: checkUser._id }, `${process.env["JWT_SECRET"]}`, {
         expiresIn: "24h",
       });
     } else {
-      return errRes(res, 401, "incorrect password");
+      return res.status(200).json({
+        success: false,
+        message: "incorrect password",
+      });
     }
 
-    // save token in db and set in cookie for response
-    if (newUserToken) {
-      // delete previous token
-      if (checkUser.userToken) {
-        await Token.findByIdAndDelete(checkUser.userToken).exec();
-      }
+    /*
+      save token in db and set in cookie for response
+    */
 
-      const newToken = await Token.create({ tokenValue: newUserToken });
-
-      // create token and add in user
-      const userToken = await User.findByIdAndUpdate(
-        { _id: checkUser?._id },
-        { $set: { userToken: newToken._id } },
-        { new: true }
-      )
-        .select({ userToken: true })
-        .exec();
-
-      // set token in cookie and select httponly: true
-      if (userToken?.userToken) {
-        const options = {
-          expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 1),
-          httpOnly: true,
-          secure: true,
-        };
-        return res
-          .cookie(`${process.env["TOKEN_NAME"]}`, newUserToken, options)
-          .status(200)
-          .json({
-            success: true,
-            message: "user login successfull",
-            user: {
-              _id: checkUser._id,
-              id: checkUser.userId2,
-              userName: checkUser.userName,
-              firstName: checkUser.firstName,
-              lastName: checkUser.lastName,
-              imageUrl: checkUser.imageUrl,
-              publicKey: checkUser.publicKey,
-            },
-          });
-      } else {
-        return errRes(res, 500, "error while generating token");
-      }
-    } else {
-      return errRes(res, 500, "error while generating token");
+    // delete previous token
+    if (checkUser.userToken) {
+      await Token.findByIdAndDelete({ _id: checkUser.userToken }).exec();
     }
+
+    // create token and add in user
+    const newToken = await Token.create({ tokenValue: newUserToken });
+    checkUser.userToken = newToken._id;
+    await checkUser.save();
+
+    // set token in cookie and select httponly: true
+    const options = {
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 1),
+      httpOnly: true,
+      secure: true,
+    };
+    return res
+      .cookie(`${process.env["TOKEN_NAME"]}`, newUserToken, options)
+      .status(200)
+      .json({
+        success: true,
+        message: "user login successfull",
+        user: {
+          _id: checkUser._id,
+          id: checkUser.userId2,
+          userName: checkUser.userName,
+          firstName: checkUser.firstName,
+          lastName: checkUser.lastName,
+          imageUrl: checkUser.imageUrl,
+          publicKey: checkUser.publicKey,
+        },
+      });
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     return errRes(res, 500, "error while user login", error.message);
@@ -288,10 +281,6 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
         publicKey: true,
       })
       .exec();
-
-    if (!user) {
-      return errRes(res, 401, "user authorization failed, no user found for userId");
-    }
 
     return res.status(200).json({
       success: true,

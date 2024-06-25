@@ -2,7 +2,7 @@
 version: '3.8'
 
 volumes:
-  talkverse-app:
+  talkverse-backend:
   talkverse-pg:
   talkverse-mongo:
 
@@ -12,15 +12,16 @@ networks:
     external: true
 
 services:
-  app:
+  backend:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: talkverse-app
+    container_name: talkverse-backend
     volumes:
-      - talkverse-app:/usr/src/app
+      - talkverse-backend:/usr/src/app
     networks:
       - talkverse-proxy
+      - proxy
     ports: [5000:5000]
     env_file: .env
     depends_on:
