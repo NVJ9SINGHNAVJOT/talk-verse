@@ -12,7 +12,8 @@ export const errMessage = process.env.ERROR_MESSAGE;
 export const categories = [
   "Technology",
   "Lifestyle",
-  "Blog",
+  "Article",
+  "Research",
   "Nature",
   "Music",
   "Sports",

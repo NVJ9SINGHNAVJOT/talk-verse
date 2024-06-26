@@ -22,7 +22,7 @@ services:
     networks:
       - talkverse-proxy
       - proxy
-    ports: [5000:5000]
+    ports: [5000:5000] # disable in production
     env_file: .env
     depends_on:
       - postgres

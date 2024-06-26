@@ -19,5 +19,5 @@ services:
       - talkverse-frontend:/usr/src/app
     networks:
       - proxy
-    ports: [ 4173:4173 ]
+    ports: [4173:4173] # disable in production
     env_file: .env
