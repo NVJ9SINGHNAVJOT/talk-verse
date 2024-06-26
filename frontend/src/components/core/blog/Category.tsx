@@ -41,7 +41,7 @@ const Category = () => {
       if (!category) {
         return;
       }
-      if (!categories.includes(category)) {
+      if (!categories.includes(category.charAt(0).toUpperCase() + category.slice(1))) {
         navigate("/blog");
         return;
       }
