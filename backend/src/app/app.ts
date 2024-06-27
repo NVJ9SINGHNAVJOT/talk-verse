@@ -1,5 +1,4 @@
 import express, { Request, Response } from "express";
-import { cloudinaryConnect } from "@/config/cloudinary";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import serverKey from "@/middlewares/serverKey";
@@ -25,9 +24,6 @@ app.use(
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
-
-// connect cloudinary
-cloudinaryConnect();
 
 // logging details
 app.use(logging);

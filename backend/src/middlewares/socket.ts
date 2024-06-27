@@ -6,7 +6,7 @@ import { logger } from "@/logger/logger";
 // check authentication for socket
 export const checkUserSocket = async (socket: Socket): Promise<boolean> => {
   try {
-    logger.info("socket req details", {
+    logger.http("socket req details", {
       socketId: socket.id,
       method: socket.request.method,
       url: socket.request.url,
@@ -55,6 +55,7 @@ export const checkUserSocket = async (socket: Socket): Promise<boolean> => {
     return true;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
+    logger.error("error while checking socket authorization", { socketId: socket.id });
     return false;
   }
 };

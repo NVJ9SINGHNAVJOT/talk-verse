@@ -3,7 +3,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import React, { useMemo, useRef } from "react";
 import * as THREE from "three";
 
-// FIXME: when this component is removed it gives error -> THREE.WebGLRenderer: Context Lost. three.module.js:28952
+/* FIXME: when this component is removed it gives error -> THREE.WebGLRenderer: Context Lost. three.module.js:28952 */
 export const CanvasReveal = ({
   animationSpeed = 0.4,
   opacities = [0.3, 0.3, 0.3, 0.5, 0.5, 0.5, 0.8, 0.8, 0.8, 1],
@@ -243,7 +243,7 @@ const ShaderMaterial = ({
     });
 
     return materialObject;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [size.width, size.height, source]);
 
   return (

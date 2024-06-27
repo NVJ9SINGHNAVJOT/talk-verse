@@ -32,7 +32,7 @@ const Profile = () => {
       if (apiCalls["getProfileApi"] === true) {
         return;
       }
-      /* NOTE: getProfileApi api call state management */
+      /* INFO: getProfileApi api call state management */
       dispatch(setApiCall({ api: "getProfileApi", status: true }));
       const response = await getProfileApi();
       if (response && response.success === true) {
@@ -45,7 +45,7 @@ const Profile = () => {
       dispatch(setApiCall({ api: "getProfileApi", status: false }));
     };
     getProfile();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

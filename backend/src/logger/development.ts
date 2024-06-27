@@ -5,6 +5,7 @@ const developmentLogger = () => {
     transports: [
       // printed on console
       new transports.Console({
+        level: "silly",
         format: format.combine(
           format.colorize(),
           format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
@@ -14,11 +15,13 @@ const developmentLogger = () => {
         ),
       }),
       new transports.Console({
+        level: "silly",
         format: format.combine(format.json(), format.prettyPrint()),
       }),
 
       // saved in logs
       new transports.File({
+        level: "silly",
         dirname: "logs",
         filename: "development.log",
         format: format.combine(

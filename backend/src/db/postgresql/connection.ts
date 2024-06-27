@@ -10,8 +10,8 @@ import { story, storysRelations } from "@/db/postgresql/schema/story";
 import { follow, followsRelations } from "@/db/postgresql/schema/follow";
 import { save, savesRelations } from "@/db/postgresql/schema/save";
 import { request, requestsRelations } from "@/db/postgresql/schema/request";
-import { query } from "./schema/query";
-import { review, reviewsRelations } from "./schema/review";
+import { query } from "@/db/postgresql/schema/query";
+import { review, reviewsRelations } from "@/db/postgresql/schema/review";
 
 configDotenv();
 
@@ -20,7 +20,7 @@ export const pool = new Pool({
   user: `${process.env["POSTGRES_USER"]}`,
   database: `${process.env["POSTGRES_DB"]}`,
   password: `${process.env["POSTGRES_PASSWORD"]}`,
-  /* NOTE: only use for live connections */
+  /* INFO: only use for live connections */
   // ssl: { rejectUnauthorized: false },
 });
 
