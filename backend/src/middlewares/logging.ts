@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from "express";
 
 function logging(req: Request, res: Response, next: NextFunction) {
   try {
-    logger.info("req details", {
+    logger.http("req details", {
       method: req.method,
       url: req.url,
       clientIP: req.ip,

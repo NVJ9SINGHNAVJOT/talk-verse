@@ -40,7 +40,7 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
         text: data.fromText,
         createdAt: createdAt.toISOString(),
       };
-      /* NOTE: fromText for currUser and toText for friend */
+      /* INFO: fromText for currUser and toText for friend */
       const currUserSocketIds = getSingleUserSockets(userId);
       const friendSocketIds = getSingleUserSockets(data.to);
 

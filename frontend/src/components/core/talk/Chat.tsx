@@ -77,7 +77,7 @@ const Chat = () => {
       // this function will only call api for a chatId messasges once
       if (chatIdStart[chatId] !== true && apiCalls[`getMessagesApi-${chatId}`] !== true) {
         // api is getting called for first time for chatId and this hook will call this api only once
-        /* NOTE: getMessagesApi api call state management */
+        /* INFO: getMessagesApi api call state management */
         dispatch(setApiCall({ api: `getMessagesApi-${chatId}`, status: true }));
         dispatch(setChatIdStart(chatId));
 
@@ -145,7 +145,7 @@ const Chat = () => {
 
     const getMessages = async () => {
       if (apiCalls[`getMessagesApi-${chatId}`] !== true && chatIdStart[chatId] === true && chatIdEnd[chatId] !== true) {
-        /* NOTE: getMessagesApi api call state management */
+        /* INFO: getMessagesApi api call state management */
         dispatch(setApiCall({ api: `getMessagesApi-${chatId}`, status: true }));
 
         const response = await getMessagesApi(chatId, pMessages[chatId][pMessages[chatId].length - 1].createdAt);
