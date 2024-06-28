@@ -11,7 +11,6 @@ export type FollowUsers = {
   userName: string;
   imageUrl?: string;
   isFollowed: boolean;
-  isFollower: boolean;
   isRequested: boolean;
 };
 export type GetFollowUsersRs = {

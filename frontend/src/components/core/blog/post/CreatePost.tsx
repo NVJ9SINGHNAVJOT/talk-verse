@@ -156,43 +156,46 @@ const CreatePost = (props: CreatePostProps) => {
   };
 
   return (
-    <div className=" absolute flex justify-center z-40 backdrop-blur-[10px] w-full min-h-full h-auto min-w-minContent overflow-y-auto">
-      <div className=" absolute z-50 mx-auto flex flex-col w-[34rem] md:w-[40rem]">
+    <div
+      className="absolute z-40 flex h-auto min-h-full w-full min-w-minContent justify-center overflow-y-auto 
+    backdrop-blur-[10px]"
+    >
+      <div className="absolute z-50 mx-auto flex w-[34rem] flex-col md:w-[40rem]">
         <MdOutlineCancelPresentation
           onClick={() => props.setCreatePost(false)}
-          className="w-11 h-8 fill-white cursor-pointer self-end hover:fill-slate-300 mt-4"
+          className="mt-4 h-8 w-11 cursor-pointer self-end fill-white hover:fill-slate-300"
         />
         {/* create post form */}
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="w-full font-be-veitnam-pro flex flex-col mb-10 gap-y-6 text-white"
+          className="mb-10 flex w-full flex-col gap-y-6 font-be-veitnam-pro text-black"
         >
           {/* select category */}
-          <div className=" flex flex-col gap-y-1">
-            <label className=" text-[1.1rem]">Category</label>
+          <div className="flex flex-col gap-y-1">
+            <label className="text-[1.1rem] text-white">Category</label>
             <select
-              className="bg-transparent outline-none cursor-pointer border-[2px] border-transparent hover:border-snow-700 py-1"
+              className="cursor-pointer border-[2px] border-transparent bg-transparent py-1 text-white outline-none 
+              hover:border-snow-700"
               {...register("category", {
                 required: true,
               })}
               defaultValue={""} // Set the default value here
             >
-              <option disabled value={""} className=" text-center bg-neutral-900">
+              <option disabled value={""} className="bg-neutral-900 text-center">
                 Select Category
               </option>
               {categories.map((category, index) => (
-                <option className=" text-center bg-neutral-900" key={index} value={category}>
+                <option className="bg-neutral-900 text-center" key={index} value={category}>
                   {category}
                 </option>
               ))}
             </select>
           </div>
           {/* title */}
-          <div className=" flex flex-col gap-y-1">
-            <label className=" text-[1.1rem]">Title</label>
+          <div className="flex flex-col gap-y-1">
+            <label className="text-[1.1rem] text-white">Title</label>
             <input
-              className=" outline-none text-sm text-black rounded-lg p-2 bg-snow-600 focus:bg-transparent
-                   focus:text-white transition-all ease-in-out duration-100"
+              className="rounded-lg bg-snow-600 p-2 text-sm text-black outline-none"
               {...register("title", {
                 minLength: 1,
                 maxLength: 100,
@@ -202,26 +205,26 @@ const CreatePost = (props: CreatePostProps) => {
             />
           </div>
           {/* media files */}
-          <div className="relative flex flex-col w-full gap-y-1">
+          <div className="relative flex w-full flex-col gap-y-1">
             <input
               ref={mediaFilesInputRef}
-              className=" absolute w-0 h-0 hidden"
+              className="absolute hidden h-0 w-0"
               type="file"
               multiple
               accept=".jpg ,.jpeg, .png, .mp4, .webm, .oog"
               placeholder=""
               onChange={handleMediaFiles}
             />
-            <div className="flex justify-between items-center">
-              <label className=" text-[1.1rem]">Media</label>
+            <div className="flex items-center justify-between">
+              <label className="text-[1.1rem] text-white">Media</label>
               {mediaFiles.length !== 0 && (
                 <div
                   onClick={() => {
                     setMediaFiles([]);
                     setMediaUrls([]);
                   }}
-                  className=" text-xs cursor-pointer rounded-xl bg-white text-black hover:bg-transparent hover:text-white
-                   py-1 px-2 duration-[10ms] transition-all ease-linear delay-0"
+                  className="cursor-pointer rounded-xl bg-white px-2 py-1 text-xs text-black transition-all 
+                  delay-0 duration-150 ease-in-out hover:bg-snow-500"
                 >
                   Remove
                 </div>
@@ -229,30 +232,26 @@ const CreatePost = (props: CreatePostProps) => {
             </div>
             {mediaUrls.length === 0 ? (
               <div
-                className=" w-10/12 h-64 flex flex-col gap-y-1 justify-center items-center self-center rounded-lg bg-neutral-950
-                    hover:bg-transparent cursor-pointer transition-all duration-100 ease-in-out"
+                className="flex h-64 w-10/12 cursor-pointer flex-col items-center justify-center gap-y-1 
+                self-center rounded-lg bg-neutral-950 text-white transition-all ease-linear hover:bg-opacity-80"
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleDrop}
                 onClick={() => mediaFilesInputRef.current?.click()}
               >
                 <div className="mb-4 text-2xl">Drop Files</div>
-                <div className=" text-xs">Images (jpeg, jpg, png)</div>
-                <div className=" text-xs">Video (mp4, webm, oog)</div>
-                <p className=" text-xs">Max files 5 and each file can be of max size 5mb</p>
+                <div className="text-xs">Images (jpeg, jpg, png)</div>
+                <div className="text-xs">Video (mp4, webm, oog)</div>
+                <p className="text-xs">Max files 5 and each file can be of max size 5mb</p>
               </div>
             ) : (
-              <MediaFiles
-                mediaUrls={mediaUrls}
-                className=" w-10/12 h-64 flex justify-center items-center self-center"
-              />
+              <MediaFiles mediaUrls={mediaUrls} className="flex h-64 w-10/12 items-center justify-center self-center" />
             )}
           </div>
           {/* content */}
-          <div className=" flex flex-col gap-y-1">
-            <label className=" text-[1.1rem]">Content</label>
+          <div className="flex flex-col gap-y-1">
+            <label className="text-[1.1rem] text-white">Content</label>
             <textarea
-              className=" h-[20rem] outline-none resize-none text-sm text-black rounded-lg p-2 bg-snow-600 focus:bg-transparent
-                   focus:text-white transition-all ease-in-out duration-100"
+              className="h-[20rem] resize-none rounded-lg bg-snow-600 p-2 text-sm text-black outline-none"
               {...register("content", {
                 maxLength: 1000,
               })}
@@ -261,21 +260,21 @@ const CreatePost = (props: CreatePostProps) => {
             />
           </div>
           {/* tags */}
-          <div className=" flex flex-col gap-y-1">
-            <label className=" text-[1.1rem]">Tags</label>
+          <div className="flex flex-col gap-y-1">
+            <label className="text-[1.1rem] text-white">Tags</label>
             <input
               onChange={(e) => handleTagsChange(e)}
-              className=" outline-none text-sm text-black rounded-lg p-2 bg-snow-600 focus:bg-transparent
-                   focus:text-white transition-all ease-in-out duration-100 mb-4"
+              className="mb-4 rounded-lg bg-snow-600 p-2 text-sm text-black outline-none"
               placeholder="Tags: eg - universe, vibe, lifestyle"
             />
             {tags.length > 0 && (
-              <div className=" flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2">
                 {tags.map((tag, index) => {
                   return (
                     <span
                       key={index}
-                      className="inline-flex items-center justify-center rounded-full border border-gray-800 bg-gray-950 px-3 py-1 text-xs text-gray-300 backdrop-blur-3xl"
+                      className="inline-flex items-center justify-center rounded-full border border-gray-800 
+                      bg-gray-950 px-3 py-1 text-xs text-gray-300 backdrop-blur-3xl"
                     >
                       <span className="bg-gradient-to-t from-[#fff] to-[#8678f9] bg-clip-text text-transparent">
                         {tag}
@@ -286,8 +285,15 @@ const CreatePost = (props: CreatePostProps) => {
               </div>
             )}
           </div>
-          <button className=" text-white" type="submit">
-            Submit
+
+          <button
+            type="submit"
+            className="flex w-fit cursor-pointer self-center rounded-full border border-gray-600 bg-gradient-to-r 
+            from-gray-800 to-black px-14 py-3 font-be-veitnam-pro font-semibold tracking-[.25em] text-white 
+            transition-all duration-200 ease-linear [text-shadow:0_0_5px_#59deed] hover:scale-105 
+            hover:border-gray-800 hover:from-black hover:to-gray-900"
+          >
+            Create
           </button>
         </form>
       </div>

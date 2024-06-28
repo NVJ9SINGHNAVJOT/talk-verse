@@ -1,3 +1,6 @@
+INFO: 
+"plugins": ["prettier-plugin-tailwindcss"] use for tailwind classes sorting
+
 version-1 inprogress
 
 pro-talk-verse  
