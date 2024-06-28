@@ -75,8 +75,10 @@ const SearchModal = (props: SearchModalProps) => {
           <input type="text" placeholder="Search Username" onChange={(event) => setQuery(event.target.value)} />
 
           {users.length > 0 && (
-            <div className="absolute top-24 flex max-h-[calc(100vh-62vh)] w-[35rem] max-w-[40rem] flex-wrap justify-center gap-7 
-            overflow-y-auto text-white">
+            <div
+              className="absolute top-24 flex max-h-[calc(100vh-62vh)] w-[35rem] max-w-[40rem] flex-wrap justify-center gap-7 
+            overflow-y-auto text-white"
+            >
               {users.map((user, index) => {
                 return (
                   <div key={index} className="flex w-fit items-center gap-x-3 rounded-lg bg-black px-3 py-1">
@@ -90,8 +92,10 @@ const SearchModal = (props: SearchModalProps) => {
                       <div className="text-xs text-snow-900">requested</div>
                     ) : (
                       <button onClick={() => sendRequest(user._id)} disabled={sending.includes(user._id)}>
-                        <CiCirclePlus className="aspect-auto h-8 w-8 cursor-pointer rounded-full text-white 
-                        hover:bg-white hover:text-black" />
+                        <CiCirclePlus
+                          className="aspect-auto h-8 w-8 cursor-pointer rounded-full text-white 
+                        hover:bg-white hover:text-black"
+                        />
                       </button>
                     )}
                   </div>
@@ -100,8 +104,10 @@ const SearchModal = (props: SearchModalProps) => {
             </div>
           )}
           {followUsers.length > 0 && (
-            <div className="absolute top-24 flex max-h-[calc(100vh-62vh)] w-[35rem] max-w-[40rem] flex-wrap justify-center gap-7 overflow-y-auto 
-            text-white">
+            <div
+              className="absolute top-24 flex max-h-[calc(100vh-62vh)] w-[35rem] max-w-[40rem] flex-wrap justify-center gap-7 overflow-y-auto 
+              text-white"
+            >
               {followUsers.map((user, index) => {
                 return (
                   <div key={index} className="flex max-w-full flex-col gap-y-2 rounded-lg bg-black px-5 py-1">
@@ -117,9 +123,9 @@ const SearchModal = (props: SearchModalProps) => {
                       )}
                       <div className="max-w-fit truncate">{user.userName}</div>
                     </div>
-                    {user.isFollowed === true || user.isFollower === true || user.isRequested === true ? (
+                    {user.isFollowed === true || user.isRequested === true ? (
                       <div className="self-center text-xs text-snow-900">
-                        {user.isRequested ? "requested" : user.isFollowed ? "following" : "follower"}
+                        {user.isRequested ? "requested" : "following"}
                       </div>
                     ) : (
                       <button

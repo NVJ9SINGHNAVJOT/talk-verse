@@ -45,10 +45,10 @@ const Category = () => {
         navigate("/blog");
         return;
       }
-      if (apiCalls[`${category}category-post`] === true) {
+      if (apiCalls[`${category}-category-post`] === true) {
         return;
       }
-      dispatch(setApiCall({ api: `${category}category-post`, status: true }));
+      dispatch(setApiCall({ api: `${category}-category-post`, status: true }));
       let lastCreatedAt;
       if (categoriesPost.length === 0) {
         lastCreatedAt = new Date().toISOString();
@@ -72,7 +72,7 @@ const Category = () => {
       } else {
         toast.error("Error while getting recent post");
       }
-      dispatch(setApiCall({ api: `${category}category-post`, status: false }));
+      dispatch(setApiCall({ api: `${category}-category-post`, status: false }));
     };
     getPosts();
     // eslint-disable-next-line react-hooks/exhaustive-deps

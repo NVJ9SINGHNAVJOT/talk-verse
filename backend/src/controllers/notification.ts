@@ -24,7 +24,7 @@ import { isValidMongooseObjectId } from "@/validators/mongooseId";
 import { db } from "@/db/postgresql/connection";
 import { user } from "@/db/postgresql/schema/user";
 import { follow } from "@/db/postgresql/schema/follow";
-import { and, eq, ilike, isNull, ne, or, sql } from "drizzle-orm";
+import { and, eq, ilike, isNull, ne, sql } from "drizzle-orm";
 import { request } from "@/db/postgresql/schema/request";
 import { OtherPostgreSQLUserIdReqSchema } from "@/types/controllers/common";
 import { checkGroupMembers } from "@/utils/helpers";
@@ -107,37 +107,16 @@ export const getFollowUsers = async (req: Request, res: Response): Promise<Respo
       return errRes(res, 400, "invalid userName for search");
     }
 
-    /* BUG: on server in production only one time below query gave multiple users of same id in response,
-      this never happenend in development and in production testing.
-      so, currently (select distinct on) is used in query */
-
-    // const followUsers = await db
-    //   .select({
-    //     id: user.id,
-    //     userName: user.userName,
-    //     imageUrl: user.imageUrl,
-    //     isFollowed: sql<boolean>`CASE WHEN ${follow.followerId} = ${userId2} THEN true ELSE false END`,
-    //     isFollower: sql<boolean>`CASE WHEN ${follow.followingId} = ${userId2} THEN true ELSE false END`,
-    //     isRequested: sql<boolean>`CASE WHEN ${request.fromId} = ${userId2} THEN true ELSE false END`,
-    //   })
-    //   .from(user)
-    //   .leftJoin(follow, or(eq(follow.followerId, user.id), eq(follow.followingId, user.id)))
-    //   .leftJoin(request, and(eq(request.toId, user.id), eq(request.fromId, userId2)))
-    //   .where(and(ilike(user.userName, `%${userName}%`), ne(user.id, userId2)))
-    //   .limit(25)
-    //   .execute();
-
     const followUsers = await db
       .selectDistinctOn([user.id], {
         id: user.id,
         userName: user.userName,
         imageUrl: user.imageUrl,
         isFollowed: sql<boolean>`CASE WHEN ${follow.followerId} = ${userId2} THEN true ELSE false END`,
-        isFollower: sql<boolean>`CASE WHEN ${follow.followingId} = ${userId2} THEN true ELSE false END`,
         isRequested: sql<boolean>`CASE WHEN ${request.fromId} = ${userId2} THEN true ELSE false END`,
       })
       .from(user)
-      .leftJoin(follow, or(eq(follow.followerId, user.id), eq(follow.followingId, user.id)))
+      .leftJoin(follow, and(eq(follow.followingId, user.id), eq(follow.followingId, userId2)))
       .leftJoin(request, and(eq(request.toId, user.id), eq(request.fromId, userId2)))
       .where(and(ilike(user.userName, `%${userName}%`), ne(user.id, userId2)))
       .limit(25)

@@ -1,3 +1,5 @@
+/* INFO: Any changes in socket events need to be changed in backend as well */
+
 export const clientE = {
   USER_REQUEST: "USER_REQUEST",
   REQUEST_ACCEPTED: "REQUEST_ACCEPTED",

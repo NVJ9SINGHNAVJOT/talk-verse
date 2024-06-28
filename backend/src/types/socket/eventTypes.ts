@@ -1,4 +1,4 @@
-/* INFO: Any changes in socket events types need to be changed in backend as well */
+/* INFO: Any changes in socket events types need to be changed in frontend as well */
 
 // client
 export type SoUserRequest = {
