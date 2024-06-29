@@ -1,5 +1,5 @@
 import "@/lib/cards/chatwelcomecard/ChatWelcomeCard.css";
-import welcomeQuotes from "@/assets/data/welcome-quotes";
+import welcomeQuotes from "@/data/welcome-quotes";
 import { useEffect, useState } from "react";
 
 function getRandomNumber(min: number, max: number): number {

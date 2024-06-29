@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import dronerBeast from "@/assets/images/dronzerBeast.jpg";
 
 export type Reviews = {
   firstName: string;
@@ -15,26 +14,26 @@ const data: Reviews[] = [
       "A Digital Tapestry of Voices. Where connections bloom, effortlessly. Genuine interactions nurture lasting relationships.",
     firstName: "Dronzer",
     lastName: "Beast",
-    imageUrl: dronerBeast,
+    imageUrl: "images/dronzerBeast.jpg",
   },
   {
     reviewText:
       "Authentic Bonds Flourish. Diverse minds unite. From tech enthusiasts to poets, sparks of creativity ignite.",
     firstName: "Dronzer",
     lastName: "Beast",
-    imageUrl: dronerBeast,
+    imageUrl: "images/dronzerBeast.jpg",
   },
   {
     reviewText: "Intuitive Navigation. Seamless interface. Focus on meaningful conversations within Talkverse.",
     firstName: "Dronzer",
     lastName: "Beast",
-    imageUrl: dronerBeast,
+    imageUrl: "images/dronzerBeast.jpg",
   },
   {
     reviewText: "Amplifying Voices. Insights resonate. Empowering users to share and be heard.",
     firstName: "Dronzer",
     lastName: "Beast",
-    imageUrl: dronerBeast,
+    imageUrl: "images/dronzerBeast.jpg",
   },
 ];
 

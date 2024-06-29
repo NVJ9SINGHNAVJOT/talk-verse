@@ -1,4 +1,3 @@
-import mainLogo from "@/assets/images/mainLogo.png";
 import { FaFacebook } from "react-icons/fa6";
 import { FaInstagram } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
@@ -13,6 +12,7 @@ const MainFooter = () => {
   const homeHandler = () => {
     navigate("/");
   };
+
   return (
     <footer
       className="w-full text-white py-16 px-8 
@@ -23,7 +23,7 @@ const MainFooter = () => {
         {/* logo and main description */}
         <div className="flex flex-col col-span-3 lg:col-span-2 ">
           <div className="flex gap-5">
-            <img src={mainLogo} alt="Loading..." className=" w-16 aspect-square"></img>
+            <img src="images/mainLogo.png" alt="Loading..." className=" w-16 aspect-square"></img>
             <span onClick={homeHandler} className=" text-2xl font-medium cursor-pointer">
               TalkVerse
             </span>

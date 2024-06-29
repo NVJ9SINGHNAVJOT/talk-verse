@@ -3,7 +3,7 @@ import { userfollowersApi } from "@/services/operations/profileApi";
 import { UserSuggestion } from "@/types/apis/notificationApiRs";
 import { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
-import OtherUser from "./otheruser/OtherUser";
+import OtherUser from "@/components/core/profile/otheruser/OtherUser";
 import CubeLoader from "@/lib/loaders/cubeloader/CubeLoader";
 
 const Followers = () => {

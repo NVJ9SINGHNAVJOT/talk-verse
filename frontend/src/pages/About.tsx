@@ -1,8 +1,4 @@
-import aboutUs1 from "@/assets/images/about_us_1.jpg";
-import aboutUs2 from "@/assets/images/about_us_2.jpg";
 import MainFooter from "@/components/common/MainFooter";
-import client1 from "@/assets/images/client1.jpg";
-import client2 from "@/assets/images/client2.jpg";
 import ReadMoreButton from "@/lib/buttons/readmorebutton/ReadMoreButton";
 import MainSliderTes from "@/components/common/MainSliderTes";
 import useCountOnView from "@/hooks/useCountOnView";
@@ -42,8 +38,8 @@ const About = () => {
              hover:bg-[#e0e0e0] hover:[box-shadow:15px_15px_30px_#bebebe,_-15px_-15px_30px_#ffffff]
             transition-all ease-in-out py-10 lm:py-20"
           >
-            <img src={aboutUs1} alt="Loading..." className=" w-5/12 aspect-auto object-contain"></img>
-            <img src={aboutUs2} alt="Loading..." className=" w-5/12 aspect-auto object-contain"></img>
+            <img src="images/about_us_1.jpg" alt="Loading..." className=" w-5/12 aspect-auto object-contain"></img>
+            <img src="images/about_us_2.jpg" alt="Loading..." className=" w-5/12 aspect-auto object-contain"></img>
           </div>
         </section>
         {/* section 2 */}
@@ -97,7 +93,7 @@ const About = () => {
         <div className="w-10/12 mx-auto flex flex-col my-12 gap-y-36">
           {/* client 1 */}
           <div
-            style={{ backgroundImage: `url(${client1})` }}
+            style={{ backgroundImage: `url(images/client1.jpg)` }}
             className=" self-start group relative h-[20rem] lm:h-[25rem] lg:h-[28rem] xl:h-[30rem] w-9/12 flex flex-col justify-center 
             items-center [background-size:100%_100%] bg-no-repeat shadow-[0px_0px_40px_#1f1f1f]
             before:absolute before:top-[0] before:left-[0] before:right-[0] before:bottom-[0] 
@@ -118,7 +114,7 @@ const About = () => {
           </div>
           {/* client 2 */}
           <div
-            style={{ backgroundImage: `url(${client2})` }}
+            style={{ backgroundImage: `url(images/client2.jpg)` }}
             className=" self-end group relative h-[20rem] lm:h-[25rem] lg:h-[28rem] xl:h-[30rem] w-9/12 flex flex-col 
             justify-center items-center [background-size:100%_100%] bg-no-repeat shadow-[0px_0px_40px_#1f1f1f]
             before:absolute before:top-[0] before:left-[0] before:right-[0] before:bottom-[0] 
