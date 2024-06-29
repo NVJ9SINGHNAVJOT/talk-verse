@@ -55,7 +55,7 @@ export const checkUserSocket = async (socket: Socket): Promise<boolean> => {
     return true;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    logger.error("error while checking socket authorization", { socketId: socket.id });
+    logger.error("error while checking socket authorization", { socketId: socket.id, error: error.message });
     return false;
   }
 };

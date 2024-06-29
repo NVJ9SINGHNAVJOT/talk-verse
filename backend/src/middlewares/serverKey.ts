@@ -11,7 +11,7 @@ function serverKey(req: Request, res: Response, next: NextFunction) {
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 401, "errror while checking authorization of serverKey");
+    return errRes(res, 401, "errror while checking authorization of serverKey", error.message);
   }
 }
 
