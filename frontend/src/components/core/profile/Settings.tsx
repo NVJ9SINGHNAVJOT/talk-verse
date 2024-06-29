@@ -1,4 +1,4 @@
-import { countryCodes } from "@/assets/data/countryCodes";
+import { countryCodes } from "@/data/countryCodes";
 import { Profile, setProfile } from "@/redux/slices/userSlice";
 import { useAppSelector } from "@/redux/store";
 import { checkUserNameApi, setProfileDetailsApi } from "@/services/operations/profileApi";

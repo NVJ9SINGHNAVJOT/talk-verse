@@ -1,4 +1,3 @@
-import homePageImage from "@/assets/images/homePage.png";
 import TrackingCard from "@/lib/cards/trackingcard/TrackingCard";
 import MainFooter from "@/components/common/MainFooter";
 import { FcConferenceCall } from "react-icons/fc";
@@ -27,7 +26,7 @@ const Home = () => {
             TalkVerse lets you chat privately
           </p>
         </div>
-        <img src={homePageImage} alt="Home Page Image Loading..." className="w-[25rem] aspect-square"></img>
+        <img src="images/homePage.png" alt="Loading..." className="w-[25rem] aspect-square"></img>
       </section>
       <section className="w-full flex justify-evenly items-center pt-8 py-36">
         <TrackingCard />

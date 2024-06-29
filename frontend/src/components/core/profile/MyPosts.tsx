@@ -2,7 +2,7 @@ import { useScrollTriggerVertical } from "@/hooks/useScrollTrigger";
 import { Post } from "@/types/apis/postApiRs";
 import { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
-import PostLayout from "../blog/post/PostLayout";
+import PostLayout from "@/components/core/blog/post/PostLayout";
 import { userPostsApi } from "@/services/operations/profileApi";
 import CubeLoader from "@/lib/loaders/cubeloader/CubeLoader";
 
