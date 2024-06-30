@@ -2,7 +2,7 @@ import ReactDOM from "react-dom/client";
 import store from "@/redux/store.ts";
 import { Provider } from "react-redux";
 import { ToastContainer } from "react-toastify";
-import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import App from "@/App.tsx";
 import "@/index.css";
@@ -30,82 +30,130 @@ import Home from "@/pages/Home";
 import Group from "@/components/core/talk/Group";
 import Error from "@/pages/Error";
 
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route path="/" element={<App />}>
-      <Route index element={<Home />} />
-      <Route path="about" element={<About />} />
-      <Route path="contact" element={<Contact />} />
-
-      {/* ===== open routes ===== */}
-      <Route
-        path="login"
-        element={
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
+      {
+        path: "about",
+        element: <About />,
+      },
+      {
+        path: "contact",
+        element: <Contact />,
+      },
+      /* ===== open routes ===== */
+      {
+        path: "login",
+        element: (
           <OpenRoute>
             <Login />
           </OpenRoute>
-        }
-      />
-
-      {/* ===== private routes ===== */}
-      {/* talk page */}
-      <Route
-        path="talk"
-        element={
+        ),
+      },
+      /* ===== private routes ===== */
+      {
+        path: "talk",
+        element: (
           <PrivateRoute>
             <Talk />
           </PrivateRoute>
-        }
-      >
-        <Route index element={<Welcome />} />
-        <Route path="chat/:chatId?" element={<Chat />} />
-        <Route path="group/:groupId?" element={<Group />} />
-      </Route>
-      {/* profile page */}
-      <Route
-        path="profile"
-        element={
+        ),
+        children: [
+          {
+            index: true,
+            element: <Welcome />,
+          },
+          {
+            path: "chat/:chatId",
+            element: <Chat />,
+          },
+          {
+            path: "group/:groupId",
+            element: <Group />,
+          },
+        ],
+      },
+      {
+        path: "profile",
+        element: (
           <PrivateRoute>
             <Profile />
           </PrivateRoute>
-        }
-      >
-        <Route index element={<UserInfo />} />
-        <Route path="settings" element={<Settings />} />
-        <Route path="myposts" element={<MyPosts />} />
-        <Route path="following" element={<Following />} />
-        <Route path="followers" element={<Followers />} />
-        <Route path="saved" element={<SavedPosts />} />
-      </Route>
-      {/* checkkey page */}
-      <Route
-        path="checkKey"
-        element={
+        ),
+        children: [
+          {
+            index: true,
+            element: <UserInfo />,
+          },
+          {
+            path: "settings",
+            element: <Settings />,
+          },
+          {
+            path: "myposts",
+            element: <MyPosts />,
+          },
+          {
+            path: "following",
+            element: <Following />,
+          },
+          {
+            path: "followers",
+            element: <Followers />,
+          },
+          {
+            path: "saved",
+            element: <SavedPosts />,
+          },
+        ],
+      },
+      {
+        path: "checkKey",
+        element: (
           <PrivateRoute>
             <ChekKey />
           </PrivateRoute>
-        }
-      />
-      {/* blog page */}
-      <Route
-        path="blog"
-        element={
+        ),
+      },
+      {
+        path: "blog",
+        element: (
           <PrivateRoute>
             <Blog />
           </PrivateRoute>
-        }
-      >
-        <Route index element={<Trending />} />
-        <Route path="recent" element={<Recent />} />
-        <Route path=":category?" element={<Category />} />
-      </Route>
-
-      {/* ===== error routes ===== */}
-      <Route path="error" element={<Error />} />
-      <Route path="*" element={<Error />} />
-    </Route>
-  )
-);
+        ),
+        children: [
+          {
+            index: true,
+            element: <Trending />,
+          },
+          {
+            path: "recent",
+            element: <Recent />,
+          },
+          {
+            path: ":category",
+            element: <Category />,
+          },
+        ],
+      },
+      {
+        path: "error",
+        element: <Error />,
+      },
+    ],
+  },
+  {
+    path: "*",
+    element: <Navigate to="error" />,
+  },
+]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
