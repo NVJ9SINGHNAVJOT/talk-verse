@@ -11,7 +11,8 @@
     "prettier-check": "npx prettier . --check",
     "prettier-write": "npx prettier . --write --ignore-unknown",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "start": "vite preview --host"
   },
   "dependencies": {
     "@react-three/fiber": "^8.16.8",
