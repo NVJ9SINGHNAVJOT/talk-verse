@@ -67,7 +67,7 @@ const FriendBarItem = (props: FriendBarItemsProps) => {
           isTyping?.includes(friend._id) ? "opacity-100" : "opacity-0"
         } absolute z-40 bottom-[0.2rem] left-[3.5rem] lg:left-[4.7rem] text-yellow-500 text-[0.6rem] lg:text-xs`}
       >
-        Typing...
+        typing...
       </div>
     </div>
   );

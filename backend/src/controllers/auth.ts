@@ -29,13 +29,6 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
 
     const data = signUpReq.data;
 
-    if (data.password !== data.confirmPassword) {
-      if (req.file) {
-        deleteFile(req.file);
-      }
-      return errRes(res, 400, "password matching failed");
-    }
-
     const checkOtp = await Otp.findOne({ email: data.email, otpValue: data.otp });
 
     if (!checkOtp) {
@@ -193,7 +186,7 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
       .exec();
 
     if (!checkUser) {
-      return errRes(res, 401, "user in not signed up");
+      return errRes(res, 400, "user in not signed up");
     }
 
     // check password and generate token
@@ -210,7 +203,8 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
     }
 
     /*
-      save token in db and set in cookie for response
+      save token in db and set in cookie for response.
+      token will be automatically deleted after 24 hrs.
     */
 
     // delete previous token

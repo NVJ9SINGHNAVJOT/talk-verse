@@ -11,7 +11,6 @@ import { setMyId } from "@/redux/slices/messagesSlice";
 export type LogInData = {
   email: string;
   password: string;
-  confirmPassword: string;
 };
 
 type SignInProps = {
@@ -21,7 +20,7 @@ type SignInProps = {
 const LogIn = (props: SignInProps) => {
   const { toggleSignIn } = props;
 
-  const isLogin = useAppSelector((state) => state.auth.loading);
+  const loginLoading = useAppSelector((state) => state.auth.loading);
   const dispatch = useDispatch();
 
   const {
@@ -33,12 +32,8 @@ const LogIn = (props: SignInProps) => {
   const navigate = useNavigate();
 
   const onSubmitForm = async (data: LogInData) => {
-    if (data.password !== data.confirmPassword) {
-      toast.error("Password and ConfirmPassword not matched");
-      return;
-    }
-    reset();
     dispatch(setLoading(true));
+    reset();
 
     const tid = toast.loading("Loading...");
 
@@ -129,36 +124,7 @@ const LogIn = (props: SignInProps) => {
           </label>
         </div>
 
-        <div className="group relative z-0 mb-5 w-full pb-4">
-          <input
-            type="password"
-            className="peer block w-full appearance-none border-0 border-b-2 border-gray-300 bg-transparent px-0 py-2.5 text-sm 
-            text-white focus:border-blue-600 focus:outline-none focus:ring-0"
-            placeholder=""
-            required
-            {...register("confirmPassword", {
-              required: true,
-              pattern: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,20}$/,
-              minLength: 8,
-              maxLength: 20,
-            })}
-          />
-          {errors.password && (
-            <span className="absolute text-[0.7rem] text-red-600">
-              lowercase, uppercase, digit, special character and Length: min - 8, max - 20
-            </span>
-          )}
-
-          <label
-            className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-sm text-white duration-300 
-          peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:start-0 peer-focus:-translate-y-6 
-          peer-focus:scale-75 peer-focus:font-medium rtl:peer-focus:left-auto rtl:peer-focus:translate-x-1/4"
-          >
-            Confirm Password
-          </label>
-        </div>
-
-        <button disabled={isLogin} type="submit" className="w-full rounded-sm bg-white p-1 text-black">
+        <button disabled={loginLoading} type="submit" className="w-full rounded-sm bg-white p-1 text-black">
           Submit
         </button>
       </form>

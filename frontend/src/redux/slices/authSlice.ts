@@ -9,7 +9,7 @@ interface AuthState {
 
 const initialState = {
   loading: false,
-  isLogin: false,
+  isLogin: true,
   authUser: false,
 } satisfies AuthState as AuthState;
 
