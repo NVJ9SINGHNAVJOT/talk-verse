@@ -1,5 +1,5 @@
 ---
-version: '3.8'
+version: "3.8"
 
 volumes:
   talkverse-frontend:
@@ -9,7 +9,6 @@ networks:
     external: true
 
 services:
-
   talkverse-frontend:
     build:
       context: .

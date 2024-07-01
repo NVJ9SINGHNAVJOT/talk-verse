@@ -278,8 +278,10 @@ const Blog = () => {
           ) : (
             <div className="flex flex-shrink-0 flex-col items-center gap-y-2 text-white">
               <button type="button" disabled={storyLoading} onClick={() => setCreateStory(true)}>
-                <div className="flex size-12 cursor-pointer items-center justify-center rounded-full border-[2px] border-dotted 
-                border-whitesmoke bg-slate-900">
+                <div
+                  className="flex size-12 cursor-pointer items-center justify-center rounded-full border-[2px] border-dotted 
+                border-whitesmoke bg-slate-900"
+                >
                   <GoPlus className="fill-white" />
                 </div>
               </button>
@@ -308,16 +310,26 @@ const Blog = () => {
           className="group relative mx-auto mt-4 flex h-12 w-10/12 cursor-pointer items-center justify-center overflow-hidden 
           rounded-md bg-sky-800 p-2 text-sky-50 duration-500 hover:border-sky-600"
         >
-          <div className="absolute z-10 h-48 w-48 rounded-full bg-sky-900 transition-all delay-150 duration-500 ease-in-out 
-            group-hover:scale-150 group-hover:delay-75"></div>
-          <div className="absolute z-10 h-40 w-40 rounded-full bg-sky-800 transition-all delay-150 duration-500 ease-in-out 
-            group-hover:scale-150 group-hover:delay-100"></div>
-          <div className="absolute z-10 h-32 w-32 rounded-full bg-sky-700 transition-all delay-150 duration-500 ease-in-out 
-            group-hover:scale-150 group-hover:delay-150"></div>
-          <div className="absolute z-10 h-24 w-24 rounded-full bg-sky-600 transition-all delay-150 duration-500 ease-in-out 
-            group-hover:scale-150 group-hover:delay-200"></div>
-          <div className="absolute z-10 h-16 w-16 rounded-full bg-sky-500 transition-all delay-150 duration-500 ease-in-out 
-            group-hover:scale-150 group-hover:delay-300"></div>
+          <div
+            className="absolute z-10 h-48 w-48 rounded-full bg-sky-900 transition-all delay-150 duration-500 ease-in-out 
+            group-hover:scale-150 group-hover:delay-75"
+          ></div>
+          <div
+            className="absolute z-10 h-40 w-40 rounded-full bg-sky-800 transition-all delay-150 duration-500 ease-in-out 
+            group-hover:scale-150 group-hover:delay-100"
+          ></div>
+          <div
+            className="absolute z-10 h-32 w-32 rounded-full bg-sky-700 transition-all delay-150 duration-500 ease-in-out 
+            group-hover:scale-150 group-hover:delay-150"
+          ></div>
+          <div
+            className="absolute z-10 h-24 w-24 rounded-full bg-sky-600 transition-all delay-150 duration-500 ease-in-out 
+            group-hover:scale-150 group-hover:delay-200"
+          ></div>
+          <div
+            className="absolute z-10 h-16 w-16 rounded-full bg-sky-500 transition-all delay-150 duration-500 ease-in-out 
+            group-hover:scale-150 group-hover:delay-300"
+          ></div>
           <p className="z-10 font-semibold text-white">Create Post</p>
         </div>
         {/* follow suggestions */}
@@ -382,15 +394,19 @@ const Blog = () => {
                         disabled={answeringReq.includes(followRequest.id)}
                         onClick={() => acceptRequest(followRequest.id)}
                       >
-                        <CiCirclePlus className="aspect-auto size-6 cursor-pointer rounded-full text-white hover:bg-white 
-                        hover:text-black" />
+                        <CiCirclePlus
+                          className="aspect-auto size-6 cursor-pointer rounded-full text-white hover:bg-white 
+                        hover:text-black"
+                        />
                       </button>
                       <button
                         disabled={answeringReq.includes(followRequest.id)}
                         onClick={() => deleteRequest(followRequest.id)}
                       >
-                        <CiCirclePlus className="aspect-auto size-6 rotate-45 cursor-pointer rounded-full text-white hover:bg-white 
-                        hover:text-black" />
+                        <CiCirclePlus
+                          className="aspect-auto size-6 rotate-45 cursor-pointer rounded-full text-white hover:bg-white 
+                        hover:text-black"
+                        />
                       </button>
                     </div>
                   </div>
