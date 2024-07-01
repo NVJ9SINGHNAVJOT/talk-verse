@@ -23,18 +23,19 @@ const UserChatBar = () => {
   return (
     <div className="h-full w-full bg-[#0D1117]">
       {/* chat top bar */}
-      <div className="flex h-[4rem] w-full items-center justify-around border-b-[1px] border-r-[3px] border-b-whitesmoke border-r-black py-2">
+      <div
+        className="relative flex h-[4rem] w-full items-center justify-around border-b-[1px] border-r-[3px] 
+      border-b-whitesmoke border-r-black py-2"
+      >
         <IoSearchOutline onClick={() => setIsSearchOpen(true)} className="cursor-pointer text-2xl text-white" />
         <FiPlus onClick={() => setIsCreateGroupOpen(true)} className="cursor-pointer text-2xl text-white" />
-        <div className="relative">
-          <div ref={excSeeNotifRef}>
-            <FaRegBell
-              className={` ${userRequests.length === 0 ? "text-white" : "text-yellow-400"} cursor-pointer text-2xl`}
-              onClick={() => setSeeNotif((prev) => !prev)}
-            />
-          </div>
-          {seeNotif && <FriendRequests setSeeNotif={setSeeNotif} excSeeNotifRef={excSeeNotifRef} />}
+        <div ref={excSeeNotifRef}>
+          <FaRegBell
+            className={` ${userRequests.length === 0 ? "text-white" : "text-yellow-400"} cursor-pointer text-2xl`}
+            onClick={() => setSeeNotif((prev) => !prev)}
+          />
         </div>
+        {seeNotif && <FriendRequests setSeeNotif={setSeeNotif} excSeeNotifRef={excSeeNotifRef} />}
       </div>
 
       {/* chat user component */}

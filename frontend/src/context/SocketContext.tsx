@@ -87,65 +87,66 @@ export default function SocketProvider({ children }: ContextProviderProps) {
       });
 
       const [res1, res2, res3] = await Promise.all([
-        getAllNotificationsApi(),
-        chatBarDataApi(),
-        checkOnlineFriendsApi(),
+        getAllNotificationsApi(), // res1
+        chatBarDataApi(), // res2
+        checkOnlineFriendsApi(), // res3
       ]);
 
-      if (res1 && res2 && res3) {
-        if (res1.success === true) {
-          if (res1.unseenMessages) {
-            const newUnseenMessages: UnseenMessages = {};
-            res1.unseenMessages.forEach((messages) => {
-              newUnseenMessages[messages.mainId] = messages.count;
-            });
-            dispatch(setUnseenMessages(newUnseenMessages));
-          }
-          if (res1.userReqs) {
-            dispatch(setUserRequests(res1.userReqs));
-          }
-        }
-
-        if (res2.success === true) {
-          if (res2.friends) dispatch(setFriends(res2.friends));
-          if (res2.groups) dispatch(setGroups(res2.groups));
-          if (res2.chatBarData) dispatch(setChatBarData(res2.chatBarData));
-          if (res2.friendPublicKeys) {
-            const newFriendKeys: PublicKeys = {};
-            res2.friendPublicKeys.forEach((data) => {
-              newFriendKeys[data.friendId] = data.publicKey;
-            });
-            dispatch(setPublicKeys(newFriendKeys));
-          }
-        }
-
-        if (res3.success === true && res3.onlineFriends) {
-          dispatch(setOnlineFriend(res3.onlineFriends));
-        }
-
-        // all response are valid for talk page, now connect to web socket server
-        socketRef.current = socketInstance.connect();
-        socketRef.current.on("connect", () => {
-          setSocket(socketInstance);
-          setTimeout(() => {
-            dispatch(setTalkPageLoading(false));
-          }, 700);
-        });
-        socketRef.current.on("connect_error", () => {
-          setSocket(null);
-          socketRef.current = null;
-          toast.error("Error in connection");
-          navigate("/error");
-          // if error in connection then clear all state for talk page
-          talkPageCleanUp();
-        });
-      } else {
+      if (!res1 || !res2 || !res3) {
         toast.error("Error while getting talk page data");
-        navigate("/error");
+        navigate("/");
+        return;
       }
+
+      if (res1.success === true) {
+        if (res1.unseenMessages) {
+          const newUnseenMessages: UnseenMessages = {};
+          res1.unseenMessages.forEach((messages) => {
+            newUnseenMessages[messages.mainId] = messages.count;
+          });
+          dispatch(setUnseenMessages(newUnseenMessages));
+        }
+        if (res1.userReqs) {
+          dispatch(setUserRequests(res1.userReqs));
+        }
+      }
+
+      if (res2.success === true) {
+        if (res2.friends) dispatch(setFriends(res2.friends));
+        if (res2.groups) dispatch(setGroups(res2.groups));
+        if (res2.chatBarData) dispatch(setChatBarData(res2.chatBarData));
+        if (res2.friendPublicKeys) {
+          const newFriendKeys: PublicKeys = {};
+          res2.friendPublicKeys.forEach((data) => {
+            newFriendKeys[data.friendId] = data.publicKey;
+          });
+          dispatch(setPublicKeys(newFriendKeys));
+        }
+      }
+
+      if (res3.success === true && res3.onlineFriends) {
+        dispatch(setOnlineFriend(res3.onlineFriends));
+      }
+
+      // all response are valid for talk page, now connect to web socket server
+      socketRef.current = socketInstance.connect();
+      socketRef.current.on("connect", () => {
+        setSocket(socketInstance);
+        setTimeout(() => {
+          dispatch(setTalkPageLoading(false));
+        }, 700);
+      });
+      socketRef.current.on("connect_error", () => {
+        setSocket(null);
+        socketRef.current = null;
+        toast.error("Error in connection");
+        // if error in connection then clear all state for talk page
+        talkPageCleanUp();
+        navigate("/");
+      });
     } catch (error) {
       toast.error("Error while connecting");
-      navigate("/error");
+      navigate("/");
     }
   };
 

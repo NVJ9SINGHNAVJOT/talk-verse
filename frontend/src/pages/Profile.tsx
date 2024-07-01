@@ -56,20 +56,20 @@ const Profile = () => {
   }, [location.pathname]);
 
   return (
-    <div className="w-full flex h-[calc(100vh-4rem)]">
+    <div className="flex h-[calc(100vh-4rem)] w-full min-w-minContent max-w-maxContent">
       {/* left bar profile menu section*/}
       <section
-        className=" w-[8rem] md:w-[11rem] lg:w-[14rem] h-full bg-[#A69F96] max-w-maxContent
-       hover:bg-[#FBF4D0] transition-all ease-in-out overflow-y-auto "
+        className="h-full w-[8rem] overflow-y-auto bg-[#A69F96] transition-all 
+        ease-in-out hover:bg-[#FBF4D0] md:w-[11rem] lg:w-[14rem]"
       >
-        <div className=" group flex flex-col w-full mt-28 gap-5">
+        <div className="group mt-28 flex w-full flex-col gap-5">
           {proifleMenu.map((menu, index) => {
             return (
               <div
                 key={index}
-                className={`font-roboto-condensed text-richblack-800 text-xl ${
+                className={`font-roboto-condensed text-xl text-richblack-800 ${
                   title === menu.toLowerCase() && "bg-[#FBF4D0] group-hover:bg-[#A69F96]"
-                } cursor-pointer w-full px-4 py-1 lm:px-10 lm:py-3`}
+                } w-full cursor-pointer px-4 py-1 lm:px-10 lm:py-3`}
                 onClick={() => goMenu(menu)}
               >
                 {menu}
@@ -80,19 +80,21 @@ const Profile = () => {
       </section>
 
       {/* right bar chat main section */}
-      {loading ? (
-        <div
-          className=" w-[calc(100vw-8rem)] md:w-[calc(100vw-11rem)] lg:w-[calc(100vw-14rem)] max-w-maxContent overflow-y-auto 
-        ct-userInfoBack min-h-full blur-md"
-        ></div>
-      ) : (
-        <section
-          className=" w-[calc(100vw-8rem)] md:w-[calc(100vw-11rem)] lg:w-[calc(100vw-14rem)] max-w-maxContent overflow-y-auto 
-      ct-userInfoBack min-h-full"
-        >
+      <section
+        className="ct-userInfoBack min-h-full w-[calc(100vw-8rem)] overflow-y-auto md:w-[calc(100vw-11rem)] 
+        lg:w-[calc(100vw-14rem)]"
+      >
+        {loading ? (
+          <div
+            className="flex h-full w-full animate-pulse items-center justify-center font-be-veitnam-pro 
+            text-4xl font-semibold text-black"
+          >
+            <div>Loading...</div>
+          </div>
+        ) : (
           <Outlet />
-        </section>
-      )}
+        )}
+      </section>
 
       {openReviewModal && <ReviewModal setOpenReviewModal={setOpenReviewModal} />}
     </div>

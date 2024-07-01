@@ -116,9 +116,7 @@ const Settings = () => {
 
   const resetHandler = () => {
     setDisabled([]);
-    if (profile) {
-      reset(profile);
-    }
+    reset();
   };
 
   return (

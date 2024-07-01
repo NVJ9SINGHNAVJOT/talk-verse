@@ -7,7 +7,7 @@ function serverKey(req: Request, res: Response, next: NextFunction) {
     if (serverKey === `${process.env["SERVER_KEY"]}`) {
       next();
     } else {
-      return errRes(res, 401, "unauthorized access denied for server", { ip: req.ip, serverKey: serverKey });
+      return errRes(res, 403, "unauthorized access denied for server", { ip: req.ip, serverKey: serverKey });
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {

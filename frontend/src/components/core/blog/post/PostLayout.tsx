@@ -111,6 +111,7 @@ const PostLayout = (props: PostProps) => {
     <div className="relative flex w-10/12 max-w-[44rem] flex-col gap-y-4 rounded-xl bg-black p-3 text-white">
       {/* top */}
       <div className="flex justify-between">
+        {/* top left */}
         <div className="flex">
           {post.imageUrl ? (
             <img alt="Loading..." className="size-10 rounded-full" src={post.imageUrl} />
@@ -122,6 +123,7 @@ const PostLayout = (props: PostProps) => {
             <p className="text-snow-800">{post.userName}</p>
           </div>
         </div>
+        {/* top right */}
         <div className="flex flex-col items-end justify-between">
           {post.isCurrentUser ? (
             <button type="button" className="group relative">
@@ -132,12 +134,15 @@ const PostLayout = (props: PostProps) => {
               {/* tooltip for delete */}
               <div className="opacity-0 transition-all duration-300 ease-in group-hover:block group-hover:opacity-100">
                 <div
-                  className="pointer-events-none absolute top-1/2 flex -translate-x-4 -translate-y-1/2 items-center
-                 rounded-sm text-center text-sm text-slate-300 transition-all duration-500 ease-in-out before:-top-2 
-                 group-hover:-translate-x-[6.7rem]"
+                  className="pointer-events-none absolute top-1/2 flex -translate-x-4 -translate-y-1/2 items-center 
+                  rounded-sm text-center text-sm text-slate-300 transition-all duration-500 ease-in-out before:-top-2 
+                  group-hover:-translate-x-[6.7rem]"
                 >
                   <div className="border-[2px] border-red-400">
-                    <div className="cursor-pointer items-center rounded-md bg-red-950 fill-red-400 duration-100 active:border">
+                    <div
+                      className="cursor-pointer items-center rounded-md bg-red-950 fill-red-400 duration-100 
+                    active:border"
+                    >
                       <p className="text-nowrap px-2 py-[0.20rem] text-[0.8rem] font-bold leading-4 text-red-400">
                         Delete Post
                       </p>
@@ -151,19 +156,27 @@ const PostLayout = (props: PostProps) => {
             <button type="button" className="group relative">
               <BsSaveFill
                 onClick={() => savePost()}
-                className={`aspect-square size-5 cursor-pointer hover:opacity-100 ${isSaved === true ? "fill-lime-400" : "opacity-70"}`}
+                className={`aspect-square size-5 cursor-pointer hover:opacity-100 
+                  ${isSaved === true ? "fill-lime-400" : "opacity-70"}`}
               />
               {/* tooltip for save */}
-              <div className="opacity-0 transition-all duration-300 ease-in group-hover:block group-hover:opacity-100">
+              <div
+                className="opacity-0 transition-all duration-300 ease-in group-hover:block 
+                group-hover:opacity-100"
+              >
                 <div
-                  className="pointer-events-none absolute top-1/2 flex -translate-x-4 -translate-y-1/2 items-center 
-                rounded-sm text-center text-sm text-slate-300 transition-all duration-500 ease-in-out before:-top-2 
-                group-hover:-translate-x-[6.35rem]"
+                  className={`pointer-events-none absolute top-1/2 flex -translate-x-4 -translate-y-1/2 items-center 
+                    rounded-sm text-center text-sm text-slate-300 transition-all duration-500 ease-in-out 
+                    before:-top-2 
+                    ${isSaved === true ? "group-hover:-translate-x-[7.18rem]" : "group-hover:-translate-x-[6.32rem]"}`}
                 >
                   <div className="border-[2px] border-lime-400">
-                    <div className="cursor-pointer items-center rounded-md bg-lime-950 fill-lime-400 duration-100 active:border">
+                    <div
+                      className="cursor-pointer items-center rounded-md bg-lime-950 fill-lime-400 duration-100 
+                      active:border"
+                    >
                       <p className="text-nowrap px-2 py-[0.20rem] text-[0.8rem] font-bold leading-4 text-lime-400">
-                        Save Post
+                        {isSaved === true ? "Unsave Post" : "Save Post"}
                       </p>
                     </div>
                   </div>
@@ -213,9 +226,7 @@ const PostLayout = (props: PostProps) => {
           <FaHeart className={`size-5 ${like === true ? "fill-red-600" : "fill-snow-500"}`} />
         </button>
         <div className="mr-4 leading-[1.1rem]">{likesCount}</div>
-        <button onClick={() => setToggleComments(true)}>
-          <BiSolidCommentDetail className="size-5" />
-        </button>
+        <BiSolidCommentDetail onClick={() => setToggleComments(true)} className="size-5 cursor-pointer" />
         <div className="mr-4 leading-[1.1rem]">{commentsCount}</div>
       </div>
       {/* open post comments */}

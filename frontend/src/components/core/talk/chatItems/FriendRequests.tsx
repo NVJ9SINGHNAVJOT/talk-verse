@@ -64,7 +64,8 @@ const FriendRequests = (props: FriendRequestsProps) => {
   return (
     <div
       ref={seeNotifRef}
-      className="absolute -right-[18rem] -top-3 z-[500] flex max-h-[60vh] flex-col gap-y-3 overflow-y-auto rounded-xl bg-black px-5 py-2 text-white"
+      className="absolute -right-[18rem] z-[100] flex max-h-[60vh] flex-col gap-y-3 overflow-y-auto rounded-xl 
+      bg-black px-5 py-2 text-white"
     >
       {userRequests?.length === 0 ? (
         <div className="w-[12rem] bg-black px-3 py-1 text-center text-white">No Requests</div>
@@ -82,10 +83,16 @@ const FriendRequests = (props: FriendRequestsProps) => {
               )}
               <div className="truncate">{user.userName}</div>
               <button disabled={answeringReq.includes(user._id)} onClick={() => acceptReq(user._id)}>
-                <CiCirclePlus className="aspect-auto h-8 w-8 cursor-pointer rounded-full text-white hover:bg-white hover:text-black" />
+                <CiCirclePlus
+                  className="aspect-auto h-8 w-8 cursor-pointer rounded-full text-white 
+                hover:bg-white hover:text-black"
+                />
               </button>
               <button disabled={answeringReq.includes(user._id)} onClick={() => deleteReq(user._id)}>
-                <CiCirclePlus className="aspect-auto h-8 w-8 rotate-45 cursor-pointer rounded-full text-white hover:bg-white hover:text-black" />
+                <CiCirclePlus
+                  className="aspect-auto h-8 w-8 rotate-45 cursor-pointer rounded-full text-white 
+                hover:bg-white hover:text-black"
+                />
               </button>
             </div>
           );
