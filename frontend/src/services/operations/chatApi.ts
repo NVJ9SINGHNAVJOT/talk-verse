@@ -3,7 +3,7 @@ import { fetchApi } from "@/services/fetchApi";
 import { ChatBarDataRs, GetChatMessagesRs, GetGroupMessagesRs } from "@/types/apis/chatApiRs";
 import { CommonRs } from "@/types/apis/common";
 
-export const chatBarDataApi = async (): Promise<ChatBarDataRs> => {
+export const chatBarDataApi = async (): Promise<ChatBarDataRs | null> => {
   try {
     const resData: ChatBarDataRs = await fetchApi("GET", chatEndPoints.CHAT_BAR_DATA);
     // success false is used in response
@@ -28,7 +28,7 @@ export const fileMessageApi = async (data: FormData): Promise<boolean> => {
   }
 };
 
-export const getMessagesApi = async (chatId: string, createdAt: string): Promise<GetChatMessagesRs> => {
+export const getMessagesApi = async (chatId: string, createdAt: string): Promise<GetChatMessagesRs | null> => {
   try {
     const resData: GetChatMessagesRs = await fetchApi("GET", chatEndPoints.CHAT_MESSAGES, null, null, {
       chatId: chatId,
@@ -44,7 +44,7 @@ export const getMessagesApi = async (chatId: string, createdAt: string): Promise
   }
 };
 
-export const getGroupMessagesApi = async (groupId: string, createdAt: string): Promise<GetGroupMessagesRs> => {
+export const getGroupMessagesApi = async (groupId: string, createdAt: string): Promise<GetGroupMessagesRs | null> => {
   try {
     const resData: GetGroupMessagesRs = await fetchApi("GET", chatEndPoints.GROUP_MESSAGES, null, null, {
       groupId: groupId,

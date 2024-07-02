@@ -1,10 +1,9 @@
 import { ChatBarData, Friend } from "@/redux/slices/chatSlice";
 import { GroupMessages } from "@/redux/slices/messagesSlice";
 import { SoAddedInGroup, SoMessageRecieved } from "@/types/socket/eventTypes";
+import { CommonRs } from "@/types/apis/common";
 
-export type ChatBarDataRs = {
-  success: boolean;
-  message: string;
+export type ChatBarDataRs = CommonRs & {
   friends?: Friend[];
   groups?: SoAddedInGroup[];
   chatBarData?: ChatBarData[];
@@ -12,22 +11,16 @@ export type ChatBarDataRs = {
     friendId: string;
     publicKey: string;
   }[];
-} | null;
+};
 
-export type GetChatMessagesRs = {
-  success: boolean;
-  message: string;
+export type GetChatMessagesRs = CommonRs & {
   messages?: SoMessageRecieved[];
-} | null;
+};
 
-export type GetGroupMessagesRs = {
-  success: boolean;
-  message: string;
+export type GetGroupMessagesRs = CommonRs & {
   messages?: GroupMessages[];
-} | null;
+};
 
-export type CreateGroupRs = {
-  success: boolean;
-  message: string;
+export type CreateGroupRs = CommonRs & {
   newGroup: SoAddedInGroup;
-} | null;
+};

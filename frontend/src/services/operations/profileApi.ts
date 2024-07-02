@@ -11,7 +11,7 @@ import { CommonRs } from "@/types/apis/common";
 import { NewProfileData } from "@/components/core/profile/Settings";
 import { PostsRs } from "@/types/apis/postApiRs";
 
-export const checkUserNameApi = async (userName: string): Promise<CommonRs> => {
+export const checkUserNameApi = async (userName: string): Promise<CommonRs | null> => {
   try {
     const resData: CommonRs = await fetchApi("GET", profileEndPoints.CHECK_USERNAME, null, null, {
       userName: userName,
@@ -25,7 +25,7 @@ export const checkUserNameApi = async (userName: string): Promise<CommonRs> => {
   }
 };
 
-export const getProfileApi = async (): Promise<ProfileRs> => {
+export const getProfileApi = async (): Promise<ProfileRs | null> => {
   try {
     const resData: ProfileRs = await fetchApi("GET", profileEndPoints.PROFILE_DETAILS);
     if (resData && resData.success === true) {
@@ -37,7 +37,7 @@ export const getProfileApi = async (): Promise<ProfileRs> => {
   }
 };
 
-export const setProfileImageApi = async (data: FormData): Promise<SetProfileImageRs> => {
+export const setProfileImageApi = async (data: FormData): Promise<SetProfileImageRs | null> => {
   try {
     const resData: SetProfileImageRs = await fetchApi("POST", profileEndPoints.SET_PROFILE_IMAGE, data);
     if (resData && resData.success === true) {
@@ -49,7 +49,7 @@ export const setProfileImageApi = async (data: FormData): Promise<SetProfileImag
   }
 };
 
-export const setProfileDetailsApi = async (data: NewProfileData): Promise<ProfileRs> => {
+export const setProfileDetailsApi = async (data: NewProfileData): Promise<ProfileRs | null> => {
   try {
     const resData: ProfileRs = await fetchApi("POST", profileEndPoints.SET_PROFILE_DETAILS, data, {
       "Content-Type": "application/json",
@@ -63,7 +63,7 @@ export const setProfileDetailsApi = async (data: NewProfileData): Promise<Profil
   }
 };
 
-export const userBlogProfileApi = async (): Promise<UserBlogProfileRs> => {
+export const userBlogProfileApi = async (): Promise<UserBlogProfileRs | null> => {
   try {
     const resData: UserBlogProfileRs = await fetchApi("GET", profileEndPoints.USER_BLOG_PROFILE);
     if (resData && resData.success === true) {
@@ -75,7 +75,7 @@ export const userBlogProfileApi = async (): Promise<UserBlogProfileRs> => {
   }
 };
 
-export const userPostsApi = async (createdAt: string): Promise<PostsRs> => {
+export const userPostsApi = async (createdAt: string): Promise<PostsRs | null> => {
   try {
     const resData: PostsRs = await fetchApi("GET", profileEndPoints.USER_POSTS, null, null, {
       createdAt: createdAt,
@@ -89,7 +89,7 @@ export const userPostsApi = async (createdAt: string): Promise<PostsRs> => {
   }
 };
 
-export const userFollowingApi = async (createdAt: string): Promise<UserFollowingRs> => {
+export const userFollowingApi = async (createdAt: string): Promise<UserFollowingRs | null> => {
   try {
     const resData: UserFollowingRs = await fetchApi("GET", profileEndPoints.USER_FOLLOWING, null, null, {
       createdAt: createdAt,
@@ -103,7 +103,7 @@ export const userFollowingApi = async (createdAt: string): Promise<UserFollowing
   }
 };
 
-export const userfollowersApi = async (createdAt: string): Promise<UserFollowersRs> => {
+export const userfollowersApi = async (createdAt: string): Promise<UserFollowersRs | null> => {
   try {
     const resData: UserFollowersRs = await fetchApi("GET", profileEndPoints.USER_FOLLOWERS, null, null, {
       createdAt: createdAt,
@@ -159,7 +159,7 @@ export const unfollowUserApi = async (userId: number): Promise<boolean> => {
   }
 };
 
-export const userSavedPostsApi = async (createdAt: string): Promise<PostsRs> => {
+export const userSavedPostsApi = async (createdAt: string): Promise<PostsRs | null> => {
   try {
     const resData: PostsRs = await fetchApi("GET", profileEndPoints.POST_SAVES, null, null, {
       createdAt: createdAt,

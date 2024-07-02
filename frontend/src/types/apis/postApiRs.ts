@@ -1,6 +1,6 @@
-export type CreatePostRs = {
-  success: boolean;
-  message: string;
+import { CommonRs } from "@/types/apis/common";
+
+export type CreatePostRs = CommonRs & {
   post: {
     id: number;
     userId: number;
@@ -12,33 +12,27 @@ export type CreatePostRs = {
     likesCount: number;
     createdAt: string;
   };
-} | null;
+};
 
 export type UserStory = {
   id: number;
   storyUrl: string;
 };
-export type CreateStoryRs = {
-  success: boolean;
-  message: string;
+export type CreateStoryRs = CommonRs & {
   story: UserStory;
-} | null;
+};
 
-export type UserStoryRs = {
-  success: boolean;
-  message: string;
+export type UserStoryRs = CommonRs & {
   story?: UserStory;
-} | null;
+};
 
-export type AddCommentRs = {
-  success: boolean;
-  message: string;
+export type AddCommentRs = CommonRs & {
   comment: {
     id: number;
     commentText: string;
     createdAt: string;
   };
-} | null;
+};
 
 export type Story = {
   userName: string;
@@ -46,11 +40,9 @@ export type Story = {
   storyUrl: string;
   createdAt: string;
 };
-export type GetStoriesRs = {
-  success: boolean;
-  message: string;
+export type GetStoriesRs = CommonRs & {
   stories?: Story[];
-} | null;
+};
 
 export type Comment = {
   id: number;
@@ -61,11 +53,9 @@ export type Comment = {
   commentText: string;
   createdAt: string;
 };
-export type PostCommentsRs = {
-  success: boolean;
-  message: string;
+export type PostCommentsRs = CommonRs & {
   comments?: Comment[];
-} | null;
+};
 
 export type Post = {
   id: number;
@@ -86,8 +76,6 @@ export type Post = {
   createdAt: string;
 };
 
-export type PostsRs = {
-  success: boolean;
-  message: string;
+export type PostsRs = CommonRs & {
   posts?: Post[];
-} | null;
+};

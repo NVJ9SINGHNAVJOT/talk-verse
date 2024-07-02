@@ -1,10 +1,9 @@
 import { UserRequest } from "@/redux/slices/chatSlice";
+import { CommonRs } from "@/types/apis/common";
 
-export type GetUsersRs = {
-  success: boolean;
-  message: string;
+export type GetUsersRs = CommonRs & {
   users?: (UserRequest & { isAlreadyRequested: boolean })[];
-} | null;
+};
 
 export type FollowUsers = {
   id: number;
@@ -13,25 +12,19 @@ export type FollowUsers = {
   isFollowed: boolean;
   isRequested: boolean;
 };
-export type GetFollowUsersRs = {
-  success: boolean;
-  message: string;
+export type GetFollowUsersRs = CommonRs & {
   followUsers?: FollowUsers[];
-} | null;
+};
 
-export type GetAllNotificationsRs = {
-  success: boolean;
-  message: string;
+export type GetAllNotificationsRs = CommonRs & {
   userReqs?: UserRequest[];
   unseenMessages?: {
     mainId: string;
     count: number;
   }[];
-} | null;
+};
 
-export type AcceptRequestRs = {
-  success: boolean;
-  message: string;
+export type AcceptRequestRs = CommonRs & {
   newFriend: {
     _id: string;
     firstName: string;
@@ -40,13 +33,11 @@ export type AcceptRequestRs = {
   };
   newChatId: string;
   newFriendPublicKey: string;
-} | null;
+};
 
-export type CheckOnlineFriendsRs = {
-  success: boolean;
-  message: string;
+export type CheckOnlineFriendsRs = CommonRs & {
   onlineFriends?: string[];
-} | null;
+};
 
 export type UserSuggestion = {
   id: number;
@@ -55,14 +46,10 @@ export type UserSuggestion = {
   userName: string;
   imageUrl?: string;
 };
-export type FollowSuggestionsRs = {
-  success: boolean;
-  message: string;
+export type FollowSuggestionsRs = CommonRs & {
   suggestions?: UserSuggestion[];
-} | null;
+};
 
-export type FollowRequestsRs = {
-  success: boolean;
-  message: string;
+export type FollowRequestsRs = CommonRs & {
   followRequests?: UserSuggestion[];
-} | null;
+};
