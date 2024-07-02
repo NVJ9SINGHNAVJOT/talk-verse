@@ -1,36 +1,27 @@
 import { Profile } from "@/redux/slices/userSlice";
 import { UserSuggestion } from "@/types/apis/notificationApiRs";
+import { CommonRs } from "@/types/apis/common";
 
-export type ProfileRs = {
-  success: boolean;
-  message: string;
+export type ProfileRs = CommonRs & {
   userData: Profile;
-} | null;
+};
 
-export type SetProfileImageRs = {
-  success: boolean;
-  message: string;
+export type SetProfileImageRs = CommonRs & {
   imageUrl: string;
-} | null;
+};
 
-export type UserBlogProfileRs = {
-  success: boolean;
-  message: string;
+export type UserBlogProfileRs = CommonRs & {
   blogProfile: {
     followingCount: number;
     followersCount: number;
     totalPosts: number;
   };
-} | null;
+};
 
-export type UserFollowingRs = {
-  success: boolean;
-  message: string;
+export type UserFollowingRs = CommonRs & {
   following?: (UserSuggestion & { createdAt: string })[];
-} | null;
+};
 
-export type UserFollowersRs = {
-  success: boolean;
-  message: string;
+export type UserFollowersRs = CommonRs & {
   followers?: (UserSuggestion & { createdAt: string })[];
-} | null;
+};

@@ -60,7 +60,7 @@ const Followers = () => {
     >
       {followers.length > 0 ? (
         followers.map((otherUser, index) => (
-          <OtherUser key={index} otherUser={otherUser} removeOtherUser={removeOtherUser} />
+          <OtherUser key={index} otherUser={otherUser} userType="followers" removeOtherUser={removeOtherUser} />
         ))
       ) : (
         <CubeLoader className="self-center" />

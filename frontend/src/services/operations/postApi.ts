@@ -11,7 +11,7 @@ import { fetchApi } from "@/services/fetchApi";
 import { postEndPoints } from "@/services/apis";
 import { CommonRs } from "@/types/apis/common";
 
-export const createPostApi = async (data: FormData): Promise<CreatePostRs> => {
+export const createPostApi = async (data: FormData): Promise<CreatePostRs | null> => {
   try {
     const resData: CreatePostRs = await fetchApi("POST", postEndPoints.CREATE_POST, data);
     if (resData && resData.success === true) {
@@ -57,7 +57,7 @@ export const savePostApi = async (postId: number, update: "add" | "remove"): Pro
   }
 };
 
-export const createStoryApi = async (data: FormData): Promise<CreateStoryRs> => {
+export const createStoryApi = async (data: FormData): Promise<CreateStoryRs | null> => {
   try {
     const resData: CreateStoryRs = await fetchApi("POST", postEndPoints.CREATE_STORY, data);
     if (resData && resData.success === true) {
@@ -83,7 +83,7 @@ export const deleteStoryApi = async (storyId: number): Promise<boolean> => {
   }
 };
 
-export const userStoryApi = async (): Promise<UserStoryRs> => {
+export const userStoryApi = async (): Promise<UserStoryRs | null> => {
   try {
     const resData: UserStoryRs = await fetchApi("GET", postEndPoints.USER_STORY);
     if (resData) {
@@ -110,7 +110,7 @@ export const updateLikeApi = async (postId: number, update: "add" | "delete"): P
   }
 };
 
-export const addCommentApi = async (postId: number, comment: string): Promise<AddCommentRs> => {
+export const addCommentApi = async (postId: number, comment: string): Promise<AddCommentRs | null> => {
   try {
     const resData: AddCommentRs = await fetchApi(
       "POST",
@@ -144,7 +144,7 @@ export const deleteCommentApi = async (postId: number, commentId: number): Promi
   }
 };
 
-export const postCommentsApi = async (postId: number, createdAt: string): Promise<PostCommentsRs> => {
+export const postCommentsApi = async (postId: number, createdAt: string): Promise<PostCommentsRs | null> => {
   try {
     const resData: PostCommentsRs = await fetchApi("GET", postEndPoints.POST_COMMENTS, null, null, {
       postId: `${postId}`,
@@ -160,7 +160,7 @@ export const postCommentsApi = async (postId: number, createdAt: string): Promis
   }
 };
 
-export const getStoriesApi = async (createdAt: string): Promise<GetStoriesRs> => {
+export const getStoriesApi = async (createdAt: string): Promise<GetStoriesRs | null> => {
   try {
     const resData: GetStoriesRs = await fetchApi("GET", postEndPoints.GET_STORIES, null, null, {
       createdAt: createdAt,
@@ -174,7 +174,7 @@ export const getStoriesApi = async (createdAt: string): Promise<GetStoriesRs> =>
   }
 };
 
-export const recentPostsApi = async (createdAt: string): Promise<PostsRs> => {
+export const recentPostsApi = async (createdAt: string): Promise<PostsRs | null> => {
   try {
     const resData: PostsRs = await fetchApi("GET", postEndPoints.RECENT_POSTS, null, null, { createdAt: createdAt });
     if (resData) {
@@ -186,7 +186,7 @@ export const recentPostsApi = async (createdAt: string): Promise<PostsRs> => {
   }
 };
 
-export const trendingPostsApi = async (createdAt: string): Promise<PostsRs> => {
+export const trendingPostsApi = async (createdAt: string): Promise<PostsRs | null> => {
   try {
     const resData: PostsRs = await fetchApi("GET", postEndPoints.TRENDING_POSTS, null, null, { createdAt: createdAt });
     if (resData) {
@@ -198,7 +198,7 @@ export const trendingPostsApi = async (createdAt: string): Promise<PostsRs> => {
   }
 };
 
-export const categoryPostsApi = async (category: string, createdAt: string): Promise<PostsRs> => {
+export const categoryPostsApi = async (category: string, createdAt: string): Promise<PostsRs | null> => {
   try {
     const resData: PostsRs = await fetchApi("GET", postEndPoints.CATEGORY_POSTS, null, null, {
       category: category,

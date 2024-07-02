@@ -363,7 +363,7 @@ export const userFollowers = async (req: Request, res: Response): Promise<Respon
       return res.status(200).json({
         success: true,
         message: "user followers",
-        following: followers,
+        followers: followers,
       });
     }
 
@@ -401,6 +401,11 @@ export const removeFollower = async (req: Request, res: Response): Promise<Respo
       });
     }
 
+    /*
+      TODO: {status: 200, success: true} can be return if now follower exists with otherUserId for current user.
+      it is possible that before current request for removing follower, otherUserId user
+      already unfollowed current user(removed current user from it's following users).
+    */
     return errRes(res, 400, "invalid follower id, no follower exists for other userId");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -432,6 +437,12 @@ export const unfollowUser = async (req: Request, res: Response): Promise<Respons
       });
     }
 
+    /*
+      TODO: {status: 200, success: true} can be return if otherUserId user does not exists in 
+      current user following users in database.
+      it is possible that before current request for unfollowing otherUserId user, otherUserId user
+      already removed current user from it's followers(removed current user as follower).
+    */
     return errRes(res, 400, "invalid following id, no following exists for other userId");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {

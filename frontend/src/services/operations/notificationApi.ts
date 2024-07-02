@@ -12,7 +12,7 @@ import {
   GetUsersRs,
 } from "@/types/apis/notificationApiRs";
 
-export const getUsersApi = async (userName: string): Promise<GetUsersRs> => {
+export const getUsersApi = async (userName: string): Promise<GetUsersRs | null> => {
   try {
     const resData: GetUsersRs = await fetchApi("GET", notificationEndPoints.GET_USERS, null, null, {
       userName: userName,
@@ -27,7 +27,7 @@ export const getUsersApi = async (userName: string): Promise<GetUsersRs> => {
   }
 };
 
-export const getFollowUsersApi = async (userName: string): Promise<GetFollowUsersRs> => {
+export const getFollowUsersApi = async (userName: string): Promise<GetFollowUsersRs | null> => {
   try {
     const resData: GetFollowUsersRs = await fetchApi("GET", notificationEndPoints.GET_FOLLOW_USERS, null, null, {
       userName: userName,
@@ -59,7 +59,7 @@ export const sendRequestApi = async (otherUserId: string): Promise<boolean> => {
   }
 };
 
-export const acceptRequestApi = async (otherUserId: string): Promise<AcceptRequestRs> => {
+export const acceptRequestApi = async (otherUserId: string): Promise<AcceptRequestRs | null> => {
   try {
     const resData: AcceptRequestRs = await fetchApi(
       "POST",
@@ -93,7 +93,7 @@ export const deleteRequestApi = async (otherUserId: string): Promise<boolean> =>
   }
 };
 
-export const getAllNotificationsApi = async (): Promise<GetAllNotificationsRs> => {
+export const getAllNotificationsApi = async (): Promise<GetAllNotificationsRs | null> => {
   try {
     const resData: GetAllNotificationsRs = await fetchApi("GET", notificationEndPoints.GET_ALL_NOTIFICATIONS);
     if (resData) {
@@ -105,7 +105,7 @@ export const getAllNotificationsApi = async (): Promise<GetAllNotificationsRs> =
   }
 };
 
-export const createGroupApi = async (data: FormData): Promise<CreateGroupRs> => {
+export const createGroupApi = async (data: FormData): Promise<CreateGroupRs | null> => {
   try {
     const resData: CreateGroupRs = await fetchApi("POST", notificationEndPoints.CREATE_GROUP, data);
     if (resData && resData.success === true) {
@@ -117,7 +117,7 @@ export const createGroupApi = async (data: FormData): Promise<CreateGroupRs> => 
   }
 };
 
-export const checkOnlineFriendsApi = async (): Promise<CheckOnlineFriendsRs> => {
+export const checkOnlineFriendsApi = async (): Promise<CheckOnlineFriendsRs | null> => {
   try {
     const resData: CheckOnlineFriendsRs = await fetchApi("GET", notificationEndPoints.CHECK_ONLINE_FRIENDS);
     if (resData) {
@@ -222,7 +222,7 @@ export const acceptFollowRequestApi = async (userId: number): Promise<boolean> =
   }
 };
 
-export const followRequestsApi = async (): Promise<FollowRequestsRs> => {
+export const followRequestsApi = async (): Promise<FollowRequestsRs | null> => {
   try {
     const resData: FollowRequestsRs = await fetchApi("GET", notificationEndPoints.FOLLOW_REQUESTS);
     if (resData) {
@@ -234,7 +234,7 @@ export const followRequestsApi = async (): Promise<FollowRequestsRs> => {
   }
 };
 
-export const followSuggestionsApi = async (): Promise<FollowSuggestionsRs> => {
+export const followSuggestionsApi = async (): Promise<FollowSuggestionsRs | null> => {
   try {
     const resData: FollowSuggestionsRs = await fetchApi("GET", notificationEndPoints.FOLLOW_SUGGESTIONS);
     if (resData) {

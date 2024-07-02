@@ -32,7 +32,7 @@ export const sendOtpApi = async (email: string): Promise<boolean> => {
   }
 };
 
-export const logInApi = async (data: object): Promise<CheckUserRs> => {
+export const logInApi = async (data: object): Promise<CheckUserRs | null> => {
   try {
     const resData: CheckUserRs = await fetchApi("POST", authEndPoints.LOGIN, data, {
       "Content-Type": "application/json",
@@ -46,7 +46,7 @@ export const logInApi = async (data: object): Promise<CheckUserRs> => {
   }
 };
 
-export const checkUserApi = async (): Promise<CheckUserRs> => {
+export const checkUserApi = async (): Promise<CheckUserRs | null> => {
   try {
     const resData: CheckUserRs = await fetchApi("GET", authEndPoints.CHECK_USER);
     if (resData && resData.success === true) {
