@@ -8,15 +8,11 @@ export type SendQueryData = {
   text: string[];
 };
 export const sendQueryApi = async (data: SendQueryData): Promise<boolean> => {
-  try {
-    const resData: CommonRs = await fetchApi("POST", queryEndPoints.SEND_QUERY, data, {
-      "Content-Type": "application/json",
-    });
-    if (resData) {
-      return true;
-    }
-    return false;
-  } catch (error) {
-    return false;
+  const resData: CommonRs = await fetchApi("POST", queryEndPoints.SEND_QUERY, data, {
+    "Content-Type": "application/json",
+  });
+  if (resData) {
+    return true;
   }
+  return false;
 };

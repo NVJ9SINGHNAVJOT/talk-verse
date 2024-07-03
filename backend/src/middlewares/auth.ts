@@ -16,12 +16,12 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
 
     const userIds = await jwtVerify(token);
 
-    if (!userIds || userIds.length !== 2) {
+    if (!userIds) {
       return errRes(res, 401, "user token invalid, need to log in");
     }
 
-    (req as CustomRequest).userId = userIds[0] as string;
-    (req as CustomRequest).userId2 = userIds[1] as number;
+    (req as CustomRequest).userId = userIds.userId;
+    (req as CustomRequest).userId2 = userIds.userId2;
 
     next();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

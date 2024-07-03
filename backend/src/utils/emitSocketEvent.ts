@@ -23,7 +23,7 @@ const emitSocketEvent = (
     req.app.get("io").to(roomIds).emit(event, sdata);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    logger.error("error while emiting event from io", { error: error, data: sdata });
+    logger.error("error while emiting event from io", { error: error.message, data: sdata });
   }
 };
 

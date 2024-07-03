@@ -70,7 +70,12 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-        logger.error("error while creating message", { error: error, data: data, newMessage: newMessage });
+        logger.error("error while creating message", {
+          error: error.message,
+          data: data,
+          uuId: uuId,
+          createdAt: createdAt,
+        });
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -129,7 +134,12 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-        logger.error("error while creating goupMessage", { error: error, data: data, newGpMessage: newGpMessage });
+        logger.error("error while creating goupMessage", {
+          error: error.message,
+          data: data,
+          uuId: uuId,
+          createdAt: createdAt,
+        });
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {

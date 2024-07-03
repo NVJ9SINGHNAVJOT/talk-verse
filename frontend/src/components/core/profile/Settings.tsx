@@ -1,8 +1,9 @@
 import { countryCodes } from "@/data/countryCodes";
 import { Profile, setProfile } from "@/redux/slices/userSlice";
 import { useAppSelector } from "@/redux/store";
+import { changePasswordApi } from "@/services/operations/authApi";
 import { checkUserNameApi, setProfileDetailsApi } from "@/services/operations/profileApi";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaEdit } from "react-icons/fa";
 import { useDispatch } from "react-redux";
@@ -17,33 +18,26 @@ export type NewProfileData = {
   bio?: string;
 };
 
+export type ChangePassword = {
+  oldPassword: string;
+  newPassword: string;
+};
+
 const Settings = () => {
   const dispatch = useDispatch();
   const [disabled, setDisabled] = useState<string[]>([]);
   const profile = useAppSelector((state) => state.user.profile);
   const [loading, setLoading] = useState<boolean>(false);
+  const [changingPassword, setChangingPassword] = useState<boolean>(false);
   const { register, handleSubmit, reset } = useForm<Profile>({
     defaultValues: profile ? profile : {},
   });
-  const datePickerRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    const datePickerElement = datePickerRef.current;
-
-    const handleClick = () => {
-      datePickerRef.current?.showPicker();
-    };
-
-    if (datePickerElement) {
-      datePickerElement.addEventListener("click", handleClick);
-    }
-
-    return () => {
-      if (datePickerElement) {
-        datePickerElement.removeEventListener("click", handleClick);
-      }
-    };
-  }, []);
+  const {
+    register: registerPassword,
+    handleSubmit: handleSubmitPassword,
+    reset: resetPassword,
+    formState: { errors },
+  } = useForm<ChangePassword>();
 
   const updateDisable = (value: string) => {
     if (disabled.includes(value)) {
@@ -119,13 +113,34 @@ const Settings = () => {
     reset();
   };
 
+  const changePassword = async (data: ChangePassword) => {
+    if (data.oldPassword === data.newPassword) {
+      toast.info("cannot update same password");
+      return;
+    }
+    setChangingPassword(true);
+    resetPassword();
+    const response = await changePasswordApi(data);
+
+    if (!response) {
+      toast.error("error while changing password");
+    } else if (response.success === false) {
+      toast.info(response.message);
+    } else {
+      toast.success("password changed");
+    }
+
+    setChangingPassword(false);
+  };
+
   return (
-    <div className=" w-full mt-14 ">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-fit mx-auto gap-8">
-        <div className=" flex gap-4 items-center">
-          <label className=" font-semibold">User Name</label>
+    <div className="mt-6 flex w-full flex-col">
+      <div className="my-5 pl-4 font-be-veitnam-pro text-4xl lm:pl-10">Profile</div>
+      <form onSubmit={handleSubmit(onSubmit)} className="mx-auto flex w-fit flex-col gap-8">
+        <div className="flex items-center gap-4">
+          <label className="font-semibold">User Name</label>
           <input
-            className=" bg-black text-white rounded-lg px-4 py-2 outline-none"
+            className="rounded-lg bg-black px-4 py-2 text-white outline-none"
             {...register("userName", {
               required: true,
               pattern: /^[a-zA-Z][a-zA-Z0-9_-]{2,}$/,
@@ -137,15 +152,15 @@ const Settings = () => {
           />
           <FaEdit
             onClick={() => updateDisable("userName")}
-            className={`cursor-pointer size-4 hover:fill-white ${disabled.includes("userName") ? "fill-white" : "fill-black"}`}
+            className={`size-4 cursor-pointer hover:fill-white ${disabled.includes("userName") ? "fill-white" : "fill-black"}`}
           />
         </div>
 
-        <div className=" flex gap-4 items-center">
-          <label className=" font-semibold">Date of Birth</label>
+        <div className="flex items-center gap-4">
+          <label className="font-semibold">Date of Birth</label>
           <input
             type="date"
-            className=" bg-black text-white rounded-lg px-4 py-2 outline-none"
+            className="rounded-lg bg-black px-4 py-2 text-white outline-none"
             {...register("dateOfBirth", {
               max: {
                 value: new Date().toISOString().split("T")[0],
@@ -157,14 +172,14 @@ const Settings = () => {
           />
           <FaEdit
             onClick={() => updateDisable("dateOfBirth")}
-            className={`cursor-pointer size-4 hover:fill-white ${disabled.includes("dateOfBirth") ? "fill-white" : "fill-black"}`}
+            className={`size-4 cursor-pointer hover:fill-white ${disabled.includes("dateOfBirth") ? "fill-white" : "fill-black"}`}
           />
         </div>
 
-        <div className=" flex gap-4">
-          <label className=" self-start font-semibold">Bio</label>
+        <div className="flex gap-4">
+          <label className="self-start font-semibold">Bio</label>
           <textarea
-            className=" w-80 bg-black text-white rounded-lg px-4 py-2 outline-none h-32 resize-none"
+            className="h-32 w-80 resize-none rounded-lg bg-black px-4 py-2 text-white outline-none"
             {...register("bio", {
               maxLength: 150,
               minLength: 1,
@@ -174,16 +189,16 @@ const Settings = () => {
           />
           <FaEdit
             onClick={() => updateDisable("bio")}
-            className={`cursor-pointer size-4 hover:fill-white ${disabled.includes("bio") ? "fill-white" : "fill-black"}`}
+            className={`size-4 cursor-pointer hover:fill-white ${disabled.includes("bio") ? "fill-white" : "fill-black"}`}
           />
         </div>
 
-        <div className=" flex gap-4 items-center">
-          <label className=" font-semibold">Gender</label>
-          <div className=" flex items-center gap-2">
-            <span className=" text-richblack-700 text-sm">Male</span>
+        <div className="flex items-center gap-4">
+          <label className="font-semibold">Gender</label>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-richblack-700">Male</span>
             <input
-              className=" mt-1"
+              className="mt-1"
               type="radio"
               value="Male"
               {...register("gender")}
@@ -191,10 +206,10 @@ const Settings = () => {
               disabled={!disabled.includes("gender")}
             />
           </div>
-          <div className=" flex items-center gap-2">
-            <span className=" text-richblack-700 text-sm">Female</span>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-richblack-700">Female</span>
             <input
-              className=" mt-1"
+              className="mt-1"
               type="radio"
               value="Female"
               {...register("gender")}
@@ -202,10 +217,10 @@ const Settings = () => {
               disabled={!disabled.includes("gender")}
             />
           </div>
-          <div className=" flex items-center gap-2">
-            <span className=" text-richblack-700 text-sm">Other</span>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-richblack-700">Other</span>
             <input
-              className=" mt-1"
+              className="mt-1"
               type="radio"
               value="Other"
               {...register("gender")}
@@ -215,15 +230,15 @@ const Settings = () => {
           </div>
           <FaEdit
             onClick={() => updateDisable("gender")}
-            className={`cursor-pointer size-4 hover:fill-white ${disabled.includes("gender") ? "fill-white" : "fill-black"}`}
+            className={`size-4 cursor-pointer hover:fill-white ${disabled.includes("gender") ? "fill-white" : "fill-black"}`}
           />
         </div>
 
-        <div className=" flex gap-4 items-center">
+        <div className="flex items-center gap-4">
           <label className="font-semibold">Country Code</label>
           <select
             {...register("countryCode")}
-            className="  bg-black text-white rounded-lg px-4 py-2 outline-none text-center"
+            className="rounded-lg bg-black px-4 py-2 text-center text-white outline-none"
             disabled={!disabled.includes("countryCode")}
           >
             {!profile?.countryCode && <option defaultValue={""}>Select Country Code</option>}
@@ -238,15 +253,15 @@ const Settings = () => {
           </select>
           <FaEdit
             onClick={() => updateDisable("countryCode")}
-            className={`cursor-pointer size-4 hover:fill-white ${disabled.includes("countryCode") ? "fill-white" : "fill-black"}`}
+            className={`size-4 cursor-pointer hover:fill-white ${disabled.includes("countryCode") ? "fill-white" : "fill-black"}`}
           />
         </div>
 
-        <div className=" flex gap-4 items-center">
+        <div className="flex items-center gap-4">
           <label className="font-semibold">Contact No.</label>
           <input
             type="number"
-            className=" bg-black text-white rounded-lg px-4 py-2 outline-none "
+            className="rounded-lg bg-black px-4 py-2 text-white outline-none"
             {...register("contactNumber", {
               min: 1,
               max: 999999999,
@@ -264,17 +279,16 @@ const Settings = () => {
           />
           <FaEdit
             onClick={() => updateDisable("contactNumber")}
-            className={`cursor-pointer size-4 hover:fill-white ${disabled.includes("contactNumber") ? "fill-white" : "fill-black"}`}
+            className={`size-4 cursor-pointer hover:fill-white ${disabled.includes("contactNumber") ? "fill-white" : "fill-black"}`}
           />
         </div>
 
-        <div className=" flex justify-center gap-8">
+        <div className="flex justify-center gap-8">
           <button
             type="submit"
             disabled={loading}
-            className="[box-shadow:0px_0px_57px_9px_rgba(0,0,0,0.4)] hover:scale-110 transition-all ease-in-out
-           bg-black  px-10 py-2 rounded-xl text-white mt-8
-            text-center cursor-pointer"
+            className="mt-8 cursor-pointer rounded-xl bg-black px-10 py-2 text-center text-white transition-all 
+            ease-in-out [box-shadow:0px_0px_57px_9px_rgba(0,0,0,0.4)] hover:scale-110"
           >
             Update
           </button>
@@ -282,13 +296,58 @@ const Settings = () => {
             type="button"
             onClick={() => resetHandler()}
             disabled={loading}
-            className="[box-shadow:0px_0px_57px_9px_rgba(0,0,0,0.4)] hover:scale-110 transition-all ease-in-out
-           bg-white px-10 py-2 rounded-xl text-black mt-8
-            text-center cursor-pointer"
+            className="mt-8 cursor-pointer rounded-xl bg-white px-10 py-2 text-center text-black transition-all 
+            ease-in-out [box-shadow:0px_0px_57px_9px_rgba(0,0,0,0.4)] hover:scale-110"
           >
             Cancel
           </button>
         </div>
+      </form>
+      {/* change password */}
+      <div className="my-8 pl-4 font-be-veitnam-pro text-4xl lm:pl-10">Password</div>
+      <form
+        onSubmit={handleSubmitPassword(changePassword)}
+        className="relative mx-auto mb-12 flex w-10/12 flex-col items-center gap-8 rounded-2xl bg-[#DD5746] pb-8"
+      >
+        <label className="ml-8 mt-5 text-xl font-semibold text-white">Change Password</label>
+        <div className="mb-5 ml-8 flex flex-col gap-x-8 gap-y-6 md:flex-row">
+          <input
+            className="rounded-lg bg-black px-4 py-2 text-white outline-none"
+            {...registerPassword("oldPassword", {
+              required: true,
+              pattern: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,20}$/,
+              minLength: 8,
+              maxLength: 20,
+            })}
+            placeholder="Current Password"
+          />
+          <input
+            className="rounded-lg bg-black px-4 py-2 text-white outline-none"
+            {...registerPassword("newPassword", {
+              required: true,
+              pattern: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,20}$/,
+              minLength: 8,
+              maxLength: 20,
+            })}
+            placeholder="New Password"
+          />
+        </div>
+        {(errors.oldPassword || errors.newPassword) && (
+          <span
+            className="absolute top-[12.5rem] mx-auto w-[20rem] text-center text-[0.8rem] text-white 
+          md:top-[7.8rem]"
+          >
+            lowercase, uppercase, digit, special character and Length: min - 8, max - 20
+          </span>
+        )}
+        <button
+          type="submit"
+          disabled={changingPassword}
+          className="mt-8 cursor-pointer rounded-xl bg-white px-10 py-2 text-center text-black transition-all 
+          ease-in-out hover:scale-110"
+        >
+          Change
+        </button>
       </form>
     </div>
   );

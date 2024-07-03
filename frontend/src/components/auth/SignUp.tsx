@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { maxFileSize, validFiles } from "@/utils/constants";
 import OtpInput from "@/components/auth/OtpInput";
 import WorkModal from "@/lib/modals/workmodal/WorkModal";
+import { checkUserNameApi } from "@/services/operations/profileApi";
 
 type SignUpData = {
   firstName: string;
@@ -69,35 +70,73 @@ const SignUp = (props: SignInProps) => {
   } = useForm<SignUpData>();
 
   const signUpUser = async (otp: string) => {
-    setToggleOtp(false);
-    setSigningUp(true);
-
-    if (!signUp || !otp) {
+    if (!signUp) {
       toast.error("Signup Failed, try again");
       return;
     }
+
+    setToggleOtp(false);
+    setSigningUp(true);
+
     signUp.append("otp", otp);
 
-    const response: boolean = await signUpApi(signUp);
+    const response = await signUpApi(signUp);
 
-    if (response === true) {
-      toast.success("Sign Up completed");
-      dispatch(setIsLogin(true));
-    } else {
+    if (!response) {
       toast.error("Error while Signig Up, Try again");
+    } else if (response.success === false) {
+      toast.info(response.message);
+    } else {
+      dispatch(setIsLogin(true));
+      toast.success("Sign Up completed");
     }
+
     dispatch(setLoading(false));
     setSigningUp(false);
   };
 
   const sendOtp = async (data: SignUpData): Promise<void> => {
+    if (data.password !== data.confirmPassword) {
+      toast.info("passwords not matched");
+      return;
+    }
     dispatch(setLoading(true));
+
+    // check if userName given by user is already in use
+    const checkUserNameAlreadyPresent = await checkUserNameApi(data.userName);
+    if (!checkUserNameAlreadyPresent) {
+      toast.error("error while checking userName");
+      dispatch(setLoading(false));
+      return;
+    }
+    if (checkUserNameAlreadyPresent.success === false) {
+      toast.info("userName already in use");
+      dispatch(setLoading(false));
+      return;
+    }
+
+    // userName validation done, now send otp
+    reset();
     const tid = toast.loading("Loading...");
 
-    const newSignUpData = new FormData();
+    const response = await sendOtpApi(data.email, "yes");
+    toast.dismiss(tid);
 
+    if (!response) {
+      toast.error("Error while sending otp");
+      return;
+    }
+
+    if (response.success === false) {
+      toast.info("Hey, you are already registered with us!");
+      return;
+    }
+
+    // collect and store signup data
+    const newSignUpData = new FormData();
     if (selectedFile) {
       newSignUpData.append("imageFile", selectedFile);
+      setSelectedFile(null);
     }
     newSignUpData.append("firstName", data.firstName);
     newSignUpData.append("lastName", data.lastName);
@@ -105,23 +144,15 @@ const SignUp = (props: SignInProps) => {
     newSignUpData.append("email", data.email);
     newSignUpData.append("password", data.password);
     newSignUpData.append("confirmPassword", data.confirmPassword);
+    setSignUp(newSignUpData);
+    toast.info("Check your mail for otp");
 
-    reset();
-    setSelectedFile(null);
-
-    const response = await sendOtpApi(data.email);
-    toast.dismiss(tid);
-    if (response) {
-      setSignUp(newSignUpData);
-      toast.info("Check your mail for otp");
-      setToggleOtp(true);
-    } else {
-      toast.error("Error while sending otp");
-    }
+    // show otp input ui
+    setToggleOtp(true);
   };
 
   return toggleOtp ? (
-    <OtpInput submitOtp={signUpUser} />
+    <OtpInput signUpUser={signUpUser} />
   ) : (
     <div className="flex w-full flex-col items-center justify-evenly">
       <form

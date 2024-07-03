@@ -45,12 +45,12 @@ export const checkUserSocket = async (socket: Socket): Promise<boolean> => {
 
     const userIds = await jwtVerify(token);
 
-    if (!userIds || userIds.length !== 2) {
+    if (!userIds) {
       return false;
     }
 
     // user verified and now userid is set in request
-    (socket as CustomSocket).userId = userIds[0] as string;
+    (socket as CustomSocket).userId = userIds.userId;
 
     return true;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

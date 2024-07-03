@@ -1,5 +1,12 @@
 import User from "@/db/mongodb/models/User";
-import { LogInReqSchema, SendOtpReqSchema, SignUpReqSchema } from "@/types/controllers/authReq";
+import {
+  ChangePasswordReqSchema,
+  LogInReqSchema,
+  SendOtpReqSchema,
+  ResetPasswordReqSchema,
+  SignUpReqSchema,
+  VerifyOtpReqSchema,
+} from "@/types/controllers/authReq";
 import { Request, Response } from "express";
 import { uploadToCloudinary } from "@/utils/cloudinaryHandler";
 import { errRes } from "@/utils/error";
@@ -8,13 +15,18 @@ import jwt from "jsonwebtoken";
 import Token from "@/db/mongodb/models/Token";
 import Notification from "@/db/mongodb/models/Notification";
 import { jwtVerify } from "@/utils/token";
-import { generateOTP } from "@/utils/generateOtp";
-import Otp from "@/db/mongodb/models/Otp";
-import { sendPrivateKeyMail, sendVerficationMail } from "@/utils/sendMail";
-import * as forge from "node-forge";
+import { checkOTP, generateOTP } from "@/utils/otp";
+import {
+  sendForgotPasswordVerificationMail,
+  sendPasswordUpdatedMail,
+  sendPrivateKeyMail,
+  sendVerficationMail,
+} from "@/utils/sendMail";
 import { deleteFile } from "@/utils/deleteFile";
 import { db } from "@/db/postgresql/connection";
 import { user } from "@/db/postgresql/schema/user";
+import { CustomRequest } from "@/types/custom";
+import generateAsymmetricKeyPair from "@/utils/generateAsymmetricKeyPair";
 
 export const signUp = async (req: Request, res: Response): Promise<Response> => {
   try {
@@ -29,16 +41,29 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
 
     const data = signUpReq.data;
 
-    const checkOtp = await Otp.findOne({ email: data.email, otpValue: data.otp });
+    const checkOtp = await checkOTP(data.email, data.otp);
 
     if (!checkOtp) {
       if (req.file) {
         deleteFile(req.file);
       }
-      return errRes(res, 400, "Invalid otp or otp has expired");
+      return res.status(200).json({
+        success: false,
+        message: "otp expired or invalid",
+      });
     }
-    // delete otp after verification
-    await Otp.deleteOne({ otpValue: data.otp });
+
+    // check if userName is already in use
+    const checkUserName = await User.findOne({ userName: data.userName }).select({ userName: true }).exec();
+    if (checkUserName) {
+      if (req.file) {
+        deleteFile(req.file);
+      }
+      return res.status(200).json({
+        success: false,
+        message: "userName already in use",
+      });
+    }
 
     // now check if user is already registered
     const response = await User.findOne({ email: data.email }).select({ email: true }).exec();
@@ -47,16 +72,6 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
         deleteFile(req.file);
       }
       return errRes(res, 400, "user already present");
-    }
-
-    // check if userName is already in use
-    const checkUserName = await User.findOne({ userName: data.userName }).select({ userName: true }).exec();
-
-    if (checkUserName) {
-      if (req.file) {
-        deleteFile(req.file);
-      }
-      return errRes(res, 400, "user name already in use");
     }
 
     /* all verification done, now create user */
@@ -73,17 +88,15 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     // encrypt password
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
-    // Generate a key pair (public and private keys)
-    const keypair = forge.pki.rsa.generateKeyPair({ bits: 2048 });
-    const publicKeyPem = forge.pki.publicKeyToPem(keypair.publicKey);
-    const privateKeyPem = forge.pki.privateKeyToPem(keypair.privateKey);
+    // get key pairs for new user
+    const keyPair = generateAsymmetricKeyPair();
 
     const newUser = await User.create({
       firstName: data.firstName,
       lastName: data.lastName,
       userName: data.userName,
       password: hashedPassword,
-      publicKey: publicKeyPem,
+      publicKey: keyPair.publicKeyPem,
       email: data.email,
       imageUrl: secUrl ? secUrl : "",
     });
@@ -114,7 +127,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
 
     // now generate pair of public and private keys for user
     // Split the key into lines
-    const lines = privateKeyPem.trim().split("\n");
+    const lines = keyPair.privateKeyPem.trim().split("\n");
 
     // Remove the first and last lines (which contain the comment)
     const privateKeyPemOnly = lines.slice(1, -1).join("\n");
@@ -140,21 +153,45 @@ export const sendOtp = async (req: Request, res: Response): Promise<Response> =>
     // validation
     const sendOtpReq = SendOtpReqSchema.safeParse(req.body);
     if (!sendOtpReq.success) {
-      return errRes(res, 400, `invalid email id, ${sendOtpReq.error.message}`);
+      return errRes(res, 400, `invalid data for otp, ${sendOtpReq.error.message}`);
     }
 
     const data = sendOtpReq.data;
+    const checkUser = await User.findOne({ email: data.email });
 
-    const newOtp = generateOTP();
-    await Otp.create({ email: data.email, otpValue: newOtp });
+    // otp to send for new user
+    if (data.newUser === "yes") {
+      // otp is need to be sent to new user but user already exists
+      if (checkUser) {
+        return res.status(200).json({
+          success: false,
+          message: "user already exists for mail id",
+        });
+      }
+      const newOtp = await generateOTP(data.email);
+      /* NOTE: commented only for development purpose, remove comment in production */
+      await sendVerficationMail(data.email, newOtp);
+      return res.status(200).json({
+        success: true,
+        message: "otp send successfully",
+      });
+    }
 
+    // otp to send for existing user
+    if (!checkUser) {
+      return res.status(200).json({
+        success: false,
+        message: "user not registerd for mail id",
+      });
+    }
+    const newOtp = await generateOTP(data.email);
     /* NOTE: commented only for development purpose, remove comment in production */
-    await sendVerficationMail(data.email, newOtp);
-
+    await sendForgotPasswordVerificationMail(data.email, newOtp);
     return res.status(200).json({
       success: true,
       message: "otp send successfully",
     });
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     return errRes(res, 500, "error while sending otp", error.message);
@@ -261,11 +298,11 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
     const userIds = await jwtVerify(token);
 
     // If JWT token present and userId invalid or null
-    if (!userIds || userIds.length !== 2) {
+    if (!userIds) {
       return errRes(res, 401, "user authorization failed");
     }
 
-    const user = await User.findById({ _id: `${userIds[0]}` })
+    const user = await User.findById({ _id: userIds.userId })
       .select({
         userId2: true,
         firstName: true,
@@ -301,12 +338,12 @@ export const logOut = async (req: Request, res: Response): Promise<Response> => 
     const userIds = await jwtVerify(token);
 
     // If JWT token present and userId invalid or null
-    if (!userIds || userIds.length !== 2) {
+    if (!userIds) {
       return errRes(res, 400, "user token invalid");
     }
 
     await Token.findOneAndDelete({ tokenValue: token });
-    await User.findByIdAndUpdate({ _id: `${userIds[0]}` }, { $unset: { userToken: true } });
+    await User.findByIdAndUpdate({ _id: userIds.userId }, { $unset: { userToken: true } });
 
     res.cookie(`${process.env["TOKEN_NAME"]}`, "", {
       expires: new Date(0), // Set an immediate expiration date (in the past)
@@ -322,5 +359,136 @@ export const logOut = async (req: Request, res: Response): Promise<Response> => 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     return errRes(res, 500, "error while user log out", error.message);
+  }
+};
+
+export const changePassword = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const userId = (req as CustomRequest).userId;
+
+    const changePasswordReq = ChangePasswordReqSchema.safeParse(req.body);
+    if (!changePasswordReq.success) {
+      return errRes(res, 400, `invalid data, ${changePasswordReq.error.message}`);
+    }
+
+    const data = changePasswordReq.data;
+
+    const userDetails = await User.findById({ _id: userId })
+      .select({ userName: true, email: true, password: true, userToken: true })
+      .exec();
+    if (!userDetails) {
+      return errRes(res, 400, "userDetails not present in database");
+    }
+
+    // check old password
+    const checkOldPassword = await bcrypt.compare(data.oldPassword, userDetails.password);
+    if (!checkOldPassword) {
+      return res.status(200).json({
+        success: false,
+        message: "old password did not matched",
+      });
+    }
+
+    // encrypt password
+    const hashedPassword = await bcrypt.hash(data.newPassword, 10);
+    userDetails.password = hashedPassword;
+
+    // validation done, now update new password and delete current token
+    if (userDetails.userToken) {
+      await Token.findByIdAndDelete({ _id: userDetails.userToken }).exec();
+    }
+
+    // generate new token
+    const newUserToken = jwt.sign({ userId: userDetails._id }, `${process.env["JWT_SECRET"]}`, {
+      expiresIn: "24h",
+    });
+
+    const newToken = await Token.create({ tokenValue: newUserToken });
+    // update new token _id in userDetails
+    userDetails.userToken = newToken._id;
+
+    await userDetails.save();
+    await sendPasswordUpdatedMail(userDetails.userName, userDetails.email);
+
+    // set token in cookie and select httponly: true
+    const options = {
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 1),
+      httpOnly: true,
+      secure: true,
+    };
+    return res.cookie(`${process.env["TOKEN_NAME"]}`, newUserToken, options).status(200).json({
+      success: true,
+      message: "user password updated successfully",
+    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while updating password", error.message);
+  }
+};
+
+export const verifyOtp = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const verifyOtpReq = VerifyOtpReqSchema.safeParse(req.body);
+    if (!verifyOtpReq.success) {
+      return errRes(res, 400, `invalid data, ${verifyOtpReq.error.message}`);
+    }
+
+    const data = verifyOtpReq.data;
+
+    const checkOtp = await checkOTP(data.email, data.otp);
+    if (checkOtp) {
+      return res.status(200).json({
+        success: true,
+        message: "otp validation successfull",
+      });
+    }
+    return res.status(200).json({
+      success: false,
+      message: "otp validation failed",
+    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while validating otp", error.message);
+  }
+};
+
+export const resetPassword = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const resetPasswordReq = ResetPasswordReqSchema.safeParse(req.body);
+    if (!resetPasswordReq.success) {
+      return errRes(res, 400, `invalid data, ${resetPasswordReq.error.message}`);
+    }
+
+    const data = resetPasswordReq.data;
+
+    const checkOtp = await checkOTP(data.email, data.otp);
+    if (!checkOtp) {
+      return res.status(200).json({
+        success: false,
+        message: "otp validation failed",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const updateUser = await User.findOneAndUpdate(
+      { email: data.email },
+      { $set: { password: hashedPassword } },
+      { new: true }
+    )
+      .select({ email: true })
+      .exec();
+
+    if (!updateUser) {
+      return errRes(res, 400, "user does not exist for email id");
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "new password set successfully",
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while setting new password", error.message);
   }
 };
