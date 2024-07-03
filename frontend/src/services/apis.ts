@@ -9,7 +9,7 @@ export const authEndPoints = {
   LOGOUT: BASE_URL_SERVER + "/auths/logout",
   CHANGE_PASSWORD: BASE_URL_SERVER + "/auths/changePassword",
   VERIFY_OTP: BASE_URL_SERVER + "/auths/verifyOtp",
-  RESET_PASSWORD: BASE_URL_SERVER + "/auths/newPassword",
+  RESET_PASSWORD: BASE_URL_SERVER + "/auths/resetPassword",
 };
 
 // profile endpoints
