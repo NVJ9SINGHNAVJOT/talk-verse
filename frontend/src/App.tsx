@@ -52,6 +52,9 @@ function App() {
         dispatch(setUser(response.user));
         dispatch(setAuthUser(true));
         dispatch(setMyId(response.user._id));
+      } else {
+        // for multiple tabs set CHECK_USER_IN_MULTI_TAB to "false"
+        localStorage.setItem(process.env.CHECK_USER_IN_MULTI_TAB as string, JSON.stringify("false"));
       }
 
       setTimeout(() => {

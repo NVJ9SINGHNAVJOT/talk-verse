@@ -127,6 +127,9 @@ const LogIn = (props: SignInProps) => {
         <button disabled={loginLoading} type="submit" className="w-full rounded-sm bg-white p-1 text-black">
           Submit
         </button>
+        <div onClick={() => navigate("/resetPassword")} className="mt-2 cursor-pointer text-snow-700 hover:text-white">
+          Forgot Password
+        </div>
       </form>
 
       <div className="flex flex-col items-center gap-5">

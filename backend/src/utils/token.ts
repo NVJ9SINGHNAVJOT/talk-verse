@@ -3,7 +3,7 @@ import User from "@/db/mongodb/models/User";
 import { CustomPayload } from "@/types/custom";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
-export const jwtVerify = async (token: string): Promise<(string | number)[] | null> => {
+export const jwtVerify = async (token: string): Promise<{ userId: string; userId2: number } | null> => {
   // check token exist in database or expired or invalid token
   const checkToken = await Token.findOne({ tokenValue: token }).exec();
   if (!checkToken) {
@@ -27,5 +27,5 @@ export const jwtVerify = async (token: string): Promise<(string | number)[] | nu
     return null;
   }
 
-  return [decoded.userId, checkUser.userId2];
+  return { userId: decoded.userId, userId2: checkUser.userId2 };
 };

@@ -29,6 +29,7 @@ import Talk from "@/pages/Talk";
 import Home from "@/pages/Home";
 import Group from "@/components/core/talk/Group";
 import Error from "@/pages/Error";
+import ResetPassword from "@/pages/ResetPassword";
 
 const router = createBrowserRouter([
   {
@@ -53,6 +54,14 @@ const router = createBrowserRouter([
         element: (
           <OpenRoute>
             <Login />
+          </OpenRoute>
+        ),
+      },
+      {
+        path: "resetPassword",
+        element: (
+          <OpenRoute>
+            <ResetPassword />
           </OpenRoute>
         ),
       },
@@ -143,6 +152,7 @@ const router = createBrowserRouter([
           },
         ],
       },
+      /* ===== error route ===== */
       {
         path: "error",
         element: <Error />,

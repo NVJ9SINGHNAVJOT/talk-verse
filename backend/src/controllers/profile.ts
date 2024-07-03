@@ -23,9 +23,9 @@ export const checkUserName = async (req: Request, res: Response): Promise<Respon
 
     const data = checkUserNameReq.data;
 
-    const checkUserName = await User.countDocuments({ userName: data.userName });
+    const checkUserName = await User.findOne({ userName: data.userName }).select({ userName: true }).exec();
 
-    if (checkUserName !== 0) {
+    if (checkUserName) {
       return res.status(200).json({
         success: false,
         message: "userName already exits",
@@ -395,6 +395,18 @@ export const removeFollower = async (req: Request, res: Response): Promise<Respo
       .execute();
 
     if (checkRemoveFollwer.length !== 0) {
+      // decrease current user followersCount by 1
+      await db
+        .update(user)
+        .set({ followersCount: sql`${user.followersCount} - 1` })
+        .where(eq(user.id, userId2));
+
+      // decrease otherUserId user followingCount by 1
+      await db
+        .update(user)
+        .set({ followingCount: sql`${user.followingCount} - 1` })
+        .where(eq(user.id, data.otherUserId));
+
       return res.status(200).json({
         success: true,
         message: "user removed from followers",
@@ -431,6 +443,18 @@ export const unfollowUser = async (req: Request, res: Response): Promise<Respons
       .execute();
 
     if (checkUnfollowUser.length !== 0) {
+      // decrease current user followingCount by 1
+      await db
+        .update(user)
+        .set({ followersCount: sql`${user.followingCount} - 1` })
+        .where(eq(user.id, userId2));
+
+      // decrease otherUserId user followersCount by 1
+      await db
+        .update(user)
+        .set({ followingCount: sql`${user.followersCount} - 1` })
+        .where(eq(user.id, data.otherUserId));
+
       return res.status(200).json({
         success: true,
         message: "other user unfollowed",
