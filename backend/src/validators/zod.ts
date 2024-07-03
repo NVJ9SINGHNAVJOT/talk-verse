@@ -50,7 +50,7 @@ export const emailSchema = z.string().regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.
 export const optSchema = z
   .string()
   .length(6)
-  .regex(/^[0-9]{6}$/);
+  .regex(/^[1-9][0-9]{5}$/);
 
 // category
 export const categoriesSchema = z.enum([

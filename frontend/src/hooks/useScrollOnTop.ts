@@ -8,7 +8,7 @@ const useScrollOnTop = (ref: RefObject<HTMLDivElement>) => {
     // Check if the ref and current property are not null
     if (ref.current) {
       // Scroll to the top of the div element
-      ref.current.scroll({ top: 64, behavior: "instant" });
+      ref.current.scroll({ top: 0, behavior: "instant" });
       ref.current.scrollTop = 0;
     }
   }, [ref, location.pathname]); // Dependency on pathname

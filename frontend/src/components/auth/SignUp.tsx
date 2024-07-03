@@ -116,7 +116,6 @@ const SignUp = (props: SignInProps) => {
     }
 
     // userName validation done, now send otp
-    reset();
     const tid = toast.loading("Loading...");
 
     const response = await sendOtpApi(data.email, "yes");
@@ -132,6 +131,7 @@ const SignUp = (props: SignInProps) => {
       return;
     }
 
+    reset();
     // collect and store signup data
     const newSignUpData = new FormData();
     if (selectedFile) {
@@ -149,6 +149,7 @@ const SignUp = (props: SignInProps) => {
 
     // show otp input ui
     setToggleOtp(true);
+    dispatch(setLoading(false));
   };
 
   return toggleOtp ? (
