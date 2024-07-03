@@ -96,11 +96,11 @@ const ResetPassword = () => {
       className="relative flex h-[calc(100vh-4rem)] w-full min-w-minContent max-w-maxContent flex-col 
       items-center justify-center gap-8 overflow-y-auto"
     >
-      <div className="absolute z-50 self-center flex flex-col items-center gap-y-7">
+      <div className="absolute z-50 flex flex-col items-center gap-y-7 self-center">
         {step !== 0 && (
-          <div className=" flex flex-col items-center">
-            <h2 className=" text-white text-5xl">{formatTime(timeLeft)}</h2>
-            <p className=" text-red-700 text-xl animate-pulse">Remaing Time</p>
+          <div className="flex flex-col items-center">
+            <h2 className="text-5xl text-white">{formatTime(timeLeft)}</h2>
+            <p className="animate-pulse text-xl text-red-700">Remaining Time</p>
           </div>
         )}
         <form onSubmit={handleSubmit(submit)} className="flex flex-col items-center gap-y-14 text-white">
