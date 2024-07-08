@@ -17,7 +17,7 @@ const postSlice = createSlice({
       state.userTotalPosts = action.payload;
     },
     updateTotalPosts(state, action: PayloadAction<1 | -1>) {
-      state.userTotalPosts + action.payload;
+      state.userTotalPosts = state.userTotalPosts + action.payload;
     },
   },
 });

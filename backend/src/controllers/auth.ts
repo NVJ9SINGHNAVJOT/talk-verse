@@ -132,7 +132,6 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     // Remove the first and last lines (which contain the comment)
     const privateKeyPemOnly = lines.slice(1, -1).join("\n");
 
-    /* NOTE: commented only for development purpose, remove comment in production */
     await sendPrivateKeyMail(data.email, privateKeyPemOnly);
 
     return res.status(200).json({
@@ -168,9 +167,10 @@ export const sendOtp = async (req: Request, res: Response): Promise<Response> =>
           message: "user already exists for mail id",
         });
       }
+
       const newOtp = await generateOTP(data.email);
-      /* NOTE: commented only for development purpose, remove comment in production */
       await sendVerficationMail(data.email, newOtp);
+
       return res.status(200).json({
         success: true,
         message: "otp send successfully",
@@ -184,9 +184,10 @@ export const sendOtp = async (req: Request, res: Response): Promise<Response> =>
         message: "user not registerd for mail id",
       });
     }
+
     const newOtp = await generateOTP(data.email);
-    /* NOTE: commented only for development purpose, remove comment in production */
     await sendForgotPasswordVerificationMail(data.email, newOtp);
+
     return res.status(200).json({
       success: true,
       message: "otp send successfully",

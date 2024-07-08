@@ -134,12 +134,11 @@ export const deletePost = async (req: Request, res: Response): Promise<Response>
 
     // check query response
     if (postRes.length) {
-      // delete media from cloudinary
-      if (postRes[0] && postRes[0].mediaUrls.length > 0) {
-        postRes[0].mediaUrls.forEach((url) => {
-          deleteFromCloudinay(url);
-        });
-      }
+      /* 
+        NOTE: currently media files are not deleted after post delete.
+        TODO: separate api to be made to delete posts having 'isPostDeleted: true' from database and
+        remove media files from cloudinary.
+      */
       return res.status(200).json({
         success: true,
         message: "post deleted successfully",
@@ -164,6 +163,19 @@ export const savePost = async (req: Request, res: Response): Promise<Response> =
     const data = savePostReq.data;
 
     if (data.update === "add") {
+      /*
+        check if post with postId should not have userId as userId2.
+        because user cannot save it's own created post.
+      */
+      const checkIfUserCreatedPost = await db
+        .select({ id: post.id })
+        .from(post)
+        .where(and(eq(post.id, data.postId), eq(post.userId, userId2)));
+
+      if (checkIfUserCreatedPost.length !== 0) {
+        return errRes(res, 400, "user cannot save it's own post");
+      }
+
       const checkSavedPost = await db
         .insert(save)
         .values({ userId: userId2, postId: data.postId })
@@ -195,7 +207,7 @@ export const savePost = async (req: Request, res: Response): Promise<Response> =
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while save post for user", error.message);
+    return errRes(res, 500, "error while updating save post for user", error.message);
   }
 };
 

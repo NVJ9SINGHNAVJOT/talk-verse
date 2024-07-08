@@ -17,6 +17,7 @@ const sendMail = async (email: string, title: string, body: string): Promise<voi
     FIXME: for invalid email id, nodemailer throws error only some times. 
     this need to be changed and error to be thrown every time.
   */
+  /* NOTE: commented only for development purpose, remove comment in production */
   await transporter.sendMail({ from: "TalkVerse", to: email, subject: title, html: body });
 };
 

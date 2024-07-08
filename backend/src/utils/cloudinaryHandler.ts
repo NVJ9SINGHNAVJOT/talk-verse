@@ -80,8 +80,9 @@ export const deleteFromCloudinay = async (cloudinaryUrl: string) => {
     */
     /* NOTE: commented only for production purpose, remove comment in development */
     // cloudinary.api.delete_resources([publicId]);
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    logger.error("error while deleting file from cloudinary", { cloudinaryUrl: cloudinaryUrl, error: error });
+    logger.error("error while deleting file from cloudinary", { cloudinaryUrl: cloudinaryUrl, error: error.message });
   }
 };
