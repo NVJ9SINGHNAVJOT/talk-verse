@@ -134,7 +134,7 @@ const PostLayout = (props: PostProps) => {
               {/* tooltip for delete */}
               <div className="opacity-0 transition-all duration-300 ease-in group-hover:block group-hover:opacity-100">
                 <div
-                  className="pointer-events-none absolute top-1/2 flex -translate-x-4 -translate-y-1/2 items-center 
+                  className="pointer-events-none absolute top-1/2 flex -translate-x-[8rem] -translate-y-1/2 items-center 
                   rounded-sm text-center text-sm text-slate-300 transition-all duration-500 ease-in-out before:-top-2 
                   group-hover:-translate-x-[6.7rem]"
                 >
@@ -165,7 +165,7 @@ const PostLayout = (props: PostProps) => {
                 group-hover:opacity-100"
               >
                 <div
-                  className={`pointer-events-none absolute top-1/2 flex -translate-x-4 -translate-y-1/2 items-center 
+                  className={`pointer-events-none absolute top-1/2 flex -translate-x-[8rem] -translate-y-1/2 items-center 
                     rounded-sm text-center text-sm text-slate-300 transition-all duration-500 ease-in-out 
                     before:-top-2 
                     ${isSaved === true ? "group-hover:-translate-x-[7.18rem]" : "group-hover:-translate-x-[6.32rem]"}`}

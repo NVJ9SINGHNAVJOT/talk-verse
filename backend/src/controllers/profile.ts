@@ -214,7 +214,10 @@ export const userBlogProfile = async (req: Request, res: Response): Promise<Resp
       .limit(1)
       .execute();
 
-    const totalPosts = await db.select({ count: count() }).from(post).where(eq(post.userId, userId2));
+    const totalPosts = await db
+      .select({ count: count() })
+      .from(post)
+      .where(and(eq(post.userId, userId2), eq(post.isPostDeleted, false)));
 
     return res.status(200).json({
       success: true,
