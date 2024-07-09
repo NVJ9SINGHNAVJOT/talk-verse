@@ -3,8 +3,8 @@ version: '3.8'
 
 volumes:
   talkverse-backend:
-  talkverse-pg:
-  talkverse-mongo:
+  talkverse-postgres-db:
+  talkverse-mongo-db:
 
 networks:
   talkverse-proxy:
@@ -36,7 +36,7 @@ services:
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-      - talkverse-pg:/var/lib/postgresql/data
+      - talkverse-postgres-db:/var/lib/postgresql/data
     env_file: .env
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
@@ -52,7 +52,7 @@ services:
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-      - talkverse-mongo:/var/lib/mongodb/data
+      - talkverse-mongo-db:/var/lib/mongodb/data
     env_file: .env
     networks:
       - talkverse-proxy
