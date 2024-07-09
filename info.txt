@@ -5,3 +5,8 @@ version-1 inprogress
 
 pro-talk-verse  
 responsive from 640px to 2000px
+FIXME:
+mongo docker image is not able to use volume data, reason unknown.
+for alternative first stop talkverse-backend container, then remove container
+now when container is removed run command - docker compose build, docker compose up -d
+by this way mongo and postgres containers are not stopped and removed.
