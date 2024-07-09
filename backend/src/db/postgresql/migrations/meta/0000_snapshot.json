@@ -1,5 +1,5 @@
 {
-  "id": "ed7c2dd7-6856-4754-ba5a-b77c21476197",
+  "id": "5388be9a-9561-4d04-8825-175464f5b39c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -735,6 +735,13 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
+        "user_ref_id_unique": {
+          "name": "user_ref_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "ref_id"
+          ]
+        },
         "user_user_name_unique": {
           "name": "user_user_name_unique",
           "nullsNotDistinct": false,
