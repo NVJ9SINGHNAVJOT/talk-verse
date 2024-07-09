@@ -95,6 +95,7 @@ CREATE TABLE IF NOT EXISTS "user" (
 	"followers_count" integer DEFAULT 0 NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "user_ref_id_unique" UNIQUE("ref_id"),
 	CONSTRAINT "user_user_name_unique" UNIQUE("user_name")
 );
 --> statement-breakpoint

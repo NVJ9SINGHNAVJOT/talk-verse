@@ -12,7 +12,7 @@ export const user = pgTable("user", {
   id: serial("id").primaryKey(),
 
   // reference from mongodb
-  refId: char("ref_id", { length: 24 }).notNull(),
+  refId: char("ref_id", { length: 24 }).notNull().unique(),
   firstName: varchar("first_name", { length: 15 }).notNull(),
   lastName: varchar("last_name", { length: 15 }).notNull(),
   userName: varchar("user_name", { length: 15 }).notNull().unique(),
