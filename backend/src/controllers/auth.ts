@@ -224,7 +224,10 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
       .exec();
 
     if (!checkUser) {
-      return errRes(res, 400, "user in not signed up");
+      return res.status(200).json({
+        success: false,
+        message: "user not registerd for mail id",
+      });
     }
 
     // check password and generate token

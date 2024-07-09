@@ -119,6 +119,7 @@ const SignUp = (props: SignInProps) => {
     const tid = toast.loading("Loading...");
 
     const response = await sendOtpApi(data.email, "yes");
+    dispatch(setLoading(false));
     toast.dismiss(tid);
 
     if (!response) {

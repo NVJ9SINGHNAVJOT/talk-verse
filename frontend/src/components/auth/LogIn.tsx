@@ -47,8 +47,8 @@ const LogIn = (props: SignInProps) => {
       return;
     }
 
-    if (response.success === false) {
-      toast.info("Incorrect password");
+    if (response.success === false || !response.user) {
+      toast.info(response.message);
       return;
     }
 

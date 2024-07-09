@@ -48,7 +48,7 @@ function App() {
     const checkDefaultLogin = async () => {
       const response = await checkUserApi();
 
-      if (response && response.success === true) {
+      if (response && response.success === true && response.user) {
         dispatch(setUser(response.user));
         dispatch(setAuthUser(true));
         dispatch(setMyId(response.user._id));
