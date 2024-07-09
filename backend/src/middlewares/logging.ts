@@ -4,12 +4,14 @@ import { NextFunction, Request, Response } from "express";
 
 function logging(req: Request, res: Response, next: NextFunction) {
   try {
+    const isLogin = req.url.split("/").pop();
+
     logger.http("req details", {
       method: req.method,
       url: req.url,
       clientIP: req.ip,
       query: req.query,
-      requestBody: req.body,
+      requestBody: isLogin === "login" ? { email: req.body.email } : req.body,
       requestHeaders: {
         "content-type": req.headers["content-type"],
       },
