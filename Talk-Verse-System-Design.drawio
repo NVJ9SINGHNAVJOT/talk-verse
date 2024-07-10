@@ -1,6 +1,6 @@
-<mxfile host="Electron" modified="2024-07-10T18:07:42.176Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.5.3 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="-zRQuJ2KxfF03jiYy3fk" version="24.5.3" type="device">
+<mxfile host="Electron" modified="2024-07-10T18:22:47.293Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.5.3 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="QMRAx79tMWu45o76TNdh" version="24.5.3" type="device">
   <diagram name="Page-1" id="xBdfEz-9WboyrYXsSSGI">
-    <mxGraphModel dx="2121" dy="2044" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="2192" dy="2078" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -13,7 +13,7 @@
             <mxPoint x="727" y="-990" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="nuiKF1VjGRspzTlw7c-V-4" value="" style="rounded=1;whiteSpace=wrap;html=1;direction=south;fillColor=#647687;strokeColor=#314354;fontColor=#ffffff;" parent="1" vertex="1">
+        <mxCell id="nuiKF1VjGRspzTlw7c-V-4" value="" style="rounded=1;whiteSpace=wrap;html=1;direction=south;fillColor=#9DB9D4;strokeColor=#314354;fontColor=#ffffff;" parent="1" vertex="1">
           <mxGeometry x="-159" y="2" width="536" height="864" as="geometry" />
         </mxCell>
         <mxCell id="nuiKF1VjGRspzTlw7c-V-5" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="nuiKF1VjGRspzTlw7c-V-1" target="cfrhRi3zTsHiO-jlDfqi-22" edge="1">
@@ -387,9 +387,6 @@
             <mxPoint x="-426" y="1123" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="bDJ4OmMcAz1w1Z4mRW5s-4" value="&lt;font size=&quot;1&quot; style=&quot;&quot;&gt;&lt;b style=&quot;font-size: 22px;&quot;&gt;Encryption and Decryption&lt;/b&gt;&lt;/font&gt;" style="whiteSpace=wrap;html=1;fillColor=#e51400;fontColor=#ffffff;strokeColor=#B20000;" parent="1" vertex="1">
-          <mxGeometry x="-136" y="330" width="488" height="49" as="geometry" />
-        </mxCell>
         <mxCell id="Rw7CRna9a3xsddY8eC8c-1" value="&lt;font style=&quot;text-wrap: nowrap; font-size: 16px;&quot;&gt;userSocketIds maps contains socketIds as string array for each connected user._id&amp;nbsp;&lt;/font&gt;&lt;div style=&quot;text-wrap: nowrap; font-size: 16px;&quot;&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;whenever user join web socket server its socket.id is stored in array for it&#39;s user._id in userSocketIds&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6a00ff;fontColor=#ffffff;strokeColor=#3700CC;" parent="1" vertex="1">
           <mxGeometry x="2364.5" y="-579" width="775" height="73" as="geometry" />
         </mxCell>
@@ -533,6 +530,9 @@
             <mxPoint x="1427" y="219" as="sourcePoint" />
             <mxPoint x="1426" y="97" as="targetPoint" />
           </mxGeometry>
+        </mxCell>
+        <mxCell id="xVZ5ul_7m6fOiQexNmXF-1" value="&lt;b style=&quot;color: rgb(0, 0, 0); text-wrap: wrap;&quot;&gt;&lt;font style=&quot;font-size: 26px;&quot;&gt;Encryption and Decryption&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="-65.5" y="311" width="350" height="43" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
