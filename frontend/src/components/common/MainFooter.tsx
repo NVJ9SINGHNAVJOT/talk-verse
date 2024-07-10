@@ -23,7 +23,7 @@ const MainFooter = () => {
         {/* logo and main description */}
         <div className="flex flex-col col-span-3 lg:col-span-2 ">
           <div className="flex gap-5">
-            <img src="images/mainLogo.png" alt="Loading..." className=" w-16 aspect-square"></img>
+            <img src="images/mainLogo.jpg" alt="Loading..." className=" w-16 aspect-square"></img>
             <span onClick={homeHandler} className=" text-2xl font-medium cursor-pointer">
               TalkVerse
             </span>
