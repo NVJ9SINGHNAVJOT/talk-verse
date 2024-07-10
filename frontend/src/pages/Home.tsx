@@ -26,7 +26,7 @@ const Home = () => {
             TalkVerse lets you chat privately
           </p>
         </div>
-        <img src="images/homePage.png" alt="Loading..." className="w-[25rem] aspect-square"></img>
+        <img src="images/homePage.jpg" alt="Loading..." className="w-[25rem] aspect-square"></img>
       </section>
       <section className="w-full flex justify-evenly items-center pt-8 py-36">
         <TrackingCard />
