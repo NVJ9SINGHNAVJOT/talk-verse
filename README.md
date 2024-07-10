@@ -81,7 +81,7 @@ TalkVerse is a social media web application.
 
 ## System Design
 
-- [`Open`](https://raw.githubusercontent.com/NVJ9SINGHNAVJOT/talk-verse/11188ac3d1b807d1d0673781c210d0dc47e66b7a/Talk-Verse-System-Design.svg)
-  ![Talk-Verse-System-Design](https://raw.githubusercontent.com/NVJ9SINGHNAVJOT/talk-verse/11188ac3d1b807d1d0673781c210d0dc47e66b7a/Talk-Verse-System-Design.svg)
+- [`Open`](https://raw.githubusercontent.com/NVJ9SINGHNAVJOT/talk-verse/3e9add97953f7a8126ecfb56e62542a903d257a4/Talk-Verse-System-Design.svg)
+![Talk-Verse-System-Design](https://raw.githubusercontent.com/NVJ9SINGHNAVJOT/talk-verse/3e9add97953f7a8126ecfb56e62542a903d257a4/Talk-Verse-System-Design.svg)
 
 ---
