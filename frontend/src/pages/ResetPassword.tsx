@@ -128,7 +128,7 @@ const ResetPassword = () => {
                 minLength={6}
                 maxLength={6}
                 className="h-12 w-40 rounded-lg bg-white p-2 text-center tracking-[0.5rem] text-black 
-                outline-none placeholder:-tracking-normal"
+                outline-none placeholder:tracking-normal"
                 {...register("otp", {
                   required: true,
                   minLength: 6,
