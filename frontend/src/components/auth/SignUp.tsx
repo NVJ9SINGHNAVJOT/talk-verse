@@ -154,7 +154,7 @@ const SignUp = (props: SignInProps) => {
   };
 
   return toggleOtp ? (
-    <OtpInput signUpUser={signUpUser} />
+    <OtpInput submitOtpHandler={signUpUser} />
   ) : (
     <div className="flex w-full flex-col items-center justify-evenly">
       <form
