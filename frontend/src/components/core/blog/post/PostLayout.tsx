@@ -114,7 +114,7 @@ const PostLayout = (props: PostProps) => {
         {/* top left */}
         <div className="flex">
           {post.imageUrl ? (
-            <img alt="Loading..." className="size-10 rounded-full" src={post.imageUrl} />
+            <img alt="Loading..." className="size-10 object-cover rounded-full" src={post.imageUrl} />
           ) : (
             <RxAvatar className="size-10 rounded-full" />
           )}
