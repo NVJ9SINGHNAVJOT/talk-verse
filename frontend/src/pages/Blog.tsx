@@ -179,7 +179,7 @@ const Blog = () => {
         {/* user profile details */}
         <div className="mt-4 flex flex-col items-center gap-y-1 font-be-veitnam-pro text-snow-200">
           {user?.imageUrl ? (
-            <img src={user?.imageUrl} alt="Loading..." className="aspect-auto size-20 rounded-full" />
+            <img src={user?.imageUrl} alt="Loading..." className="size-20 object-cover rounded-full" />
           ) : (
             <RxAvatar className="aspect-auto size-20 w-full rounded-full fill-slate-500" />
           )}
@@ -262,7 +262,7 @@ const Blog = () => {
                   <img
                     alt="Loading.."
                     src={user.imageUrl}
-                    className="size-12 cursor-pointer rounded-full border-[2px] border-dotted border-whitesmoke bg-slate-900"
+                    className="size-12 cursor-pointer object-cover rounded-full border-[2px] border-whitesmoke bg-slate-900"
                   />
                 </button>
               ) : (

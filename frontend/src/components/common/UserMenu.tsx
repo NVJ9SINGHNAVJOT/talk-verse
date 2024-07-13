@@ -31,14 +31,14 @@ const UserMenu = () => {
       {user?.imageUrl ? (
         <img
           onClick={toggleMenu}
-          className="aspect-auto h-10 w-10 cursor-pointer rounded"
+          className="aspect-auto size-10 object-cover cursor-pointer rounded"
           src={user?.imageUrl as string}
           alt="Loading..."
         ></img>
       ) : (
         <div
           onClick={toggleMenu}
-          className="peer flex h-10 w-10 cursor-pointer items-center justify-center gap-1 rounded bg-richblue-500 text-white hover:bg-transparent"
+          className="peer flex size-10 cursor-pointer items-center justify-center gap-1 rounded bg-richblue-500 text-white hover:bg-transparent"
         >
           <span className="text-xl uppercase text-white">{user?.firstName.charAt(0)}</span>
           <span className="text-xl uppercase text-white">{user?.lastName.charAt(0)}</span>

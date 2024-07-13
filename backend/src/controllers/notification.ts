@@ -136,7 +136,7 @@ export const getFollowUsers = async (req: Request, res: Response): Promise<Respo
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while getting follow users");
+    return errRes(res, 500, "error while getting follow users", error.message);
   }
 };
 
