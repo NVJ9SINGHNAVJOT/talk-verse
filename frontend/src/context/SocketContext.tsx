@@ -1,4 +1,12 @@
 import {
+  addChatBarData,
+  addFriend,
+  addGroup,
+  addOnlineFriend,
+  addUserRequest,
+  addUserTyping,
+  removeOnlineFriend,
+  removeUserTyping,
   resetTyping,
   setChatBarData,
   setFriends,
@@ -6,8 +14,15 @@ import {
   setLastMainId,
   setOnlineFriend,
   setUserRequests,
+  UserRequest,
 } from "@/redux/slices/chatSlice";
 import {
+  addLiveGpMessage,
+  addLivePMessage,
+  addNewUnseen,
+  addPublicKey,
+  GroupMessages,
+  PublicKey,
   PublicKeys,
   resetChatIdAndGroupIdPoints,
   resetGpMess,
@@ -19,16 +34,22 @@ import {
 import { setTalkPageLoading } from "@/redux/slices/loadingSlice";
 import { chatBarDataApi } from "@/services/operations/chatApi";
 import { checkOnlineFriendsApi, getAllNotificationsApi } from "@/services/operations/notificationApi";
-import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useRef, useState } from "react";
+import { createContext, ReactNode, useContext, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { io, Socket } from "socket.io-client";
 import { clientE } from "@/socket/events";
+import {
+  SoUserRequest,
+  SoRequestAccepted,
+  SoAddedInGroup,
+  SoMessageRecieved,
+  SoGroupMessageRecieved,
+} from "@/types/socket/eventTypes";
 
 interface SocketContextInterface {
-  socket: Socket | null;
-  setSocket: Dispatch<SetStateAction<Socket | null>>;
+  socketRef: React.MutableRefObject<Socket | null>;
   setupSocketConnection: () => Promise<void>;
   disconnectSocket: () => void;
 }
@@ -49,7 +70,6 @@ export const useSocketContext = (): SocketContextInterface => {
 };
 
 export default function SocketProvider({ children }: ContextProviderProps) {
-  const [socket, setSocket] = useState<Socket | null>(null);
   const socketRef = useRef<Socket | null>(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -128,16 +148,112 @@ export default function SocketProvider({ children }: ContextProviderProps) {
         dispatch(setOnlineFriend(res3.onlineFriends));
       }
 
-      // all response are valid for talk page, now connect to web socket server
+      /* all response are valid for talk page, now connect to web socket server */
       socketRef.current = socketInstance.connect();
-      socketRef.current.on("connect", () => {
-        setSocket(socketInstance);
+      /* 
+        user is connected with web socket server then register socket events
+        all event listeners are registered here 
+      */
+      const socket = socketRef.current;
+      /* ===== socket events start ===== */
+      socket.on(clientE.USER_REQUEST, (data: SoUserRequest) => {
+        dispatch(
+          addUserRequest({
+            _id: data._id,
+            userName: data.userName,
+            imageUrl: data.imageUrl,
+          } as UserRequest)
+        );
+        toast.info("New friend request");
+      });
+
+      socket.on(clientE.REQUEST_ACCEPTED, (data: SoRequestAccepted) => {
+        dispatch(
+          addPublicKey({
+            userId: data._id,
+            publicKey: data.publicKey,
+          } as PublicKey)
+        );
+        dispatch(
+          addFriend({
+            _id: data._id,
+            chatId: data.chatId,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            imageUrl: data.imageUrl,
+          })
+        );
+        dispatch(
+          addChatBarData({
+            _id: data._id,
+            chatId: data.chatId,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            imageUrl: data.imageUrl,
+          })
+        );
+        dispatch(addNewUnseen(data.chatId));
+        toast.success("New friend added");
+      });
+
+      socket.on(clientE.ADDED_IN_GROUP, (data: SoAddedInGroup) => {
+        dispatch(addGroup(data));
+        dispatch(addNewUnseen(data._id));
+        dispatch(
+          addChatBarData({
+            _id: data._id,
+            groupName: data.groupName,
+            gpImageUrl: data.gpImageUrl,
+          })
+        );
+        toast.success("Added in new Group");
+      });
+
+      socket.on(clientE.MESSAGE_RECIEVED, (data: SoMessageRecieved) => {
+        dispatch(addLivePMessage(data));
+      });
+
+      socket.on(clientE.GROUP_MESSAGE_RECIEVED, (data: SoGroupMessageRecieved) => {
+        const newGpMessage: GroupMessages = {
+          uuId: data.uuId,
+          isFile: data.isFile,
+          from: {
+            _id: data.from,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            imageUrl: data.imageUrl,
+          },
+          to: data.to,
+          text: data.text,
+          createdAt: data.createdAt,
+        };
+        dispatch(addLiveGpMessage(newGpMessage));
+      });
+
+      socket.on(clientE.OTHER_START_TYPING, (friendId: string) => {
+        dispatch(addUserTyping(friendId));
+      });
+
+      socket.on(clientE.OTHER_STOP_TYPING, (friendId: string) => {
+        dispatch(removeUserTyping(friendId));
+      });
+
+      socket.on(clientE.SET_USER_ONLINE, (friendId: string) => {
+        dispatch(addOnlineFriend(friendId));
+      });
+
+      socket.on(clientE.SET_USER_OFFLINE, (friendId: string) => {
+        dispatch(removeOnlineFriend(friendId));
+      });
+      /* ===== socket events end ===== */
+
+      socket.on("connect", () => {
         setTimeout(() => {
           dispatch(setTalkPageLoading(false));
-        }, 700);
+        }, 500);
       });
+
       socketRef.current.on("connect_error", () => {
-        setSocket(null);
         socketRef.current = null;
         toast.error("Error in connection");
         // if error in connection then clear all state for talk page
@@ -146,11 +262,15 @@ export default function SocketProvider({ children }: ContextProviderProps) {
       });
     } catch (error) {
       toast.error("Error while connecting");
+      // if error in connection then clear all state for talk page
+      talkPageCleanUp();
       navigate("/");
     }
   };
 
   const disconnectSocket = (): void => {
+    // disconnect user from web socket server
+    const socket = socketRef.current;
     if (socket) {
       socket.off(clientE.USER_REQUEST);
       socket.off(clientE.REQUEST_ACCEPTED);
@@ -161,15 +281,13 @@ export default function SocketProvider({ children }: ContextProviderProps) {
       socket.off(clientE.OTHER_STOP_TYPING);
       socket.off(clientE.SET_USER_ONLINE);
       socket.off(clientE.SET_USER_OFFLINE);
+      socket.disconnect();
     }
-    socketRef.current?.disconnect();
-    socketRef.current = null;
-    setSocket(null);
     talkPageCleanUp();
   };
 
   return (
-    <SocketContext.Provider value={{ socket, setSocket, setupSocketConnection, disconnectSocket }}>
+    <SocketContext.Provider value={{ socketRef, setupSocketConnection, disconnectSocket }}>
       {children}
     </SocketContext.Provider>
   );

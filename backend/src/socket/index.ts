@@ -58,9 +58,6 @@ export const setupWebSocket = (app: Application): HTTPServer => {
 
   io.on("connection", (socket: Socket) => {
     const userId = (socket as CustomSocket).userId;
-    if (!userId) {
-      socket.disconnect();
-    }
     logger.info(`a user connected id: ${userId} : ${socket.id}`);
 
     // set userId in userSocketIds and show friends that user in online
@@ -75,7 +72,7 @@ export const setupWebSocket = (app: Application): HTTPServer => {
       showOnline(io, userId, false, true, socket);
     }
 
-    // register events
+    /* register socket events */
     registerNotificationEvents(socket, userId);
     registerMessageEvents(io, socket, userId);
 
@@ -84,13 +81,18 @@ export const setupWebSocket = (app: Application): HTTPServer => {
 
       // remove userId in userSocketIds
       const checkUserAlreadyConnected = userSocketIDs.get(userId);
+      if (!checkUserAlreadyConnected || checkUserAlreadyConnected.length === 0) {
+        logger.error("while disconnecting no socketId array is present in userSocketIDs map");
+        showOnline(io, userId, false, false, socket);
+        return;
+      }
       // check if this is the only socketId present for userId
-      if (checkUserAlreadyConnected?.length === 1) {
+      if (checkUserAlreadyConnected.length === 1) {
         userSocketIDs.delete(userId);
         showOnline(io, userId, false, false, socket);
       } else {
         // user is still connected with other socketIds
-        const afterRemovingSocketId = userSocketIDs.get(userId)?.filter((sId) => sId !== socket.id);
+        const afterRemovingSocketId = checkUserAlreadyConnected.filter((sId) => sId !== socket.id);
         if (afterRemovingSocketId) {
           userSocketIDs.set(userId, afterRemovingSocketId);
         }

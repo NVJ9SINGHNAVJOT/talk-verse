@@ -74,8 +74,8 @@ export const checkGroupMembers = (groupMembers: string): string[] => {
   // Check if checkMembers is an array and not empty
   if (
     !Array.isArray(checkMembers) ||
-    checkMembers.length < 3 ||
-    checkMembers.length > 50 ||
+    checkMembers.length < 2 ||
+    checkMembers.length > 49 ||
     !isValidMongooseObjectId(checkMembers)
   ) {
     return [];

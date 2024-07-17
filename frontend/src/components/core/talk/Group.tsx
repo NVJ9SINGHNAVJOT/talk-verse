@@ -39,10 +39,11 @@ const Group = () => {
   const [resetTrigger, setResetTrigger] = useState<boolean>(true);
   const [firstMounting, setFirstMounting] = useState(true);
   const dispatch = useDispatch();
-  const { socket } = useSocketContext();
+  const { socketRef } = useSocketContext();
   const navigate = useNavigate();
   const { groupId } = useParams();
   const scrollableDivRef = useRef<HTMLDivElement>(null);
+  const socket = socketRef.current;
 
   // initialLoad is for text input disable while messages re-render or render when groupId is changed
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
@@ -120,7 +121,9 @@ const Group = () => {
     getInitialGroup();
 
     return () => {
-      setInitialLoad(true), setFirstMounting(true), setStop(false);
+      setInitialLoad(true);
+      setFirstMounting(true);
+      setStop(false);
       setResetTrigger((prev) => !prev);
     };
 
