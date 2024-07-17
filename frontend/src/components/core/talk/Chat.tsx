@@ -44,9 +44,10 @@ const Chat = () => {
   const [firstMounting, setFirstMounting] = useState(true);
   const scrollableDivRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
-  const { socket } = useSocketContext();
+  const { socketRef } = useSocketContext();
   const navigate = useNavigate();
   const { chatId } = useParams();
+  const socket = socketRef.current;
 
   // initialLoad is for text input disable while messages re-render or render when chatId is changed
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
@@ -125,8 +126,10 @@ const Chat = () => {
     getInitialChat();
 
     return () => {
-      setInitialLoad(true), setFirstMounting(true);
-      setStop(false), setResetTrigger((prev) => !prev);
+      setInitialLoad(true);
+      setFirstMounting(true);
+      setStop(false);
+      setResetTrigger((prev) => !prev);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatId]);
