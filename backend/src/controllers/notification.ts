@@ -846,7 +846,7 @@ export const followSuggestions = async (req: Request, res: Response): Promise<Re
       })
       .from(user)
       .leftJoin(follow, and(eq(follow.followingId, user.id), eq(follow.followerId, userId2)))
-      .leftJoin(request, eq(user.id, request.toId))
+      .leftJoin(request, and(eq(user.id, request.toId), eq(request.fromId, userId2)))
       .where(and(isNull(request.toId), isNull(follow.followerId), ne(user.id, userId2)))
       .limit(5)
       .execute();
