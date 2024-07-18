@@ -104,16 +104,8 @@ const LogIn = (props: SignInProps) => {
             required
             {...register("password", {
               required: true,
-              pattern: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*]).{8,20}$/,
-              minLength: 8,
-              maxLength: 20,
             })}
           />
-          {errors.password && (
-            <span className="absolute text-[0.7rem] text-red-600">
-              lowercase, uppercase, digit, special character and Length: min - 8, max - 20
-            </span>
-          )}
 
           <label
             className="absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-sm text-white duration-300 

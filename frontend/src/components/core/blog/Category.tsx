@@ -57,10 +57,12 @@ const Category = () => {
       }
 
       const response = await categoryPostsApi(category, lastCreatedAt);
+      dispatch(setApiCall({ api: `${category}-category-post`, status: false }));
+
       if (response) {
         if (response.posts) {
           const withNewPosts = [...categoriesPost, ...response.posts];
-          if (category === response.posts[0].category) {
+          if (location.pathname.includes(response.posts[0].category)) {
             if (response.posts.length < 15) {
               setStop(true);
             }
@@ -72,7 +74,6 @@ const Category = () => {
       } else {
         toast.error("Error while getting recent post");
       }
-      dispatch(setApiCall({ api: `${category}-category-post`, status: false }));
     };
     getPosts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
