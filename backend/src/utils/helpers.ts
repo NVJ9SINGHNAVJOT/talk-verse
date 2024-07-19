@@ -9,20 +9,22 @@ export const checkTags = (tags: string): string[] => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     // If JSON.parse fails, return an empty array
-    logger.error("error while parsing tags", { tags: tags });
+    logger.error("error while parsing tags", { tags: tags, error: error.message });
     return [];
   }
 
   // Check if checkTags is an array and not empty
-  if (!Array.isArray(checkTags) || checkTags.length === 0 || checkTags.includes("")) {
+  if (!Array.isArray(checkTags) || checkTags.length === 0) {
     return [];
   }
 
   // Check each tag's length
-  const hasInvalidTag = checkTags.some((tag) => tag.length > 255);
-
-  if (hasInvalidTag) {
-    return [];
+  for (let index = 0; index < checkTags.length; index++) {
+    const element = checkTags[index];
+    if (!element || !element.trim() || element.length > 255) {
+      return [];
+    }
+    checkTags[index] = element.trim();
   }
 
   return checkTags;
@@ -36,7 +38,7 @@ export const checkContent = (content: string): string[] => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     // If JSON.parse fails, return an empty array
-    logger.error("error while parsing content", { content: content });
+    logger.error("error while parsing content", { content: content, error: error.message });
     return [];
   }
 
@@ -46,7 +48,7 @@ export const checkContent = (content: string): string[] => {
   }
 
   // check if content have valid string order
-  if (checkContent[0] === "" || checkContent[checkContent.length - 1] === "") {
+  if (!checkContent[0]?.trim() || !checkContent[checkContent.length - 1]?.trim()) {
     return [];
   }
 
@@ -67,7 +69,7 @@ export const checkGroupMembers = (groupMembers: string): string[] => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     // If JSON.parse fails, return an empty array
-    logger.error("error while parsing content", { groupMembers: groupMembers });
+    logger.error("error while parsing content", { groupMembers: groupMembers, error: error.message });
     return [];
   }
 

@@ -17,8 +17,9 @@ const ReviewModal = (props: ReviewModalProps) => {
   const postReview = async (data: UserReview) => {
     const reviewText = data.review
       .split(/\r?\n/)
-      .filter((value) => value !== "")
-      .join(" ");
+      .filter((value) => !value.trim())
+      .join(" ")
+      .trim();
 
     if (reviewText) {
       const tid = toast.loading("Posting review");

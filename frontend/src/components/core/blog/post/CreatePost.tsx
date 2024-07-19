@@ -105,10 +105,10 @@ const CreatePost = (props: CreatePostProps) => {
 
     if (data.content) {
       linesArray = data.content.split(/\r?\n/);
-      while (linesArray.length && linesArray[0] === "") {
+      while (linesArray.length && !linesArray[0].trim()) {
         linesArray.shift();
       }
-      while (linesArray.length && linesArray[linesArray.length - 1] === "") {
+      while (linesArray.length && !linesArray[linesArray.length - 1].trim()) {
         linesArray.pop();
       }
     }
