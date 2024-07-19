@@ -41,17 +41,6 @@ export const createPost = async (req: Request, res: Response): Promise<Response>
 
     const data = createPostReq.data;
 
-    let tags;
-    if (data.tags) {
-      tags = checkTags(data.tags);
-      if (tags.length === 0) {
-        if (req.files?.length) {
-          deleteFiles(req.files);
-        }
-        return errRes(res, 400, "tags present in req, but invalid data after parsing");
-      }
-    }
-
     let content;
     if (data.content) {
       content = checkContent(data.content);
@@ -60,6 +49,22 @@ export const createPost = async (req: Request, res: Response): Promise<Response>
           deleteFiles(req.files);
         }
         return errRes(res, 400, "content present in req, but invalid data after parsing");
+      }
+    }
+
+    // content or media files - one should be present for creating post
+    if (!content && !req.files?.length) {
+      return errRes(res, 400, "content or media files - one should be present for creating post");
+    }
+
+    let tags;
+    if (data.tags) {
+      tags = checkTags(data.tags);
+      if (tags.length === 0) {
+        if (req.files?.length) {
+          deleteFiles(req.files);
+        }
+        return errRes(res, 400, "tags present in req, but invalid data after parsing");
       }
     }
 

@@ -13,7 +13,11 @@ export const UpdateProfileReqSchema = z.object({
     .string()
     .regex(/^[a-zA-Z0-9+-]*$/)
     .optional(),
-  contactNumber: z.string().min(1).max(9).regex(/^\d+$/).optional(),
+  contactNumber: z
+    .string()
+    .length(10)
+    .regex(/^[1-9][0-9]{9}$/)
+    .optional(),
 });
 export type UpdateProfileReq = z.infer<typeof UpdateProfileReqSchema>;
 

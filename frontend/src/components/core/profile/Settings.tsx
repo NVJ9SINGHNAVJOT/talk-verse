@@ -14,7 +14,7 @@ export type NewProfileData = {
   gender?: string;
   dateOfBirth?: string;
   countryCode?: string;
-  contactNumber?: number;
+  contactNumber?: string;
   bio?: string;
 };
 
@@ -69,24 +69,47 @@ const Settings = () => {
 
     setDisabled([]);
 
-    if (profile?.bio !== data.bio) {
-      newProfileData.bio = data.bio;
+    if (data.bio && profile?.bio !== data.bio) {
+      const linesArray = data.bio.split(/\r?\n/);
+      while (linesArray.length && !linesArray[0].trim()) {
+        linesArray.shift();
+      }
+      while (linesArray.length && !linesArray[linesArray.length - 1].trim()) {
+        linesArray.pop();
+      }
+
+      if (!linesArray.length) {
+        toast.info("invalid bio input");
+        setLoading(false);
+        return;
+      }
+
+      newProfileData.bio = linesArray.map((value) => value.trim()).join(" ");
       change = true;
     }
-    if (profile?.gender !== data.gender) {
+    if (data.gender && profile?.gender !== data.gender) {
       newProfileData.gender = data.gender;
       change = true;
     }
-    if (profile?.dateOfBirth !== data.dateOfBirth) {
+    if (data.dateOfBirth && profile?.dateOfBirth !== data.dateOfBirth) {
       newProfileData.dateOfBirth = data.dateOfBirth;
       change = true;
     }
-    if (profile?.countryCode !== data.countryCode) {
+    if ("Select Country Code" !== data.countryCode && profile?.countryCode !== data.countryCode) {
       newProfileData.countryCode = data.countryCode;
       change = true;
     }
-    if (profile?.contactNumber !== data.contactNumber) {
-      newProfileData.contactNumber = data.contactNumber;
+    /*
+      HACK: contact number is number by type in input, but still in output in form it comes as string.
+      to handle this, for getting contact number as number this is used parseInt(`${data.contactNumber}`)
+    */
+    if (data.contactNumber && profile?.contactNumber !== parseInt(`${data.contactNumber}`)) {
+      if (!profile?.countryCode || !data.countryCode) {
+        toast.info("Country code is required for contact number");
+        setLoading(false);
+        return;
+      }
+      newProfileData.contactNumber = `${data.contactNumber}`;
       change = true;
     }
 
@@ -110,7 +133,9 @@ const Settings = () => {
 
   const resetHandler = () => {
     setDisabled([]);
-    reset();
+    if (profile) {
+      reset(profile);
+    }
   };
 
   const changePassword = async (data: ChangePassword) => {
@@ -184,6 +209,7 @@ const Settings = () => {
               maxLength: 150,
               minLength: 1,
             })}
+            maxLength={150}
             placeholder="About Me"
             disabled={!disabled.includes("bio")}
           />
@@ -263,10 +289,8 @@ const Settings = () => {
             type="number"
             className="rounded-lg bg-black px-4 py-2 text-white outline-none"
             {...register("contactNumber", {
-              min: 1,
-              max: 999999999,
-              minLength: 1,
-              maxLength: 9,
+              min: 1000000000,
+              max: 9999999999,
             })}
             onKeyDown={(evt) => evt.key === "e" && evt.preventDefault()}
             placeholder="Contact Number"
