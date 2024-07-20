@@ -57,12 +57,14 @@ const Settings = () => {
       if (response) {
         if (response.success === false) {
           toast.info("This userName is already in use");
+          setLoading(false);
           return;
         }
         newProfileData.userName = data.userName;
         change = true;
       } else {
         toast.error("Error while checking userName availability");
+        setLoading(false);
         return;
       }
     }
