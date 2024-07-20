@@ -104,7 +104,7 @@ const Settings = () => {
       to handle this, for getting contact number as number this is used parseInt(`${data.contactNumber}`)
     */
     if (data.contactNumber && profile?.contactNumber !== parseInt(`${data.contactNumber}`)) {
-      if (!profile?.countryCode || !data.countryCode) {
+      if ("Select Country Code" === data.countryCode || (!profile?.countryCode && !data.countryCode)) {
         toast.info("Country code is required for contact number");
         setLoading(false);
         return;
