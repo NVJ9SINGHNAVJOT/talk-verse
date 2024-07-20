@@ -139,6 +139,7 @@ export const updateProfile = async (req: Request, res: Response): Promise<Respon
         email: true,
         userName: true,
         bio: true,
+        dateOfBirth: true,
         gender: true,
         countryCode: true,
         contactNumber: true,
@@ -146,52 +147,47 @@ export const updateProfile = async (req: Request, res: Response): Promise<Respon
       })
       .exec();
 
-    if (mongoUser) {
-      if (data.bio) {
-        mongoUser.bio = data.bio;
-      }
-      if (data.countryCode) {
-        mongoUser.countryCode = data.countryCode;
-      }
-      if (data.contactNumber) {
-        mongoUser.contactNumber = parseInt(data.contactNumber);
-      }
-      if (data.gender) {
-        mongoUser.gender = data.gender;
-      }
-      if (data.dateOfBirth) {
-        mongoUser.dateOfBirth = data.dateOfBirth;
-      }
-      // check whether userName exist or not
-      if (data.userName) {
-        const checkUsers = await User.countDocuments({ userName: data.userName });
-        if (checkUsers === 0) {
-          mongoUser.userName = data.userName;
-          await mongoUser?.save();
-          await db.update(user).set({ userName: data.userName }).where(eq(user.refId, userId)).execute();
-          return res.status(200).json({
-            success: true,
-            message: "user details updated successfully",
-            userData: user,
-          });
-        } else {
-          await mongoUser.save();
-          return res.status(200).json({
-            success: false,
-            message: "userName is already in use, try again",
-            userData: mongoUser,
-          });
-        }
-      }
-
-      // userName is not in data for update, so save user
-      await mongoUser.save();
-      return res.status(200).json({
-        success: true,
-        message: "user details updated successfully",
-        userData: mongoUser,
-      });
+    if (!mongoUser) {
+      return errRes(res, 400, "invalid user");
     }
+    // check userName
+    if (data.userName) {
+      const checkUsers = await User.countDocuments({ userName: data.userName });
+      if (checkUsers !== 0) {
+        return errRes(res, 400, "userName is already in use");
+      }
+      mongoUser.userName = data.userName;
+    }
+    if (data.bio) {
+      mongoUser.bio = data.bio;
+    }
+    if (data.countryCode) {
+      mongoUser.countryCode = data.countryCode;
+    }
+    if (data.contactNumber) {
+      if (!data.countryCode && !mongoUser.countryCode) {
+        return errRes(res, 400, "country code is required for contact number");
+      }
+      mongoUser.contactNumber = parseInt(data.contactNumber);
+    }
+    if (data.gender) {
+      mongoUser.gender = data.gender;
+    }
+    if (data.dateOfBirth) {
+      mongoUser.dateOfBirth = data.dateOfBirth;
+    }
+
+    // now save updated data
+    if (data.userName) {
+      await db.update(user).set({ userName: data.userName }).where(eq(user.refId, userId)).execute();
+    }
+    await mongoUser.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "user details updated successfully",
+      userData: mongoUser,
+    });
 
     return res.status(400).json({
       success: false,
