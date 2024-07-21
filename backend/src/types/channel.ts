@@ -1,30 +1,35 @@
 class Queue<T> {
-  private elements: Record<number, T> = {};
-  private head: number = 0;
-  private tail: number = 0;
+  private _elements: Record<number, T> = {};
+  private _head: number = 0;
+  private _tail: number = 0;
 
   enqueue(element: T): void {
-    this.elements[this.tail] = element;
-    this.tail++;
+    this._elements[this._tail] = element;
+    this._tail++;
   }
 
   dequeue(): T | undefined {
-    const item = this.elements[this.head];
-    delete this.elements[this.head];
-    this.head++;
+    const item = this._elements[this._head];
+    delete this._elements[this._head];
+    this._head++;
     return item;
   }
 
   peek(): T | undefined {
-    return this.elements[this.head];
+    return this._elements[this._head];
   }
 
   get length(): number {
-    return this.tail - this.head;
+    return this._tail - this._head;
   }
 
   get isEmpty(): boolean {
-    return this.length === 0;
+    return this._head - this._tail === 0;
+  }
+
+  resetQueue(): void {
+    this._head = 0;
+    this._tail = 0;
   }
 }
 
@@ -68,6 +73,7 @@ class Channel {
       const next = this._queue.dequeue();
       next?.();
     } else {
+      this._queue.resetQueue();
       this._locked.set(false);
     }
   }
