@@ -12,7 +12,7 @@ networks:
     external: true
 
 services:
-  backend:
+  talkverse-backend:
     build:
       context: .
       dockerfile: Dockerfile
