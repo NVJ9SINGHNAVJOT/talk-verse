@@ -287,12 +287,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background-attachment: fixed;
 }
 
-/* logging out shinning */
-.ct-shinningLogOutTitle {
-  animation: logOut-background-shine 2s linear infinite;
+/* shinning class*/
+.ct-background-shine {
+  background-size: 250% 100%;
+  animation: background-shine 2s linear infinite;
 }
 
-@keyframes logOut-background-shine {
+@keyframes background-shine {
   from {
     background-position: 0 0;
   }

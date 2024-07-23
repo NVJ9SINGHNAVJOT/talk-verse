@@ -44,9 +44,16 @@ const LogOutModal = (props: LogOutModalPros) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[1000] !mt-0 flex items-center justify-center overflow-auto bg-white bg-opacity-10 backdrop-blur-sm">
+    <div
+      className="fixed inset-0 z-[1000] !mt-0 flex items-center justify-center overflow-auto 
+      bg-white bg-opacity-10 backdrop-blur-sm"
+    >
       {logginOut ? (
-        <span className="ct-shinningLogOutTitle cursor-pointer rounded-2xl border border-gray-800 bg-[linear-gradient(110deg,#000,45%,#4D4B4B,55%,#000)] bg-[length:250%_100%] px-16 py-4 text-4xl font-medium text-gray-300">
+        <span
+          className="ct-background-shine rounded-2xl border border-gray-800 
+          bg-[linear-gradient(110deg,#000,45%,#4D4B4B,55%,#000)] px-16 py-4 text-4xl 
+          font-medium text-gray-300"
+        >
           Logging Out...
         </span>
       ) : (
@@ -65,9 +72,13 @@ const LogOutModal = (props: LogOutModalPros) => {
               props.setTogLogO(false);
               props.setMenuOpen(false);
             }}
-            className="relative inline-flex h-[3rem] w-fit items-center justify-center rounded-md bg-white px-4 font-medium text-gray-950 transition-colors"
+            className="relative inline-flex h-[3rem] w-fit items-center justify-center 
+            rounded-md bg-white px-4 font-medium text-gray-950 transition-colors"
           >
-            <div className="absolute -inset-0.5 -z-10 rounded-lg bg-gradient-to-b from-[#c7d2fe] to-[#8678f9] opacity-75 blur" />
+            <div
+              className="absolute -inset-0.5 -z-10 rounded-lg bg-gradient-to-b 
+            from-[#c7d2fe] to-[#8678f9] opacity-75 blur"
+            />
             Cancel
           </button>
         </div>

@@ -9,6 +9,12 @@ const LoginRightSide = () => {
             Welcome to <span className=" blinkingHeading  text-richblack-400">TalkVerse! </span>
             Connect, share, and engage in conversations that matter. Log in to your world of words and wisdom.
           </div>
+          <br />
+          <br />
+          <br />
+          <p className="text-center text-xl text-white">
+            Enter the realm of endless dialogue and discovery. Your journey begins here!
+          </p>
         </strong>
         <div id="container-stars">
           <div id="stars"></div>
