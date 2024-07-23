@@ -26,7 +26,7 @@ export const checkUserSocket = async (socket: Socket): Promise<boolean> => {
       return false;
     }
 
-    const splitCookies = rawCookies?.split("; ");
+    const splitCookies = rawCookies.split("; ");
     const parsedCookies: Record<string, string> = {};
 
     splitCookies.forEach((cookie) => {

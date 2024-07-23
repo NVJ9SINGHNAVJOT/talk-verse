@@ -41,18 +41,13 @@ export const setupWebSocket = (app: Application): HTTPServer => {
 
   app.set("io", io);
 
+  // socket authorization
   io.use(async (socket: Socket, next) => {
-    try {
-      if ((await checkUserSocket(socket)) === true) {
-        next();
-      } else {
-        logger.error("socket authorization failed", { socketId: socket.id });
-        next(new Error("authorization invalid, access denied"));
-      }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
+    if ((await checkUserSocket(socket)) === true) {
+      next();
+    } else {
       logger.error("socket authorization failed", { socketId: socket.id });
-      next(new Error("error which checking user authenticaton for socket connection"));
+      next(new Error("authorization invalid, access denied"));
     }
   });
 
@@ -93,9 +88,7 @@ export const setupWebSocket = (app: Application): HTTPServer => {
       } else {
         // user is still connected with other socketIds
         const afterRemovingSocketId = checkUserAlreadyConnected.filter((sId) => sId !== socket.id);
-        if (afterRemovingSocketId) {
-          userSocketIDs.set(userId, afterRemovingSocketId);
-        }
+        userSocketIDs.set(userId, afterRemovingSocketId);
       }
     });
   });

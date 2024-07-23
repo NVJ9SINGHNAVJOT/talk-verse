@@ -22,6 +22,7 @@ type SignUpData = {
 
 type SignInProps = {
   toggleSignIn: () => void;
+  setSuccess: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const SignUp = (props: SignInProps) => {
@@ -70,8 +71,10 @@ const SignUp = (props: SignInProps) => {
   } = useForm<SignUpData>();
 
   const signUpUser = async (otp: string) => {
+    dispatch(setLoading(true));
     if (!signUp) {
       toast.error("Signup Failed, try again");
+      dispatch(setLoading(false));
       return;
     }
 
@@ -82,25 +85,27 @@ const SignUp = (props: SignInProps) => {
 
     const response = await signUpApi(signUp);
 
+    dispatch(setLoading(false));
+    setSigningUp(false);
+
     if (!response) {
       toast.error("Error while Signig Up, Try again");
     } else if (response.success === false) {
       toast.info(response.message);
     } else {
+      props.setSuccess(true);
       dispatch(setIsLogin(true));
       toast.success("Sign Up completed");
     }
-
-    dispatch(setLoading(false));
-    setSigningUp(false);
   };
 
   const sendOtp = async (data: SignUpData): Promise<void> => {
+    dispatch(setLoading(true));
     if (data.password !== data.confirmPassword) {
       toast.info("passwords not matched");
+      dispatch(setLoading(false));
       return;
     }
-    dispatch(setLoading(true));
 
     // check if userName given by user is already in use
     const checkUserNameAlreadyPresent = await checkUserNameApi(data.userName);
@@ -122,17 +127,16 @@ const SignUp = (props: SignInProps) => {
     dispatch(setLoading(false));
     toast.dismiss(tid);
 
+    reset();
     if (!response) {
       toast.error("Error while sending otp");
       return;
     }
-
     if (response.success === false) {
       toast.info("Hey, you are already registered with us!");
       return;
     }
 
-    reset();
     // collect and store signup data
     const newSignUpData = new FormData();
     if (selectedFile) {
@@ -150,7 +154,6 @@ const SignUp = (props: SignInProps) => {
 
     // show otp input ui
     setToggleOtp(true);
-    dispatch(setLoading(false));
   };
 
   return toggleOtp ? (
@@ -162,10 +165,6 @@ const SignUp = (props: SignInProps) => {
         className="flex w-10/12 flex-col items-center justify-evenly gap-2 lm:w-7/12"
       >
         <h2 className="text-center font-sans text-base font-semibold text-white">Sign Up to TalkVerse</h2>
-        <p className="text-center text-xs text-white">
-          Enter the realm of endless dialogue and discovery. Your journey begins here!
-        </p>
-
         {/* image input */}
         <div className="relative flex h-16 w-16 items-center justify-center">
           <input
