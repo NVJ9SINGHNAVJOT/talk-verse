@@ -17,7 +17,7 @@ const ReviewModal = (props: ReviewModalProps) => {
   const postReview = async (data: UserReview) => {
     const reviewText = data.review
       .split(/\r?\n/)
-      .filter((value) => !value.trim())
+      .filter((value) => value.trim())
       .join(" ")
       .trim();
 
