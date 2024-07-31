@@ -7,7 +7,7 @@ import { registerNotificationEvents } from "@/socket/events/notificationEvents";
 import { checkUserSocket } from "@/middlewares/socket";
 import { CustomSocket } from "@/types/custom";
 import Channel from "@/types/channel";
-import { showOnline } from "@/utils/onlineStatus";
+import { showOnline } from "@/socket/onlineStatus";
 import { logger } from "@/logger/logger";
 import { origins } from "@/config/corsOptions";
 

@@ -4,16 +4,31 @@ import { NextFunction, Request, Response } from "express";
 
 function logging(req: Request, res: Response, next: NextFunction) {
   try {
-    const isLogin = req.url.split("/").pop();
+    const toBeLogged = req.url.split("/").pop();
 
     logger.http("req details", {
       method: req.method,
       url: req.url,
       clientIP: req.ip,
       query: req.query,
-      requestBody: isLogin === "login" ? { email: req.body.email } : req.body,
+      requestBody:
+        toBeLogged === "login"
+          ? { email: req.body.email }
+          : toBeLogged === "changePassword"
+            ? {}
+            : toBeLogged === "resetPassword"
+              ? { email: req.body.email, otp: req.body.otp }
+              : req.body,
       requestHeaders: {
+        host: req.headers["host"],
+        connection: req.headers["connection"],
         "content-type": req.headers["content-type"],
+        "sec-ch-ua-platform": req.headers["sec-ch-ua-platform"],
+        origin: req.headers["origin"],
+        "sec-fetch-site": req.headers["sec-fetch-site"],
+        "sec-fetch-mode": req.headers["sec-fetch-mode"],
+        "sec-fetch-dest": req.headers["sec-fetch-dest"],
+        referer: req.headers["referer"],
       },
     });
     next();

@@ -43,7 +43,7 @@ const UserChatBar = () => {
         {chatBarData.length > 0 &&
           chatBarData.map((data, index) => (
             <div key={index}>
-              {data.chatId !== undefined ? (
+              {"chatId" in data ? (
                 <FriendBarItem friend={data as Friend} inChat={inChat} setInChat={setInChat} />
               ) : (
                 <GroupBarItem group={data as SoAddedInGroup} inChat={inChat} setInChat={setInChat} />

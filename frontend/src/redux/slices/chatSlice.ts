@@ -3,20 +3,7 @@ import { SoAddedInGroup } from "@/types/socket/eventTypes";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-export type ChatBarData = {
-  // common -> friend id or group id
-  _id: string;
-
-  // friend
-  chatId?: string;
-  firstName?: string;
-  lastName?: string;
-  imageUrl?: string;
-
-  // group
-  groupName?: string;
-  gpImageUrl?: string;
-};
+export type ChatBarData = Friend | SoAddedInGroup;
 
 export type Friend = {
   _id: string;
@@ -34,22 +21,20 @@ export type UserRequest = {
 
 interface ChatState {
   friends: Friend[];
-  groups: SoAddedInGroup[];
   chatBarData: ChatBarData[];
   onlineFriends: string[];
   userRequests: UserRequest[];
   userTyping: string[];
-  lastMainId: string | undefined;
+  firstMainId: string | undefined;
 }
 
 const initialState = {
   friends: [],
-  groups: [],
   chatBarData: [],
   onlineFriends: [],
   userRequests: [],
   userTyping: [],
-  lastMainId: undefined,
+  firstMainId: undefined,
 } satisfies ChatState as ChatState;
 
 const chatSlice = createSlice({
@@ -65,38 +50,32 @@ const chatSlice = createSlice({
       state.friends.push(action.payload);
     },
 
-    // groups
-    setGroups(state, action: PayloadAction<SoAddedInGroup[]>) {
-      state.groups = action.payload;
-    },
-    addGroup(state, action: PayloadAction<SoAddedInGroup>) {
-      state.groups.push(action.payload);
-    },
-
     // chatBarData
     setChatBarData(state, action: PayloadAction<ChatBarData[]>) {
       state.chatBarData = action.payload;
     },
     addChatBarData(state, action: PayloadAction<ChatBarData>) {
-      const { chatId } = action.payload;
-      if (chatId) {
-        state.lastMainId = chatId;
+      if ("chatId" in action.payload) {
+        state.firstMainId = action.payload.chatId;
       } else {
-        state.lastMainId = action.payload._id;
+        state.firstMainId = action.payload._id;
       }
       state.chatBarData.unshift(action.payload);
     },
     setChatBarDataToFirst(state, action: PayloadAction<string>) {
-      if (state.chatBarData[0]._id === action.payload || state.chatBarData[0].chatId === action.payload) {
+      if (
+        state.chatBarData[0]._id === action.payload ||
+        ("chatId" in state.chatBarData[0] && state.chatBarData[0].chatId === action.payload)
+      ) {
         return;
       }
       setOrderApi(action.payload);
-      state.lastMainId = action.payload;
+      state.firstMainId = action.payload;
       const dataIdToMove = action.payload;
       const dataIndex = state.chatBarData.findIndex(
-        (data) => data.chatId === dataIdToMove || data._id === dataIdToMove
+        (data) => ("chatId" in data && data.chatId === dataIdToMove) || data._id === dataIdToMove
       );
-      if (dataIndex !== undefined && dataIndex !== -1) {
+      if (dataIndex !== -1) {
         const data = state.chatBarData.splice(dataIndex, 1);
         if (data !== undefined) {
           state.chatBarData.unshift(data[0]);
@@ -144,9 +123,9 @@ const chatSlice = createSlice({
       state.userTyping = state.userTyping.filter((userId) => userId !== action.payload);
     },
 
-    // set lastMainId
+    // set firstMainId
     setLastMainId(state, action: PayloadAction<string | undefined>) {
-      state.lastMainId = action.payload;
+      state.firstMainId = action.payload;
     },
   },
 });
@@ -154,8 +133,6 @@ const chatSlice = createSlice({
 export const {
   setFriends,
   addFriend,
-  setGroups,
-  addGroup,
   setChatBarData,
   addChatBarData,
   setChatBarDataToFirst,

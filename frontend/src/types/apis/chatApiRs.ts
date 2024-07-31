@@ -5,7 +5,6 @@ import { CommonRs } from "@/types/apis/common";
 
 export type ChatBarDataRs = CommonRs & {
   friends?: Friend[];
-  groups?: SoAddedInGroup[];
   chatBarData?: ChatBarData[];
   friendPublicKeys?: {
     friendId: string;

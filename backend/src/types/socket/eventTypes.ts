@@ -16,6 +16,7 @@ export type SoRequestAccepted = {
 };
 export type SoAddedInGroup = {
   _id: string;
+  isAdmin: boolean;
   groupName: string;
   gpImageUrl?: string;
 };

@@ -1,16 +1,15 @@
 import {
   addChatBarData,
   addFriend,
-  addGroup,
   addOnlineFriend,
   addUserRequest,
   addUserTyping,
+  Friend,
   removeOnlineFriend,
   removeUserTyping,
   resetTyping,
   setChatBarData,
   setFriends,
-  setGroups,
   setLastMainId,
   setOnlineFriend,
   setUserRequests,
@@ -81,7 +80,6 @@ export default function SocketProvider({ children }: ContextProviderProps) {
     // chatSlice
     dispatch(setChatBarData([]));
     dispatch(setFriends([]));
-    dispatch(setGroups([]));
     dispatch(setOnlineFriend([]));
     dispatch(setUnseenMessages({}));
     dispatch(resetTyping());
@@ -133,7 +131,6 @@ export default function SocketProvider({ children }: ContextProviderProps) {
 
       if (res2.success === true) {
         if (res2.friends) dispatch(setFriends(res2.friends));
-        if (res2.groups) dispatch(setGroups(res2.groups));
         if (res2.chatBarData) dispatch(setChatBarData(res2.chatBarData));
         if (res2.friendPublicKeys) {
           const newFriendKeys: PublicKeys = {};
@@ -155,6 +152,7 @@ export default function SocketProvider({ children }: ContextProviderProps) {
         all event listeners are registered here 
       */
       const socket = socketRef.current;
+
       /* ===== socket events start ===== */
       socket.on(clientE.USER_REQUEST, (data: SoUserRequest) => {
         dispatch(
@@ -162,7 +160,7 @@ export default function SocketProvider({ children }: ContextProviderProps) {
             _id: data._id,
             userName: data.userName,
             imageUrl: data.imageUrl,
-          } as UserRequest)
+          } satisfies UserRequest as UserRequest)
         );
         toast.info("New friend request");
       });
@@ -172,40 +170,24 @@ export default function SocketProvider({ children }: ContextProviderProps) {
           addPublicKey({
             userId: data._id,
             publicKey: data.publicKey,
-          } as PublicKey)
+          } satisfies PublicKey as PublicKey)
         );
-        dispatch(
-          addFriend({
-            _id: data._id,
-            chatId: data.chatId,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            imageUrl: data.imageUrl,
-          })
-        );
-        dispatch(
-          addChatBarData({
-            _id: data._id,
-            chatId: data.chatId,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            imageUrl: data.imageUrl,
-          })
-        );
+        const newFriend: Friend = {
+          _id: data._id,
+          chatId: data.chatId,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          imageUrl: data.imageUrl,
+        };
+        dispatch(addFriend(newFriend));
+        dispatch(addChatBarData(newFriend));
         dispatch(addNewUnseen(data.chatId));
         toast.success("New friend added");
       });
 
       socket.on(clientE.ADDED_IN_GROUP, (data: SoAddedInGroup) => {
-        dispatch(addGroup(data));
         dispatch(addNewUnseen(data._id));
-        dispatch(
-          addChatBarData({
-            _id: data._id,
-            groupName: data.groupName,
-            gpImageUrl: data.gpImageUrl,
-          })
-        );
+        dispatch(addChatBarData(data));
         toast.success("Added in new Group");
       });
 

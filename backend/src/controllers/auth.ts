@@ -59,10 +59,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
       if (req.file) {
         deleteFile(req.file);
       }
-      return res.status(200).json({
-        success: false,
-        message: "userName already in use",
-      });
+      return errRes(res, 400, "userName already in use");
     }
 
     // now check if user is already registered

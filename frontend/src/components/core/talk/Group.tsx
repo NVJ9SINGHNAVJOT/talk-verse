@@ -28,7 +28,7 @@ const Group = () => {
   const { register, handleSubmit, reset } = useForm<MessageText>();
   const mainGroupId = useAppSelector((state) => state.messages.mainGroupId);
   const gpMessages = useAppSelector((state) => state.messages.gpMess);
-  const lastMainId = useAppSelector((state) => state.chat.lastMainId);
+  const firstMainId = useAppSelector((state) => state.chat.firstMainId);
   const currUser = useAppSelector((state) => state.user.user);
   const groupIdStart = useAppSelector((state) => state.messages.groupIdStart);
   const groupIdEnd = useAppSelector((state) => state.messages.groupIdEnd);
@@ -213,7 +213,7 @@ const Group = () => {
       if (!response) {
         toast.error("Error while uploading file");
       } else {
-        if (lastMainId !== groupId) {
+        if (firstMainId !== groupId) {
           dispatch(setChatBarDataToFirst(groupId));
         }
       }
@@ -243,7 +243,7 @@ const Group = () => {
       currUser.imageUrl ? currUser.imageUrl : ""
     );
 
-    if (lastMainId !== groupId) {
+    if (firstMainId !== groupId) {
       dispatch(setChatBarDataToFirst(groupId));
     }
   };
