@@ -78,6 +78,15 @@ export const mongooseIdSchema = z.string().refine(
   },
   { message: "invalid mongoose id" }
 );
+export const mongooseIdsSchema = z
+  .string()
+  .array()
+  .refine(
+    (value) => {
+      return isValidMongooseObjectId(value);
+    },
+    { message: "invalid mongoose ids" }
+  );
 
 // postgreSQL id
 export const postgreSQLIdSchema = z.string().min(1).regex(/^\d+$/);

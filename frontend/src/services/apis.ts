@@ -36,6 +36,7 @@ export const notificationEndPoints = {
   DELETE_REQUESET: BASE_URL_SERVER + "/notifications/deleteRequest",
   GET_ALL_NOTIFICATIONS: BASE_URL_SERVER + "/notifications/getAllNotifications",
   CREATE_GROUP: BASE_URL_SERVER + "/notifications/createGroup",
+  ADD_USERS_IN_GROUP: BASE_URL_SERVER + "/notifications/addUsersInGroup",
   CHECK_ONLINE_FRIENDS: BASE_URL_SERVER + "/notifications/checkOnlineFriends",
   SET_UNSEEN_COUNT: BASE_URL_SERVER + "/notifications/setUnseenCount",
   SET_ORDER: BASE_URL_SERVER + "/notifications/setOrder",

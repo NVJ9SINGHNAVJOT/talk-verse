@@ -32,7 +32,7 @@ const Chat = () => {
   const chatIdEnd = useAppSelector((state) => state.messages.chatIdEnd);
   const currFriendId = useAppSelector((state) => state.messages.currFriendId);
   const mainChatId = useAppSelector((state) => state.messages.mainChatId);
-  const lastMainId = useAppSelector((state) => state.chat.lastMainId);
+  const firstMainId = useAppSelector((state) => state.chat.firstMainId);
   const pMessages = useAppSelector((state) => state.messages.pMess);
   const currUser = useAppSelector((state) => state.user.user);
   const myPublicKey = useAppSelector((state) => state.user.user?.publicKey);
@@ -201,7 +201,7 @@ const Chat = () => {
       if (!response) {
         toast.error("Error while uploading file");
       } else {
-        if (lastMainId !== chatId) {
+        if (firstMainId !== chatId) {
           dispatch(setChatBarDataToFirst(chatId));
         }
       }
@@ -229,7 +229,7 @@ const Chat = () => {
     }
 
     sendMessageEvent(socket, chatId, currFriendId, data.text, myPublicKey, publicKeys[currFriendId]);
-    if (lastMainId !== chatId) {
+    if (firstMainId !== chatId) {
       dispatch(setChatBarDataToFirst(chatId));
     }
   };

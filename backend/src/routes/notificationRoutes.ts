@@ -2,6 +2,7 @@
 import {
   acceptFollowRequest,
   acceptRequest,
+  addUsersInGroup,
   checkOnlineFriends,
   createGroup,
   deleteFollowRequest,
@@ -29,6 +30,7 @@ router.post("/acceptRequest", auth, acceptRequest);
 router.delete("/deleteRequest", auth, deleteRequest);
 router.get("/getAllNotifications", auth, getAllNotifications);
 router.post("/createGroup", imageFile, auth, createGroup);
+router.post("/addUsersInGroup", auth, addUsersInGroup);
 router.get("/checkOnlineFriends", auth, checkOnlineFriends);
 router.post("/setUnseenCount", auth, setUnseenCount);
 router.post("/setOrder", auth, setOrder);

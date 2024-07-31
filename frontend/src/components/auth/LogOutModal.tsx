@@ -40,7 +40,7 @@ const LogOutModal = (props: LogOutModalPros) => {
       dispatch(setAuthUser(false));
       dispatch(setMyPrivateKey(undefined));
       dispatch(setMyId(undefined));
-    }, 500);
+    }, 200);
   };
 
   return (

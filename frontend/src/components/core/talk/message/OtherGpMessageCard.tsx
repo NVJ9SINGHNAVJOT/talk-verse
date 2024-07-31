@@ -13,9 +13,9 @@ const OtherGpMessageCard = (props: OtherGpMessageCardProps) => {
   return (
     <div className=" relative self-start flex flex-col ml-6 max-w-[75%]">
       {imageUrl ? (
-        <img src={imageUrl} alt="Loading..." className="absolute -left-8 size-8 rounded-full mt-4 z-50" />
+        <img src={imageUrl} alt="Loading..." className="absolute -left-8 size-8 rounded-full mt-4 z-10" />
       ) : (
-        <RxAvatar className="absolute -left-8 size-8 rounded-full bg-snow-400 mt-4 z-50" />
+        <RxAvatar className="absolute -left-8 size-8 rounded-full bg-snow-400 mt-4 z-10" />
       )}
       <div className="ct-othermessage self-start flex flex-col max-w-full ">
         <p className=" text-[0.7rem] text-purple-400">

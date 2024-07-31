@@ -89,6 +89,22 @@ export const createGroupApi = async (data: FormData): Promise<CreateGroupRs | nu
   return null;
 };
 
+export const addFriendInGroupApi = async (groupId: string, userIdsToBeAdded: string[]): Promise<boolean> => {
+  const resData: CreateGroupRs = await fetchApi(
+    "POST",
+    notificationEndPoints.CREATE_GROUP,
+    {
+      groupId: groupId,
+      userIdsToBeAdded: userIdsToBeAdded,
+    },
+    { "Content-Type": "application/json" }
+  );
+  if (resData && resData.success === true) {
+    return true;
+  }
+  return false;
+};
+
 export const checkOnlineFriendsApi = async (): Promise<CheckOnlineFriendsRs | null> => {
   const resData: CheckOnlineFriendsRs = await fetchApi("GET", notificationEndPoints.CHECK_ONLINE_FRIENDS);
   if (resData) {

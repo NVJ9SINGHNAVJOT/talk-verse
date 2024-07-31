@@ -5,6 +5,7 @@ import User from "@/db/mongodb/models/User";
 import { clientE } from "@/socket/events";
 import { channels, groupIds, groupOffline, userSocketIDs } from "@/socket/index";
 import {
+  AddUsersInGroupReqSchema,
   CreateGroupReqSchema,
   OtherMongoUserIdReqSchema,
   SetOrderReqSchema,
@@ -469,6 +470,7 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
 
     const data = createGroupReq.data;
 
+    // TODO: currently user Ids are not checked with database
     // check groupMembers for creating group
     const members = checkGroupMembers(data.userIdsInGroup);
     if (members.length === 0) {
@@ -500,14 +502,6 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
       members: members,
     });
 
-    // Create a new mutex instance
-    const newChannel = new Channel();
-    // set newmutex for new groupId
-    channels.set(newGroup._id.toString(), newChannel);
-
-    // set members with groupId
-    groupIds.set(newGroup._id.toString(), members);
-
     await Promise.all(
       members.map(async (userId) => {
         const ucOfGroupMem = await UnseenCount.create({ userId: userId, mainId: newGroup._id });
@@ -518,27 +512,36 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
       })
     );
 
-    const memData = getMultiUsersSockets(members, userId);
+    // Create a new mutex instance
+    const newChannel = new Channel();
+    // set newmutex for new groupId
+    channels.set(newGroup._id.toString(), newChannel);
+
+    // set members with groupId
+    groupIds.set(newGroup._id.toString(), members);
+
+    const membersSockerIds = getMultiUsersSockets(members, userId);
     const mySocketIds = getSingleUserSockets(userId);
 
     // set offline member for group
-    groupOffline.set(newGroup._id.toString(), new Set(memData.offline));
+    groupOffline.set(newGroup._id.toString(), new Set(membersSockerIds.offline));
 
     // join groupId room with all online members
     if (mySocketIds.length > 0) {
       req.app.get("io").in(mySocketIds).socketsJoin(newGroup._id.toString());
     }
 
-    if (memData.online.length > 0) {
-      req.app.get("io").in(memData.online).socketsJoin(newGroup._id.toString());
+    if (membersSockerIds.online.length > 0) {
+      req.app.get("io").in(membersSockerIds.online).socketsJoin(newGroup._id.toString());
 
       // in online users of group, event is emitted only except for creater, as creater get group in response
       const sdata: SoAddedInGroup = {
         _id: newGroup._id.toString(),
+        isAdmin: false,
         groupName: data.groupName,
         gpImageUrl: secUrl,
       };
-      emitSocketEvent(req, memData.online, clientE.ADDED_IN_GROUP, sdata);
+      emitSocketEvent(req, membersSockerIds.online, clientE.ADDED_IN_GROUP, sdata);
     }
 
     return res.status(200).json({
@@ -546,6 +549,7 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
       message: "group created successfully",
       newGroup: {
         _id: newGroup._id,
+        isAdmin: true,
         groupName: newGroup.groupName,
         gpImageUrl: newGroup.gpImageUrl,
       },
@@ -556,6 +560,92 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
       deleteFile(req.file);
     }
     return errRes(res, 500, "error while creating group", error.message);
+  }
+};
+
+export const addUsersInGroup = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const userId = (req as CustomRequest).userId;
+    // validation
+
+    const addUsersInGroupReq = AddUsersInGroupReqSchema.safeParse(req.body);
+
+    if (!addUsersInGroupReq.success) {
+      return errRes(res, 400, `invalid data for adding users in group, ${addUsersInGroupReq.error.message}`);
+    }
+
+    // TODO: currently user Ids are not checked with database
+    const data = addUsersInGroupReq.data;
+
+    const updateGroup = await Group.findOne({ _id: data.groupId, gpCreater: userId });
+
+    if (!updateGroup) {
+      return errRes(res, 400, "no group found with given group Id");
+    }
+
+    if (updateGroup.members.length + data.userIdsToBeAdded.length > 50) {
+      return errRes(res, 400, "max limit for user in group is 50");
+    }
+
+    // check if any new user is already present in group members
+    const containsNewMember = updateGroup.members.some((oldMemberId) =>
+      data.userIdsToBeAdded.includes(oldMemberId.toString())
+    );
+
+    if (containsNewMember) {
+      return errRes(res, 400, "new member is already present in group memebers");
+    }
+
+    const updateUsers = groupIds.get(updateGroup._id.toString());
+    const updateUsersOffline = groupOffline.get(updateGroup._id.toString());
+    if (!updateUsers || !updateUsersOffline) {
+      return errRes(res, 500, "group not present in groupIds or groupOffline");
+    }
+
+    // create unseen count for each new group memeber and update notification of each user
+    await Promise.all(
+      data.userIdsToBeAdded.map(async (userId) => {
+        const ucOfGroupMem = await UnseenCount.create({ userId: userId, mainId: data.groupId });
+        await Notification.findOneAndUpdate({ userId: userId }, { $push: { unseenMessages: ucOfGroupMem._id } }).exec();
+        await User.findByIdAndUpdate(
+          { _id: userId },
+          { $push: { chatBarOrder: { $each: [data.groupId], $position: 0 } } }
+        );
+      })
+    );
+
+    groupIds.set(data.groupId, updateUsers.concat(data.userIdsToBeAdded));
+
+    data.userIdsToBeAdded.forEach((userId) => updateGroup.members.push(new mongoose.Types.ObjectId(userId)));
+
+    // now send notification to online users and add offline user in groupOffline
+    const newMembersSocketIds = getMultiUsersSockets(data.userIdsToBeAdded);
+    const sData: SoAddedInGroup = {
+      _id: updateGroup._id.toString(),
+      isAdmin: false,
+      groupName: updateGroup.groupName,
+      gpImageUrl: updateGroup.gpImageUrl,
+    };
+
+    if (newMembersSocketIds.offline.length > 0) {
+      const offlineUsers = Array.from(updateUsersOffline).concat(data.userIdsToBeAdded);
+      groupOffline.set(data.groupId, new Set(offlineUsers));
+    }
+
+    await updateGroup.save();
+
+    if (newMembersSocketIds.online.length > 0) {
+      emitSocketEvent(req, newMembersSocketIds.online, clientE.ADDED_IN_GROUP, sData);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "new users added to group",
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while adding users in group", error.message);
   }
 };
 

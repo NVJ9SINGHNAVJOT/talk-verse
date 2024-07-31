@@ -7,7 +7,7 @@ import { channels, groupIds, groupOffline } from "@/socket";
 import { clientE } from "@/socket/events";
 import { ChatMessagesReqSchema, FileMessageReqSchema, GroupMessagesReqSchema } from "@/types/controllers/chatReq";
 import { CustomRequest } from "@/types/custom";
-import { SoGroupMessageRecieved, SoMessageRecieved } from "@/types/socket/eventTypes";
+import { SoAddedInGroup, SoGroupMessageRecieved, SoMessageRecieved } from "@/types/socket/eventTypes";
 import { uploadToCloudinary } from "@/utils/cloudinaryHandler";
 import emitSocketEvent from "@/utils/emitSocketEvent";
 import { errRes } from "@/utils/error";
@@ -16,19 +16,12 @@ import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { deleteFile } from "@/utils/deleteFile";
 
-type BarData = {
-  // common
+type Friend = {
   _id: string;
-
-  // friend
-  chatId?: string;
-  firstName?: string;
-  lastName?: string;
+  chatId: string;
+  firstName: string;
+  lastName: string;
   imageUrl?: string;
-
-  // group
-  groupName?: string;
-  gpImageUrl?: string;
 };
 
 type FriendPublicKey = {
@@ -49,7 +42,7 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
       .exec();
 
     const groups = await Group.find({ members: { $elemMatch: { $eq: userId } } })
-      .select({ groupName: true, gpImageUrl: true })
+      .select({ gpCreater: true, groupName: true, gpImageUrl: true })
       .exec();
 
     if (userFriends?.friends?.length !== undefined && userFriends.friends.length === 0 && groups.length === 0) {
@@ -60,12 +53,12 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
     }
 
     // chatBar data and friends public key pairs
-    const chatBar: BarData[] = [];
+    const chatBar: (Friend | SoAddedInGroup)[] = [];
     const friendPublicKeys: FriendPublicKey[] = [];
 
     // combine user friends and their chatId in array and push in chatbar
     const friends = userFriends?.friends?.map((item) => {
-      const newValue: BarData = {
+      const newValue: Friend = {
         _id: item.friendId._id.toString(),
         firstName: (item.friendId as IUser).firstName,
         lastName: (item.friendId as IUser).lastName,
@@ -79,13 +72,19 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
 
     // push groups in chatbar
     groups.forEach((group) => {
-      chatBar.push(group as BarData);
+      const newValue: SoAddedInGroup = {
+        _id: group._id.toString(),
+        isAdmin: group.gpCreater.toString() === userId,
+        groupName: group.groupName,
+        gpImageUrl: group.gpImageUrl,
+      };
+      chatBar.push(newValue);
     });
 
     // sort chatbar as per user chatbarorder
     const sortedBarData = chatBar.sort((a, b) => {
-      const tempA = a.chatId ? a.chatId : a._id.toString();
-      const tempB = b.chatId ? b.chatId : b._id.toString();
+      const tempA = "chatId" in a && a.chatId ? a.chatId : a._id.toString();
+      const tempB = "chatId" in b && b.chatId ? b.chatId : b._id.toString();
       const indexA = userFriends?.chatBarOrder.indexOf(tempA);
       const indexB = userFriends?.chatBarOrder.indexOf(tempB);
       if (indexA === undefined || indexB === undefined) {
@@ -98,7 +97,6 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
       success: true,
       message: "chat bar data send successfully",
       friends: friends,
-      groups: groups,
       chatBarData: sortedBarData,
       friendPublicKeys: friendPublicKeys,
     });

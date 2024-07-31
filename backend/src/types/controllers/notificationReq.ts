@@ -1,4 +1,4 @@
-import { fancyNameSchema, mongooseIdSchema } from "@/validators/zod";
+import { fancyNameSchema, mongooseIdSchema, mongooseIdsSchema } from "@/validators/zod";
 import z from "zod";
 
 export const OtherMongoUserIdReqSchema = z.object({
@@ -17,6 +17,12 @@ export const CreateGroupReqSchema = z.object({
   userIdsInGroup: z.string(), // JSON.stringify -> string[]
 });
 export type CreateGroupReq = z.infer<typeof CreateGroupReqSchema>;
+
+export const AddUsersInGroupReqSchema = z.object({
+  groupId: mongooseIdSchema,
+  userIdsToBeAdded: mongooseIdsSchema,
+});
+export type AddUsersInGroupReq = z.infer<typeof AddUsersInGroupReqSchema>;
 
 export const SetOrderReqSchema = z.object({
   mainId: mongooseIdSchema,
