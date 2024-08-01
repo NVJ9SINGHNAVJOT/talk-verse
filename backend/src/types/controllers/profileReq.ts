@@ -19,9 +19,7 @@ export const UpdateProfileReqSchema = z.object({
     .regex(/^[1-9][0-9]{9}$/)
     .optional(),
 });
-export type UpdateProfileReq = z.infer<typeof UpdateProfileReqSchema>;
 
 export const CheckUserNameReqSchema = z.object({
   userName: fancyNameSchema,
 });
-export type CheckUserNameReq = z.infer<typeof CheckUserNameReqSchema>;

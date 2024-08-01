@@ -1,6 +1,6 @@
 import { ChatBarData, Friend } from "@/redux/slices/chatSlice";
 import { GroupMessages } from "@/redux/slices/messagesSlice";
-import { SoAddedInGroup, SoMessageRecieved } from "@/types/socket/eventTypes";
+import { SoMessageRecieved } from "@/types/socket/eventTypes";
 import { CommonRs } from "@/types/apis/common";
 
 export type ChatBarDataRs = CommonRs & {
@@ -20,6 +20,6 @@ export type GetGroupMessagesRs = CommonRs & {
   messages?: GroupMessages[];
 };
 
-export type CreateGroupRs = CommonRs & {
-  newGroup: SoAddedInGroup;
+export type GetGroupMembersRs = CommonRs & {
+  members: string[];
 };

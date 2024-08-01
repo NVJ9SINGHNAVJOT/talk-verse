@@ -1,10 +1,10 @@
 import { notificationEndPoints } from "@/services/apis";
 import { fetchApi } from "@/services/fetchApi";
-import { CreateGroupRs } from "@/types/apis/chatApiRs";
 import { CommonRs } from "@/types/apis/common";
 import {
   AcceptRequestRs,
   CheckOnlineFriendsRs,
+  CreateGroupRs,
   FollowRequestsRs,
   FollowSuggestionsRs,
   GetAllNotificationsRs,
@@ -90,9 +90,9 @@ export const createGroupApi = async (data: FormData): Promise<CreateGroupRs | nu
 };
 
 export const addFriendInGroupApi = async (groupId: string, userIdsToBeAdded: string[]): Promise<boolean> => {
-  const resData: CreateGroupRs = await fetchApi(
+  const resData: CommonRs = await fetchApi(
     "POST",
-    notificationEndPoints.CREATE_GROUP,
+    notificationEndPoints.ADD_USERS_IN_GROUP,
     {
       groupId: groupId,
       userIdsToBeAdded: userIdsToBeAdded,

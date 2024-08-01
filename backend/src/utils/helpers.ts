@@ -78,7 +78,7 @@ export const checkGroupMembers = (groupMembers: string): string[] => {
     !Array.isArray(checkMembers) ||
     checkMembers.length < 2 ||
     checkMembers.length > 49 ||
-    !isValidMongooseObjectId(checkMembers)
+    !isValidMongooseObjectId(checkMembers, "yes")
   ) {
     return [];
   }

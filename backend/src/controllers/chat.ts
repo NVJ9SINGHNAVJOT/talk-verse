@@ -5,7 +5,12 @@ import UnseenCount from "@/db/mongodb/models/UnseenCount";
 import User, { IUser } from "@/db/mongodb/models/User";
 import { channels, groupIds, groupOffline } from "@/socket";
 import { clientE } from "@/socket/events";
-import { ChatMessagesReqSchema, FileMessageReqSchema, GroupMessagesReqSchema } from "@/types/controllers/chatReq";
+import {
+  ChatMessagesReqSchema,
+  FileMessageReqSchema,
+  GroupMembersReqSchema,
+  GroupMessagesReqSchema,
+} from "@/types/controllers/chatReq";
 import { CustomRequest } from "@/types/custom";
 import { SoAddedInGroup, SoGroupMessageRecieved, SoMessageRecieved } from "@/types/socket/eventTypes";
 import { uploadToCloudinary } from "@/utils/cloudinaryHandler";
@@ -354,5 +359,36 @@ export const groupMessages = async (req: Request, res: Response): Promise<Respon
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     return errRes(res, 500, "error while getting group messages", error.message);
+  }
+};
+
+export const groupMembers = async (req: Request, res: Response): Promise<Response> => {
+  try {
+    const userId = (req as CustomRequest).userId;
+
+    const groupMembersReq = GroupMembersReqSchema.safeParse(req.query);
+
+    if (!groupMembersReq.success) {
+      return errRes(res, 400, `invalid data for group members, ${groupMembersReq.error.message}`);
+    }
+
+    const data = groupMembersReq.data;
+
+    const members = await Group.findById({ _id: data.groupId }, { gpCreater: userId })
+      .select({ members: true, _id: false })
+      .exec();
+
+    if (members) {
+      return res.status(200).json({
+        success: true,
+        members: members.members,
+      });
+    }
+
+    return errRes(res, 400, "invalid groupId for group members");
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return errRes(res, 500, "error while getting groupMembers", error.message);
   }
 };

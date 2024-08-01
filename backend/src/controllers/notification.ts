@@ -21,7 +21,6 @@ import { Request, Response } from "express";
 import { uploadToCloudinary } from "@/utils/cloudinaryHandler";
 import Group from "@/db/mongodb/models/Group";
 import { deleteFile } from "@/utils/deleteFile";
-import { isValidMongooseObjectId } from "@/validators/mongooseId";
 import { db } from "@/db/postgresql/connection";
 import { user } from "@/db/postgresql/schema/user";
 import { follow } from "@/db/postgresql/schema/follow";
@@ -720,10 +719,8 @@ export const setOrder = async (req: Request, res: Response): Promise<Response> =
     if (!setOrderReq.success) {
       return errRes(res, 400, `invalid data for setunseencount, ${setOrderReq.error.message}`);
     }
+
     const data = setOrderReq.data;
-    if (!isValidMongooseObjectId([data.mainId])) {
-      return errRes(res, 400, "invalid id for setting order for chatbar");
-    }
 
     const user = await User.findById({ _id: userId }).select({ chatBarOrder: true });
     const existingIndex = user?.chatBarOrder.indexOf(data.mainId);
