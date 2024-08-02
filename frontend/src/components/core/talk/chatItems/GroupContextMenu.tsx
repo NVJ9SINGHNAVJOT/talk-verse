@@ -128,7 +128,7 @@ const GroupContextMenu = (props: GroupContextMenuProps) => {
               <div className=" max-w-96 flex-wrap flex justify-center items-center gap-6 max-h-[calc(100vh-60vh)] overflow-y-auto">
                 {members.length !== 0 &&
                   friends.map((friend, index) => {
-                    if (members.includes(friend._id)) {
+                    if (!members.includes(friend._id)) {
                       return (
                         <div
                           key={index}
