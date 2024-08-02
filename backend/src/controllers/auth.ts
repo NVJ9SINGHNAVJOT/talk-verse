@@ -111,15 +111,17 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
         userName: data.userName,
         imageUrl: secUrl ? secUrl : null,
       })
+      .onConflictDoNothing()
       .returning({ id: user.id });
-    if (newUser2.length !== 1 || !newUser2[0]) {
+
+    if (newUser2.length === 0) {
       await Notification.deleteOne({ userId: newUser.id });
       await User.deleteOne({ _id: newUser.id });
-      return errRes(res, 500, "error while creating user in other database");
+      return errRes(res, 500, "error while creating user in postgreSQL database");
     }
 
     // save user's id from postgreSQL
-    newUser.userId2 = newUser2[0].id;
+    newUser.userId2 = newUser2[0]?.id as number;
     await newUser.save();
 
     // now generate pair of public and private keys for user

@@ -12,6 +12,7 @@ type Key = {
 };
 
 const checkMessage = process.env.TEST_P_KEY as string;
+
 const ChekKey = () => {
   const myPublicKey = useAppSelector((state) => state.user.user?.publicKey);
   const dispatch = useDispatch();
@@ -20,38 +21,33 @@ const ChekKey = () => {
   const { register, handleSubmit, reset } = useForm<Key>();
 
   const checkKey = (data: Key) => {
+    if (!data.key.trim()) {
+      return;
+    }
+
     setLoading(true);
+
     const tId = toast.loading("Validating key", {
       position: "top-center",
     });
     reset();
 
-    if (!myPublicKey) {
-      navigate("/login");
-      return;
-    }
-    if (!data.key) {
-      toast.info("Enter your private key");
-      return;
+    const completeKey = "-----BEGIN RSA PRIVATE KEY-----" + data.key + "-----END RSA PRIVATE KEY-----";
+    const encryptMessage = encryptPMessage(checkMessage, myPublicKey as string);
+    const decryptedMessage = decryptPMessage(encryptMessage, completeKey);
+
+    if (!decryptedMessage || checkMessage !== decryptedMessage) {
+      toast.error("Invalid private key, please enter valid key");
+    } else {
+      dispatch(setMyPrivateKey(completeKey));
+      toast.dismiss(tId);
+      navigate("/talk");
     }
 
-    try {
-      const completeKey = "-----BEGIN RSA PRIVATE KEY-----" + data.key + "-----END RSA PRIVATE KEY-----";
-      const encryptMessage = encryptPMessage(checkMessage, myPublicKey);
-      const decryptedMessage = decryptPMessage(encryptMessage, completeKey);
-      if (!decryptedMessage || checkMessage !== decryptedMessage) {
-        toast.error("Invalid private key, please enter valid key");
-      } else {
-        dispatch(setMyPrivateKey(completeKey));
-        toast.dismiss(tId);
-        navigate("/talk");
-      }
-    } catch (error) {
-      toast.error("Invalid Key, please enter correct private key");
-    }
     toast.dismiss(tId);
     setLoading(false);
   };
+
   return (
     <form
       onSubmit={handleSubmit(checkKey)}
