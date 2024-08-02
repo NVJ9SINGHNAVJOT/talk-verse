@@ -16,4 +16,3 @@ export const SendQueryReqSchema = z.object({
     { message: "total combined length of text array must not exceed 450 characters" }
   ),
 });
-export type SendQueryReq = z.infer<typeof SendQueryReqSchema>;

@@ -54,6 +54,7 @@ export const chatEndPoints = {
   CHAT_MESSAGES: BASE_URL_SERVER + "/chats/chatMessages", // parameters: chatId, createdAt
   GROUP_MESSAGES: BASE_URL_SERVER + "/chats/groupMessages", // parameters: groupId, createdAt
   FILE_MESSAGE: BASE_URL_SERVER + "/chats/fileMessage",
+  GROUP_MEMBERS: BASE_URL_SERVER + "/chats/groupMembers", // parameters: groupId
 };
 
 // post endpoints

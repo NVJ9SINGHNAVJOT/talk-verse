@@ -1,11 +1,10 @@
 import { chatEndPoints } from "@/services/apis";
 import { fetchApi } from "@/services/fetchApi";
-import { ChatBarDataRs, GetChatMessagesRs, GetGroupMessagesRs } from "@/types/apis/chatApiRs";
+import { ChatBarDataRs, GetChatMessagesRs, GetGroupMembersRs, GetGroupMessagesRs } from "@/types/apis/chatApiRs";
 import { CommonRs } from "@/types/apis/common";
 
 export const chatBarDataApi = async (): Promise<ChatBarDataRs | null> => {
   const resData: ChatBarDataRs = await fetchApi("GET", chatEndPoints.CHAT_BAR_DATA);
-  // success false is used in response
   if (resData) {
     return resData;
   }
@@ -25,7 +24,6 @@ export const getMessagesApi = async (chatId: string, createdAt: string): Promise
     chatId: chatId,
     createdAt: createdAt,
   });
-  // success false is used in response
   if (resData) {
     return resData;
   }
@@ -37,7 +35,16 @@ export const getGroupMessagesApi = async (groupId: string, createdAt: string): P
     groupId: groupId,
     createdAt: createdAt,
   });
-  // success false is used in response
+  if (resData) {
+    return resData;
+  }
+  return null;
+};
+
+export const getGroupMembersApi = async (groupId: string): Promise<GetGroupMembersRs | null> => {
+  const resData: GetGroupMembersRs = await fetchApi("GET", chatEndPoints.GROUP_MEMBERS, null, null, {
+    groupId: groupId,
+  });
   if (resData) {
     return resData;
   }

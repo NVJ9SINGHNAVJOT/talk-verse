@@ -1,5 +1,6 @@
 import { UserRequest } from "@/redux/slices/chatSlice";
 import { CommonRs } from "@/types/apis/common";
+import { SoAddedInGroup } from "@/types/socket/eventTypes";
 
 export type GetUsersRs = CommonRs & {
   users?: (UserRequest & { isAlreadyRequested: boolean })[];
@@ -22,6 +23,10 @@ export type GetAllNotificationsRs = CommonRs & {
     mainId: string;
     count: number;
   }[];
+};
+
+export type CreateGroupRs = CommonRs & {
+  newGroup: SoAddedInGroup;
 };
 
 export type AcceptRequestRs = CommonRs & {

@@ -19,16 +19,17 @@ export const FileMessageReqSchema = z
       message: "Either 'firstName' and 'lastName' should both be present or both be absent.",
     }
   );
-export type FileMessageReq = z.infer<typeof FileMessageReqSchema>;
 
 export const ChatMessagesReqSchema = z.object({
   chatId: mongooseIdSchema,
   createdAt: z.string().datetime(),
 });
-export type ChatMessagesReq = z.infer<typeof ChatMessagesReqSchema>;
 
 export const GroupMessagesReqSchema = z.object({
   groupId: mongooseIdSchema,
   createdAt: z.string().datetime(),
 });
-export type GroupMessagesReq = z.infer<typeof GroupMessagesReqSchema>;
+
+export const GroupMembersReqSchema = z.object({
+  groupId: mongooseIdSchema,
+});
