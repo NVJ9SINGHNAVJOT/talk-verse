@@ -63,7 +63,7 @@ export const setupWebSocket = (app: Application): HTTPServer => {
       userSocketIDs.set(userId, [socket.id]);
       showOnline(io, userId, true, true, socket);
     } else {
-      userSocketIDs.get(userId)?.push(socket.id);
+      checkUserAlreadyConnected.push(socket.id);
       showOnline(io, userId, false, true, socket);
     }
 
