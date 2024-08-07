@@ -26,9 +26,13 @@ export const showOnline = async (
         groupRooms.push(groupId);
 
         const offlineMembersOfgroupId = groupOffline.get(groupId);
+        if (!offlineMembersOfgroupId) {
+          logger.error("no offline group present in groupOffline", { userId: userId, groupId: groupId });
+          return;
+        }
 
         // if new user is joined, then remove it's userId from offline groups
-        if (newUserJoinng && offlineMembersOfgroupId) {
+        if (newUserJoinng) {
           const check = offlineMembersOfgroupId.delete(userId);
           if (!check) {
             logger.error("userId is not present in offline set", { userId: userId, groupId: groupId });
@@ -36,7 +40,7 @@ export const showOnline = async (
         }
 
         // user got disconnected, add user in offline groupIds
-        if (!status && offlineMembersOfgroupId) {
+        if (!status) {
           offlineMembersOfgroupId.add(userId);
         }
       }
@@ -68,18 +72,21 @@ export const showOnline = async (
 
       const allSocketIdsOfFriends = onlineFriends.flat();
 
-      if (allSocketIdsOfFriends.length > 0) {
-        // if new user is joining
-        if (newUserJoinng) {
-          socket.to(allSocketIdsOfFriends).emit(clientE.SET_USER_ONLINE, userId);
-        }
+      if (allSocketIdsOfFriends.length === 0) {
+        return;
+      }
 
-        // user is getting disconnected
-        if (!status) {
-          socket.to(allSocketIdsOfFriends).emit(clientE.SET_USER_OFFLINE, userId);
-        }
+      // if new user is joining
+      if (newUserJoinng) {
+        socket.to(allSocketIdsOfFriends).emit(clientE.SET_USER_ONLINE, userId);
+      }
+
+      // user is getting disconnected
+      if (!status) {
+        socket.to(allSocketIdsOfFriends).emit(clientE.SET_USER_OFFLINE, userId);
       }
     }
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     logger.error("errow while setting user status", { error: error.message });

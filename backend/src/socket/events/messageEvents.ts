@@ -16,6 +16,8 @@ import GpMessage from "@/db/mongodb/models/GpMessage";
 
 export const registerMessageEvents = (io: Server, socket: Socket, userId: string): void => {
   socket.on(serverE.SEND_MESSAGE, async (data: SoSendMessage) => {
+    let uuId;
+    let createdAt;
     try {
       if (!data.chatId || !data.fromText || !data.toText || !data.to) {
         logger.error("invalid data in socket send message event", { data: data });
@@ -30,8 +32,8 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
 
       // message through channel
       await channel.lock();
-      const uuId = uuidv4();
-      const createdAt = new Date();
+      uuId = uuidv4();
+      createdAt = new Date();
       const newMessage: SoMessageRecieved = {
         uuId: uuId,
         isFile: false,
@@ -55,35 +57,34 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
       // release channel
       channel.unlock();
 
-      try {
-        await Message.create({
-          uuId: uuId,
-          chatId: data.chatId,
-          from: userId,
-          to: data.to,
-          fromText: data.fromText,
-          toText: data.toText,
-          createdAt: createdAt,
-        });
-        if (friendSocketIds.length === 0) {
-          await UnseenCount.findOneAndUpdate({ userId: data.to, mainId: data.chatId }, { $inc: { count: 1 } });
-        }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        logger.error("error while creating message", {
-          error: error.message,
-          data: data,
-          uuId: uuId,
-          createdAt: createdAt,
-        });
+      await Message.create({
+        uuId: uuId,
+        chatId: data.chatId,
+        from: userId,
+        to: data.to,
+        fromText: data.fromText,
+        toText: data.toText,
+        createdAt: createdAt,
+      });
+
+      if (friendSocketIds.length === 0) {
+        await UnseenCount.findOneAndUpdate({ userId: data.to, mainId: data.chatId }, { $inc: { count: 1 } });
       }
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      logger.error("error while sending message for chat", { error: error.message });
+      logger.error("error while sending message for chat", {
+        error: error.message,
+        data: data,
+        uuId: uuId,
+        createdAt: createdAt,
+      });
     }
   });
 
   socket.on(serverE.SEND_GROUP_MESSAGE, async (data: SoSendGroupMessage) => {
+    let uuId;
+    let createdAt;
     try {
       if (!data._id || !data.text || !data.firstName || !data.lastName) {
         logger.error("invalid data in socket send group message event", { data: data });
@@ -121,29 +122,28 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
       // release channel
       channel.unlock();
 
-      try {
-        await GpMessage.create({ uuId: uuId, from: userId, to: data._id, text: data.text, createdAt: createdAt });
-        const offlineMem = groupOffline.get(data._id);
-        if (offlineMem) {
-          const newOfline = Array.from(offlineMem);
-          if (newOfline.length > 0) {
-            await UnseenCount.updateMany({ userId: { $in: newOfline }, mainId: data._id }, { $inc: { count: 1 } });
-          }
-        } else {
-          logger.error("no offline set present for groupId", { data: data, newGpMessage: newGpMessage });
-        }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        logger.error("error while creating goupMessage", {
-          error: error.message,
-          data: data,
-          uuId: uuId,
-          createdAt: createdAt,
-        });
+      await GpMessage.create({ uuId: uuId, from: userId, to: data._id, text: data.text, createdAt: createdAt });
+
+      const offlineMem = groupOffline.get(data._id);
+
+      if (!offlineMem) {
+        logger.error("no offline set present for groupId", { data: data, newGpMessage: newGpMessage });
+        return;
       }
+
+      if (offlineMem.size !== 0) {
+        const newOfline = Array.from(offlineMem);
+        await UnseenCount.updateMany({ userId: { $in: newOfline }, mainId: data._id }, { $inc: { count: 1 } });
+      }
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      logger.error("error while sending group message", { error: error.message });
+      logger.error("error while sending group message", {
+        error: error.message,
+        data: data,
+        uuId: uuId,
+        createdAt: createdAt,
+      });
     }
   });
 };
