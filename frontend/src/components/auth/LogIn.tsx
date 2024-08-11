@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { setMyId } from "@/redux/slices/messagesSlice";
+import { messagesSliceObject } from "@/redux/slices/messagesSlice";
 
 export type LogInData = {
   email: string;
@@ -55,13 +55,10 @@ const LogIn = (props: SignInProps) => {
     // for multiple tabs set CHECK_USER_IN_MULTI_TAB to "true"
     localStorage.setItem(process.env.CHECK_USER_IN_MULTI_TAB as string, JSON.stringify("true"));
 
+    // user logged in
+    dispatch(setAuthUser(true));
     dispatch(setUser(response.user));
-    dispatch(setMyId(response.user._id));
-    navigate("/");
-
-    setTimeout(() => {
-      dispatch(setAuthUser(true));
-    }, 1000); // Delay for 1 second
+    messagesSliceObject.myId = response.user._id;
   };
 
   return (

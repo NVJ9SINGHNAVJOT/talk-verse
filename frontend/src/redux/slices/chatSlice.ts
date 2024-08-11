@@ -3,6 +3,14 @@ import { SoAddedInGroup } from "@/types/socket/eventTypes";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
+type ChatSliceObject = {
+  firstMainId: string;
+};
+// NOTE: object below contains properties for reference only, not used for state rendering
+export const chatSliceObject: ChatSliceObject = {
+  firstMainId: "",
+};
+
 export type ChatBarData = Friend | SoAddedInGroup;
 
 export type Friend = {
@@ -25,7 +33,6 @@ interface ChatState {
   onlineFriends: string[];
   userRequests: UserRequest[];
   userTyping: string[];
-  firstMainId: string | undefined;
 }
 
 const initialState = {
@@ -34,7 +41,6 @@ const initialState = {
   onlineFriends: [],
   userRequests: [],
   userTyping: [],
-  firstMainId: undefined,
 } satisfies ChatState as ChatState;
 
 const chatSlice = createSlice({
@@ -53,33 +59,30 @@ const chatSlice = createSlice({
     // chatBarData
     setChatBarData(state, action: PayloadAction<ChatBarData[]>) {
       state.chatBarData = action.payload;
+      if ("chatId" in action.payload[0]) {
+        chatSliceObject.firstMainId = action.payload[0].chatId;
+      } else {
+        chatSliceObject.firstMainId = action.payload[0]._id;
+      }
     },
     addChatBarData(state, action: PayloadAction<ChatBarData>) {
       if ("chatId" in action.payload) {
-        state.firstMainId = action.payload.chatId;
+        chatSliceObject.firstMainId = action.payload.chatId;
       } else {
-        state.firstMainId = action.payload._id;
+        chatSliceObject.firstMainId = action.payload._id;
       }
       state.chatBarData.unshift(action.payload);
     },
     setChatBarDataToFirst(state, action: PayloadAction<string>) {
-      if (
-        state.chatBarData[0]._id === action.payload ||
-        ("chatId" in state.chatBarData[0] && state.chatBarData[0].chatId === action.payload)
-      ) {
-        return;
-      }
-      setOrderApi(action.payload);
-      state.firstMainId = action.payload;
+      chatSliceObject.firstMainId = action.payload;
       const dataIdToMove = action.payload;
       const dataIndex = state.chatBarData.findIndex(
         (data) => ("chatId" in data && data.chatId === dataIdToMove) || data._id === dataIdToMove
       );
       if (dataIndex !== -1) {
         const data = state.chatBarData.splice(dataIndex, 1);
-        if (data !== undefined) {
-          state.chatBarData.unshift(data[0]);
-        }
+        state.chatBarData.unshift(data[0]);
+        setOrderApi(action.payload);
       }
     },
 
@@ -122,11 +125,6 @@ const chatSlice = createSlice({
     removeUserTyping(state, action: PayloadAction<string>) {
       state.userTyping = state.userTyping.filter((userId) => userId !== action.payload);
     },
-
-    // set firstMainId
-    setLastMainId(state, action: PayloadAction<string | undefined>) {
-      state.firstMainId = action.payload;
-    },
   },
 });
 
@@ -145,7 +143,6 @@ export const {
   resetTyping,
   addUserTyping,
   removeUserTyping,
-  setLastMainId,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

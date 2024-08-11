@@ -6,14 +6,7 @@ import { fileMessageApi, getMessagesApi } from "@/services/operations/chatApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { useScrollTriggerVertical } from "@/hooks/useScrollTrigger";
 import { useDispatch } from "react-redux";
-import {
-  addPMessages,
-  resetUnseenMessage,
-  setChatIdEnd,
-  setChatIdStart,
-  setCurrFriendId,
-  setMainChatId,
-} from "@/redux/slices/messagesSlice";
+import { addPMessages, messagesSliceObject, resetUnseenMessage } from "@/redux/slices/messagesSlice";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { MessageText } from "@/types/common";
@@ -22,21 +15,14 @@ import { useSocketContext } from "@/context/SocketContext";
 import { startTypingEvent, stopTypingEvent } from "@/socket/emitEvents/emitNotificationEvents";
 import WorkModal from "@/lib/modals/workmodal/WorkModal";
 import FileInputs from "@/components/core/talk/chatItems/FileInputs";
-import { setApiCall } from "@/redux/slices/loadingSlice";
 import useScrollOnTop from "@/hooks/useScrollOnTop";
-import { setChatBarDataToFirst } from "@/redux/slices/chatSlice";
+import { chatSliceObject, setChatBarDataToFirst } from "@/redux/slices/chatSlice";
+import { loadingSliceObject } from "@/redux/slices/loadingSlice";
 
 const Chat = () => {
-  const apiCalls = useAppSelector((state) => state.loading.apiCalls);
-  const chatIdStart = useAppSelector((state) => state.messages.chatIdStart);
-  const chatIdEnd = useAppSelector((state) => state.messages.chatIdEnd);
-  const currFriendId = useAppSelector((state) => state.messages.currFriendId);
-  const mainChatId = useAppSelector((state) => state.messages.mainChatId);
-  const firstMainId = useAppSelector((state) => state.chat.firstMainId);
   const pMessages = useAppSelector((state) => state.messages.pMess);
   const currUser = useAppSelector((state) => state.user.user);
   const myPublicKey = useAppSelector((state) => state.user.user?.publicKey);
-  const publicKeys = useAppSelector((state) => state.messages.publicKeys);
   const [workModal, setWorkModal] = useState<boolean>(false);
   const [stop, setStop] = useState<boolean>(false);
   const [trigger, setTrigger] = useState<boolean>(true);
@@ -47,7 +33,6 @@ const Chat = () => {
   const { socketRef } = useSocketContext();
   const navigate = useNavigate();
   const { chatId } = useParams();
-  const socket = socketRef.current;
 
   // initialLoad is for text input disable while messages re-render or render when chatId is changed
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
@@ -58,15 +43,15 @@ const Chat = () => {
   // clean up for chat page
   useEffect(() => {
     return () => {
-      dispatch(setCurrFriendId(""));
-      dispatch(setMainChatId(""));
+      messagesSliceObject.currFriendId = undefined;
+      messagesSliceObject.mainChatId = undefined;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // work when chatId is changed is url
   useEffect(() => {
-    if (!chatId || !currFriendId || !mainChatId || mainChatId !== chatId) {
+    if (!chatId || messagesSliceObject.mainChatId !== chatId) {
       navigate("/talk");
       return;
     }
@@ -76,50 +61,53 @@ const Chat = () => {
       dispatch(resetUnseenMessage(chatId));
 
       // this function will only call api for a chatId messasges once
-      if (chatIdStart[chatId] !== true && apiCalls[`getMessagesApi-${chatId}`] !== true) {
-        // api is getting called for first time for chatId and this hook will call this api only once
-        /* INFO: getMessagesApi api call state management */
-        dispatch(setApiCall({ api: `getMessagesApi-${chatId}`, status: true }));
-        dispatch(setChatIdStart(chatId));
+      if (messagesSliceObject.chatIdStart[chatId] === true) {
+        setInitialLoad(false);
+        return;
+      }
 
-        /*
-          getLastCreatedAt if present in chatId messages and if not then create 
-          new date for current time and get messages
-        */
-        let lastCreatedAt;
-        if (pMessages[chatId] !== undefined) {
-          lastCreatedAt = pMessages[chatId][pMessages[chatId].length - 1].createdAt;
-        } else {
-          lastCreatedAt = new Date().toISOString();
+      /* INFO: api is getting called for first time for chatId and this hook will call this api only once */
+      messagesSliceObject.chatIdStart[chatId] = true;
+
+      /*
+        getLastCreatedAt if present in chatId messages and if not then create
+        new date for current time and get messages
+      */
+      let lastCreatedAt;
+      if (pMessages[chatId] !== undefined) {
+        lastCreatedAt = pMessages[chatId][pMessages[chatId].length - 1].createdAt;
+      } else {
+        lastCreatedAt = new Date().toISOString();
+      }
+
+      // get messages for chatId
+      const response = await getMessagesApi(chatId, lastCreatedAt);
+
+      // check response from api
+      if (!response) {
+        toast.error("Error while getting messages for chat");
+        setInitialLoad(false);
+        return;
+      }
+      // no messages for chatId yet if lastCreated in not present in pMessages
+      // and if present then their are no futher messages for current chatId
+      if (response.success === false || !response.messages || response.messages.length < 15) {
+        messagesSliceObject.chatIdEnd[chatId] = true;
+        setStop(true);
+        setInitialLoad(false);
+        return;
+      }
+
+      // check if their is any overlapping for messages for chatId
+      if (pMessages[chatId] !== undefined) {
+        while (response.messages.length > 0 && response.messages[0].createdAt > lastCreatedAt) {
+          response.messages.splice(0, 1);
         }
+      }
 
-        // get messages for chatId
-        const response = await getMessagesApi(chatId, lastCreatedAt);
-
-        // check response from api
-        if (response) {
-          // no messages for chatId yet if lastCreated in not present in pMessages
-          // and if present then their are no futher messages for current chatId
-          if (response.success === false || (response.messages && response.messages.length < 15)) {
-            dispatch(setChatIdEnd(chatId));
-            setStop(true);
-          }
-
-          // check if their is any overlapping for messages for chatId
-          if (response.messages && pMessages[chatId] !== undefined) {
-            while (response.messages.length > 0 && response.messages[0].createdAt > lastCreatedAt) {
-              response.messages.splice(0, 1);
-            }
-          }
-
-          // if any messages is present then dispatch
-          if (response.messages && response.messages.length > 0) {
-            dispatch(addPMessages(response.messages));
-          }
-        } else {
-          toast.error("Error while getting messages for chat");
-        }
-        dispatch(setApiCall({ api: `getMessagesApi-${chatId}`, status: false }));
+      // if any messages is present then dispatch
+      if (response.messages.length > 0) {
+        dispatch(addPMessages(response.messages));
       }
       setInitialLoad(false);
     };
@@ -136,40 +124,44 @@ const Chat = () => {
 
   /* ===== infinite loading of messages ===== */
   useEffect(() => {
-    if (!chatId || !currFriendId || !mainChatId || mainChatId !== chatId) {
-      navigate("/talk");
-      return;
-    }
-
     if (firstMounting) {
       setFirstMounting(false);
       return;
     }
 
+    if (!chatId) {
+      return;
+    }
+
     const getMessages = async () => {
-      if (apiCalls[`getMessagesApi-${chatId}`] !== true && chatIdStart[chatId] === true && chatIdEnd[chatId] !== true) {
-        /* INFO: getMessagesApi api call state management */
-        dispatch(setApiCall({ api: `getMessagesApi-${chatId}`, status: true }));
-
-        const response = await getMessagesApi(chatId, pMessages[chatId][pMessages[chatId].length - 1].createdAt);
-
-        if (response) {
-          // no futher messages for this chatId
-          if (response.success === false || (response.messages && response.messages.length < 15)) {
-            dispatch(setChatIdEnd(chatId));
-            setStop(true);
-          }
-          if (response.messages) {
-            dispatch(addPMessages(response.messages));
-          }
-        } else {
-          toast.error("Error while getting messages for chat");
-        }
-
-        setTimeout(() => {
-          dispatch(setApiCall({ api: `getMessagesApi-${chatId}`, status: false }));
-        }, 2500);
+      if (
+        loadingSliceObject.apiCalls[`getMessagesApi-${chatId}`] === true ||
+        messagesSliceObject.chatIdEnd[chatId] === true
+      ) {
+        return;
       }
+      /* INFO: getMessagesApi api call management */
+      loadingSliceObject.apiCalls[`getMessagesApi-${chatId}`] = true;
+
+      const response = await getMessagesApi(chatId, pMessages[chatId][pMessages[chatId].length - 1].createdAt);
+
+      if (response) {
+        // no futher messages for this chatId
+        if (response.success === false || !response.messages || response.messages.length < 15) {
+          messagesSliceObject.chatIdEnd[chatId] = true;
+          setStop(true);
+        }
+        if (response.messages) {
+          dispatch(addPMessages(response.messages));
+        }
+      } else {
+        toast.error("Error while getting messages for chat");
+      }
+
+      setTimeout(() => {
+        /* INFO: getMessagesApi api call management */
+        loadingSliceObject.apiCalls[`getMessagesApi-${chatId}`] = false;
+      }, 2000);
     };
     getMessages();
 
@@ -177,7 +169,7 @@ const Chat = () => {
   }, [trigger]);
 
   const sendFileMessg = async (file: File) => {
-    if (chatId && currFriendId) {
+    if (chatId && messagesSliceObject.currFriendId) {
       /* 
         for reference form data type required for api call
           FileData = {
@@ -195,13 +187,13 @@ const Chat = () => {
       sendFile.append("fileMessg", file);
       sendFile.append("isGroup", "false");
       sendFile.append("mainId", chatId);
-      sendFile.append("to", currFriendId);
+      sendFile.append("to", messagesSliceObject.currFriendId);
 
       const response = await fileMessageApi(sendFile);
       if (!response) {
         toast.error("Error while uploading file");
       } else {
-        if (firstMainId !== chatId) {
+        if (chatSliceObject.firstMainId !== chatId) {
           dispatch(setChatBarDataToFirst(chatId));
         }
       }
@@ -214,48 +206,54 @@ const Chat = () => {
   const { register, handleSubmit, reset } = useForm<MessageText>();
 
   const sendMessage = (data: MessageText) => {
-    reset();
-    if (!socket) {
+    if (!socketRef.current || !socketRef.current.connected) {
       toast.error("Network connection is not established");
       return;
     }
-    if (!chatId || !currFriendId || !mainChatId) {
+    if (!chatId || !messagesSliceObject.currFriendId) {
       toast.error("Invalid chat");
       return;
     }
-    if (!myPublicKey || !publicKeys[currFriendId]) {
+    if (!myPublicKey || !messagesSliceObject.publicKeys[messagesSliceObject.currFriendId]) {
       toast.error("Encryption keys not present for chat");
       return;
     }
-
-    sendMessageEvent(socket, chatId, currFriendId, data.text, myPublicKey, publicKeys[currFriendId]);
-    if (firstMainId !== chatId) {
+    reset();
+    sendMessageEvent(
+      socketRef.current,
+      chatId,
+      messagesSliceObject.currFriendId,
+      data.text,
+      myPublicKey,
+      messagesSliceObject.publicKeys[messagesSliceObject.currFriendId]
+    );
+    if (chatSliceObject.firstMainId !== chatId) {
       dispatch(setChatBarDataToFirst(chatId));
     }
   };
 
   const startTyping = () => {
-    if (!socket) {
+    if (!socketRef.current || !socketRef.current.connected) {
       toast.error("Network connection is not established");
       return;
     }
-    if (!currFriendId) {
+    if (!messagesSliceObject.currFriendId) {
       toast.error("Invalid chat");
       return;
     }
-    startTypingEvent(socket, currFriendId);
+    startTypingEvent(socketRef.current, messagesSliceObject.currFriendId);
   };
 
   const stopTyping = () => {
-    if (!socket) {
+    if (!socketRef.current || !socketRef.current.connected) {
       toast.error("Network connection is not established");
       return;
     }
-    if (!currFriendId) {
+    if (!messagesSliceObject.currFriendId) {
       toast.error("Invalid chat");
       return;
     }
-    stopTypingEvent(socket, currFriendId);
+    stopTypingEvent(socketRef.current, messagesSliceObject.currFriendId);
   };
 
   return (

@@ -26,3 +26,5 @@ export const categories = [
   "Business",
   "Other",
 ];
+
+export const errorMessage = process.env.ERROR_MESSAGE as string;

@@ -1,5 +1,5 @@
 import ReviewModal from "@/components/core/profile/ReviewModal";
-import { setApiCall } from "@/redux/slices/loadingSlice";
+import { loadingSliceObject, setProfilePageLoading } from "@/redux/slices/loadingSlice";
 import { setProfile } from "@/redux/slices/userSlice";
 import { useAppSelector } from "@/redux/store";
 import { getProfileApi } from "@/services/operations/profileApi";
@@ -11,8 +11,7 @@ import { toast } from "react-toastify";
 const proifleMenu = ["Profile", "MyPosts", "Following", "Followers", "Saved", "Settings", "Review"];
 
 const Profile = () => {
-  const apiCalls = useAppSelector((state) => state.loading.apiCalls);
-  const [loading, setLoading] = useState<boolean>(true);
+  const profilePageLd = useAppSelector((state) => state.loading.profilePageLd);
   const [title, setTitle] = useState<string>();
   const [openReviewModal, setOpenReviewModal] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -28,23 +27,22 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    const getProfile = async () => {
-      if (apiCalls["getProfileApi"] === true) {
+    (async () => {
+      if (loadingSliceObject.apiCalls["profile"] === true) {
         return;
       }
-      /* INFO: getProfileApi api call state management */
-      dispatch(setApiCall({ api: "getProfileApi", status: true }));
+
+      loadingSliceObject.apiCalls["profile"] = true;
       const response = await getProfileApi();
+
       if (response && response.success === true) {
         dispatch(setProfile(response.userData));
-        setLoading(false);
+        dispatch(setProfilePageLoading(false));
       } else {
+        loadingSliceObject.apiCalls["profile"] = false;
         toast.error("Error while getting profile data");
-        navigate("/error");
       }
-      dispatch(setApiCall({ api: "getProfileApi", status: false }));
-    };
-    getProfile();
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -84,7 +82,7 @@ const Profile = () => {
         className="ct-userInfoBack min-h-full w-[calc(100vw-8rem)] overflow-y-auto md:w-[calc(100vw-11rem)] 
         lg:w-[calc(100vw-14rem)]"
       >
-        {loading ? (
+        {profilePageLd === true ? (
           <div
             className="flex h-full w-full animate-pulse items-center justify-center font-be-veitnam-pro 
             text-4xl font-semibold text-black"

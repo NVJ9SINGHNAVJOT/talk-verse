@@ -5,12 +5,12 @@ import UserMenu from "@/components/common/UserMenu";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { useRef, useState } from "react";
 import SideMenu from "@/components/common/SideMenu";
+import { messagesSliceObject } from "@/redux/slices/messagesSlice";
 
 const MainNavbar = () => {
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.user.user);
   const authUser = useAppSelector((state) => state.auth.authUser);
-  const myPrivateKey = useAppSelector((state) => state.messages.myPrivateKey);
   const [menu, setMenu] = useState<boolean>(false);
 
   const menuRefExclude = useRef<HTMLDivElement>(null);
@@ -45,7 +45,7 @@ const MainNavbar = () => {
       setMenu(false);
     }
 
-    if (myPrivateKey === undefined && authUser) {
+    if (messagesSliceObject.myPrivateKey === undefined && authUser) {
       navigate("/checkKey");
     } else {
       navigate("/talk");

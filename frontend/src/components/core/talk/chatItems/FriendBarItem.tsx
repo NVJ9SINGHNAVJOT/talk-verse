@@ -1,8 +1,7 @@
 import { Friend } from "@/redux/slices/chatSlice";
-import { setCurrFriendId, setMainChatId } from "@/redux/slices/messagesSlice";
+import { messagesSliceObject } from "@/redux/slices/messagesSlice";
 import { useAppSelector } from "@/redux/store";
 import { RxAvatar } from "react-icons/rx";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 export type FriendBarItemsProps = {
@@ -17,11 +16,10 @@ const FriendBarItem = (props: FriendBarItemsProps) => {
   const isTyping = useAppSelector((state) => state.chat.userTyping);
   const unseenMessages = useAppSelector((state) => state.messages.unseenMessages);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const goToChat = () => {
     props.setInChat(friend.chatId);
-    dispatch(setCurrFriendId(friend._id));
-    dispatch(setMainChatId(friend.chatId));
+    messagesSliceObject.currFriendId = friend._id;
+    messagesSliceObject.mainChatId = friend.chatId;
     navigate(`/talk/chat/${friend.chatId}`);
   };
 

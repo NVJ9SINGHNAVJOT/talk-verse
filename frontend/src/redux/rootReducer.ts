@@ -5,7 +5,7 @@ import loadingReducer from "@/redux/slices/loadingSlice";
 import chatReducer from "@/redux/slices/chatSlice";
 import messagesReducer from "@/redux/slices/messagesSlice";
 import postReducer from "@/redux/slices/postSlice";
-import commonReducer from "@/redux/slices/commonSlice";
+import reviewsReducer from "@/redux/slices/reviewsSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -14,7 +14,7 @@ const rootReducer = combineReducers({
   chat: chatReducer,
   messages: messagesReducer,
   post: postReducer,
-  common: commonReducer,
+  reviews: reviewsReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

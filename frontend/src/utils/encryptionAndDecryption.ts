@@ -6,7 +6,7 @@ const iv = process.env.GROUP_IV as string;
 const key = forge.md.sha256.create().update(customKey).digest().getBytes();
 
 // Encrypt a message using the recipient's public key
-export function encryptPMessage(message: string, recipientPublicKey: string): string {
+export function encryptPMessage(message: string, recipientPublicKey: string): string | null {
   try {
     const publicKey = forge.pki.publicKeyFromPem(recipientPublicKey);
     const encrypted = publicKey.encrypt(message, "RSA-OAEP", {
@@ -14,12 +14,12 @@ export function encryptPMessage(message: string, recipientPublicKey: string): st
     });
     return forge.util.encode64(encrypted);
   } catch (error) {
-    return "";
+    return null;
   }
 }
 
 // Decrypt the encrypted message using the recipient's private key
-export function decryptPMessage(encryptedMessage: string, recipientPrivateKey: string): string {
+export function decryptPMessage(encryptedMessage: string, recipientPrivateKey: string): string | null {
   try {
     const privateKey = forge.pki.privateKeyFromPem(recipientPrivateKey);
     const encryptedBytes = forge.util.decode64(encryptedMessage);
@@ -28,11 +28,11 @@ export function decryptPMessage(encryptedMessage: string, recipientPrivateKey: s
     });
     return decrypted;
   } catch (error) {
-    return "";
+    return null;
   }
 }
 
-export function encryptGMessage(text: string): string {
+export function encryptGMessage(text: string): string | null {
   try {
     const cipher = forge.cipher.createCipher("AES-CBC", key);
     cipher.start({ iv });
@@ -41,11 +41,11 @@ export function encryptGMessage(text: string): string {
     const encryptedBytes = cipher.output.getBytes();
     return forge.util.encode64(encryptedBytes);
   } catch (error) {
-    return "";
+    return null;
   }
 }
 
-export function decryptGMessage(text: string): string {
+export function decryptGMessage(text: string): string | null {
   try {
     const decipher = forge.cipher.createDecipher("AES-CBC", key);
     decipher.start({ iv });
@@ -54,6 +54,6 @@ export function decryptGMessage(text: string): string {
     const decryptedBytes = decipher.output.getBytes();
     return forge.util.encodeUtf8(decryptedBytes);
   } catch (error) {
-    return "";
+    return null;
   }
 }

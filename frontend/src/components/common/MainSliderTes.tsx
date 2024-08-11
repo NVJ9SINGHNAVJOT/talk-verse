@@ -7,29 +7,27 @@ import { RxAvatar } from "react-icons/rx";
 import { useEffect } from "react";
 import { useAppSelector } from "@/redux/store";
 import { getReviewsApi } from "@/services/operations/reviewApi";
-import { setReviews } from "@/redux/slices/commonSlice";
+import { setReviews } from "@/redux/slices/reviewsSlice";
 
 import { useDispatch } from "react-redux";
-import { setApiCall } from "@/redux/slices/loadingSlice";
+import { loadingSliceObject } from "@/redux/slices/loadingSlice";
 
 const MainSliderTes = () => {
-  const reviews = useAppSelector((state) => state.common.reviews);
-  const apiCalls = useAppSelector((state) => state.loading.apiCalls);
+  const reviews = useAppSelector((state) => state.reviews.reviews);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const getReviews = async () => {
-      if (apiCalls["reviews"] !== true) {
-        dispatch(setApiCall({ api: "reviews", status: true }));
-
-        const response = await getReviewsApi();
-        if (response && response.reviews.length > 0) {
-          dispatch(setReviews(response.reviews));
-        }
+    (async () => {
+      if (loadingSliceObject.apiCalls["reviews"] === true) {
+        return;
       }
-    };
-    getReviews();
+      loadingSliceObject.apiCalls["reviews"] = true;
+      const response = await getReviewsApi();
+      if (response && response.reviews.length > 0) {
+        dispatch(setReviews(response.reviews));
+      }
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

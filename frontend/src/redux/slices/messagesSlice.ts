@@ -1,12 +1,37 @@
 import { setUnseenCount } from "@/services/operations/notificationApi";
 import { SoMessageRecieved } from "@/types/socket/eventTypes";
+import { errorMessage } from "@/utils/constants";
 import { decryptGMessage, decryptPMessage } from "@/utils/encryptionAndDecryption";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-export const errorMessage = process.env.ERROR_MESSAGE as string;
+type MessagesSliceObject = {
+  currFriendId: string | undefined;
+  mainChatId: string | undefined;
+  mainGroupId: string | undefined;
+  myId: string | undefined;
+  myPrivateKey: string | undefined;
+  publicKeys: Record<string, string>;
+  chatIdStart: Record<string, boolean>;
+  groupIdStart: Record<string, boolean>;
+  chatIdEnd: Record<string, boolean>;
+  groupIdEnd: Record<string, boolean>;
+};
+// NOTE: object below contains properties for reference only, not used for state rendering
+export const messagesSliceObject: MessagesSliceObject = {
+  currFriendId: undefined,
+  mainChatId: undefined,
+  mainGroupId: undefined,
+  myId: undefined,
+  myPrivateKey: undefined,
+  publicKeys: {} as Record<string, string>,
+  chatIdStart: {} as Record<string, boolean>,
+  groupIdStart: {} as Record<string, boolean>,
+  chatIdEnd: {} as Record<string, boolean>,
+  groupIdEnd: {} as Record<string, boolean>,
+};
 
-export type GroupMessages = {
+export type GroupMessage = {
   uuId: string;
   isFile: boolean;
   from: {
@@ -20,55 +45,19 @@ export type GroupMessages = {
   createdAt: string;
 };
 
-// Record<mainId, count>
-export type UnseenMessages = Record<string, number>;
-
-// friends public key for encryption
-export type PublicKeys = Record<string, string>;
-export type PublicKey = {
-  userId: string;
-  publicKey: string;
-};
-
 type PMessages = Record<string, SoMessageRecieved[]>;
-type GpMessages = Record<string, GroupMessages[]>;
-
-type ChatIdStart = Record<string, boolean>;
-type GroupIdStart = Record<string, boolean>;
-
-type ChatIdEnd = Record<string, boolean>;
-type GroupIdEnd = Record<string, boolean>;
+type GpMessages = Record<string, GroupMessage[]>;
 
 interface messagesState {
   pMess: PMessages;
   gpMess: GpMessages;
-  currFriendId: string | undefined;
-  mainChatId: string | undefined;
-  mainGroupId: string | undefined;
-  unseenMessages: UnseenMessages;
-  myId: string | undefined;
-  publicKeys: PublicKeys;
-  myPrivateKey: string | undefined;
-  chatIdStart: ChatIdStart;
-  groupIdStart: GroupIdStart;
-  chatIdEnd: ChatIdEnd;
-  groupIdEnd: GroupIdEnd;
+  unseenMessages: Record<string, number>;
 }
 
 const initialState = {
   pMess: {},
   gpMess: {},
-  currFriendId: undefined,
-  mainChatId: undefined,
-  mainGroupId: undefined,
   unseenMessages: {},
-  myId: undefined,
-  publicKeys: {},
-  myPrivateKey: undefined,
-  chatIdStart: {},
-  groupIdStart: {},
-  chatIdEnd: {},
-  groupIdEnd: {},
 } satisfies messagesState as messagesState;
 
 const messagesSlice = createSlice({
@@ -80,27 +69,28 @@ const messagesSlice = createSlice({
       state.pMess = {} as PMessages;
     },
     addPMessages(state, action: PayloadAction<SoMessageRecieved[]>) {
-      if (state.myPrivateKey !== undefined) {
-        for (let index = 0; index < action.payload.length; index++) {
-          if (action.payload[index].isFile === false) {
-            const newText = decryptPMessage(action.payload[index].text, state.myPrivateKey);
-            if (newText) {
-              action.payload[index].text = newText;
-            } else {
-              action.payload[index].text = errorMessage;
-            }
+      if (!messagesSliceObject.myPrivateKey) {
+        return;
+      }
+      for (let index = 0; index < action.payload.length; index++) {
+        if (action.payload[index].isFile === false) {
+          const newText = decryptPMessage(action.payload[index].text, messagesSliceObject.myPrivateKey);
+          if (newText) {
+            action.payload[index].text = newText;
+          } else {
+            action.payload[index].text = errorMessage;
           }
         }
-        if (state.pMess[action.payload[0].chatId] === undefined) {
-          state.pMess[action.payload[0].chatId] = action.payload;
-        } else {
-          state.pMess[action.payload[0].chatId] = state.pMess[action.payload[0].chatId].concat(action.payload);
-        }
+      }
+      if (state.pMess[action.payload[0].chatId] === undefined) {
+        state.pMess[action.payload[0].chatId] = action.payload;
+      } else {
+        state.pMess[action.payload[0].chatId] = state.pMess[action.payload[0].chatId].concat(action.payload);
       }
     },
     addLivePMessage(state, action: PayloadAction<SoMessageRecieved>) {
-      if (state.myPrivateKey && action.payload.isFile === false) {
-        const newText = decryptPMessage(action.payload.text, state.myPrivateKey);
+      if (action.payload.isFile === false && messagesSliceObject.myPrivateKey) {
+        const newText = decryptPMessage(action.payload.text, messagesSliceObject.myPrivateKey);
         if (newText) {
           action.payload.text = newText;
         } else {
@@ -116,9 +106,12 @@ const messagesSlice = createSlice({
       }
 
       // update unseen count if current chat is not active on display
-      if (action.payload.from !== state.myId && (!state.mainChatId || action.payload.chatId !== state.mainChatId)) {
+      if (
+        action.payload.from !== messagesSliceObject.myId &&
+        action.payload.chatId !== messagesSliceObject.mainChatId
+      ) {
         const key = action.payload.chatId;
-        if (state.unseenMessages && key in state.unseenMessages) {
+        if (key in state.unseenMessages) {
           state.unseenMessages[key] += 1;
           setUnseenCount(key, state.unseenMessages[key] + 1);
         }
@@ -137,7 +130,7 @@ const messagesSlice = createSlice({
     resetGpMess(state) {
       state.gpMess = {} as GpMessages;
     },
-    addGpMessages(state, action: PayloadAction<GroupMessages[]>) {
+    addGpMessages(state, action: PayloadAction<GroupMessage[]>) {
       for (let index = 0; index < action.payload.length; index++) {
         if (action.payload[index].isFile === false) {
           const newText = decryptGMessage(action.payload[index].text);
@@ -155,7 +148,7 @@ const messagesSlice = createSlice({
         state.gpMess[action.payload[0].to] = state.gpMess[action.payload[0].to].concat(action.payload);
       }
     },
-    addLiveGpMessage(state, action: PayloadAction<GroupMessages>) {
+    addLiveGpMessage(state, action: PayloadAction<GroupMessage>) {
       if (action.payload.isFile === false) {
         const newText = decryptGMessage(action.payload.text);
         if (newText) {
@@ -173,9 +166,12 @@ const messagesSlice = createSlice({
       }
 
       // update unseen count if current group is not active on display
-      if (action.payload.from._id !== state.myId && (!state.mainGroupId || state.mainGroupId !== action.payload.to)) {
+      if (
+        action.payload.from._id !== messagesSliceObject.myId &&
+        messagesSliceObject.mainGroupId !== action.payload.to
+      ) {
         const key = action.payload.to;
-        if (state.unseenMessages && key in state.unseenMessages) {
+        if (key in state.unseenMessages) {
           state.unseenMessages[key] += 1;
           setUnseenCount(key, state.unseenMessages[key] + 1);
         }
@@ -190,22 +186,8 @@ const messagesSlice = createSlice({
       }
     },
 
-    // set ids for chat
-    setCurrFriendId(state, action: PayloadAction<string>) {
-      state.currFriendId = action.payload;
-    },
-    setMainChatId(state, action: PayloadAction<string>) {
-      state.mainChatId = action.payload;
-    },
-    setMainGroupId(state, action: PayloadAction<string>) {
-      state.mainGroupId = action.payload;
-    },
-    setMyId(state, action: PayloadAction<string | undefined>) {
-      state.myId = action.payload;
-    },
-
     // unseenMessages
-    setUnseenMessages(state, action: PayloadAction<UnseenMessages>) {
+    setUnseenMessages(state, action: PayloadAction<Record<string, number>>) {
       state.unseenMessages = action.payload;
     },
     addNewUnseen: (state, action: PayloadAction<string>) => {
@@ -213,47 +195,10 @@ const messagesSlice = createSlice({
     },
     resetUnseenMessage(state, action: PayloadAction<string>) {
       const key = action.payload;
-      if (state.unseenMessages && key in state.unseenMessages && state.unseenMessages[key] !== 0) {
-        setUnseenCount(key, 0);
+      if (key in state.unseenMessages && state.unseenMessages[key] !== 0) {
         state.unseenMessages[key] = 0;
+        setUnseenCount(key, 0);
       }
-    },
-
-    // publilc keys
-    setPublicKeys(state, action: PayloadAction<PublicKeys>) {
-      state.publicKeys = action.payload;
-    },
-    addPublicKey(state, action: PayloadAction<PublicKey>) {
-      state.publicKeys[action.payload.userId] = action.payload.publicKey;
-    },
-
-    // current user private key
-    setMyPrivateKey(state, action: PayloadAction<string | undefined>) {
-      state.myPrivateKey = action.payload;
-    },
-
-    // start and end points of chatId
-    setChatIdStart(state, action: PayloadAction<string>) {
-      state.chatIdStart[action.payload] = true;
-    },
-    setChatIdEnd(state, action: PayloadAction<string>) {
-      state.chatIdEnd[action.payload] = true;
-    },
-
-    // start and end points of groupId
-    setGroupIdStart(state, action: PayloadAction<string>) {
-      state.groupIdStart[action.payload] = true;
-    },
-    setGroupIdEnd(state, action: PayloadAction<string>) {
-      state.groupIdEnd[action.payload] = true;
-    },
-
-    // reset points for chat and group
-    resetChatIdAndGroupIdPoints(state) {
-      state.chatIdEnd = {} as ChatIdEnd;
-      state.chatIdStart = {} as ChatIdStart;
-      state.groupIdStart = {} as GroupIdStart;
-      state.groupIdEnd = {} as GroupIdEnd;
     },
   },
 });
@@ -265,20 +210,8 @@ export const {
   resetGpMess,
   addGpMessages,
   addLiveGpMessage,
-  setCurrFriendId,
-  setMainChatId,
-  setMainGroupId,
-  setMyId,
   setUnseenMessages,
   addNewUnseen,
   resetUnseenMessage,
-  setPublicKeys,
-  addPublicKey,
-  setMyPrivateKey,
-  setChatIdStart,
-  setChatIdEnd,
-  setGroupIdStart,
-  setGroupIdEnd,
-  resetChatIdAndGroupIdPoints,
 } = messagesSlice.actions;
 export default messagesSlice.reducer;

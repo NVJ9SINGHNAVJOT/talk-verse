@@ -2,13 +2,7 @@ import { useSocketContext } from "@/context/SocketContext";
 import { useScrollTriggerVertical } from "@/hooks/useScrollTrigger";
 import GpMessageCard from "@/components/core/talk/message/GpMessageCard";
 import OtherGpMessageCard from "@/components/core/talk/message/OtherGpMessageCard";
-import {
-  addGpMessages,
-  resetUnseenMessage,
-  setGroupIdEnd,
-  setGroupIdStart,
-  setMainGroupId,
-} from "@/redux/slices/messagesSlice";
+import { addGpMessages, messagesSliceObject, resetUnseenMessage } from "@/redux/slices/messagesSlice";
 import { useAppSelector } from "@/redux/store";
 import { fileMessageApi, getGroupMessagesApi } from "@/services/operations/chatApi";
 import { sendGroupMessageEvent } from "@/socket/emitEvents/emitMessageEvents";
@@ -21,18 +15,13 @@ import { toast } from "react-toastify";
 import FileInputs from "@/components/core/talk/chatItems/FileInputs";
 import WorkModal from "@/lib/modals/workmodal/WorkModal";
 import useScrollOnTop from "@/hooks/useScrollOnTop";
-import { setApiCall } from "@/redux/slices/loadingSlice";
-import { setChatBarDataToFirst } from "@/redux/slices/chatSlice";
+import { chatSliceObject, setChatBarDataToFirst } from "@/redux/slices/chatSlice";
+import { loadingSliceObject } from "@/redux/slices/loadingSlice";
 
 const Group = () => {
   const { register, handleSubmit, reset } = useForm<MessageText>();
-  const mainGroupId = useAppSelector((state) => state.messages.mainGroupId);
   const gpMessages = useAppSelector((state) => state.messages.gpMess);
-  const firstMainId = useAppSelector((state) => state.chat.firstMainId);
   const currUser = useAppSelector((state) => state.user.user);
-  const groupIdStart = useAppSelector((state) => state.messages.groupIdStart);
-  const groupIdEnd = useAppSelector((state) => state.messages.groupIdEnd);
-  const apiCalls = useAppSelector((state) => state.loading.apiCalls);
   const [workModal, setWorkModal] = useState<boolean>(false);
   const [stop, setStop] = useState<boolean>(false);
   const [trigger, setTrigger] = useState<boolean>(true);
@@ -43,7 +32,6 @@ const Group = () => {
   const navigate = useNavigate();
   const { groupId } = useParams();
   const scrollableDivRef = useRef<HTMLDivElement>(null);
-  const socket = socketRef.current;
 
   // initialLoad is for text input disable while messages re-render or render when groupId is changed
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
@@ -54,14 +42,14 @@ const Group = () => {
   // clean up for group page
   useEffect(() => {
     return () => {
-      dispatch(setMainGroupId(""));
+      messagesSliceObject.mainGroupId = undefined;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     setInitialLoad(true);
-    if (!groupId || !mainGroupId || mainGroupId !== groupId) {
+    if (!groupId || !messagesSliceObject.mainGroupId || messagesSliceObject.mainGroupId !== groupId) {
       navigate("/talk");
       return;
     }
@@ -70,51 +58,54 @@ const Group = () => {
       // reset unseenCount for groupId
       dispatch(resetUnseenMessage(groupId));
       // this fucntion will only call api for a groupId messasges once
-      if (groupIdStart[groupId] !== true && apiCalls[`getGroupMessagesApi-${groupId}`] !== true) {
-        // api is getting called for first time for groupId and this hook will call this api only once
-        /* INFO: getGroupMessagesApi api call state management */
-        dispatch(setApiCall({ api: `getGroupMessagesApi-${groupId}`, status: true }));
-        dispatch(setGroupIdStart(groupId));
+      if (messagesSliceObject.groupIdStart[groupId] === true) {
+        setInitialLoad(false);
+        return;
+      }
 
-        /*
-          getLastCreatedAt if present in groupId messages and if not then create 
-          new date for current time and get messages
-        */
+      /* INFO: api is getting called for first time for groupId and this hook will call this api only once */
+      messagesSliceObject.groupIdStart[groupId] = true;
 
-        let lastCreatedAt;
-        if (gpMessages[groupId] !== undefined) {
-          lastCreatedAt = gpMessages[groupId][gpMessages[groupId].length - 1].createdAt;
-        } else {
-          lastCreatedAt = new Date().toISOString();
+      /*
+        getLastCreatedAt if present in groupId messages and if not then create 
+        new date for current time and get messages
+      */
+
+      let lastCreatedAt;
+      if (gpMessages[groupId] !== undefined) {
+        lastCreatedAt = gpMessages[groupId][gpMessages[groupId].length - 1].createdAt;
+      } else {
+        lastCreatedAt = new Date().toISOString();
+      }
+
+      // get messages for groupId
+      const response = await getGroupMessagesApi(groupId, lastCreatedAt);
+
+      // check response from api
+      if (!response) {
+        toast.error("Error while getting messages for group");
+        setInitialLoad(false);
+        return;
+      }
+      // no messages for groupId yet if lastCreated in not present in gpMessages
+      // and if present then their are no futher messages for current groupId
+      if (response.success === false || !response.messages || response.messages.length < 15) {
+        messagesSliceObject.groupIdEnd[groupId] = true;
+        setStop(true);
+        setInitialLoad(false);
+        return;
+      }
+
+      // check if their is any overlapping for messages for groupId
+      if (gpMessages[groupId] !== undefined) {
+        while (response.messages.length > 0 && response.messages[0].createdAt > lastCreatedAt) {
+          response.messages.splice(0, 1);
         }
+      }
 
-        // get messages for groupId
-        const response = await getGroupMessagesApi(groupId, lastCreatedAt);
-
-        // check response from api
-        if (response) {
-          // no messages for groupId yet if lastCreated in not present in gpMessages
-          // and if present then their are no futher messages for current groupId
-          if (response.success === false || (response.messages && response.messages.length < 15)) {
-            dispatch(setGroupIdEnd(groupId));
-            setStop(true);
-          }
-
-          // check if their is any overlapping for messages for groupId
-          if (response.messages && gpMessages[groupId] !== undefined) {
-            while (response.messages.length > 0 && response.messages[0].createdAt > lastCreatedAt) {
-              response.messages.splice(0, 1);
-            }
-          }
-
-          // if any messages is present then dispatch
-          if (response.messages && response.messages.length > 0) {
-            dispatch(addGpMessages(response.messages));
-          }
-        } else {
-          toast.error("Error while getting messages for group");
-        }
-        dispatch(setApiCall({ api: `getGroupMessagesApi-${groupId}`, status: false }));
+      // if any messages is present then dispatch
+      if (response.messages && response.messages.length > 0) {
+        dispatch(addGpMessages(response.messages));
       }
       setInitialLoad(false);
     };
@@ -132,47 +123,46 @@ const Group = () => {
 
   /* ===== infinite loading of messages ===== */
   useEffect(() => {
-    if (!groupId || !mainGroupId || mainGroupId !== groupId) {
-      navigate("/talk");
-      return;
-    }
-
     if (firstMounting) {
       setFirstMounting(false);
       return;
     }
 
+    if (!groupId) {
+      return;
+    }
+
     const getMessages = async () => {
       if (
-        apiCalls[`getGroupMessagesApi-${groupId}`] !== true &&
-        groupIdStart[groupId] === true &&
-        groupIdEnd[groupId] !== true
+        loadingSliceObject.apiCalls[`getGroupMessagesApi-${groupId}`] === true ||
+        messagesSliceObject.groupIdEnd[groupId] === true
       ) {
-        /* INFO: getMessagesApi api call state management */
-        dispatch(setApiCall({ api: `getGroupMessagesApi-${groupId}`, status: true }));
-
-        const response = await getGroupMessagesApi(
-          groupId,
-          gpMessages[groupId][gpMessages[groupId].length - 1].createdAt
-        );
-
-        if (response) {
-          // no futher messages for this groupId
-          if (response.success === false || (response.messages && response.messages.length < 15)) {
-            dispatch(setGroupIdEnd(groupId));
-            setStop(true);
-          }
-          if (response.messages) {
-            dispatch(addGpMessages(response.messages));
-          }
-        } else {
-          toast.error("Error while getting messages for group");
-        }
-
-        setTimeout(() => {
-          dispatch(setApiCall({ api: `getGroupMessagesApi-${groupId}`, status: false }));
-        }, 2500);
+        return;
       }
+      /* INFO: getMessagesApi api call management */
+      loadingSliceObject.apiCalls[`getGroupMessagesApi-${groupId}`] = true;
+
+      const response = await getGroupMessagesApi(
+        groupId,
+        gpMessages[groupId][gpMessages[groupId].length - 1].createdAt
+      );
+
+      if (response) {
+        // no futher messages for this groupId
+        if (response.success === false || !response.messages || response.messages.length < 15) {
+          messagesSliceObject.groupIdEnd[groupId] = true;
+          setStop(true);
+        }
+        if (response.messages) {
+          dispatch(addGpMessages(response.messages));
+        }
+      } else {
+        toast.error("Error while getting messages for group");
+      }
+
+      setTimeout(() => {
+        loadingSliceObject.apiCalls[`getGroupMessagesApi-${groupId}`] = false;
+      }, 2000);
     };
     getMessages();
 
@@ -213,7 +203,7 @@ const Group = () => {
       if (!response) {
         toast.error("Error while uploading file");
       } else {
-        if (firstMainId !== groupId) {
+        if (chatSliceObject.firstMainId !== groupId) {
           dispatch(setChatBarDataToFirst(groupId));
         }
       }
@@ -224,26 +214,25 @@ const Group = () => {
   };
 
   const sendGroupMessage = (data: MessageText) => {
-    reset();
-    if (!socket) {
+    if (!socketRef.current || !socketRef.current.connected) {
       toast.error("Network connection is not established");
       return;
     }
-    if (!groupId || !mainGroupId || !currUser) {
+    if (!groupId || !currUser) {
       toast.error("Invalid group");
       return;
     }
-
+    reset();
     sendGroupMessageEvent(
-      socket,
+      socketRef.current,
       groupId,
       data.text,
       currUser.firstName,
       currUser.lastName,
-      currUser.imageUrl ? currUser.imageUrl : ""
+      currUser.imageUrl
     );
 
-    if (firstMainId !== groupId) {
+    if (chatSliceObject.firstMainId !== groupId) {
       dispatch(setChatBarDataToFirst(groupId));
     }
   };

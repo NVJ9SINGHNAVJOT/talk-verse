@@ -1,7 +1,5 @@
-import { setAuthUser } from "@/redux/slices/authSlice";
-import { setMyId, setMyPrivateKey } from "@/redux/slices/messagesSlice";
-import { setProfile, setUser } from "@/redux/slices/userSlice";
 import { logOutApi } from "@/services/operations/authApi";
+import logOutCleanUp from "@/utils/logOut";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -29,18 +27,9 @@ const LogOutModal = (props: LogOutModalPros) => {
     } else {
       toast.success("Logged Out");
     }
-
-    navigate("/");
     props.setMenuOpen(false);
 
-    setTimeout(() => {
-      // clean up for log out
-      dispatch(setProfile(null));
-      dispatch(setUser(null));
-      dispatch(setAuthUser(false));
-      dispatch(setMyPrivateKey(undefined));
-      dispatch(setMyId(undefined));
-    }, 200);
+    logOutCleanUp(dispatch, navigate);
   };
 
   return (

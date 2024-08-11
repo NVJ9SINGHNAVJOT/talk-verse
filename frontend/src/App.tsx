@@ -3,13 +3,14 @@ import MainNavbar from "@/components/common/MainNavbar";
 import { useEffect, useRef, useState } from "react";
 import useScrollOnTop from "@/hooks/useScrollOnTop";
 import { checkUserApi } from "@/services/operations/authApi";
-import { setProfile, setUser } from "@/redux/slices/userSlice";
+import { setUser } from "@/redux/slices/userSlice";
 import { useDispatch } from "react-redux";
 import { setAuthUser } from "@/redux/slices/authSlice";
 import SiteLoadingModal from "@/components/common/SiteLoadingModal";
 import { useAppSelector } from "@/redux/store";
-import { setMyId, setMyPrivateKey } from "@/redux/slices/messagesSlice";
 import SocketProvider from "@/context/SocketContext";
+import { messagesSliceObject } from "@/redux/slices/messagesSlice";
+import logOutCleanUp from "@/utils/logOut";
 
 function App() {
   const authUser = useAppSelector((state) => state.auth.authUser);
@@ -25,13 +26,8 @@ function App() {
     const checkUserLoggedIn = () => {
       const isMultiTabLoggedIn = localStorage.getItem(process.env.CHECK_USER_IN_MULTI_TAB as string);
 
-      if (isMultiTabLoggedIn && authUser && JSON.parse(isMultiTabLoggedIn) === "false") {
-        dispatch(setAuthUser(false));
-        navigate("/login");
-        dispatch(setProfile(null));
-        dispatch(setUser(null));
-        dispatch(setMyPrivateKey(undefined));
-        dispatch(setMyId(undefined));
+      if (authUser && isMultiTabLoggedIn && JSON.parse(isMultiTabLoggedIn) === "false") {
+        logOutCleanUp(dispatch, navigate);
       }
     };
 
@@ -49,9 +45,10 @@ function App() {
       const response = await checkUserApi();
 
       if (response && response.success === true && response.user) {
-        dispatch(setUser(response.user));
+        // user logged in
         dispatch(setAuthUser(true));
-        dispatch(setMyId(response.user._id));
+        dispatch(setUser(response.user));
+        messagesSliceObject.myId = response.user._id;
       } else {
         // for multiple tabs set CHECK_USER_IN_MULTI_TAB to "false"
         localStorage.setItem(process.env.CHECK_USER_IN_MULTI_TAB as string, JSON.stringify("false"));
@@ -59,7 +56,7 @@ function App() {
 
       setTimeout(() => {
         setCheckUser(false);
-      }, 500);
+      }, 200);
     };
 
     checkDefaultLogin();

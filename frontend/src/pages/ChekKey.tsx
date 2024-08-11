@@ -1,9 +1,8 @@
-import { setMyPrivateKey } from "@/redux/slices/messagesSlice";
+import { messagesSliceObject } from "@/redux/slices/messagesSlice";
 import { useAppSelector } from "@/redux/store";
 import { decryptPMessage, encryptPMessage } from "@/utils/encryptionAndDecryption";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -15,7 +14,6 @@ const checkMessage = process.env.TEST_P_KEY as string;
 
 const ChekKey = () => {
   const myPublicKey = useAppSelector((state) => state.user.user?.publicKey);
-  const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const { register, handleSubmit, reset } = useForm<Key>();
@@ -34,14 +32,19 @@ const ChekKey = () => {
 
     const completeKey = "-----BEGIN RSA PRIVATE KEY-----" + data.key + "-----END RSA PRIVATE KEY-----";
     const encryptMessage = encryptPMessage(checkMessage, myPublicKey as string);
-    const decryptedMessage = decryptPMessage(encryptMessage, completeKey);
 
-    if (!decryptedMessage || checkMessage !== decryptedMessage) {
-      toast.error("Invalid private key, please enter valid key");
+    if (!encryptMessage) {
+      toast.error("Error while checking key");
     } else {
-      dispatch(setMyPrivateKey(completeKey));
-      toast.dismiss(tId);
-      navigate("/talk");
+      const decryptedMessage = decryptPMessage(encryptMessage, completeKey);
+
+      if (checkMessage !== decryptedMessage) {
+        toast.error("Invalid private key, please enter valid key");
+      } else {
+        messagesSliceObject.myPrivateKey = completeKey;
+        toast.dismiss(tId);
+        navigate("/talk");
+      }
     }
 
     toast.dismiss(tId);

@@ -4,13 +4,13 @@ import {
   addOnlineFriend,
   addUserRequest,
   addUserTyping,
+  chatSliceObject,
   Friend,
   removeOnlineFriend,
   removeUserTyping,
   resetTyping,
   setChatBarData,
   setFriends,
-  setLastMainId,
   setOnlineFriend,
   setUserRequests,
   UserRequest,
@@ -19,18 +19,13 @@ import {
   addLiveGpMessage,
   addLivePMessage,
   addNewUnseen,
-  addPublicKey,
-  GroupMessages,
-  PublicKey,
-  PublicKeys,
-  resetChatIdAndGroupIdPoints,
+  GroupMessage,
+  messagesSliceObject,
   resetGpMess,
   resetPMess,
-  setPublicKeys,
   setUnseenMessages,
-  UnseenMessages,
 } from "@/redux/slices/messagesSlice";
-import { setTalkPageLoading } from "@/redux/slices/loadingSlice";
+import { loadingSliceObject, setTalkPageLoading } from "@/redux/slices/loadingSlice";
 import { chatBarDataApi } from "@/services/operations/chatApi";
 import { checkOnlineFriendsApi, getAllNotificationsApi } from "@/services/operations/notificationApi";
 import { createContext, ReactNode, useContext, useRef } from "react";
@@ -74,6 +69,7 @@ export default function SocketProvider({ children }: ContextProviderProps) {
   const dispatch = useDispatch();
 
   const talkPageCleanUp = () => {
+    loadingSliceObject.apiCalls["talk"] = false;
     // set talk page loading true
     dispatch(setTalkPageLoading(true));
 
@@ -83,14 +79,18 @@ export default function SocketProvider({ children }: ContextProviderProps) {
     dispatch(setOnlineFriend([]));
     dispatch(setUnseenMessages({}));
     dispatch(resetTyping());
-    dispatch(setLastMainId(undefined));
     dispatch(setUserRequests([]));
+    chatSliceObject.firstMainId = "";
 
     // messagesSlice
-    dispatch(setPublicKeys({}));
     dispatch(resetPMess());
     dispatch(resetGpMess());
-    dispatch(resetChatIdAndGroupIdPoints());
+    messagesSliceObject.chatIdStart = {};
+    messagesSliceObject.chatIdEnd = {};
+    messagesSliceObject.groupIdStart = {};
+    messagesSliceObject.groupIdEnd = {};
+    messagesSliceObject.publicKeys = {};
+    messagesSliceObject.myPrivateKey = undefined;
   };
 
   const setupSocketConnection = async () => {
@@ -118,7 +118,7 @@ export default function SocketProvider({ children }: ContextProviderProps) {
 
       if (res1.success === true) {
         if (res1.unseenMessages) {
-          const newUnseenMessages: UnseenMessages = {};
+          const newUnseenMessages: Record<string, number> = {};
           res1.unseenMessages.forEach((messages) => {
             newUnseenMessages[messages.mainId] = messages.count;
           });
@@ -133,11 +133,9 @@ export default function SocketProvider({ children }: ContextProviderProps) {
         if (res2.friends) dispatch(setFriends(res2.friends));
         if (res2.chatBarData) dispatch(setChatBarData(res2.chatBarData));
         if (res2.friendPublicKeys) {
-          const newFriendKeys: PublicKeys = {};
           res2.friendPublicKeys.forEach((data) => {
-            newFriendKeys[data.friendId] = data.publicKey;
+            messagesSliceObject.publicKeys[data.friendId] = data.publicKey;
           });
-          dispatch(setPublicKeys(newFriendKeys));
         }
       }
 
@@ -153,6 +151,20 @@ export default function SocketProvider({ children }: ContextProviderProps) {
       */
       const socket = socketRef.current;
 
+      socketRef.current.on("connect_error", () => {
+        socketRef.current = null;
+        toast.error("Error in connection");
+        // if error in connection then clear all state for talk page
+        talkPageCleanUp();
+        navigate("/");
+      });
+
+      socket.on("connect", () => {
+        setTimeout(() => {
+          dispatch(setTalkPageLoading(false));
+        }, 500);
+      });
+
       /* ===== socket events start ===== */
       socket.on(clientE.USER_REQUEST, (data: SoUserRequest) => {
         dispatch(
@@ -166,12 +178,7 @@ export default function SocketProvider({ children }: ContextProviderProps) {
       });
 
       socket.on(clientE.REQUEST_ACCEPTED, (data: SoRequestAccepted) => {
-        dispatch(
-          addPublicKey({
-            userId: data._id,
-            publicKey: data.publicKey,
-          } satisfies PublicKey as PublicKey)
-        );
+        messagesSliceObject.publicKeys[data._id] = data.publicKey;
         const newFriend: Friend = {
           _id: data._id,
           chatId: data.chatId,
@@ -196,7 +203,7 @@ export default function SocketProvider({ children }: ContextProviderProps) {
       });
 
       socket.on(clientE.GROUP_MESSAGE_RECIEVED, (data: SoGroupMessageRecieved) => {
-        const newGpMessage: GroupMessages = {
+        const newGpMessage: GroupMessage = {
           uuId: data.uuId,
           isFile: data.isFile,
           from: {
@@ -228,20 +235,6 @@ export default function SocketProvider({ children }: ContextProviderProps) {
         dispatch(removeOnlineFriend(friendId));
       });
       /* ===== socket events end ===== */
-
-      socket.on("connect", () => {
-        setTimeout(() => {
-          dispatch(setTalkPageLoading(false));
-        }, 500);
-      });
-
-      socketRef.current.on("connect_error", () => {
-        socketRef.current = null;
-        toast.error("Error in connection");
-        // if error in connection then clear all state for talk page
-        talkPageCleanUp();
-        navigate("/");
-      });
     } catch (error) {
       toast.error("Error while connecting");
       // if error in connection then clear all state for talk page

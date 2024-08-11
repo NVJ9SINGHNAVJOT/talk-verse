@@ -1,10 +1,10 @@
-import { GroupMessages } from "@/redux/slices/messagesSlice";
+import { GroupMessage } from "@/redux/slices/messagesSlice";
 import { getDTimeStamp } from "@/utils/getTime";
 import { RxAvatar } from "react-icons/rx";
 import FileItem from "@/components/core/talk/message/FileItem";
 
 type OtherGpMessageCardProps = {
-  message: GroupMessages;
+  message: GroupMessage;
 };
 
 const OtherGpMessageCard = (props: OtherGpMessageCardProps) => {
@@ -33,13 +33,3 @@ const OtherGpMessageCard = (props: OtherGpMessageCardProps) => {
 };
 
 export default OtherGpMessageCard;
-
-// {imageUrl ? (
-//   <img
-//     src={imageUrl}
-//     alt="Loading..."
-//     className=" size-6 rounded-full mt-4 z-50"
-//   />
-// ) : (
-//   <RxAvatar className=" size-6 rounded-full fill-slate-500 mt-4 z-50" />
-// )}

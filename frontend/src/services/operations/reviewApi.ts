@@ -1,7 +1,7 @@
 import { CommonRs } from "@/types/apis/common";
 import { fetchApi } from "@/services/fetchApi";
 import { reviewEndPoints } from "@/services/apis";
-import { Reviews } from "@/redux/slices/commonSlice";
+import { Reviews } from "@/redux/slices/reviewsSlice";
 
 export const postReviewApi = async (reviewText: string): Promise<boolean> => {
   const resData: CommonRs = await fetchApi(

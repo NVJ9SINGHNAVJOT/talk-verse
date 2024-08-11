@@ -1,16 +1,22 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-export type ApiCalls = Record<string, boolean>;
+// NOTE: object below contains properties for reference only, not used for state rendering
+type LoadingSliceObject = {
+  apiCalls: Record<string, boolean>;
+};
+export const loadingSliceObject: LoadingSliceObject = {
+  apiCalls: {},
+};
 
 interface LoadingState {
   talkPageLd: boolean;
-  apiCalls: ApiCalls;
+  profilePageLd: boolean;
 }
 
 const initialState = {
   talkPageLd: true,
-  apiCalls: {},
+  profilePageLd: true,
 } satisfies LoadingState as LoadingState;
 
 const loadingSlice = createSlice({
@@ -20,11 +26,11 @@ const loadingSlice = createSlice({
     setTalkPageLoading(state, action: PayloadAction<boolean>) {
       state.talkPageLd = action.payload;
     },
-    setApiCall(state, action: PayloadAction<{ api: string; status: boolean }>) {
-      state.apiCalls[action.payload.api] = action.payload.status;
+    setProfilePageLoading(state, action: PayloadAction<boolean>) {
+      state.profilePageLd = action.payload;
     },
   },
 });
 
-export const { setTalkPageLoading, setApiCall } = loadingSlice.actions;
+export const { setTalkPageLoading, setProfilePageLoading } = loadingSlice.actions;
 export default loadingSlice.reducer;

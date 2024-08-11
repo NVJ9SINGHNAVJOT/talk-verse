@@ -5,21 +5,17 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import PostLayout from "@/components/core/blog/post/PostLayout";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAppSelector } from "@/redux/store";
-import { useDispatch } from "react-redux";
-import { setApiCall } from "@/redux/slices/loadingSlice";
 import MultiCubeLoader from "@/lib/loaders/multicubeloader/MultiCubeLoader";
 import { categories } from "@/utils/constants";
+import { loadingSliceObject } from "@/redux/slices/loadingSlice";
 
 const Category = () => {
-  const apiCalls = useAppSelector((state) => state.loading.apiCalls);
   const { category } = useParams();
   const [stop, setStop] = useState<boolean>(false);
   const [trigger, setTrigger] = useState<boolean>(true);
   const [resetTrigger, setResetTrigger] = useState<boolean>(true);
   const categoryContainer = useRef<HTMLDivElement>(null);
   const [categoriesPost, setCategoriesPost] = useState<Post[]>([]);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useScrollTriggerVertical(categoryContainer, "down", setTrigger, stop, resetTrigger);
@@ -45,10 +41,10 @@ const Category = () => {
         navigate("/blog");
         return;
       }
-      if (apiCalls[`${category}-category-post`] === true) {
+      if (loadingSliceObject.apiCalls[`${category}-category-post`] === true) {
         return;
       }
-      dispatch(setApiCall({ api: `${category}-category-post`, status: true }));
+      loadingSliceObject.apiCalls[`${category}-category-post`] = true;
       let lastCreatedAt;
       if (categoriesPost.length === 0) {
         lastCreatedAt = new Date().toISOString();
@@ -57,7 +53,7 @@ const Category = () => {
       }
 
       const response = await categoryPostsApi(category, lastCreatedAt);
-      dispatch(setApiCall({ api: `${category}-category-post`, status: false }));
+      loadingSliceObject.apiCalls[`${category}-category-post`] = false;
 
       if (response) {
         if (response.posts) {

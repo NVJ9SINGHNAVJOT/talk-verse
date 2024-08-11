@@ -4,9 +4,10 @@ import { useSocketContext } from "@/context/SocketContext";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useAppSelector } from "@/redux/store";
+import { messagesSliceObject } from "@/redux/slices/messagesSlice";
+import { loadingSliceObject } from "@/redux/slices/loadingSlice";
 
 const Talk = () => {
-  const myPrivateKey = useAppSelector((state) => state.messages.myPrivateKey);
   const { setupSocketConnection } = useSocketContext();
   const navigate = useNavigate();
   const talkPageLd = useAppSelector((state) => state.loading.talkPageLd);
@@ -15,9 +16,10 @@ const Talk = () => {
     const getWebSocketConnected = async () => {
       try {
         // only make connection if user is getting connected for first loading of talk page
-        if (myPrivateKey === undefined) {
+        if (messagesSliceObject.myPrivateKey === undefined) {
           navigate("/checkKey");
-        } else if (talkPageLd === true) {
+        } else if (loadingSliceObject.apiCalls["talk"] !== true) {
+          loadingSliceObject.apiCalls["talk"] = true;
           await setupSocketConnection();
         }
       } catch (error) {

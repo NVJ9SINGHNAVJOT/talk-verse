@@ -1,12 +1,11 @@
-import { setMainGroupId } from "@/redux/slices/messagesSlice";
 import { useAppSelector } from "@/redux/store";
 import { SoAddedInGroup } from "@/types/socket/eventTypes";
 import { useRef, useState } from "react";
 import { CiImageOn } from "react-icons/ci";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import GroupContextMenu from "@/components/core/talk/chatItems/GroupContextMenu";
 import { Coordinates } from "@/types/common";
+import { messagesSliceObject } from "@/redux/slices/messagesSlice";
 
 export type GroupBarItemsProps = {
   group: SoAddedInGroup;
@@ -21,11 +20,10 @@ const GroupBarItem = (props: GroupBarItemsProps) => {
   const [coordinates, setCoordinates] = useState<Coordinates>({ xDistance: 0, yDistance: 0 });
   const groupDiv = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const goToGroup = () => {
     props.setInChat(group._id);
-    dispatch(setMainGroupId(group._id));
+    messagesSliceObject.mainGroupId = group._id;
     navigate(`/talk/group/${group._id}`);
   };
 

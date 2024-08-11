@@ -66,6 +66,7 @@ const GroupContextMenu = (props: GroupContextMenuProps) => {
       setMembers(response.members);
     };
     getMembers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

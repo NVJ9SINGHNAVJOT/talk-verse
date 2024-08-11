@@ -1,6 +1,6 @@
 import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 import { deleteUserRequest, Friend, ChatBarData, addFriend, addChatBarData } from "@/redux/slices/chatSlice";
-import { addPublicKey, PublicKey, addNewUnseen } from "@/redux/slices/messagesSlice";
+import { addNewUnseen, messagesSliceObject } from "@/redux/slices/messagesSlice";
 import { useAppSelector } from "@/redux/store";
 import { acceptRequestApi, deleteRequestApi } from "@/services/operations/notificationApi";
 import { useRef, useState } from "react";
@@ -33,12 +33,7 @@ const FriendRequests = (props: FriendRequestsProps) => {
         imageUrl: response.newFriend.imageUrl,
         chatId: response.newChatId,
       };
-      dispatch(
-        addPublicKey({
-          userId: response.newFriend._id,
-          publicKey: response.newFriendPublicKey,
-        } as PublicKey)
-      );
+      messagesSliceObject.publicKeys[response.newFriend._id] = response.newFriendPublicKey;
       dispatch(addFriend(newData));
       dispatch(addNewUnseen(response.newChatId));
       dispatch(addChatBarData(newData));

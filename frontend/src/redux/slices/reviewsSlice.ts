@@ -1,14 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-export type Reviews = {
+export type Review = {
   firstName: string;
   lastName: string;
   imageUrl: string | null;
   reviewText: string;
 };
 
-const data: Reviews[] = [
+const data: Review[] = [
   {
     reviewText:
       "A Digital Tapestry of Voices. Where connections bloom, effortlessly. Genuine interactions nurture lasting relationships.",
@@ -37,23 +37,23 @@ const data: Reviews[] = [
   },
 ];
 
-interface CommonState {
-  reviews: Reviews[];
+interface ReviewsState {
+  reviews: Review[];
 }
 
 const initialState = {
   reviews: data,
-} satisfies CommonState as CommonState;
+} satisfies ReviewsState as ReviewsState;
 
-const commonSlice = createSlice({
-  name: "common",
+const reviewsSlice = createSlice({
+  name: "reviews",
   initialState,
   reducers: {
-    setReviews(state, action: PayloadAction<Reviews[]>) {
+    setReviews(state, action: PayloadAction<Review[]>) {
       state.reviews.concat(action.payload);
     },
   },
 });
 
-export const { setReviews } = commonSlice.actions;
-export default commonSlice.reducer;
+export const { setReviews } = reviewsSlice.actions;
+export default reviewsSlice.reducer;
