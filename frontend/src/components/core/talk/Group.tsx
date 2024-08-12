@@ -85,6 +85,7 @@ const Group = () => {
       if (!response) {
         toast.error("Error while getting messages for group");
         setInitialLoad(false);
+        messagesSliceObject.groupIdStart[groupId] = false;
         return;
       }
       // no messages for groupId yet if lastCreated in not present in gpMessages

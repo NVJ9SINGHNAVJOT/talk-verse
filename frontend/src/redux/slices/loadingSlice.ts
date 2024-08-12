@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-// NOTE: object below contains properties for reference only, not used for state rendering
 type LoadingSliceObject = {
   apiCalls: Record<string, boolean>;
 };
+// NOTE: object below contains properties for reference only, not used for state rendering
 export const loadingSliceObject: LoadingSliceObject = {
   apiCalls: {},
 };

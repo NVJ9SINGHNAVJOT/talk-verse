@@ -59,6 +59,13 @@ const chatSlice = createSlice({
     // chatBarData
     setChatBarData(state, action: PayloadAction<ChatBarData[]>) {
       state.chatBarData = action.payload;
+      /*
+        NOTE: this check for array length is done, because when talk page clean up is done,
+        empty array is passed is reducer function
+      */
+      if (action.payload.length === 0) {
+        return;
+      }
       if ("chatId" in action.payload[0]) {
         chatSliceObject.firstMainId = action.payload[0].chatId;
       } else {

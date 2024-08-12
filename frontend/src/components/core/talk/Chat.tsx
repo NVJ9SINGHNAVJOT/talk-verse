@@ -87,6 +87,7 @@ const Chat = () => {
       if (!response) {
         toast.error("Error while getting messages for chat");
         setInitialLoad(false);
+        messagesSliceObject.chatIdStart[chatId] = false;
         return;
       }
       // no messages for chatId yet if lastCreated in not present in pMessages

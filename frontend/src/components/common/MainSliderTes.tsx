@@ -7,10 +7,8 @@ import { RxAvatar } from "react-icons/rx";
 import { useEffect } from "react";
 import { useAppSelector } from "@/redux/store";
 import { getReviewsApi } from "@/services/operations/reviewApi";
-import { setReviews } from "@/redux/slices/reviewsSlice";
-
+import { reviewsSliceObject, setReviews } from "@/redux/slices/reviewsSlice";
 import { useDispatch } from "react-redux";
-import { loadingSliceObject } from "@/redux/slices/loadingSlice";
 
 const MainSliderTes = () => {
   const reviews = useAppSelector((state) => state.reviews.reviews);
@@ -19,10 +17,10 @@ const MainSliderTes = () => {
 
   useEffect(() => {
     (async () => {
-      if (loadingSliceObject.apiCalls["reviews"] === true) {
+      if (reviewsSliceObject.reviewApiEnd === true) {
         return;
       }
-      loadingSliceObject.apiCalls["reviews"] = true;
+      reviewsSliceObject.reviewApiEnd = true;
       const response = await getReviewsApi();
       if (response && response.reviews.length > 0) {
         dispatch(setReviews(response.reviews));

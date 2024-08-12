@@ -1,6 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
+type ReviewsSliceObject = {
+  reviewApiEnd: boolean;
+};
+// NOTE: object below contains properties for reference only, not used for state rendering
+export const reviewsSliceObject: ReviewsSliceObject = {
+  reviewApiEnd: false,
+};
+
 export type Review = {
   firstName: string;
   lastName: string;

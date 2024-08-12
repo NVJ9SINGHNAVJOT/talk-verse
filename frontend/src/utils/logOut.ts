@@ -11,7 +11,7 @@ const logOutCleanUp = (dispatch: Dispatch, navigate: NavigateFunction) => {
   dispatch(setUser(null));
   dispatch(setProfile(null));
   messagesSliceObject.myId = undefined;
-  loadingSliceObject.apiCalls["profile"] = false;
+  loadingSliceObject.apiCalls = {};
 };
 
 export default logOutCleanUp;
