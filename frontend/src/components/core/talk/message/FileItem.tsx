@@ -8,8 +8,16 @@ type FileItemProps = {
 };
 
 const FileItem = ({ url }: FileItemProps) => {
-  const fileExt = useMemo(() => url.split(".").pop(), [url]);
-  if (!fileExt) return "error";
+  /*
+    FIXME: whenever new messages are added from createdAt by api,
+    then url remains same and video or audio dosn't reset.
+    But when new message is added by live messages then complete rerender happens,
+    and url also got rendered and video or audio get's restarted.
+  */
+
+  const fileExt = useMemo(() => url.split(".").pop(), []);
+
+  if (!fileExt) return <CiFileOn className="size-16 aspect-square" />;
   else if (validFiles.video.includes("video/" + fileExt)) {
     return <video src={url} controls className=" w-60 mt-4 rounded-md aspect-video" />;
   } else if (validFiles.image.includes("image/" + fileExt)) {

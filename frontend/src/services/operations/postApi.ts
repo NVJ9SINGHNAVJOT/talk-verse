@@ -138,8 +138,8 @@ export const recentPostsApi = async (createdAt: string): Promise<PostsRs | null>
   return null;
 };
 
-export const trendingPostsApi = async (createdAt: string): Promise<PostsRs | null> => {
-  const resData: PostsRs = await fetchApi("GET", postEndPoints.TRENDING_POSTS, null, null, { createdAt: createdAt });
+export const trendingPostsApi = async (skip: number): Promise<PostsRs | null> => {
+  const resData: PostsRs = await fetchApi("GET", postEndPoints.TRENDING_POSTS, null, null, { skip: `${skip}` });
   if (resData) {
     return resData;
   }

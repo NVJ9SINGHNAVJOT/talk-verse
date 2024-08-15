@@ -15,10 +15,6 @@ const MyPosts = () => {
 
   useScrollTriggerVertical(postContainer, "down", setTrigger, stop, undefined, loading);
 
-  const removePost = (postId: number) => {
-    setMyPosts((prev) => prev.filter((post) => post.id !== postId));
-  };
-
   useEffect(() => {
     const getPosts = async () => {
       if (loading) {
@@ -59,7 +55,7 @@ const MyPosts = () => {
     >
       {myPosts.length !== 0 ? (
         myPosts.map((post, index) => {
-          return <PostLayout key={index} post={post} removePost={removePost} />;
+          return <PostLayout key={index} post={post} />;
         })
       ) : (
         <CubeLoader className="absolute left-[45%] top-[35%]" />

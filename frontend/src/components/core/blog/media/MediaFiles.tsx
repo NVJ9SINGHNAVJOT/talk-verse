@@ -7,7 +7,7 @@ import { cn } from "@/utils/cn";
 import { FileUrl } from "@/components/core/blog/post/CreatePost";
 
 type MediaFilesProps = {
-  mediaUrls: FileUrl[];
+  mediaUrls: FileUrl[] | string[];
   className?: string;
 };
 
@@ -18,13 +18,25 @@ const MediaFiles = (props: MediaFilesProps) => {
         {props.mediaUrls.map((file, index) => {
           return (
             <SwiperSlide key={index}>
-              <div className="w-full h-full flex justify-center items-center">
-                {file.type === "image" ? (
-                  <img alt="Loading..." src={file.url} className=" max-w-full max-h-full w-auto aspect-auto" />
-                ) : (
-                  <video src={file.url} controls className=" max-w-full max-h-full w-auto aspect-auto" />
-                )}
-              </div>
+              {typeof file === "string" ? (
+                // mediaUrls are array of string
+                <div className="w-full h-full flex justify-center items-center">
+                  {file.includes("image") ? (
+                    <img alt="Loading..." src={file} className=" max-w-full max-h-full w-auto aspect-auto" />
+                  ) : (
+                    <video src={file} controls className=" max-w-full max-h-full w-auto aspect-auto" />
+                  )}
+                </div>
+              ) : (
+                // mediaUrls are array of FileUrl
+                <div className="w-full h-full flex justify-center items-center">
+                  {file.type === "image" ? (
+                    <img alt="Loading..." src={file.url} className=" max-w-full max-h-full w-auto aspect-auto" />
+                  ) : (
+                    <video src={file.url} controls className=" max-w-full max-h-full w-auto aspect-auto" />
+                  )}
+                </div>
+              )}
             </SwiperSlide>
           );
         })}

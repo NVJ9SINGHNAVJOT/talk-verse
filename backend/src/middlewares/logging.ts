@@ -20,15 +20,11 @@ function logging(req: Request, res: Response, next: NextFunction) {
               ? { email: req.body.email, otp: req.body.otp }
               : req.body,
       requestHeaders: {
-        host: req.headers["host"],
-        connection: req.headers["connection"],
         "content-type": req.headers["content-type"],
         "sec-ch-ua-platform": req.headers["sec-ch-ua-platform"],
         origin: req.headers["origin"],
         "sec-fetch-site": req.headers["sec-fetch-site"],
         "sec-fetch-mode": req.headers["sec-fetch-mode"],
-        "sec-fetch-dest": req.headers["sec-fetch-dest"],
-        referer: req.headers["referer"],
       },
     });
     next();

@@ -11,13 +11,9 @@ const Recent = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [trigger, setTrigger] = useState<boolean>(true);
   const postContainer = useRef<HTMLDivElement>(null);
-  const [recentPost, setRecentPost] = useState<Post[]>([]);
+  const [recentPosts, setRecentPosts] = useState<Post[]>([]);
 
   useScrollTriggerVertical(postContainer, "down", setTrigger, stop, undefined, loading);
-
-  const removePost = (postId: number) => {
-    setRecentPost((prev) => prev.filter((post) => post.id !== postId));
-  };
 
   useEffect(() => {
     const getPosts = async () => {
@@ -26,20 +22,20 @@ const Recent = () => {
       }
       setLoading(true);
       let lastCreatedAt;
-      if (recentPost.length === 0) {
+      if (recentPosts.length === 0) {
         lastCreatedAt = new Date().toISOString();
       } else {
-        lastCreatedAt = recentPost[recentPost.length - 1].createdAt;
+        lastCreatedAt = recentPosts[recentPosts.length - 1].createdAt;
       }
 
       const response = await recentPostsApi(lastCreatedAt);
       if (response) {
         if (response.posts) {
-          const withNewPosts = [...recentPost, ...response.posts];
+          const withNewPosts = [...recentPosts, ...response.posts];
           if (response.posts.length < 15) {
             setStop(true);
           }
-          setRecentPost(withNewPosts);
+          setRecentPosts(withNewPosts);
         } else {
           setStop(true);
         }
@@ -54,9 +50,9 @@ const Recent = () => {
 
   return (
     <div ref={postContainer} className="w-full h-full flex flex-col items-center gap-y-5 overflow-y-auto">
-      {recentPost.length !== 0 ? (
-        recentPost.map((post, index) => {
-          return <PostLayout key={index} post={post} removePost={removePost} />;
+      {recentPosts.length !== 0 ? (
+        recentPosts.map((post, index) => {
+          return <PostLayout key={index} post={post} />;
         })
       ) : (
         <MultiCubeLoader className=" mt-[35vh]" />

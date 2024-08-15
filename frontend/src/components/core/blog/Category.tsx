@@ -15,18 +15,14 @@ const Category = () => {
   const [trigger, setTrigger] = useState<boolean>(true);
   const [resetTrigger, setResetTrigger] = useState<boolean>(true);
   const categoryContainer = useRef<HTMLDivElement>(null);
-  const [categoriesPost, setCategoriesPost] = useState<Post[]>([]);
+  const [categoryPosts, setCategoryPosts] = useState<Post[]>([]);
   const navigate = useNavigate();
 
   useScrollTriggerVertical(categoryContainer, "down", setTrigger, stop, resetTrigger);
 
-  const removePost = (postId: number) => {
-    setCategoriesPost((prev) => prev.filter((post) => post.id !== postId));
-  };
-
   useEffect(() => {
     return () => {
-      setCategoriesPost([]);
+      setCategoryPosts([]);
       setStop(false);
       setResetTrigger((prev) => !prev);
     };
@@ -46,10 +42,10 @@ const Category = () => {
       }
       loadingSliceObject.apiCalls[`${category}-category-post`] = true;
       let lastCreatedAt;
-      if (categoriesPost.length === 0) {
+      if (categoryPosts.length === 0) {
         lastCreatedAt = new Date().toISOString();
       } else {
-        lastCreatedAt = categoriesPost[categoriesPost.length - 1].createdAt;
+        lastCreatedAt = categoryPosts[categoryPosts.length - 1].createdAt;
       }
 
       const response = await categoryPostsApi(category, lastCreatedAt);
@@ -57,12 +53,12 @@ const Category = () => {
 
       if (response) {
         if (response.posts) {
-          const withNewPosts = [...categoriesPost, ...response.posts];
+          const withNewPosts = [...categoryPosts, ...response.posts];
           if (location.pathname.includes(response.posts[0].category)) {
             if (response.posts.length < 15) {
               setStop(true);
             }
-            setCategoriesPost(withNewPosts);
+            setCategoryPosts(withNewPosts);
           }
         } else {
           setStop(true);
@@ -77,9 +73,9 @@ const Category = () => {
 
   return (
     <div ref={categoryContainer} className="flex h-full w-full flex-col items-center gap-y-5 overflow-y-auto">
-      {categoriesPost.length !== 0 ? (
-        categoriesPost.map((post, index) => {
-          return <PostLayout key={index} post={post} removePost={removePost} />;
+      {categoryPosts.length !== 0 ? (
+        categoryPosts.map((post, index) => {
+          return <PostLayout key={index} post={post} />;
         })
       ) : (
         <MultiCubeLoader className="mt-[35vh]" />

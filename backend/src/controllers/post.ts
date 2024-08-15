@@ -16,6 +16,7 @@ import {
   DeleteStoryReqSchema,
   PostCommentsReqSchema,
   SavePostReqSchema,
+  TrendingPostsReqSchema,
   UpdateLikeReqSchema,
 } from "@/types/controllers/postReq";
 import { CustomRequest } from "@/types/custom";
@@ -644,7 +645,7 @@ export const trendingPosts = async (req: Request, res: Response): Promise<Respon
   try {
     const userId2 = (req as CustomRequest).userId2;
 
-    const trendingPostsReq = GetCreatedAtReqSchema.safeParse(req.query);
+    const trendingPostsReq = TrendingPostsReqSchema.safeParse(req.query);
     if (!trendingPostsReq.success) {
       return errRes(res, 400, `invalid data for trendingPosts, ${trendingPostsReq.error.message}`);
     }
@@ -674,9 +675,10 @@ export const trendingPosts = async (req: Request, res: Response): Promise<Respon
       .innerJoin(user, eq(post.userId, user.id))
       .leftJoin(save, and(eq(save.postId, post.id), eq(save.userId, userId2)))
       .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, post.id)))
-      .where(and(lt(post.createdAt, new Date(data.createdAt)), eq(post.isPostDeleted, false)))
+      .where(eq(post.isPostDeleted, false))
       .orderBy(desc(post.likesCount), desc(post.createdAt))
       .limit(15)
+      .offset(Number(data.skip))
       .execute();
 
     if (trendingPosts.length) {

@@ -45,3 +45,7 @@ export const CategoryPostsReqSchema = z.object({
   category: categoriesSchema,
   createdAt: z.string().datetime(),
 });
+
+export const TrendingPostsReqSchema = z.object({
+  skip: z.string().regex(/^(0|[1-9]\d*)$/),
+});

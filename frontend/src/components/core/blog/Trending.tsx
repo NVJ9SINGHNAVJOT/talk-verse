@@ -15,24 +15,14 @@ const Trending = () => {
 
   useScrollTriggerVertical(postContainer, "down", setTrigger, stop, undefined, loading);
 
-  const removePost = (postId: number) => {
-    setTrendingPosts((prev) => prev.filter((post) => post.id !== postId));
-  };
-
   useEffect(() => {
     const getPosts = async () => {
       if (loading) {
         return;
       }
       setLoading(true);
-      let lastCreatedAt;
-      if (trendingPosts.length === 0) {
-        lastCreatedAt = new Date().toISOString();
-      } else {
-        lastCreatedAt = trendingPosts[trendingPosts.length - 1].createdAt;
-      }
 
-      const response = await trendingPostsApi(lastCreatedAt);
+      const response = await trendingPostsApi(trendingPosts.length);
       if (response) {
         if (response.posts) {
           const withNewPosts = [...trendingPosts, ...response.posts];
@@ -56,7 +46,7 @@ const Trending = () => {
     <div ref={postContainer} className="w-full h-full flex flex-col items-center gap-y-5 overflow-y-auto">
       {trendingPosts.length !== 0 ? (
         trendingPosts.map((post, index) => {
-          return <PostLayout key={index} post={post} removePost={removePost} />;
+          return <PostLayout key={index} post={post} />;
         })
       ) : (
         <MultiCubeLoader className=" mt-[35vh]" />

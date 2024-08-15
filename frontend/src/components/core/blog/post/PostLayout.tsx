@@ -7,8 +7,6 @@ import { RxAvatar } from "react-icons/rx";
 import { toast } from "react-toastify";
 import MediaFiles from "@/components/core/blog/media/MediaFiles";
 import { useEffect, useState } from "react";
-import { FileUrl } from "@/components/core/blog/post/CreatePost";
-import { validFiles } from "@/utils/constants";
 import { BiSolidCommentDetail } from "react-icons/bi";
 import { FaHeart } from "react-icons/fa";
 import CommentsModal from "@/components/core/blog/post/CommentsModal";
@@ -17,55 +15,62 @@ import { updateTotalPosts } from "@/redux/slices/postSlice";
 
 type PostProps = {
   post: Post;
-  // eslint-disable-next-line no-unused-vars
-  removePost?: (postId: number) => void;
 };
 
 const PostLayout = (props: PostProps) => {
   const post = props.post;
-
+  const [isDeleted, setIsDeleted] = useState<boolean>(false);
+  const [postUpdate, setPostUpdate] = useState<boolean>(false);
   const [isSaved, setIsSaved] = useState<boolean>(false);
-  const [mediaUrls, setMediaUrls] = useState<FileUrl[]>([]);
   const [like, setLike] = useState<boolean>();
   const [likeLoading, setLikeLoading] = useState<boolean>(false);
   const [likesCount, setLikesCount] = useState<number>(0);
   const [commentsCount, setCommentsCount] = useState<number>(0);
   const [toggleComments, setToggleComments] = useState<boolean>(false);
+
   const dispatch = useDispatch();
 
   const updateLike = async () => {
     setLikeLoading(true);
     const update = like === true ? "delete" : "add";
     const response = await updateLikeApi(props.post.id, update);
-    if (response) {
-      if (update === "add") {
-        setLike(true);
-        setLikesCount((prev) => prev + 1);
-      } else {
-        setLike(false);
-        setLikesCount((prev) => prev - 1);
-      }
-    } else {
-      toast.error("Error while updating like");
-    }
     setLikeLoading(false);
+
+    if (!response) {
+      toast.error("Error while updating like");
+      return;
+    }
+
+    if (update === "add") {
+      setLike(true);
+      setLikesCount((prev) => prev + 1);
+      return;
+    }
+
+    setLike(false);
+    setLikesCount((prev) => prev - 1);
   };
 
   const deletePost = async () => {
+    setPostUpdate(true);
     const response = await deletePostApi(props.post.id);
-    if (response) {
-      toast.success("Post deleted");
-      if (props.removePost) {
-        dispatch(updateTotalPosts(-1));
-        props.removePost(props.post.id);
-      }
-    } else {
+    setPostUpdate(false);
+
+    if (!response) {
       toast.error("Error while deleting post");
+      return;
     }
+
+    toast.success("Post deleted");
+    dispatch(updateTotalPosts(-1));
+    setIsDeleted(true);
   };
 
   const savePost = async () => {
+    setPostUpdate(true);
     const response = await savePostApi(props.post.id, isSaved === true ? "remove" : "add");
+    setPostUpdate(false);
+
     if (!response) {
       toast.error("Error while saving post");
       return;
@@ -74,10 +79,11 @@ const PostLayout = (props: PostProps) => {
     if (isSaved) {
       toast.success("Post removed");
       setIsSaved(false);
-    } else {
-      toast.success("Post saved");
-      setIsSaved(true);
+      return;
     }
+
+    toast.success("Post saved");
+    setIsSaved(true);
   };
 
   useEffect(() => {
@@ -91,24 +97,11 @@ const PostLayout = (props: PostProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    if (props.post.mediaUrls.length > 0) {
-      const newMediaUrls: FileUrl[] = [];
-      props.post.mediaUrls.forEach((url) => {
-        const fileExt = url.split(".").pop();
-        if (validFiles.image.includes("image/" + fileExt)) {
-          newMediaUrls.push({ type: "image", url: url });
-        } else {
-          newMediaUrls.push({ type: "video", url: url });
-        }
-      });
-      setMediaUrls(newMediaUrls);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [post]);
-
   return (
-    <div className="relative flex w-10/12 max-w-[44rem] flex-col gap-y-4 rounded-xl bg-black p-3 text-white">
+    <div
+      className={` ${isDeleted === true && "hidden"} relative flex w-10/12 max-w-[44rem] flex-col gap-y-4 
+      rounded-xl bg-black p-3 text-white`}
+    >
       {/* top */}
       <div className="flex justify-between">
         {/* top left */}
@@ -126,7 +119,7 @@ const PostLayout = (props: PostProps) => {
         {/* top right */}
         <div className="flex flex-col items-end justify-between">
           {post.isCurrentUser ? (
-            <button type="button" className="group relative">
+            <button disabled={postUpdate} type="button" className="group relative">
               <MdDeleteForever
                 onClick={() => deletePost()}
                 className="aspect-square size-5 scale-[1.25] cursor-pointer hover:fill-red-400 hover:opacity-100"
@@ -153,7 +146,7 @@ const PostLayout = (props: PostProps) => {
               </div>
             </button>
           ) : (
-            <button type="button" className="group relative">
+            <button disabled={postUpdate} type="button" className="group relative">
               <BsSaveFill
                 onClick={() => savePost()}
                 className={`aspect-square size-5 cursor-pointer hover:opacity-100 
@@ -189,7 +182,9 @@ const PostLayout = (props: PostProps) => {
         </div>
       </div>
       {/* middle */}
-      {mediaUrls.length > 0 && <MediaFiles className="h-60 w-11/12 self-center" mediaUrls={mediaUrls} />}
+      {props.post.mediaUrls.length > 0 && (
+        <MediaFiles className="h-60 w-11/12 self-center" mediaUrls={props.post.mediaUrls} />
+      )}
       {/* bottom */}
       {post.title !== undefined && (
         <div
@@ -202,7 +197,7 @@ const PostLayout = (props: PostProps) => {
       {post.content.length > 0 && (
         <div>
           {post.content.map((line, index) =>
-            line === "" ? (
+            line.trim() === "" ? (
               <br key={index} />
             ) : (
               <div key={index} className="max-w-full whitespace-pre text-wrap break-words">
