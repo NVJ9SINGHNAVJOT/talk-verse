@@ -3,7 +3,7 @@ import Notification from "@/db/mongodb/models/Notification";
 import UnseenCount from "@/db/mongodb/models/UnseenCount";
 import User from "@/db/mongodb/models/User";
 import { clientE } from "@/socket/events";
-import { channels, groupIds, groupOffline, userSocketIDs } from "@/socket/index";
+import { _io, channels, groupIds, groupOffline, userSocketIDs } from "@/socket/index";
 import {
   AddUsersInGroupReqSchema,
   CreateGroupReqSchema,
@@ -14,7 +14,7 @@ import {
 import { CustomRequest } from "@/types/custom";
 import Channel from "@/types/channel";
 import { SoAddedInGroup, SoRequestAccepted, SoUserRequest } from "@/types/socket/eventTypes";
-import emitSocketEvent from "@/utils/emitSocketEvent";
+import emitSocketEvent from "@/socket/emitSocketEvent";
 import { errRes } from "@/utils/error";
 import { getMultiUsersSockets, getSingleUserSockets } from "@/utils/getSocketIds";
 import { Request, Response } from "express";
@@ -205,7 +205,7 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
         userName: myDetails.userId.userName,
         imageUrl: myDetails.userId.imageUrl,
       };
-      emitSocketEvent(req, socketIds, clientE.USER_REQUEST, sdata);
+      emitSocketEvent(socketIds, clientE.USER_REQUEST, sdata);
     }
 
     return res.status(200).json({
@@ -335,14 +335,14 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
         imageUrl: myDetails.userId.imageUrl,
         publicKey: myDetails.userId.publicKey,
       };
-      emitSocketEvent(req, socketIds, clientE.REQUEST_ACCEPTED, sdata);
-      emitSocketEvent(req, socketIds, clientE.SET_USER_ONLINE, myDetails.userId._id.toString());
+      emitSocketEvent(socketIds, clientE.REQUEST_ACCEPTED, sdata);
+      emitSocketEvent(socketIds, clientE.SET_USER_ONLINE, myDetails.userId._id.toString());
 
       // socketId is of other user, now send useronline to myself as other user is online and socketId is present
       // get mysocketId
       const mySocketIds = getSingleUserSockets(userId);
       if (mySocketIds.length > 0) {
-        emitSocketEvent(req, mySocketIds, clientE.SET_USER_ONLINE, otherUser.userId._id.toString());
+        emitSocketEvent(mySocketIds, clientE.SET_USER_ONLINE, otherUser.userId._id.toString());
       }
     }
 
@@ -469,7 +469,6 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
 
     const data = createGroupReq.data;
 
-    // TODO: currently user Ids are not checked with database
     // check groupMembers for creating group
     const members = checkGroupMembers(data.userIdsInGroup);
     if (members.length === 0) {
@@ -527,11 +526,11 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
 
     // join groupId room with all online members
     if (mySocketIds.length > 0) {
-      req.app.get("io").in(mySocketIds).socketsJoin(newGroup._id.toString());
+      _io.in(mySocketIds).socketsJoin(newGroup._id.toString());
     }
 
     if (membersSockerIds.online.length > 0) {
-      req.app.get("io").in(membersSockerIds.online).socketsJoin(newGroup._id.toString());
+      _io.in(membersSockerIds.online).socketsJoin(newGroup._id.toString());
 
       // in online users of group, event is emitted only except for creater, as creater get group in response
       const sdata: SoAddedInGroup = {
@@ -540,7 +539,7 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
         groupName: data.groupName,
         gpImageUrl: secUrl,
       };
-      emitSocketEvent(req, membersSockerIds.online, clientE.ADDED_IN_GROUP, sdata);
+      emitSocketEvent(membersSockerIds.online, clientE.ADDED_IN_GROUP, sdata);
     }
 
     return res.status(200).json({
@@ -573,7 +572,6 @@ export const addUsersInGroup = async (req: Request, res: Response): Promise<Resp
       return errRes(res, 400, `invalid data for adding users in group, ${addUsersInGroupReq.error.message}`);
     }
 
-    // TODO: currently user Ids are not checked with database
     const data = addUsersInGroupReq.data;
 
     const updateGroup = await Group.findOne({ _id: data.groupId, gpCreater: userId });
@@ -615,7 +613,12 @@ export const addUsersInGroup = async (req: Request, res: Response): Promise<Resp
 
     groupIds.set(data.groupId, updateUsers.concat(data.userIdsToBeAdded));
 
-    data.userIdsToBeAdded.forEach((userId) => updateGroup.members.push(new mongoose.Types.ObjectId(userId)));
+    data.userIdsToBeAdded.forEach((newMemberUserId) =>
+      updateGroup.members.push(new mongoose.Types.ObjectId(newMemberUserId))
+    );
+
+    // save updated group
+    await updateGroup.save();
 
     // now send notification to online users and add offline user in groupOffline
     const newMembersSocketIds = getMultiUsersSockets(data.userIdsToBeAdded);
@@ -631,10 +634,9 @@ export const addUsersInGroup = async (req: Request, res: Response): Promise<Resp
       groupOffline.set(data.groupId, new Set(offlineUsers));
     }
 
-    await updateGroup.save();
-
     if (newMembersSocketIds.online.length > 0) {
-      emitSocketEvent(req, newMembersSocketIds.online, clientE.ADDED_IN_GROUP, sData);
+      _io.in(newMembersSocketIds.online).socketsJoin(updateGroup._id.toString());
+      emitSocketEvent(newMembersSocketIds.online, clientE.ADDED_IN_GROUP, sData);
     }
 
     return res.status(200).json({

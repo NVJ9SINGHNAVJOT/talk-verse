@@ -14,7 +14,7 @@ import {
 import { CustomRequest } from "@/types/custom";
 import { SoAddedInGroup, SoGroupMessageRecieved, SoMessageRecieved } from "@/types/socket/eventTypes";
 import { uploadToCloudinary } from "@/utils/cloudinaryHandler";
-import emitSocketEvent from "@/utils/emitSocketEvent";
+import emitSocketEvent from "@/socket/emitSocketEvent";
 import { errRes } from "@/utils/error";
 import { getSingleUserSockets } from "@/utils/getSocketIds";
 import { Request, Response } from "express";
@@ -165,7 +165,7 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
         imageUrl: data.imageUrl,
       };
 
-      emitSocketEvent(req, [data.mainId], clientE.GROUP_MESSAGE_RECIEVED, sdata);
+      emitSocketEvent([data.mainId], clientE.GROUP_MESSAGE_RECIEVED, sdata);
 
       // release channel
       channel.unlock();
@@ -183,14 +183,14 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
 
         // offline users dont include userId of current user
         const offlineMem = groupOffline.get(data.mainId);
-        if (offlineMem) {
-          const newOfline = Array.from(offlineMem);
-          if (newOfline.length > 0) {
-            await UnseenCount.updateMany({ userId: { $in: newOfline }, mainId: data.mainId }, { $inc: { count: 1 } });
-          }
-        } else {
+        if (!offlineMem) {
           return errRes(res, 400, "no offline set present for groupId");
         }
+        const newOfline = Array.from(offlineMem);
+        if (newOfline.length > 0) {
+          await UnseenCount.updateMany({ userId: { $in: newOfline }, mainId: data.mainId }, { $inc: { count: 1 } });
+        }
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         return errRes(res, 500, "error while updating unseen count for group members", { error, sdata });
@@ -219,7 +219,7 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
       // join socketIds of current user and friend
       const combineSocketIds = [...mySocketIds, ...friendSocketIds];
       if (combineSocketIds.length > 0) {
-        emitSocketEvent(req, combineSocketIds, clientE.MESSAGE_RECIEVED, sdata);
+        emitSocketEvent(combineSocketIds, clientE.MESSAGE_RECIEVED, sdata);
       }
       // release channel
       channel.unlock();

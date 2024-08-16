@@ -29,6 +29,9 @@ export const groupOffline = new Map<string, Set<string>>();
 // create a map to store channels for mainID   chatId/_id  ->   chatId is for two users and _id is of group
 export const channels: Map<string, Channel> = new Map();
 
+// creating websocket instance for emiting event from api server
+export let _io: Server;
+
 export const setupWebSocket = (app: Application): HTTPServer => {
   const httpServer: HTTPServer = createServer(app);
   const io: Server = new Server(httpServer, {
@@ -39,7 +42,7 @@ export const setupWebSocket = (app: Application): HTTPServer => {
     },
   });
 
-  app.set("io", io);
+  _io = io;
 
   // socket authorization
   io.use(async (socket: Socket, next) => {

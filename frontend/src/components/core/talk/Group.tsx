@@ -90,11 +90,16 @@ const Group = () => {
       }
       // no messages for groupId yet if lastCreated in not present in gpMessages
       // and if present then their are no futher messages for current groupId
-      if (response.success === false || !response.messages || response.messages.length < 15) {
+      if (response.success === false || !response.messages) {
         messagesSliceObject.groupIdEnd[groupId] = true;
         setStop(true);
         setInitialLoad(false);
         return;
+      }
+
+      if (response.messages.length < 15) {
+        messagesSliceObject.groupIdEnd[groupId] = true;
+        setStop(true);
       }
 
       // check if their is any overlapping for messages for groupId

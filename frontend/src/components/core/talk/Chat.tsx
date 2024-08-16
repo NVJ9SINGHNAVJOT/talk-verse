@@ -92,11 +92,16 @@ const Chat = () => {
       }
       // no messages for chatId yet if lastCreated in not present in pMessages
       // and if present then their are no futher messages for current chatId
-      if (response.success === false || !response.messages || response.messages.length < 15) {
+      if (response.success === false || !response.messages) {
         messagesSliceObject.chatIdEnd[chatId] = true;
         setStop(true);
         setInitialLoad(false);
         return;
+      }
+
+      if (response.messages.length < 15) {
+        messagesSliceObject.chatIdEnd[chatId] = true;
+        setStop(true);
       }
 
       // check if their is any overlapping for messages for chatId

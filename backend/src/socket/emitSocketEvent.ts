@@ -1,4 +1,5 @@
 import { logger } from "@/logger/logger";
+import { _io } from "@/socket";
 import {
   SoAddedInGroup,
   SoGroupMessageRecieved,
@@ -6,10 +7,8 @@ import {
   SoRequestAccepted,
   SoUserRequest,
 } from "@/types/socket/eventTypes";
-import { Request } from "express";
 
 const emitSocketEvent = (
-  req: Request,
   roomIds: string[],
   event: string,
   // sdata can be only be of type data send to client by client events
@@ -20,7 +19,7 @@ const emitSocketEvent = (
     return;
   }
   try {
-    req.app.get("io").to(roomIds).emit(event, sdata);
+    _io.to(roomIds).emit(event, sdata);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     logger.error("error while emiting event from io", { error: error.message, data: sdata });

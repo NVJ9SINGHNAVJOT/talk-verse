@@ -7,7 +7,7 @@ import {
   SoSendGroupMessage,
   SoSendMessage,
 } from "@/types/socket/eventTypes";
-import { channels, groupIds, groupOffline } from "@/socket/index";
+import { channels, groupOffline } from "@/socket/index";
 import { logger } from "@/logger/logger";
 import { v4 as uuidv4 } from "uuid";
 import Message from "@/db/mongodb/models/Message";
@@ -88,12 +88,6 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
     try {
       if (!data._id || !data.text || !data.firstName || !data.lastName) {
         logger.error("invalid data in socket send group message event", { data: data });
-        return;
-      }
-
-      const members = groupIds.get(data._id);
-      if (!members || members.length === 0) {
-        logger.error("no members present for group", { data: data });
         return;
       }
 
