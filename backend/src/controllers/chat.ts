@@ -121,16 +121,12 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
     }
     const fileMessageReq = FileMessageReqSchema.safeParse(req.body);
     if (!fileMessageReq.success) {
-      deleteFile(req.file);
       return errRes(res, 400, `invalid data for filemessage, ${fileMessageReq.error.message}`);
     }
     const data = fileMessageReq.data;
 
     const secUrl = await uploadToCloudinary(req.file);
     if (secUrl === null) {
-      if (req.file) {
-        deleteFile(req.file);
-      }
       return errRes(res, 500, "error while uploading filemessage to cloudinary, url is null");
     }
 

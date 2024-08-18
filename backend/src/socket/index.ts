@@ -33,8 +33,8 @@ export const channels: Map<string, Channel> = new Map();
 export let _io: Server;
 
 export const setupWebSocket = (app: Application): HTTPServer => {
-  const httpServer: HTTPServer = createServer(app);
-  const io: Server = new Server(httpServer, {
+  const httpServer = createServer(app);
+  const io = new Server(httpServer, {
     cors: {
       origin: origins,
       credentials: true,

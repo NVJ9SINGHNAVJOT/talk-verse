@@ -484,9 +484,6 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
     if (req.file) {
       secUrl = await uploadToCloudinary(req.file);
       if (secUrl === null) {
-        if (req.file) {
-          deleteFile(req.file);
-        }
         return errRes(res, 500, "error while uploading group image");
       }
     } else {

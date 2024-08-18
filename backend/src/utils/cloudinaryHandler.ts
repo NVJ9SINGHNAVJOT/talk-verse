@@ -1,7 +1,6 @@
 import { logger } from "@/logger/logger";
 import { v2 as cloudinary } from "cloudinary";
-import fs from "fs";
-import { deleteFiles } from "@/utils/deleteFile";
+import { deleteFile } from "@/utils/deleteFile";
 
 export const uploadToCloudinary = async (file: Express.Multer.File): Promise<string | null> => {
   try {
@@ -11,54 +10,28 @@ export const uploadToCloudinary = async (file: Express.Multer.File): Promise<str
       chunk_size: 2000000, // 2mb
     });
 
-    fs.unlink(file.path, (unlinkError) => {
-      if (unlinkError) {
-        logger.error("error deleting file from uploadStorage", { error: unlinkError });
-      }
-    });
+    deleteFile(file);
 
     return secureUrl.secure_url;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    logger.error("error while uploading file to cloudinary", error.message);
-    if (fs.existsSync(file.path)) {
-      fs.unlink(file.path, (unlinkError) => {
-        if (unlinkError) {
-          logger.error("error deleting file from uploadStorage", { error: unlinkError });
-        }
-      });
-    }
+    logger.error("error while uploading file to cloudinary", { error: error, path: file.path });
+    // FIXME: deleteFile is not working after error, reason unknown
+    deleteFile(file);
     return null;
   }
 };
 
 export const uploadMultiplesToCloudinary = async (files: Express.Multer.File[]): Promise<string[]> => {
-  try {
-    const uploadPromises = files.map((file) => uploadToCloudinary(file));
+  const uploadPromises = files.map((file) => uploadToCloudinary(file));
 
-    const secUrls = await Promise.all(uploadPromises);
+  const secUrls = await Promise.all(uploadPromises);
 
-    const confirmUrls: string[] = [];
-
-    secUrls.forEach((url) => {
-      if (url !== null) {
-        confirmUrls.push(url);
-      }
-    });
-
-    if (!secUrls || secUrls.length < 1) {
-      return [];
-    }
-
-    return confirmUrls;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    if (files) {
-      deleteFiles(files);
-    }
-    logger.error("error uploading multiple files to cloudinary", error.message);
+  if (secUrls.includes(null)) {
     return [];
   }
+
+  return secUrls as string[];
 };
 
 export const deleteFromCloudinay = async (cloudinaryUrl: string) => {

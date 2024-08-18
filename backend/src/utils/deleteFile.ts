@@ -5,7 +5,7 @@ export function deleteFile(file: Express.Multer.File) {
   if (fs.existsSync(file.path)) {
     fs.unlink(file.path, (unlinkError) => {
       if (unlinkError) {
-        logger.error("error deleting file from uploadStorage", { error: unlinkError });
+        logger.error("error deleting file from uploadStorage", { error: unlinkError, path: file.path });
       }
     });
   }
@@ -18,7 +18,7 @@ export function deleteFiles(files: Express.Multer.File[] | { [fieldname: string]
       if (fs.existsSync(file.path)) {
         fs.unlink(file.path, (unlinkError) => {
           if (unlinkError) {
-            logger.error("error deleting files from uploadStorage", { error: unlinkError });
+            logger.error("error deleting files from uploadStorage", { error: unlinkError, path: file.path });
           }
         });
       }
@@ -30,7 +30,7 @@ export function deleteFiles(files: Express.Multer.File[] | { [fieldname: string]
       if (fs.existsSync(file.path)) {
         fs.unlink(file.path, (unlinkError) => {
           if (unlinkError) {
-            logger.error("error deleting files from uploadStorage", { error: unlinkError });
+            logger.error("error deleting files from uploadStorage", { error: unlinkError, path: file.path });
           }
         });
       }

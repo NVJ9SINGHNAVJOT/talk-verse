@@ -71,13 +71,10 @@ export const createPost = async (req: Request, res: Response): Promise<Response>
 
     let secUrls;
     if (req.files?.length) {
-      const files: Express.Multer.File[] = req.files as Express.Multer.File[];
+      const files = req.files as Express.Multer.File[];
       const checkUpload = files.length;
       secUrls = await uploadMultiplesToCloudinary(files);
-      if (secUrls.length < 1 || checkUpload !== secUrls.length) {
-        if (req.files?.length) {
-          deleteFiles(req.files);
-        }
+      if (checkUpload !== secUrls.length) {
         return errRes(res, 500, "error while uploading files to cloudinay");
       }
     }

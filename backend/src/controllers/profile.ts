@@ -78,12 +78,12 @@ export const getUserDetails = async (req: Request, res: Response): Promise<Respo
 
 export const updateProfileImage = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const userId = (req as CustomRequest).userId;
-    const userId2 = (req as CustomRequest).userId2;
-
     if (!req.file) {
       return errRes(res, 400, "invalid data, imageFile not present");
     }
+
+    const userId = (req as CustomRequest).userId;
+    const userId2 = (req as CustomRequest).userId2;
 
     const getUser = await User.findById({ _id: userId }).select({ imageUrl: true });
 
@@ -96,9 +96,6 @@ export const updateProfileImage = async (req: Request, res: Response): Promise<R
 
     const secUrl = await uploadToCloudinary(req.file);
     if (secUrl === null) {
-      if (req.file) {
-        deleteFile(req.file);
-      }
       return errRes(res, 500, "error while uploading user profile image");
     }
 

@@ -76,7 +76,6 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
     if (req.file) {
       const imageUrl = await uploadToCloudinary(req.file);
       if (imageUrl === null) {
-        deleteFile(req.file);
         return errRes(res, 500, "error while uploading user image");
       }
       secUrl = imageUrl;
