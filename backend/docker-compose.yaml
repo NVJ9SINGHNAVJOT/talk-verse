@@ -18,7 +18,7 @@ services:
       dockerfile: Dockerfile
     container_name: talkverse-backend
     volumes:
-      - talkverse-backend:/usr/src/app
+      - talkverse-backend:/app
     networks:
       - talkverse-proxy
       - proxy
@@ -52,7 +52,7 @@ services:
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-      - talkverse-mongo-db:/var/lib/mongodb/data
+      - talkverse-mongo-db:/data/db
     env_file: .env
     networks:
       - talkverse-proxy

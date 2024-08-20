@@ -15,7 +15,7 @@ services:
       dockerfile: Dockerfile
     container_name: talkverse-frontend
     volumes:
-      - talkverse-frontend:/usr/src/app
+      - talkverse-frontend:/app
     networks:
       - proxy
     ports: [4173:4173] # disable in production
