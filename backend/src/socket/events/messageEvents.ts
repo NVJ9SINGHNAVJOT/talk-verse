@@ -4,8 +4,8 @@ import { getSingleUserSockets } from "@/utils/getSocketIds";
 import {
   SoGroupMessageRecieved,
   SoMessageRecieved,
-  SoSendGroupMessage,
-  SoSendMessage,
+  SoSendGroupMessageSchema,
+  SoSendMessageSchema,
 } from "@/types/socket/eventTypes";
 import { channels, groupOffline } from "@/socket/index";
 import { logger } from "@/logger/logger";
@@ -15,14 +15,17 @@ import UnseenCount from "@/db/mongodb/models/UnseenCount";
 import GpMessage from "@/db/mongodb/models/GpMessage";
 
 export const registerMessageEvents = (io: Server, socket: Socket, userId: string): void => {
-  socket.on(serverE.SEND_MESSAGE, async (data: SoSendMessage) => {
+  socket.on(serverE.SEND_MESSAGE, async (data) => {
     let uuId;
     let createdAt;
     try {
-      if (!data.chatId || !data.fromText || !data.toText || !data.to) {
-        logger.error("invalid data in socket send message event", { data: data });
+      // check event data
+      const sendMessageEvent = SoSendMessageSchema.safeParse(data);
+      if (!sendMessageEvent.success) {
+        logger.error(`invalid data in socket send message event, ${sendMessageEvent.error.message}`);
         return;
       }
+      const edata = sendMessageEvent.data;
 
       const channel = channels.get(data.chatId);
       if (!channel) {
@@ -37,21 +40,21 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
       const newMessage: SoMessageRecieved = {
         uuId: uuId,
         isFile: false,
-        chatId: data.chatId,
+        chatId: edata.chatId,
         from: userId,
-        text: data.fromText,
+        text: edata.fromText,
         createdAt: createdAt.toISOString(),
       };
       /* INFO: fromText for currUser and toText for friend */
       const currUserSocketIds = getSingleUserSockets(userId);
-      const friendSocketIds = getSingleUserSockets(data.to);
+      const friendSocketIds = getSingleUserSockets(edata.to);
 
       if (currUserSocketIds.length > 0) {
         io.to(currUserSocketIds).emit(clientE.MESSAGE_RECIEVED, newMessage);
       }
       if (friendSocketIds.length > 0) {
         // now send message to friend, text to changed to toText
-        newMessage.text = data.toText;
+        newMessage.text = edata.toText;
         io.to(friendSocketIds).emit(clientE.MESSAGE_RECIEVED, newMessage);
       }
       // release channel
@@ -59,16 +62,16 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
 
       await Message.create({
         uuId: uuId,
-        chatId: data.chatId,
+        chatId: edata.chatId,
         from: userId,
-        to: data.to,
-        fromText: data.fromText,
-        toText: data.toText,
+        to: edata.to,
+        fromText: edata.fromText,
+        toText: edata.toText,
         createdAt: createdAt,
       });
 
       if (friendSocketIds.length === 0) {
-        await UnseenCount.findOneAndUpdate({ userId: data.to, mainId: data.chatId }, { $inc: { count: 1 } });
+        await UnseenCount.findOneAndUpdate({ userId: edata.to, mainId: edata.chatId }, { $inc: { count: 1 } });
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -82,18 +85,21 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
     }
   });
 
-  socket.on(serverE.SEND_GROUP_MESSAGE, async (data: SoSendGroupMessage) => {
+  socket.on(serverE.SEND_GROUP_MESSAGE, async (data) => {
     let uuId;
     let createdAt;
     try {
-      if (!data._id || !data.text || !data.firstName || !data.lastName) {
-        logger.error("invalid data in socket send group message event", { data: data });
+      // check event data
+      const sendGroupMessageEvent = SoSendGroupMessageSchema.safeParse(data);
+      if (!sendGroupMessageEvent.success) {
+        logger.error(`invalid data in socket send group message event, ${sendGroupMessageEvent.error.message}`);
         return;
       }
+      const edata = sendGroupMessageEvent.data;
 
-      const channel = channels.get(data._id);
+      const channel = channels.get(edata._id);
       if (!channel) {
-        logger.error("channel not present for groupId", { data: data });
+        logger.error("channel not present for groupId", { data: edata });
         return;
       }
 
@@ -105,29 +111,29 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
         uuId: uuId,
         isFile: false,
         from: userId,
-        to: data._id,
-        text: data.text,
+        to: edata._id,
+        text: edata.text,
         createdAt: createdAt.toISOString(),
-        firstName: data.firstName,
-        lastName: data.lastName,
-        imageUrl: data.imageUrl,
+        firstName: edata.firstName,
+        lastName: edata.lastName,
+        imageUrl: edata.imageUrl,
       };
-      io.to(data._id).emit(clientE.GROUP_MESSAGE_RECIEVED, newGpMessage);
+      io.to(edata._id).emit(clientE.GROUP_MESSAGE_RECIEVED, newGpMessage);
       // release channel
       channel.unlock();
 
-      await GpMessage.create({ uuId: uuId, from: userId, to: data._id, text: data.text, createdAt: createdAt });
+      await GpMessage.create({ uuId: uuId, from: userId, to: edata._id, text: edata.text, createdAt: createdAt });
 
-      const offlineMem = groupOffline.get(data._id);
+      const offlineMem = groupOffline.get(edata._id);
 
       if (!offlineMem) {
-        logger.error("no offline set present for groupId", { data: data, newGpMessage: newGpMessage });
+        logger.error("no offline set present for groupId", { data: edata, newGpMessage: newGpMessage });
         return;
       }
 
       if (offlineMem.size !== 0) {
         const newOfline = Array.from(offlineMem);
-        await UnseenCount.updateMany({ userId: { $in: newOfline }, mainId: data._id }, { $inc: { count: 1 } });
+        await UnseenCount.updateMany({ userId: { $in: newOfline }, mainId: edata._id }, { $inc: { count: 1 } });
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

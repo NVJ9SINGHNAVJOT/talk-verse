@@ -1,5 +1,8 @@
 /* INFO: Any changes in socket events types need to be changed in frontend as well */
 
+import { mongooseIdSchema, nameSchema } from "@/validators/zod";
+import z from "zod";
+
 // client
 export type SoUserRequest = {
   _id: string;
@@ -41,16 +44,16 @@ export type SoGroupMessageRecieved = {
 };
 
 // server
-export type SoSendMessage = {
-  chatId: string;
-  to: string;
-  fromText: string;
-  toText: string;
-};
-export type SoSendGroupMessage = {
-  _id: string;
-  text: string;
-  firstName: string;
-  lastName: string;
-  imageUrl?: string;
-};
+export const SoSendMessageSchema = z.object({
+  chatId: mongooseIdSchema,
+  to: mongooseIdSchema,
+  fromText: z.string().min(1),
+  toText: z.string().min(1),
+});
+export const SoSendGroupMessageSchema = z.object({
+  _id: mongooseIdSchema,
+  text: z.string().min(1),
+  firstName: nameSchema,
+  lastName: nameSchema,
+  imageUrl: z.string().url().optional(),
+});
