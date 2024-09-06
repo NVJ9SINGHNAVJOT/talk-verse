@@ -44,11 +44,12 @@ export async function fetchApi(
 
     const response = await fetch(url, requestOptions);
 
-    if (response.ok && response.status === 200) {
-      const resData = await response.json();
-      return resData;
+    // currently only status between 200 to 299 are accepted as success
+    if (!response.ok || response.status > 299 || response.status < 200) {
+      return null;
     }
-    return null;
+    const resData = await response.json();
+    return resData;
   } catch (error) {
     return null;
   }
