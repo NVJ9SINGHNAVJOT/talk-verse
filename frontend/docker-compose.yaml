@@ -1,9 +1,6 @@
 ---
 version: "3.8"
 
-volumes:
-  talkverse-frontend:
-
 networks:
   proxy:
     external: true
@@ -14,8 +11,6 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: talkverse-frontend
-    volumes:
-      - talkverse-frontend:/app
     networks:
       - proxy
     ports: [4173:4173] # disable in production
