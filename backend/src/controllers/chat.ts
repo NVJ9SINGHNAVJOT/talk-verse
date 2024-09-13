@@ -3,7 +3,7 @@ import Group from "@/db/mongodb/models/Group";
 import Message from "@/db/mongodb/models/Message";
 import UnseenCount from "@/db/mongodb/models/UnseenCount";
 import User, { IUser } from "@/db/mongodb/models/User";
-import { channels, groupIds, groupOffline } from "@/socket";
+import { channels, groupOffline } from "@/socket";
 import { clientE } from "@/socket/events";
 import {
   ChatMessagesReqSchema,
@@ -133,11 +133,6 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
     if (data.isGroup === "true") {
       if (!data.firstName || !data.lastName) {
         return errRes(res, 400, "invalid user group data for sending group message");
-      }
-
-      const members = groupIds.get(data.mainId);
-      if (!members) {
-        return errRes(res, 400, "no members for group for file message");
       }
 
       const channel = channels.get(data.mainId);

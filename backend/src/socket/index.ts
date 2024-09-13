@@ -11,22 +11,28 @@ import { showOnline } from "@/socket/onlineStatus";
 import { logger } from "@/logger/logger";
 import { origins } from "@/config/corsOptions";
 
-// store userIds with their current socketIds
-// userId -> socketIds[]
+/*
+  NOTE: Currently, userSocketIDs, groupOffline, and channels mapping is stored in the server.
+  For scalability, Redis can be used.
+*/
+
 /* 
+  store userIds with their current socketIds
+  userId -> socketIds[]
   a user can join from multiple devices so it can have multiple socketIds for it's userId
 */
 export const userSocketIDs = new Map<string, string[]>();
 
-// store group members with groupId
-// groupId -> members
-export const groupIds = new Map<string, string[]>();
-
-// offline members for each group
-// groupId -> offline members
+/*
+  offline members for each group
+  groupId -> offline members only
+*/
 export const groupOffline = new Map<string, Set<string>>();
 
-// create a map to store channels for mainID   chatId/_id  ->   chatId is for two users and _id is of group
+/*
+  create a map to store channels for mainID,
+  chatId/_id  ->   chatId is for two users and _id is of group
+*/
 export const channels: Map<string, Channel> = new Map();
 
 // creating websocket instance for emiting event from api server

@@ -1,10 +1,11 @@
 /* eslint-disable drizzle/enforce-delete-with-where */
 import { Server, Socket } from "socket.io";
 import User from "@/db/mongodb/models/User";
-import { groupIds, groupOffline } from "@/socket/index";
+import { groupOffline } from "@/socket/index";
 import { clientE } from "@/socket/events";
 import { logger } from "@/logger/logger";
 import { getSingleUserSockets } from "@/utils/getSocketIds";
+import Group from "@/db/mongodb/models/Group";
 
 export const showOnline = async (
   io: Server,
@@ -19,35 +20,37 @@ export const showOnline = async (
       get group room Ids in which user is present
     */
     const groupRooms: string[] = [];
+    // if user is joining then join socketId to all group rooms
 
-    groupIds.forEach((groupMem, groupId) => {
+    const groups = await Group.find({ members: { $elemMatch: { $eq: userId } } })
+      .select({ _id: true })
+      .exec();
+
+    if (groups.length > 0) {
       // user exist in group, push groupId in groupRooms
-      if (groupMem.includes(userId)) {
-        groupRooms.push(groupId);
+      groups.forEach((group) => {
+        groupRooms.push(group.id);
 
-        const offlineMembersOfgroupId = groupOffline.get(groupId);
-        if (!offlineMembersOfgroupId) {
-          logger.error("no offline group present in groupOffline", { userId: userId, groupId: groupId });
-          return;
-        }
+        if (newUserJoinng || !status) {
+          const offlineMembersOfgroupId = groupOffline.get(group.id);
+          if (!offlineMembersOfgroupId) {
+            logger.error("no offline group present in groupOffline", { userId: userId, groupId: group.id });
+            return;
+          }
 
-        // if new user is joined, then remove it's userId from offline groups
-        if (newUserJoinng) {
-          const check = offlineMembersOfgroupId.delete(userId);
-          if (!check) {
-            logger.error("userId is not present in offline set", { userId: userId, groupId: groupId });
+          // if new user is joined, then remove it's userId from offline groups
+          if (newUserJoinng) {
+            const check = offlineMembersOfgroupId.delete(userId);
+            if (!check) {
+              logger.error("userId is not present in offline set", { userId: userId, groupId: group.id });
+            }
+          } else {
+            // user got disconnected, add user in offline groupIds
+            offlineMembersOfgroupId.add(userId);
           }
         }
-
-        // user got disconnected, add user in offline groupIds
-        if (!status) {
-          offlineMembersOfgroupId.add(userId);
-        }
-      }
-    });
-
-    // if user is joining then join socketId to all group rooms
-    if (status && groupRooms.length > 0) {
+      });
+      // join all groups
       io.in(socket.id).socketsJoin(groupRooms);
     }
 
@@ -57,7 +60,13 @@ export const showOnline = async (
     if (newUserJoinng || !status) {
       // get user friends
       const userData = await User.findById({ _id: userId }).select({ friends: true }).exec();
-      if (userData?.friends.length === undefined || userData?.friends.length === 0) {
+
+      if (userData === null) {
+        logger.error("userData is null", { id: userId });
+        return;
+      }
+
+      if (userData.friends.length === 0) {
         return;
       }
 

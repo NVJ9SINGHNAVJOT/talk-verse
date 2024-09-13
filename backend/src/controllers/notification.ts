@@ -3,7 +3,7 @@ import Notification from "@/db/mongodb/models/Notification";
 import UnseenCount from "@/db/mongodb/models/UnseenCount";
 import User from "@/db/mongodb/models/User";
 import { clientE } from "@/socket/events";
-import { _io, channels, groupIds, groupOffline, userSocketIDs } from "@/socket/index";
+import { _io, channels, groupOffline, userSocketIDs } from "@/socket/index";
 import {
   AddUsersInGroupReqSchema,
   CreateGroupReqSchema,
@@ -512,9 +512,6 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
     // set newmutex for new groupId
     channels.set(newGroup._id.toString(), newChannel);
 
-    // set members with groupId
-    groupIds.set(newGroup._id.toString(), members);
-
     const membersSockerIds = getMultiUsersSockets(members, userId);
     const mySocketIds = getSingleUserSockets(userId);
 
@@ -590,9 +587,8 @@ export const addUsersInGroup = async (req: Request, res: Response): Promise<Resp
       return errRes(res, 400, "new member is already present in group memebers");
     }
 
-    const updateUsers = groupIds.get(updateGroup._id.toString());
     const updateUsersOffline = groupOffline.get(updateGroup._id.toString());
-    if (!updateUsers || !updateUsersOffline) {
+    if (!updateUsersOffline) {
       return errRes(res, 500, "group not present in groupIds or groupOffline");
     }
 
@@ -607,8 +603,6 @@ export const addUsersInGroup = async (req: Request, res: Response): Promise<Resp
         );
       })
     );
-
-    groupIds.set(data.groupId, updateUsers.concat(data.userIdsToBeAdded));
 
     data.userIdsToBeAdded.forEach((newMemberUserId) =>
       updateGroup.members.push(new mongoose.Types.ObjectId(newMemberUserId))
@@ -627,7 +621,7 @@ export const addUsersInGroup = async (req: Request, res: Response): Promise<Resp
     };
 
     if (newMembersSocketIds.offline.length > 0) {
-      const offlineUsers = Array.from(updateUsersOffline).concat(data.userIdsToBeAdded);
+      const offlineUsers = Array.from(updateUsersOffline).concat(newMembersSocketIds.offline);
       groupOffline.set(data.groupId, new Set(offlineUsers));
     }
 

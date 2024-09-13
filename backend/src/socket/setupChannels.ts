@@ -1,7 +1,7 @@
 import Chat from "@/db/mongodb/models/Chat";
 import Group from "@/db/mongodb/models/Group";
 import { logger } from "@/logger/logger";
-import { channels, groupIds, groupOffline } from "@/socket/index";
+import { channels, groupOffline } from "@/socket/index";
 import Channel from "@/types/channel";
 
 const setupChannels = async () => {
@@ -33,8 +33,6 @@ const setupChannels = async () => {
           memeberIds.push(member._id.toString());
         });
 
-        // set group members id in groupIds map
-        groupIds.set(groupId, memeberIds);
         // initially set all group memebers as offline members
         groupOffline.set(groupId, new Set(memeberIds));
       });
