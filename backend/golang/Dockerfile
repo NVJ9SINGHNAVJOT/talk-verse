@@ -11,9 +11,6 @@ RUN go build -o ./dist/main main.go
 FROM builder AS runner
 WORKDIR /app
 
-# Install FFmpeg for the runner image
-RUN apk add --no-cache ffmpeg
-
 COPY --from=builder /app/dist .
 
 EXPOSE 9000
