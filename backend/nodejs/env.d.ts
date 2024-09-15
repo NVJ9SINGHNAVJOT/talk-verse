@@ -21,6 +21,7 @@ declare namespace NodeJS {
     KAFKA_BROKERS: string;
 
     MONGODB_URL: string;
+    MONGO_INITDB_DATABASE: string;
 
     POSTGRES_HOST: string;
     POSTGRES_USER: string;

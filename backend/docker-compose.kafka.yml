@@ -1,6 +1,6 @@
 ---
 version: '3.8'
-  
+
 volumes:
   talkverse-kafka_data:
 
@@ -11,17 +11,8 @@ networks:
   #   external: true
 
 services:
-  talkverse-server-kafka:
-    build:
-      context: .
-      dockerfile: .
-    container_name: talkverse-server-kafka
-    networks:
-        - talkverse-backend-proxy
-    ports: [9000:9000]
-    env_file: .env
 
-  talkverse-kafka:
+talkverse-kafka:
     image: docker.io/bitnami/kafka:3.3.2
     container_name: talkverse-kafka
     ports:

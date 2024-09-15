@@ -17,6 +17,7 @@ export function checkEnvVariables() {
     !process.env["KAFKA_BROKERS"] ||
     process.env["KAFKA_BROKERS"].split(",").length === 0 ||
     !process.env["MONGODB_URL"] ||
+    !process.env["MONGO_INITDB_DATABASE"] ||
     !process.env["POSTGRES_HOST"] ||
     !process.env["POSTGRES_USER"] ||
     !process.env["POSTGRES_DB"] ||
