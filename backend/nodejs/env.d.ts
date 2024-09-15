@@ -17,6 +17,9 @@ declare namespace NodeJS {
     API_KEY: string;
     API_SECRET: string;
 
+    KAFKA_CLIENT_ID: string;
+    KAFKA_BROKERS: string;
+
     MONGODB_URL: string;
 
     POSTGRES_HOST: string;

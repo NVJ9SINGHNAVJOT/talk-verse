@@ -17,3 +17,8 @@ export async function mongodbDatabaseConnect() {
     process.exit();
   }
 }
+
+export async function mongodbDatabaseDisconnect() {
+  await mongoose.disconnect();
+  logger.info("mongodb database disconnected");
+}

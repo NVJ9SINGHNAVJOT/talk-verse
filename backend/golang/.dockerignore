@@ -1,0 +1,7 @@
+.env.example
+build
+dist
+tmp
+temp
+logs
+Taskfile.yaml

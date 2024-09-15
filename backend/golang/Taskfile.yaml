@@ -1,0 +1,29 @@
+---
+version: "3"
+
+dotenv:
+  - ".env"
+
+interval: 500ms
+
+tasks:
+  i:
+    desc: download dependencies and verify integrity
+    cmds:
+      - go mod download
+      - go mod verify
+
+  tidy:
+    desc: runs go mod tidy
+    cmds:
+      - go mod tidy
+
+  build:
+    desc: builds the project
+    cmds:
+      - go build -o ./dist/main main.go
+
+  run:
+    desc: run server main.go file
+    cmds:
+      - go run main.go

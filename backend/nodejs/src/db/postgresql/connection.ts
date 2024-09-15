@@ -36,6 +36,11 @@ export async function postgresqlDatabaseConnect() {
   }
 }
 
+export async function postgresqlDatabaseDisconnect() {
+  await pool.end();
+  logger.info("postgresql database disconnected");
+}
+
 export const db = drizzle(pool, {
   schema: {
     user,

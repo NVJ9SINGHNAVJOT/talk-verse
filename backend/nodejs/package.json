@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "main": "./src/index.ts",
   "scripts": {
@@ -27,6 +27,7 @@
     "drizzle-orm": "^0.30.7",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
+    "kafkajs": "^2.2.4",
     "module-alias": "^2.2.3",
     "mongodb": "^6.5.0",
     "mongoose": "^8.2.4",

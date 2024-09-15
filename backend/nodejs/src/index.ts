@@ -7,12 +7,19 @@ import { logger, loggerConfig } from "@/logger/logger";
 import app from "@/app/app";
 import { setupWebSocket } from "@/socket/index";
 import setupChannels from "@/socket/setupChannels";
-import { mongodbDatabaseConnect } from "@/db/mongodb/connection";
-import { postgresqlDatabaseConnect } from "@/db/postgresql/connection";
+import { mongodbDatabaseConnect, mongodbDatabaseDisconnect } from "@/db/mongodb/connection";
+import { postgresqlDatabaseConnect, postgresqlDatabaseDisconnect } from "@/db/postgresql/connection";
 import { checkEnvVariables } from "@/validators/checkEnvVariables";
 import { migratePostgreSQL } from "@/db/postgresql/migrate";
 import { setupPostgreSQLTriggers } from "@/db/postgresql/triggers";
 import { cloudinaryConnect } from "@/config/cloudinary";
+import { kafkaProducerDisconnect, kafkaProducerSetup } from "@/kafka/kafka";
+
+async function handleExit() {
+  await mongodbDatabaseDisconnect();
+  await postgresqlDatabaseDisconnect();
+  await kafkaProducerDisconnect();
+}
 
 async function main() {
   // check environment variables
@@ -29,6 +36,9 @@ async function main() {
   await migratePostgreSQL();
   await setupPostgreSQLTriggers();
 
+  // setup channels for messages
+  await setupChannels();
+
   // connect cloudinary
   cloudinaryConnect();
 
@@ -38,8 +48,11 @@ async function main() {
   // setup server
   const httpServer = setupWebSocket(app);
 
-  // setup channels for messages
-  await setupChannels();
+  // setup kafka producer
+  await kafkaProducerSetup();
+
+  process.on("SIGINT", () => handleExit());
+  process.on("SIGTERM", () => handleExit());
 
   httpServer.listen(PORT, () => {
     logger.info("server running...");

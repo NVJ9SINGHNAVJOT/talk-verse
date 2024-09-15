@@ -6,7 +6,7 @@ volumes:
   talkverse-mongo-db:
 
 networks:
-  talkverse-proxy:
+  talkverse-backend-proxy:
   proxy:
     external: true
 
@@ -40,7 +40,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
-      - talkverse-proxy
+      - talkverse-backend-proxy
     # ports: [5432:5432]
 
   mongo:
@@ -52,5 +52,5 @@ services:
       - talkverse-mongo-db:/data/db
     env_file: .env
     networks:
-      - talkverse-proxy
+      - talkverse-backend-proxy
     # ports: [27017:27017]

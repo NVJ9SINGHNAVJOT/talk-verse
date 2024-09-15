@@ -14,6 +14,8 @@ export function checkEnvVariables() {
     !process.env["CLOUD_NAME"] ||
     !process.env["API_KEY"] ||
     !process.env["API_SECRET"] ||
+    !process.env["KAFKA_BROKERS"] ||
+    process.env["KAFKA_BROKERS"].split(",").length === 0 ||
     !process.env["MONGODB_URL"] ||
     !process.env["POSTGRES_HOST"] ||
     !process.env["POSTGRES_USER"] ||
