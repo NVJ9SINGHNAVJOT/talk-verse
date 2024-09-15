@@ -29,6 +29,7 @@ import { request } from "@/db/postgresql/schema/request";
 import { OtherPostgreSQLUserIdReqSchema } from "@/types/controllers/common";
 import { checkGroupMembers } from "@/utils/helpers";
 import mongoose from "mongoose";
+import { kafkaProducer } from "@/kafka/kafka";
 
 type CustomIUser = {
   _id: string;
@@ -692,7 +693,7 @@ export const setUnseenCount = async (req: Request, res: Response): Promise<Respo
     }
     const data = setUnseenCountReq.data;
 
-    await UnseenCount.findOneAndUpdate({ userId: userId, mainId: data.mainId }, { $set: { count: data.count } });
+    await kafkaProducer.unseenCount([userId], data.mainId, data.count);
 
     return res.status(200).json({
       success: true,

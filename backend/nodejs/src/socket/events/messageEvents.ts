@@ -10,9 +10,7 @@ import {
 import { channels, groupOffline } from "@/socket/index";
 import { logger } from "@/logger/logger";
 import { v4 as uuidv4 } from "uuid";
-import Message from "@/db/mongodb/models/Message";
-import UnseenCount from "@/db/mongodb/models/UnseenCount";
-import GpMessage from "@/db/mongodb/models/GpMessage";
+import { kafkaProducer } from "@/kafka/kafka";
 
 export const registerMessageEvents = (io: Server, socket: Socket, userId: string): void => {
   socket.on(serverE.SEND_MESSAGE, async (data) => {
@@ -59,10 +57,10 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
       }
       // release channel
       channel.unlock();
-
-      await Message.create({
+      await kafkaProducer.message({
         uuId: uuId,
         chatId: edata.chatId,
+        isFile: false,
         from: userId,
         to: edata.to,
         fromText: edata.fromText,
@@ -71,7 +69,7 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
       });
 
       if (friendSocketIds.length === 0) {
-        await UnseenCount.findOneAndUpdate({ userId: edata.to, mainId: edata.chatId }, { $inc: { count: 1 } });
+        await kafkaProducer.unseenCount([userId], data.mainId);
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -122,8 +120,14 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
       // release channel
       channel.unlock();
 
-      await GpMessage.create({ uuId: uuId, from: userId, to: edata._id, text: edata.text, createdAt: createdAt });
-
+      await kafkaProducer.gpMessage({
+        uuId: uuId,
+        isFile: false,
+        from: userId,
+        to: edata._id,
+        text: edata.text,
+        createdAt: createdAt,
+      });
       const offlineMem = groupOffline.get(edata._id);
 
       if (!offlineMem) {
@@ -133,7 +137,7 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
 
       if (offlineMem.size !== 0) {
         const newOfline = Array.from(offlineMem);
-        await UnseenCount.updateMany({ userId: { $in: newOfline }, mainId: edata._id }, { $inc: { count: 1 } });
+        await kafkaProducer.unseenCount(newOfline, edata._id);
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

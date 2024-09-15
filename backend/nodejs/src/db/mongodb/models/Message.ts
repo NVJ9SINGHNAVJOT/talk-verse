@@ -16,6 +16,12 @@ export interface IMessage extends Document {
   updatedAt: Date;
 }
 
+export type IMessageType = Omit<IMessage, keyof Document | "_id" | "chatId" | "from" | "to" | "updatedAt"> & {
+  chatId: string;
+  from: string;
+  to: string;
+};
+
 // Define the Message schema using the interface
 const messageSchema = new Schema<IMessage>({
   uuId: {

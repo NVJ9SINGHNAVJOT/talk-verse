@@ -1,5 +1,6 @@
+import { IGpMessageType } from "@/db/mongodb/models/GpMessage";
+import { IMessageType } from "@/db/mongodb/models/Message";
 import { logger } from "@/logger/logger";
-import { SoGroupMessageRecieved, SoMessageRecieved } from "@/types/socket/eventTypes";
 import { Kafka, logLevel, Partitioners } from "kafkajs";
 
 const kafka = new Kafka({
@@ -34,7 +35,7 @@ export const kafkaProducerDisconnect = async () => {
   logger.info("kafka producer disconnected");
 };
 
-async function message(data: SoMessageRecieved) {
+async function message(data: IMessageType) {
   try {
     await producer.send({
       topic: "message",
@@ -43,10 +44,11 @@ async function message(data: SoMessageRecieved) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     logger.error("error in kafka producer, topic: message", { data: data, error: error.message });
+    throw new Error("kafka producer error");
   }
 }
 
-async function gpMessage(data: SoGroupMessageRecieved) {
+async function gpMessage(data: IGpMessageType) {
   try {
     await producer.send({
       topic: "gpMessage",
@@ -55,21 +57,23 @@ async function gpMessage(data: SoGroupMessageRecieved) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     logger.error("error in kafka producer, topic: gpMessage", { data: data, error: error.message });
+    throw new Error("kafka producer error");
   }
 }
 
-async function unseenCount(userId: string, mainId: string, count: number) {
+async function unseenCount(userIds: string[], mainId: string, count?: number) {
   try {
     await producer.send({
       topic: "unseenCount",
-      messages: [{ value: JSON.stringify({ userId, mainId, count }) }],
+      messages: [{ value: JSON.stringify({ userIds, mainId, count }) }],
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     logger.error("error in kafka producer, topic: unseenCount", {
-      data: { userId, mainId, count },
+      data: { userIds, mainId, count },
       error: error.message,
     });
+    throw new Error("kafka producer error");
   }
 }
 

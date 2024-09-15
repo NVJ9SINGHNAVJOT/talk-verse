@@ -14,6 +14,11 @@ export interface IGpMessage extends Document {
   updatedAt: Date;
 }
 
+export type IGpMessageType = Omit<IGpMessage, keyof Document | "_id" | "from" | "to" | "updatedAt"> & {
+  from: string;
+  to: string;
+};
+
 // Define the Group Message schema using the interface
 const gpMessageSchema = new Schema<IGpMessage>({
   uuId: {
