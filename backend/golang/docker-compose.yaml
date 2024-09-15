@@ -1,6 +1,6 @@
 ---
 version: '3.8'
-
+  
 volumes:
   talkverse-kafka_data:
 
@@ -23,6 +23,7 @@ services:
 
   talkverse-kafka:
     image: docker.io/bitnami/kafka:3.3.2
+    container_name: talkverse-kafka
     ports:
       - "9092:9092"
     volumes:
@@ -46,5 +47,3 @@ services:
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
       - ALLOW_PLAINTEXT_LISTENER=yes
-      # Enable auto-creation of topics
-      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true

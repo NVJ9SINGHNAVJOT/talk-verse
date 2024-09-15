@@ -10,7 +10,6 @@ const kafka = new Kafka({
 
 const producer = kafka.producer({
   createPartitioner: Partitioners.DefaultPartitioner, // Use default partitioner for balanced distribution
-  allowAutoTopicCreation: true,
   retry: {
     retries: 5, // Retrying 5 times for resiliency
     initialRetryTime: 300, // Start with 300ms backoff

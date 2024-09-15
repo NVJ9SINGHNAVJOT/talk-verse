@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"strconv"
+	"sync"
 	"syscall"
 	"time"
 
@@ -44,6 +45,9 @@ func main() {
 		log.Fatal().Err(err).Msg("Error connecting to MongoDB")
 	}
 
+	// Create a WaitGroup to track worker goroutines
+	var wg sync.WaitGroup
+
 	// Context for managing shutdown
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel() // Ensure context is cancelled on shutdown
@@ -56,7 +60,7 @@ func main() {
 
 	// Kafka consumers setup
 	go func() {
-		kafka.KafkaConsumeSetup(ctx, errChan, groupsCount)
+		kafka.KafkaConsumeSetup(ctx, errChan, groupsCount, &wg)
 	}()
 
 	// HTTP server setup
@@ -97,7 +101,14 @@ func main() {
 			select {
 			case sig := <-sigChan:
 				log.Info().Msgf("Received signal: %s. Shutting down...", sig)
-				cancel()
+				cancel() // Cancel context to signal Kafka workers to shut down
+
+				// Wait for all Kafka workers to finish before shutting down the server
+				log.Info().Msg("Waiting for Kafka workers to complete...")
+				wg.Wait() // Wait for all worker goroutines to complete
+				log.Info().Msg("All Kafka workers stopped")
+
+				// Now gracefully shut down the HTTP server
 				shutdownServer(srv)
 				return
 
@@ -109,7 +120,13 @@ func main() {
 
 				if remainingWorkers == 1 {
 					log.Warn().Msgf("Only one worker remaining for topic: %s. Shutting down...", workerErr.Topic)
-					cancel()
+					cancel() // Cancel the context to shut down all workers
+
+					log.Info().Msg("Waiting for Kafka workers to complete...")
+					wg.Wait() // Wait for all worker goroutines to complete
+					log.Info().Msg("All Kafka workers stopped")
+
+					// Shut down the HTTP server after workers finish
 					shutdownServer(srv)
 					return
 				}

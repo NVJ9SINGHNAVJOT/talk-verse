@@ -63,8 +63,7 @@ func (w *WorkerTracker) DecrementWorker(topic string) int {
 }
 
 // KafkaConsumeSetup creates consumer groups and assigns workers to partitions
-func KafkaConsumeSetup(ctx context.Context, errChan chan<- WorkerError, groupCount int) {
-	var wg sync.WaitGroup
+func KafkaConsumeSetup(ctx context.Context, errChan chan<- WorkerError, groupCount int, wg *sync.WaitGroup) {
 
 	// Create groups and assign workers
 	for groupID := 1; groupID <= groupCount; groupID++ {
@@ -81,6 +80,7 @@ func KafkaConsumeSetup(ctx context.Context, errChan chan<- WorkerError, groupCou
 					if err := consumeWithRetry(ctx, group, topic, workerName); err != nil {
 						errChan <- WorkerError{Topic: topic, Err: err, WorkerName: workerName}
 					}
+					log.Warn().Msgf("Shutting down worker: %s", workerName)
 				}(topic, workerID)
 			}
 		}
@@ -94,7 +94,9 @@ func KafkaConsumeSetup(ctx context.Context, errChan chan<- WorkerError, groupCou
 // consumeWithRetry consumes messages and retries on failure
 func consumeWithRetry(ctx context.Context, group, topic, workerName string) error {
 	for attempt := 1; attempt <= retryAttempts; attempt++ {
-		if err := consumeMessages(ctx, group, topic, workerName); err != nil {
+		err := consumeMessages(ctx, group, topic, workerName)
+
+		if err != nil && !errors.Is(err, context.Canceled) {
 			log.Error().Err(err).Msgf("Error in %s, retrying (%d/%d)", workerName, attempt, retryAttempts)
 			time.Sleep(backoff)
 		} else {
@@ -123,7 +125,7 @@ func consumeMessages(ctx context.Context, group, topic, workerName string) error
 	for {
 		select {
 		case <-ctx.Done():
-			log.Info().Msgf("Shutting down %s", workerName)
+			log.Info().Msgf("Context cancelled, shutting down %s", workerName)
 			return nil
 		default:
 			msg, err := r.FetchMessage(ctx)
