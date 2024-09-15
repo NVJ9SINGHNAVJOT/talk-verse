@@ -10,6 +10,7 @@ type EnvironmentConfig struct {
 	PORT           string
 	SERVER_KEY     string
 	MONGODB_URL    string
+	KAFKA_GROUPS   string
 	KAFKA_GROUP_ID string
 	KAFKA_BROKERS  string
 }
@@ -38,6 +39,11 @@ func ValidateEnvs() error {
 		return fmt.Errorf("mongo db url is not provided")
 	}
 
+	kafkaGroups, exist := os.LookupEnv("KAFKA_GROUPS")
+	if !exist {
+		return fmt.Errorf("kafka group id is not provided")
+	}
+
 	kafkaGroupId, exist := os.LookupEnv("KAFKA_GROUP_ID")
 	if !exist {
 		return fmt.Errorf("kafka group id is not provided")
@@ -52,6 +58,7 @@ func ValidateEnvs() error {
 	Envs.PORT = port
 	Envs.SERVER_KEY = serverKey
 	Envs.MONGODB_URL = mongoDBUrl
+	Envs.KAFKA_GROUPS = kafkaGroups
 	Envs.KAFKA_GROUP_ID = kafkaGroupId
 	Envs.KAFKA_BROKERS = kafkaBrokers
 

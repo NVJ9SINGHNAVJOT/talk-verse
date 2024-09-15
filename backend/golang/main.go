@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -24,10 +25,17 @@ func main() {
 	err := config.ValidateEnvs()
 	if err != nil {
 		log.Fatal().Err(err).Msg("Invalid environment variables")
+		panic(err)
 	}
 
 	// Setup logger
 	config.SetUpLogger(config.Envs.ENVIRONMENT)
+
+	groupsCount, err := strconv.Atoi(config.Envs.KAFKA_GROUPS)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Error getting groupsCount")
+		panic(err)
+	}
 
 	// Connect to MongoDB
 	err = db.ConnectMongoDB()
@@ -44,7 +52,7 @@ func main() {
 
 	// Kafka consumers setup
 	go func() {
-		kafka.KafkaConsumeSetup(ctx, errChan)
+		kafka.KafkaConsumeSetup(ctx, errChan, groupsCount)
 	}()
 
 	// HTTP server setup

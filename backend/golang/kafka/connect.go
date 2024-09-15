@@ -2,44 +2,81 @@ package kafka
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"sync"
+	"time"
 
 	"github.com/nvj9singhnavjot/talkverse-server-kafka/config"
 	"github.com/rs/zerolog/log"
 	"github.com/segmentio/kafka-go"
 )
 
-// Define topics we are going to consume from
+// Topics to consume
 var topics = []string{"message", "gpMessage", "unseenCount"}
 
-// KafkaConsumeSetup starts Kafka consumers and handles shutdown and errors
-func KafkaConsumeSetup(ctx context.Context, errChan chan<- error) {
+// Retry settings
+const retryAttempts = 5
+const backoff = 2 * time.Second
+
+// Number of workers per topic in each group
+// currently for each top 2 workers, this can be increased as per system resources
+const workersPerTopic = 2
+
+// KafkaConsumeSetup creates consumer groups and assigns workers to partitions
+func KafkaConsumeSetup(ctx context.Context, errChan chan<- error, groupCount int) {
 	var wg sync.WaitGroup
 
-	// Start consumer workers for each topic
-	for i, topic := range topics {
-		wg.Add(1)
-		go func(workerID int, topic string) {
-			defer wg.Done()
-			log.Info().Int("worker", workerID).Msg("Consumer worker started for topic " + topic)
-			if err := consumeMessages(ctx, topic, workerID); err != nil {
-				errChan <- err // Send error to error channel
+	// Create groups and assign workers
+	for groupID := 1; groupID <= groupCount; groupID++ {
+		group := fmt.Sprintf(config.Envs.KAFKA_GROUP_ID+"-%d", groupID)
+		log.Info().Msgf("Starting consumer group: %s", group)
+
+		for _, topic := range topics {
+			for workerID := 1; workerID <= workersPerTopic; workerID++ {
+				wg.Add(1)
+				go func(topic string, workerID int) {
+					defer wg.Done()
+					workerName := fmt.Sprintf("%s-%s-worker-%d", group, topic, workerID)
+					log.Info().Msgf("Starting worker: %s", workerName)
+					if err := consumeWithRetry(ctx, group, topic, workerName); err != nil {
+						errChan <- err
+					}
+				}(topic, workerID)
 			}
-		}(i, topic)
+		}
 	}
 
 	// Wait for all workers to finish
 	wg.Wait()
-	close(errChan) // Close the error channel when all workers are done
+	close(errChan)
 }
 
-// consumeMessages listens for Kafka messages and processes them
-func consumeMessages(ctx context.Context, topic string, workerID int) error {
+// consumeWithRetry consumes messages and retries on failure
+func consumeWithRetry(ctx context.Context, group, topic, workerName string) error {
+	for attempt := 1; attempt <= retryAttempts; attempt++ {
+		if err := consumeMessages(ctx, group, topic, workerName); err != nil {
+			log.Error().Err(err).Msgf("Error in %s, retrying (%d/%d)", workerName, attempt, retryAttempts)
+			time.Sleep(backoff)
+		} else {
+			return nil // Successfully consumed
+		}
+	}
+	return errors.New("retries exhausted for consuming message")
+}
+
+// consumeMessages connects and consumes messages from Kafka for a given topic
+func consumeMessages(ctx context.Context, group, topic, workerName string) error {
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:   []string{config.Envs.KAFKA_BROKERS},
-		GroupID:   config.Envs.KAFKA_GROUP_ID,
-		Topic:     topic,
-		Partition: -1,
+		Brokers: []string{config.Envs.KAFKA_BROKERS},
+		GroupID: group,
+		Topic:   topic,
+		Dialer: &kafka.Dialer{
+			Timeout:   10 * time.Second,
+			KeepAlive: 5 * time.Minute,
+		},
+		HeartbeatInterval: 3 * time.Second,
+		MaxAttempts:       retryAttempts,
 	})
 
 	defer r.Close()
@@ -47,32 +84,29 @@ func consumeMessages(ctx context.Context, topic string, workerID int) error {
 	for {
 		select {
 		case <-ctx.Done():
-			log.Info().Int("worker", workerID).Msg("Stopping consumer worker")
-			return nil // Stop gracefully
+			log.Info().Msgf("Shutting down %s", workerName)
+			return nil
 		default:
-			// Fetch message with context
 			msg, err := r.FetchMessage(ctx)
 			if err != nil {
-				log.Error().Err(err).Msgf("Error fetching message in worker %d", workerID)
-				return err // Return exact error if Kafka worker fails
+				return err
 			}
 
 			// Process the message
-			processMessage(msg, workerID)
+			processMessage(msg, workerName)
 
-			// Commit the message
+			// Commit message offset after processing
 			if err := r.CommitMessages(ctx, msg); err != nil {
-				log.Error().Err(err).Msg("Failed to commit message")
+				log.Error().Err(err).Msgf("Failed to commit message in %s", workerName)
 			}
 		}
 	}
 }
 
 // processMessage processes individual Kafka messages
-func processMessage(msg kafka.Message, workerID int) {
+func processMessage(msg kafka.Message, workerName string) {
 	log.Info().
-		Int("worker", workerID).
-		Str("topic", msg.Topic).
+		Str("worker", workerName).
 		Int("partition", msg.Partition).
 		Msgf("Received message: %s", string(msg.Value))
 
