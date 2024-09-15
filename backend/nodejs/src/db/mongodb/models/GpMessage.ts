@@ -14,9 +14,10 @@ export interface IGpMessage extends Document {
   updatedAt: Date;
 }
 
-export type IGpMessageType = Omit<IGpMessage, keyof Document | "_id" | "from" | "to" | "updatedAt"> & {
+export type IGpMessageType = Omit<IGpMessage, keyof Document | "_id" | "isFile" | "from" | "to" | "updatedAt"> & {
   from: string;
   to: string;
+  isFile?: boolean;
 };
 
 // Define the Group Message schema using the interface

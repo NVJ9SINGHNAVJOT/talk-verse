@@ -60,7 +60,6 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
       await kafkaProducer.message({
         uuId: uuId,
         chatId: edata.chatId,
-        isFile: false,
         from: userId,
         to: edata.to,
         fromText: edata.fromText,
@@ -122,7 +121,6 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
 
       await kafkaProducer.gpMessage({
         uuId: uuId,
-        isFile: false,
         from: userId,
         to: edata._id,
         text: edata.text,

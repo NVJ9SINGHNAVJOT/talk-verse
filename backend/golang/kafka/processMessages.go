@@ -17,6 +17,10 @@ import (
 
 // processMessage processes individual Kafka messages
 func ProcessMessage(msg kafka.Message, workerName string) {
+	log.Debug().
+		Str("worker", workerName).
+		Int("partition", msg.Partition).
+		Msgf("Received message: %s", string(msg.Value))
 	// Process message based on topic
 	switch msg.Topic {
 	case "message":
@@ -45,6 +49,11 @@ func handleMessageTopic(message []byte, workerName string) {
 	if err := helper.ValidateStruct(msg); err != nil {
 		log.Error().Err(err).Str("worker", workerName).Str("message", string(message)).Msg("Validation failed for message")
 		return
+	}
+
+	// Directly assign default value
+	if !msg.IsFile {
+		msg.IsFile = false // This is redundant but shown for clarity
 	}
 
 	// Set timestamps
@@ -76,6 +85,11 @@ func handleGpMessageTopic(message []byte, workerName string) {
 	if err := helper.ValidateStruct(gpMsg); err != nil {
 		log.Error().Err(err).Str("worker", workerName).Str("message", string(message)).Msg("Validation failed for group message")
 		return
+	}
+
+	// Directly assign default value
+	if !gpMsg.IsFile {
+		gpMsg.IsFile = false // This is redundant but shown for clarity
 	}
 
 	// Set timestamps

@@ -16,10 +16,14 @@ export interface IMessage extends Document {
   updatedAt: Date;
 }
 
-export type IMessageType = Omit<IMessage, keyof Document | "_id" | "chatId" | "from" | "to" | "updatedAt"> & {
+export type IMessageType = Omit<
+  IMessage,
+  keyof Document | "_id" | "chatId" | "isFile" | "from" | "to" | "updatedAt"
+> & {
   chatId: string;
   from: string;
   to: string;
+  isFile?: boolean;
 };
 
 // Define the Message schema using the interface

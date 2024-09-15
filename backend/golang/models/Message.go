@@ -9,8 +9,8 @@ import (
 // Message struct for MongoDB document
 type Message struct {
 	ID        primitive.ObjectID `bson:"_id,omitempty"`
-	UUID      string             `bson:"uuid" json:"uuid" validate:"required"`
-	IsFile    bool               `bson:"isFile" json:"isFile" validate:"required"`
+	UUID      string             `bson:"uuId" json:"uuId" validate:"required"`
+	IsFile    bool               `bson:"isFile" json:"isFile,omitempty"`
 	ChatID    primitive.ObjectID `bson:"chatId" json:"chatId" validate:"required"`
 	From      primitive.ObjectID `bson:"from" json:"from" validate:"required"`
 	To        primitive.ObjectID `bson:"to" json:"to" validate:"required"`

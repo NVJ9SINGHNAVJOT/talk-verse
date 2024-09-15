@@ -67,13 +67,16 @@ func KafkaConsumeSetup(ctx context.Context, errChan chan<- WorkerError, groupCou
 
 	// Create groups and assign workers
 	for groupID := 1; groupID <= groupCount; groupID++ {
-		group := fmt.Sprintf(config.Envs.KAFKA_GROUP_ID+"-%d", groupID)
-		log.Info().Msgf("Starting consumer group: %s", group)
+		groupName := fmt.Sprintf(config.Envs.KAFKA_GROUP_ID+"-%d", groupID)
+		log.Info().Msgf("Starting consumer group: %s", groupName)
+
+		// INFO: short notation talkverse-kafka-group-1 -> tk-g-1
+		shortGroupName := fmt.Sprintf("tk-g-%d", groupID)
 
 		for _, topic := range topics {
 			for workerID := 1; workerID <= workersPerTopic; workerID++ {
 				wg.Add(1)
-				go func(topic string, workerID int) {
+				go func(topic string, group string, workerID int) {
 					defer wg.Done()
 					workerName := fmt.Sprintf("%s-%s-worker-%d", group, topic, workerID)
 					log.Info().Msgf("Starting worker: %s", workerName)
@@ -81,7 +84,7 @@ func KafkaConsumeSetup(ctx context.Context, errChan chan<- WorkerError, groupCou
 						errChan <- WorkerError{Topic: topic, Err: err, WorkerName: workerName}
 					}
 					log.Warn().Msgf("Shutting down worker: %s", workerName)
-				}(topic, workerID)
+				}(topic, shortGroupName, workerID)
 			}
 		}
 	}
