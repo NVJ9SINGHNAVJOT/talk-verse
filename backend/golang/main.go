@@ -45,6 +45,9 @@ func main() {
 		log.Fatal().Err(err).Msg("Error connecting to MongoDB")
 	}
 
+	// Initialize validator
+	helper.InitializeValidator()
+
 	// Create a WaitGroup to track worker goroutines
 	var wg sync.WaitGroup
 
