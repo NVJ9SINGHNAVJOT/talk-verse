@@ -1,0 +1,87 @@
+---
+version: "3"
+
+interval: 500ms
+
+# NOTE: after setting up all envs, use task file for development.
+# INFO: task create-topics is os and terminal specific
+
+tasks:
+  i:
+    desc: install all dependencies for project
+    cmds:
+      - cd backend/nodejs && npm run install
+      - cd backend/golang && task i
+      - cd frontend && npm run install
+
+  build:
+    desc: builds the project
+    cmds:
+      - cd backend/nodejs && npm run build
+      - cd backend/golang && task build
+      - cd frontend && npm run build
+  
+  kafka-development:
+    desc: start the Kafka container for development
+    cmds:
+      - |
+        docker run -d \
+        --name talkverse-kafka-development \
+        --hostname talkverse-kafka-development \
+        --network proxy \
+        -p 9092:9092 \
+        -v talkverse-kafka_data-development:/bitnami/kafka \
+        -e KAFKA_KRAFT_CLUSTER_ID=Mk7v7VBISdb098NSDVisdg \
+        -e KAFKA_ENABLE_KRAFT=yes \
+        -e KAFKA_CFG_PROCESS_ROLES=broker,controller \
+        -e KAFKA_CFG_NODE_ID=1 \
+        -e KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@localhost:9093 \
+        -e KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093 \
+        -e KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 \
+        -e KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT \
+        -e KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER \
+        -e KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT \
+        -e ALLOW_PLAINTEXT_LISTENER=yes \
+        docker.io/bitnami/kafka:3.3.2
+  
+  create-topics-development:
+    desc: create topics for kafka from ./backend/kafka/create_kafka_topics_development.sh
+    cmd:
+        # Windows (Git Bash)
+        bash ./backend/kafka/create_kafka_topics_development.sh
+  
+  create-topics:
+    desc: create topics for kafka from ./backend/kafka/create_kafka_topics.sh
+    cmd:
+        # Windows (Git Bash)
+        bash ./backend/kafka/create_kafka_topics.sh
+
+  dev:
+    desc: start all development servers concurrently (backend and frontend)
+    cmds:
+      - task: kafka-development
+      - task: create-topics-development
+      - npm run conc
+
+  compose-up-backend:
+    desc: start backend services using Docker Compose - databases, kafka, servers
+    cmds:
+      - docker-compose -f ./backend/docker-compose.databases.yml up -d
+      - docker-compose -f ./backend/docker-compose.kafka.yml up -d 
+      - task: create-topics
+      - docker-compose -f ./backend/docker-compose.servers.yml up -d
+
+  compose-down-backend:
+    desc: stop backend services using Docker Compose - databases, kafka, servers
+    cmds:
+      - docker-compose -f ./backend/docker-compose.servers.yml -f ./backend/docker-compose.kafka.yml -f ./backend/docker-compose.databases.yml down
+
+  compose-up-frontend:
+    desc: start frontend services using Docker Compose
+    cmds:
+      - docker-compose -f ./frontend/docker-compose.yml up -d
+
+  compose-down-frontend:
+    desc: stop frontend services using Docker Compose
+    cmds:
+      - docker-compose -f ./frontend/docker-compose.yml down

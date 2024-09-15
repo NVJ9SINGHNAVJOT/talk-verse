@@ -3,8 +3,8 @@ import { SoGroupMessageRecieved, SoMessageRecieved } from "@/types/socket/eventT
 import { Kafka, logLevel, Partitioners } from "kafkajs";
 
 const kafka = new Kafka({
-  clientId: process.env["KAFKA_CLIENT_ID"],
-  brokers: process.env["KAFKA_BROKERS"].split(","),
+  clientId: `${process.env["KAFKA_CLIENT_ID"]}`,
+  brokers: `${process.env["KAFKA_BROKERS"]}`.split(","),
   logLevel: logLevel.INFO, // Logging Kafka events
 });
 

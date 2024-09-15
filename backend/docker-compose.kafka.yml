@@ -6,9 +6,6 @@ volumes:
 
 networks:
   talkverse-backend-proxy:
-  # NOTE: use proxy for development, for exposing talkverse-kafka to local machine
-  # proxy:
-  #   external: true
 
 services:
 
@@ -19,9 +16,7 @@ talkverse-kafka:
       - "9092:9092"
     volumes:
       - talkverse-kafka_data:/bitnami/kafka
-    networks:
-      # NOTE: use proxy for development, for exposing talkverse-kafka to local machine
-      # - proxy  
+    networks: 
       - talkverse-backend-proxy
     restart: unless-stopped
     environment:

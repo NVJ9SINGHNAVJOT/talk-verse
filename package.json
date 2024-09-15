@@ -4,8 +4,9 @@
   "description": "",
   "scripts": {
     "client": "cd frontend && npm run dev",
-    "server": "cd backend && npm run dev",
-    "conc": "concurrently -n \"server,client\" -c \"bgBlue,bgYellow\" \"npm run server\" \"npm run client\""
+    "server-nodejs": "cd backend/nodejs && npm run dev",
+    "server-golang": "cd backend/golang && task run",
+    "conc": "concurrently -n \"nodejs,golang,client\" -c \"bgBlue,bgYellow,bgWhite\" \"npm run server-nodejs\" \"npm run server-golang\" \"npm run client\""
   },
   "keywords": [],
   "author": "",
