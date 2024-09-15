@@ -31,6 +31,7 @@ func main() {
 	// Setup logger
 	config.SetUpLogger(config.Envs.ENVIRONMENT)
 
+	// Get groupsCount from environment
 	groupsCount, err := strconv.Atoi(config.Envs.KAFKA_GROUPS)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error getting groupsCount")
@@ -48,7 +49,10 @@ func main() {
 	defer cancel() // Ensure context is cancelled on shutdown
 
 	// Error channel to listen to Kafka worker errors
-	errChan := make(chan error)
+	errChan := make(chan kafka.WorkerError)
+
+	// Initialize WorkerTracker to track remaining workers per topic
+	workerTracker := kafka.NewWorkerTracker(groupsCount, 2) // 2 workers per group
 
 	// Kafka consumers setup
 	go func() {
@@ -84,27 +88,32 @@ func main() {
 		Handler: router,
 	}
 
-	// Shutdown handling using signal
+	// Shutdown handling using signal and worker tracking
 	go func() {
 		sigChan := make(chan os.Signal, 1)
 		signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 
-		select {
-		case sig := <-sigChan:
-			log.Info().Msgf("Received signal: %s. Shutting down...", sig)
-		case err := <-errChan:
-			log.Error().Err(err).Msg("Kafka worker error. Shutting down...")
-		}
+		for {
+			select {
+			case sig := <-sigChan:
+				log.Info().Msgf("Received signal: %s. Shutting down...", sig)
+				cancel()
+				shutdownServer(srv)
+				return
 
-		// Call cancel to shut down consumers
-		cancel()
+			case workerErr := <-errChan:
+				log.Error().Err(workerErr.Err).Msgf("Kafka worker error for topic: %s, workerName: %s", workerErr.Topic, workerErr.WorkerName)
 
-		// Give server some time to finish ongoing requests
-		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer shutdownCancel()
+				// Reduce worker count for the topic
+				remainingWorkers := workerTracker.DecrementWorker(workerErr.Topic)
 
-		if err := srv.Shutdown(shutdownCtx); err != nil {
-			log.Error().Err(err).Msg("HTTP server shutdown error")
+				if remainingWorkers == 1 {
+					log.Warn().Msgf("Only one worker remaining for topic: %s. Shutting down...", workerErr.Topic)
+					cancel()
+					shutdownServer(srv)
+					return
+				}
+			}
 		}
 	}()
 
@@ -115,4 +124,15 @@ func main() {
 	}
 
 	log.Info().Msg("Server stopped")
+}
+
+// shutdownServer gracefully shuts down the HTTP server
+func shutdownServer(srv *http.Server) {
+	// Give server some time to finish ongoing requests
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer shutdownCancel()
+
+	if err := srv.Shutdown(shutdownCtx); err != nil {
+		log.Error().Err(err).Msg("HTTP server shutdown error")
+	}
 }

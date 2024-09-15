@@ -23,8 +23,47 @@ const backoff = 2 * time.Second
 // currently for each top 2 workers, this can be increased as per system resources
 const workersPerTopic = 2
 
+// WorkerTracker keeps track of workers per topic
+type WorkerTracker struct {
+	workerCount map[string]int
+	mu          sync.Mutex
+}
+
+// WorkerError to pass the topic and error
+type WorkerError struct {
+	Topic      string
+	Err        error
+	WorkerName string
+}
+
+// NewWorkerTracker initializes the worker tracker with the total worker count per topic
+func NewWorkerTracker(groupCount int, workersPerGroup int) *WorkerTracker {
+	workerCount := make(map[string]int)
+
+	// Initialize worker count per topic (groupsCount * workersPerGroup)
+	for _, topic := range topics {
+		workerCount[topic] = groupCount * workersPerGroup
+	}
+
+	return &WorkerTracker{
+		workerCount: workerCount,
+	}
+}
+
+// DecrementWorker reduces the worker count for a topic and returns the remaining workers for that topic
+func (w *WorkerTracker) DecrementWorker(topic string) int {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+
+	if count, exists := w.workerCount[topic]; exists && count > 0 {
+		w.workerCount[topic]--
+	}
+
+	return w.workerCount[topic]
+}
+
 // KafkaConsumeSetup creates consumer groups and assigns workers to partitions
-func KafkaConsumeSetup(ctx context.Context, errChan chan<- error, groupCount int) {
+func KafkaConsumeSetup(ctx context.Context, errChan chan<- WorkerError, groupCount int) {
 	var wg sync.WaitGroup
 
 	// Create groups and assign workers
@@ -40,7 +79,7 @@ func KafkaConsumeSetup(ctx context.Context, errChan chan<- error, groupCount int
 					workerName := fmt.Sprintf("%s-%s-worker-%d", group, topic, workerID)
 					log.Info().Msgf("Starting worker: %s", workerName)
 					if err := consumeWithRetry(ctx, group, topic, workerName); err != nil {
-						errChan <- err
+						errChan <- WorkerError{Topic: topic, Err: err, WorkerName: workerName}
 					}
 				}(topic, workerID)
 			}
