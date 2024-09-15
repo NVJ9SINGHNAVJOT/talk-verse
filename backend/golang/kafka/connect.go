@@ -134,7 +134,7 @@ func consumeMessages(ctx context.Context, group, topic, workerName string) error
 			}
 
 			// Process the message
-			processMessage(msg, workerName)
+			ProcessMessage(msg, workerName)
 
 			// Commit message offset after processing
 			if err := r.CommitMessages(ctx, msg); err != nil {
@@ -142,39 +142,4 @@ func consumeMessages(ctx context.Context, group, topic, workerName string) error
 			}
 		}
 	}
-}
-
-// processMessage processes individual Kafka messages
-func processMessage(msg kafka.Message, workerName string) {
-	log.Info().
-		Str("worker", workerName).
-		Int("partition", msg.Partition).
-		Msgf("Received message: %s", string(msg.Value))
-
-	// Process message based on topic
-	switch msg.Topic {
-	case "message":
-		handleMessageTopic(msg.Value)
-	case "gpMessage":
-		handleGpMessageTopic(msg.Value)
-	case "unseenCount":
-		handleUnseenCountTopic(msg.Value)
-	default:
-		log.Warn().Msgf("Unknown topic: %s, value: %s", msg.Topic, string(msg.Value))
-	}
-}
-
-// handleMessageTopic processes the "message" topic
-func handleMessageTopic(message []byte) {
-	log.Info().Msgf("Handled 'message' topic with data: %s", string(message))
-}
-
-// handleGpMessageTopic processes the "gpMessage" topic
-func handleGpMessageTopic(message []byte) {
-	log.Info().Msgf("Handled 'gpMessage' topic with data: %s", string(message))
-}
-
-// handleUnseenCountTopic processes the "unseenCount" topic
-func handleUnseenCountTopic(message []byte) {
-	log.Info().Msgf("Handled 'unseenCount' topic with data: %s", string(message))
 }
