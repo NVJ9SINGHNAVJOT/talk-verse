@@ -5,9 +5,10 @@ volumes:
   talkverse-kafka_data:
 
 networks:
-  # talkverse-backend-proxy:
-  proxy:
-    external: true
+  talkverse-backend-proxy:
+  # NOTE: use proxy for development, for exposing talkverse-kafka to local machine
+  # proxy:
+  #   external: true
 
 services:
   talkverse-server-kafka:
