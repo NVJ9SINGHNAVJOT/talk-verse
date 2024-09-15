@@ -121,6 +121,7 @@ func main() {
 	log.Info().Msg("Server is running...")
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.Fatal().Err(err).Msg("HTTP server crashed")
+		cancel() // Ensure context is cancelled if server crashes
 	}
 
 	log.Info().Msg("Server stopped")
