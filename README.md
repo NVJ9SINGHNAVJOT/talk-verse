@@ -28,11 +28,23 @@ TalkVerse is a social media web application.
 
    - Websockets are employed to enable live chat functionality. Users can engage in real-time conversations, making the application dynamic and responsive.
 
-5. #### Messaging Channels :
+5. #### Kafka as a Message Broker :
+
+   - Efficiently handles real-time data streams.
+   - Ensures reliable message delivery and fault tolerance.
+   - Scales seamlessly to accommodate high-throughput data pipelines.
+
+6. #### Golang for Concurrently Handling Messages :
+
+   - Utilizes Go’s goroutines for efficient concurrent processing.
+   - Manages Kafka messages and MongoDB operations simultaneously.
+   - Enhances performance and responsiveness of the system.
+
+7. #### Messaging Channels :
 
    - Channels organize message operations within the application.
 
-6. #### Blogging and Post Creation :
+8. #### Blogging and Post Creation :
 
    - Users have the ability to create and share blog posts or other content. This feature encourages engagement and content sharing.
 
@@ -43,36 +55,30 @@ TalkVerse is a social media web application.
   git clone https://github.com/NVJ9SINGHNAVJOT/talk-verse.git
   ```
 - Set up environment variables.
-  In the root directory in /backend and /frontend **.env.example** file is present. Replace it with **.env** file and set the required variables running application _(.env.example contains all variables examples)_.
+  In the root directory in /backend/nodejs, /backend/golang and /frontend **.env.example** file is present. Replace it with **.env** file and set the required variables running application _(.env.example contains all variables examples)_.
 - Project can be run on local machine by Docker or by installing dependencies locally.
-- **Using Docker**
+- **Using Docker**  ***Recommended***
 
   ```
   cd talk-verse
-  cd backend
-  docker compose up -d
-  cd ..
-  cd frontend
-  docker compose up -d
+  task compose-up-backend
+  task compose-up-frontend
   ```
+- Open the project in your browser at [`http://localhost:5173`](http://localhost:5173).
 
 - **Using local machine dependencies**
 
-1. Install Node.js (if not already installed).
-2. Install the required packages and start servers.
+1. Install Node.js (skip if already installed).
+2. Install Golang (skip if already installed).
+3. Install the required packages and start the servers.
+4. If you have Apache Kafka installed locally, skip this step. Otherwise, start Docker (Apache Kafka is used in this project with Docker).
+
    ```
    cd talk-verse
-   cd backend
-   npm install
-   npm run build
-   npm run start
-   cd ..
-   cd frontend
-   npm install
-   npm run build
-   npm run start
+   task i
+   task build
+   task dev
    ```
-
 - Open the project in your browser at [`http://localhost:4173`](http://localhost:4173).
 
 ## Important
@@ -104,6 +110,7 @@ TalkVerse is a social media web application.
 ![signUpPage](https://github.com/user-attachments/assets/119dd678-4742-47bc-a265-037567a67333)
 ![about_us](https://github.com/user-attachments/assets/a69b9f29-eb4b-4ced-84e2-ea75cabe2082)
 ![contact_us](https://github.com/user-attachments/assets/6598e1b3-6eea-42be-b9da-047394987130)
+![welcome](https://github.com/user-attachments/assets/f7742715-f3b0-496f-8c75-9bb1f8f757ff)
 ![blogPage](https://github.com/user-attachments/assets/314c6756-ed25-482e-9aa8-0a8d836d4869)
 ![post_story](https://github.com/user-attachments/assets/81c0036a-0a3c-4790-9785-cd94fb18d46e)
 ![create_group](https://github.com/user-attachments/assets/b0727daf-196f-44f6-8064-164da71dc9f0)
