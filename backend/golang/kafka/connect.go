@@ -76,15 +76,16 @@ func KafkaConsumeSetup(ctx context.Context, errChan chan<- WorkerError, groupCou
 		for _, topic := range topics {
 			for workerID := 1; workerID <= workersPerTopic; workerID++ {
 				wg.Add(1)
-				go func(topic string, group string, workerID int) {
+				go func(group string, topic string, workerID int) {
 					defer wg.Done()
+					// INFO: workerName = tk-g-1-message-worker-1
 					workerName := fmt.Sprintf("%s-%s-worker-%d", group, topic, workerID)
 					log.Info().Msgf("Starting worker: %s", workerName)
 					if err := consumeWithRetry(ctx, group, topic, workerName); err != nil {
 						errChan <- WorkerError{Topic: topic, Err: err, WorkerName: workerName}
 					}
 					log.Warn().Msgf("Shutting down worker: %s", workerName)
-				}(topic, shortGroupName, workerID)
+				}(shortGroupName, topic, workerID)
 			}
 		}
 	}
