@@ -33,9 +33,9 @@ func main() {
 	config.SetUpLogger(config.Envs.ENVIRONMENT)
 
 	// Get groupsCount from environment
-	groupsCount, err := strconv.Atoi(config.Envs.KAFKA_GROUPS)
+	groupWorkersCount, err := strconv.Atoi(config.Envs.KAFKA_GROUP_WORKERS)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Error getting groupsCount")
+		log.Fatal().Err(err).Msg("Error getting groupWorkersCount")
 		panic(err)
 	}
 
@@ -59,11 +59,11 @@ func main() {
 	errChan := make(chan kafka.WorkerError)
 
 	// Initialize WorkerTracker to track remaining workers per topic
-	workerTracker := kafka.NewWorkerTracker(groupsCount, 2) // 2 workers per group
+	workerTracker := kafka.NewWorkerTracker(groupWorkersCount)
 
 	// Kafka consumers setup
 	go func() {
-		kafka.KafkaConsumeSetup(ctx, errChan, groupsCount, &wg)
+		kafka.KafkaConsumeSetup(ctx, errChan, groupWorkersCount, &wg)
 	}()
 
 	// HTTP server setup

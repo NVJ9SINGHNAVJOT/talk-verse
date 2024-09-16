@@ -41,19 +41,19 @@ func handleMessageTopic(message []byte, workerName string) {
 	// Unmarshal the Kafka message into the Message struct
 	err := json.Unmarshal(message, &msg)
 	if err != nil {
-		log.Error().Err(err).Str("worker", workerName).Str("message", string(message)).Msg("Failed to unmarshal message")
+		log.Error().Err(err).Msgf("Failed to unmarshal message. Worker: %s, Message: %s", workerName, string(message))
 		return
 	}
 
 	// Validate the message struct
 	if err := helper.ValidateStruct(msg); err != nil {
-		log.Error().Err(err).Str("worker", workerName).Str("message", string(message)).Msg("Validation failed for message")
+		log.Error().Err(err).Msgf("Validation failed for message. Worker: %s, Message: %s", workerName, string(message))
 		return
 	}
 
 	// Directly assign default value
 	if !msg.IsFile {
-		msg.IsFile = false // This is redundant but shown for clarity
+		msg.IsFile = false
 	}
 
 	// Set timestamps
@@ -63,11 +63,11 @@ func handleMessageTopic(message []byte, workerName string) {
 	collection := db.GetCollection("messages")
 	_, err = collection.InsertOne(context.Background(), msg)
 	if err != nil {
-		log.Error().Err(err).Str("worker", workerName).Str("message", string(message)).Msg("Failed to insert message into MongoDB")
+		log.Error().Err(err).Msgf("Failed to insert message into MongoDB. Worker: %s, Message: %s", workerName, string(message))
 		return
 	}
 
-	log.Info().Str("worker", workerName).Msgf("Successfully inserted message with UUID: %s", msg.UUID)
+	log.Info().Msgf("Successfully inserted message with UUID: %s, Worker: %s", msg.UUID, workerName)
 }
 
 // handleGpMessageTopic processes the "gpMessage" topic
@@ -77,19 +77,19 @@ func handleGpMessageTopic(message []byte, workerName string) {
 	// Unmarshal the Kafka message into the GpMessage struct
 	err := json.Unmarshal(message, &gpMsg)
 	if err != nil {
-		log.Error().Err(err).Str("worker", workerName).Str("message", string(message)).Msg("Failed to unmarshal group message")
+		log.Error().Err(err).Msgf("Failed to unmarshal group message. Worker: %s, Message: %s", workerName, string(message))
 		return
 	}
 
 	// Validate the group message struct
 	if err := helper.ValidateStruct(gpMsg); err != nil {
-		log.Error().Err(err).Str("worker", workerName).Str("message", string(message)).Msg("Validation failed for group message")
+		log.Error().Err(err).Msgf("Validation failed for group message. Worker: %s, Message: %s", workerName, string(message))
 		return
 	}
 
 	// Directly assign default value
 	if !gpMsg.IsFile {
-		gpMsg.IsFile = false // This is redundant but shown for clarity
+		gpMsg.IsFile = false
 	}
 
 	// Set timestamps
@@ -99,16 +99,15 @@ func handleGpMessageTopic(message []byte, workerName string) {
 	collection := db.GetCollection("gpmessages")
 	_, err = collection.InsertOne(context.Background(), gpMsg)
 	if err != nil {
-		log.Error().Err(err).Str("worker", workerName).Str("message", string(message)).Msg("Failed to insert group message into MongoDB")
+		log.Error().Err(err).Msgf("Failed to insert group message into MongoDB. Worker: %s, Message: %s", workerName, string(message))
 		return
 	}
 
-	log.Info().Str("worker", workerName).Msgf("Successfully inserted group message with UUID: %s", gpMsg.UUID)
+	log.Info().Msgf("Successfully inserted group message with UUID: %s, Worker: %s", gpMsg.UUID, workerName)
 }
 
 // handleUnseenCountTopic processes the "unseenCount" topic
 func handleUnseenCountTopic(message []byte, workerName string) {
-	// Unmarshal the message
 	var data struct {
 		UserIDs []string `json:"userIds"`
 		MainID  string   `json:"mainId"`
@@ -117,14 +116,14 @@ func handleUnseenCountTopic(message []byte, workerName string) {
 
 	// Unmarshal the message
 	if err := json.Unmarshal(message, &data); err != nil {
-		log.Error().Err(err).Str("worker", workerName).Str("message", string(message)).Msg("Failed to unmarshal unseenCount message")
+		log.Error().Err(err).Msgf("Failed to unmarshal unseenCount message. Worker: %s, Message: %s", workerName, string(message))
 		return
 	}
 
 	collection := db.GetCollection("unseencounts")
 	mainID, err := primitive.ObjectIDFromHex(data.MainID)
 	if err != nil {
-		log.Error().Err(err).Str("worker", workerName).Str("message", string(message)).Msg("Invalid MainID format")
+		log.Error().Err(err).Msgf("Invalid MainID format. Worker: %s, Message: %s", workerName, string(message))
 		return
 	}
 
@@ -133,7 +132,7 @@ func handleUnseenCountTopic(message []byte, workerName string) {
 	for i, userIDStr := range data.UserIDs {
 		userID, err := primitive.ObjectIDFromHex(userIDStr)
 		if err != nil {
-			log.Error().Err(err).Str("worker", workerName).Str("message", string(message)).Msg("Invalid UserID format")
+			log.Error().Err(err).Msgf("Invalid UserID format. Worker: %s, Message: %s", workerName, string(message))
 			return
 		}
 		userIDs[i] = userID
@@ -153,13 +152,13 @@ func handleUnseenCountTopic(message []byte, workerName string) {
 		filter["userId"] = userIDs[0]
 		_, err = collection.UpdateOne(context.Background(), filter, update, options.Update().SetUpsert(true))
 		if err != nil {
-			log.Error().Err(err).Str("worker", workerName).Str("message", string(message)).Msg("Failed to update unseen count for a single user")
+			log.Error().Err(err).Msgf("Failed to update unseen count for a single user. Worker: %s, Message: %s", workerName, string(message))
 		}
 	} else {
 		filter["userId"] = bson.M{"$in": userIDs}
 		_, err = collection.UpdateMany(context.Background(), filter, update, options.Update().SetUpsert(true))
 		if err != nil {
-			log.Error().Err(err).Str("worker", workerName).Str("message", string(message)).Msg("Failed to update unseen counts for multiple users")
+			log.Error().Err(err).Msgf("Failed to update unseen counts for multiple users. Worker: %s, Message: %s", workerName, string(message))
 		}
 	}
 }

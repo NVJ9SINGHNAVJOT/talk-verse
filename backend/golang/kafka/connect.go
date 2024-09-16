@@ -19,10 +19,6 @@ var topics = []string{"message", "gpMessage", "unseenCount"}
 const retryAttempts = 5
 const backoff = 2 * time.Second
 
-// Number of workers per topic in each group
-// currently for each top 2 workers, this can be increased as per system resources
-const workersPerTopic = 2
-
 // WorkerTracker keeps track of workers per topic
 type WorkerTracker struct {
 	workerCount map[string]int
@@ -37,8 +33,9 @@ type WorkerError struct {
 }
 
 // NewWorkerTracker initializes the worker tracker with the total worker count per topic
-func NewWorkerTracker(groupCount int, workersPerGroup int) *WorkerTracker {
+func NewWorkerTracker(workersPerGroup int) *WorkerTracker {
 	workerCount := make(map[string]int)
+	groupCount := len(topics)
 
 	// Initialize worker count per topic (groupsCount * workersPerGroup)
 	for _, topic := range topics {
@@ -62,31 +59,30 @@ func (w *WorkerTracker) DecrementWorker(topic string) int {
 	return w.workerCount[topic]
 }
 
-// KafkaConsumeSetup creates consumer groups and assigns workers to partitions
-func KafkaConsumeSetup(ctx context.Context, errChan chan<- WorkerError, groupCount int, wg *sync.WaitGroup) {
+// KafkaConsumeSetup creates a single consumer group per topic and assigns workers within that group
+func KafkaConsumeSetup(ctx context.Context, errChan chan<- WorkerError, workersPerTopic int, wg *sync.WaitGroup) {
+	// Iterate over each topic to create one group per topic and spawn workers
+	for _, topic := range topics {
+		// Create a single consumer group for each topic
+		groupName := fmt.Sprintf(config.Envs.KAFKA_GROUP_ID+"-%s-group", topic)
+		log.Info().Msgf("Starting consumer group: %s for topic: %s", groupName, topic)
 
-	// Create groups and assign workers
-	for groupID := 1; groupID <= groupCount; groupID++ {
-		groupName := fmt.Sprintf(config.Envs.KAFKA_GROUP_ID+"-%d", groupID)
-		log.Info().Msgf("Starting consumer group: %s", groupName)
+		// INFO: short notation talkverse-kafka-message-group -> tk-message-g
+		shortGroupName := fmt.Sprintf("tk-%s-g", topic)
 
-		// INFO: short notation talkverse-kafka-group-1 -> tk-g-1
-		shortGroupName := fmt.Sprintf("tk-g-%d", groupID)
-
-		for _, topic := range topics {
-			for workerID := 1; workerID <= workersPerTopic; workerID++ {
-				wg.Add(1)
-				go func(group string, topic string, workerID int) {
-					defer wg.Done()
-					// INFO: workerName = tk-g-1-message-worker-1
-					workerName := fmt.Sprintf("%s-%s-worker-%d", group, topic, workerID)
-					log.Info().Msgf("Starting worker: %s", workerName)
-					if err := consumeWithRetry(ctx, group, topic, workerName); err != nil {
-						errChan <- WorkerError{Topic: topic, Err: err, WorkerName: workerName}
-					}
-					log.Warn().Msgf("Shutting down worker: %s", workerName)
-				}(shortGroupName, topic, workerID)
-			}
+		// Create workers for the current group and topic
+		for workerID := 1; workerID <= workersPerTopic; workerID++ {
+			wg.Add(1)
+			go func(group string, topic string, workerID int) {
+				defer wg.Done()
+				// INFO: workerName = tk-message-g-worker-1
+				workerName := fmt.Sprintf("%s-worker-%d", group, workerID)
+				log.Info().Msgf("Starting worker: %s", workerName)
+				if err := consumeWithRetry(ctx, group, topic, workerName); err != nil {
+					errChan <- WorkerError{Topic: topic, Err: err, WorkerName: workerName}
+				}
+				log.Warn().Msgf("Shutting down worker: %s", workerName)
+			}(shortGroupName, topic, workerID)
 		}
 	}
 

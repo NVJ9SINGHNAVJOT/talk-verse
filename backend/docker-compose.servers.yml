@@ -24,7 +24,6 @@ services:
       - postgres
       - mongo
       - talkverse-kafka
-      - talkverse-server-kafka
     entrypoint: ['/app/wait-for.sh', 'postgres:5432', '--', '/app/start.sh']
     command: [ 'node', 'dist/index.js']
 
@@ -40,3 +39,4 @@ services:
     depends_on:
       - mongo
       - talkverse-kafka
+      - talkverse-backend

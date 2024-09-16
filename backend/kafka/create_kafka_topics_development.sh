@@ -20,7 +20,7 @@ create_topic_if_not_exists() {
   fi
 }
 
-# Create topics with 4 partitions and replication factor of 1
+# Create topics with 10 partitions and replication factor of 1
 create_topic_if_not_exists "message" 10 1
 create_topic_if_not_exists "gpMessage" 10 1
 create_topic_if_not_exists "unseenCount" 10 1
