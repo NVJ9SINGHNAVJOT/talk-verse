@@ -34,16 +34,15 @@ tasks:
       bash ./task_scripts/create_kafka_topics_development.sh
 
   create-topics:
-    desc: create topics for kafka from ./backend/kafka/create_kafka_topics.sh
+    desc: create topics for kafka from ./task_scripts/create_kafka_topics.sh
     cmd:
       # Windows (Git Bash)
-      bash ./backend/kafka/create_kafka_topics.sh
+      bash ./task_scripts/kafka/create_kafka_topics.sh
 
   dev:
     desc: start all development servers concurrently (backend and frontend)
     cmds:
-      - task: kafka-development
-      - task: create-topics-development
+      - task: dev-kafka
       - npm run conc
 
   dev-kafka:
