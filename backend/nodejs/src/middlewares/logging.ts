@@ -20,7 +20,6 @@ function logging(req: Request, res: Response, next: NextFunction) {
               ? { email: req.body.email, otp: req.body.otp }
               : req.body,
       requestHeaders: {
-        "content-type": req.headers["content-type"],
         "sec-ch-ua-platform": req.headers["sec-ch-ua-platform"],
         origin: req.headers["origin"],
         "sec-fetch-site": req.headers["sec-fetch-site"],

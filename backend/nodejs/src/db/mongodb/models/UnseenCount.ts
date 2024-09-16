@@ -4,8 +4,8 @@ import { IUser } from "@/db/mongodb/models/User";
 // Define an interface representing a UnseenCount document
 export interface IUnseenCount extends Document {
   _id: mongoose.Types.ObjectId;
-  userId: mongoose.Types.ObjectId | IUser;
-  mainId: mongoose.Types.ObjectId;
+  userId: string | IUser;
+  mainId: string;
   count: number;
   createdAt: Date;
   updatedAt: Date;
@@ -15,15 +15,14 @@ export interface IUnseenCount extends Document {
 const unseenCountSchema = new Schema<IUnseenCount>(
   {
     userId: {
-      type: Schema.Types.ObjectId,
+      type: String,
       ref: "User",
       required: true,
     },
     mainId: {
-      // type: Schema.Types.ObjectId
       // ref: Chat
       // ref: Group
-      type: Schema.Types.ObjectId,
+      type: String,
       required: true,
     },
     count: {
