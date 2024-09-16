@@ -1,5 +1,5 @@
-import { IGpMessageType } from "@/db/mongodb/models/GpMessage";
-import { IMessageType } from "@/db/mongodb/models/Message";
+import { KafkaIGpMessageType } from "@/db/mongodb/models/GpMessage";
+import { KafkaIMessageType } from "@/db/mongodb/models/Message";
 import { logger } from "@/logger/logger";
 import { Kafka, logLevel, Partitioners } from "kafkajs";
 
@@ -35,7 +35,7 @@ export const kafkaProducerDisconnect = async () => {
   logger.info("kafka producer disconnected");
 };
 
-async function message(data: IMessageType) {
+async function message(data: KafkaIMessageType) {
   try {
     await producer.send({
       topic: "message",
@@ -48,7 +48,7 @@ async function message(data: IMessageType) {
   }
 }
 
-async function gpMessage(data: IGpMessageType) {
+async function gpMessage(data: KafkaIGpMessageType) {
   try {
     await producer.send({
       topic: "gpMessage",

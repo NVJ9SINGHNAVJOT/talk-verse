@@ -7,16 +7,16 @@ export interface IMessage extends Document {
   _id: mongoose.Types.ObjectId;
   uuId: string;
   isFile: boolean;
-  chatId: mongoose.Types.ObjectId | IChat;
-  from: mongoose.Types.ObjectId | IUser;
-  to: mongoose.Types.ObjectId | IUser;
+  chatId: string | IChat;
+  from: string | IUser;
+  to: string | IUser;
   fromText: string;
   toText: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export type IMessageType = Omit<
+export type KafkaIMessageType = Omit<
   IMessage,
   keyof Document | "_id" | "chatId" | "isFile" | "from" | "to" | "updatedAt"
 > & {
@@ -38,17 +38,17 @@ const messageSchema = new Schema<IMessage>({
     default: false,
   },
   chatId: {
-    type: Schema.Types.ObjectId,
+    type: String,
     ref: "Chat",
     required: true,
   },
   from: {
-    type: Schema.Types.ObjectId,
+    type: String,
     ref: "User",
     required: true,
   },
   to: {
-    type: Schema.Types.ObjectId,
+    type: String,
     ref: "User",
     required: true,
   },

@@ -292,9 +292,9 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
       const userChatMessage: SoMessageRecieved = {
         uuId: message.uuId,
         isFile: message.isFile,
-        chatId: message.chatId._id.toString(),
-        from: message.from._id.toString(),
-        text: message.from._id.toString() === userId ? message.fromText : message.toText,
+        chatId: message.chatId as string,
+        from: message.from as string,
+        text: (message.from as string) === userId ? message.fromText : message.toText,
         createdAt: message.createdAt.toISOString(),
       };
       newMessages.push(userChatMessage);

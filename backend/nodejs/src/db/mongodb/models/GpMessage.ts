@@ -3,18 +3,18 @@ import { IUser } from "@/db/mongodb/models/User";
 import { IGroup } from "@/db/mongodb/models/Group";
 
 // Define an interface representing a Group Message document
-export interface IGpMessage extends Document {
+export interface IGpMessage {
   _id: mongoose.Types.ObjectId;
   uuId: string;
   isFile: boolean;
-  from: mongoose.Types.ObjectId | IUser;
-  to: mongoose.Types.ObjectId | IGroup;
+  from: string | IUser;
+  to: string | IGroup;
   text: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export type IGpMessageType = Omit<IGpMessage, keyof Document | "_id" | "isFile" | "from" | "to" | "updatedAt"> & {
+export type KafkaIGpMessageType = Omit<IGpMessage, keyof Document | "_id" | "isFile" | "from" | "to" | "updatedAt"> & {
   from: string;
   to: string;
   isFile?: boolean;
@@ -32,12 +32,12 @@ const gpMessageSchema = new Schema<IGpMessage>({
     default: false,
   },
   from: {
-    type: Schema.Types.ObjectId,
+    type: String,
     ref: "User",
     required: true,
   },
   to: {
-    type: Schema.Types.ObjectId,
+    type: String,
     ref: "Group",
     required: true,
   },

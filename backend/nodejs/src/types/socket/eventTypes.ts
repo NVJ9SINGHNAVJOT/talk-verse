@@ -55,5 +55,10 @@ export const SoSendGroupMessageSchema = z.object({
   text: z.string().min(1),
   firstName: nameSchema,
   lastName: nameSchema,
-  imageUrl: z.string().url().optional(),
+  imageUrl: z
+    .string()
+    .refine((value) => value === "" || /^(https?:\/\/)[^\s$.?#].[^\s]*$/i.test(value), {
+      message: "Invalid URL",
+    })
+    .optional(),
 });

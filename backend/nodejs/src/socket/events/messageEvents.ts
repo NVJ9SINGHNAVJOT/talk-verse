@@ -68,7 +68,7 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
       });
 
       if (friendSocketIds.length === 0) {
-        await kafkaProducer.unseenCount([userId], data.mainId);
+        await kafkaProducer.unseenCount([edata.to], edata.chatId);
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
