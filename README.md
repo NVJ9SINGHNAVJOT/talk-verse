@@ -11,40 +11,40 @@ TalkVerse is a social media web application.
 
 ## Features
 
-1. #### User Authentication :
+#### User Authentication :
 
    - TalkVerse ensures secure user registration and authentication using **JWT (JSON Web Tokens)**. Users can easily sign up, log in, and manage their profiles with confidence.
    - **Bcrypt** is used for password hashing, adding an extra layer of security to user data.
 
-2. #### Application Stack :
+#### Application Stack :
 
    - The web application is built using TypeScript, React, Node.js, MongoDB, and PostgreSQL. These technologies form the foundation for its functionality and user interface.
 
-3. #### Secure Chat with Encryption :
+#### Secure Chat with Encryption :
 
    - The chat feature incorporates both **asymmetric and symmetric encryption** methods. This ensures that user messages remain confidential and protected.
 
-4. #### Real-Time Communication :
+#### Real-Time Communication :
 
    - Websockets are employed to enable live chat functionality. Users can engage in real-time conversations, making the application dynamic and responsive.
 
-5. #### Kafka as a Message Broker :
+#### Kafka as a Message Broker :
 
    - Efficiently handles real-time data streams.
    - Ensures reliable message delivery and fault tolerance.
    - Scales seamlessly to accommodate high-throughput data pipelines.
 
-6. #### Golang for Concurrently Handling Messages :
+#### Golang for Concurrently Handling Messages :
 
    - Utilizes Go’s goroutines for efficient concurrent processing.
    - Manages Kafka messages and MongoDB operations simultaneously.
    - Enhances performance and responsiveness of the system.
 
-7. #### Messaging Channels :
+#### Messaging Channels :
 
    - Channels organize message operations within the application.
 
-8. #### Blogging and Post Creation :
+#### Blogging and Post Creation :
 
    - Users have the ability to create and share blog posts or other content. This feature encourages engagement and content sharing.
 
