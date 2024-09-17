@@ -35,11 +35,10 @@ type WorkerError struct {
 // NewWorkerTracker initializes the worker tracker with the total worker count per topic
 func NewWorkerTracker(workersPerGroup int) *WorkerTracker {
 	workerCount := make(map[string]int)
-	groupCount := len(topics)
 
-	// Initialize worker count per topic (groupsCount * workersPerGroup)
+	// Initialize worker count per topic (workersPerGroup is workers per topic)
 	for _, topic := range topics {
-		workerCount[topic] = groupCount * workersPerGroup
+		workerCount[topic] = workersPerGroup
 	}
 
 	return &WorkerTracker{
