@@ -29,20 +29,25 @@ tasks:
 
   create-topics-development:
     desc: create topics for kafka from ./task_scripts/create_kafka_topics_development.sh
+    vars:
+      KAFKA_CONTAINER: "talkverse-kafka-development" # Dynamically defined container name
     cmd:
       # Windows (Git Bash)
-      bash ./task_scripts/create_kafka_topics_development.sh
+      bash ./task_scripts/create_kafka_topics.sh "{{.KAFKA_CONTAINER}}"
 
   create-topics:
     desc: create topics for kafka from ./task_scripts/create_kafka_topics.sh
+    vars:
+      KAFKA_CONTAINER: "talkverse-kafka" # Dynamically defined container name
     cmd:
       # Windows (Git Bash)
-      bash ./task_scripts/kafka/create_kafka_topics.sh
+      bash ./task_scripts/create_kafka_topics.sh "{{.KAFKA_CONTAINER}}"
 
   dev:
     desc: start all development servers concurrently (backend and frontend)
     cmds:
-      - task: dev-kafka
+      - task: kafka-development
+      - task: create-topics-development
       - npm run conc
 
   dev-kafka:
@@ -50,7 +55,21 @@ tasks:
     cmds:
       - task: kafka-development
       - task: create-topics-development
-      - npm run server-golang
+
+  golang:
+    desc: start golang server from backend services (kafka should be running)
+    cmds:
+      - cd backend/golang && task run
+
+  nodejs:
+    desc: start nodejs server from backend services (kafka should be running)
+    cmds:
+      - cd backend/nodejs && npm run dev
+
+  client:
+    desc: start reactjs server from frontend services (backend services should be running)
+    cmds:
+      - cd frontend && npm run dev
 
   compose-up-backend:
     desc: start backend services using Docker Compose - databases, kafka, servers

@@ -1,12 +1,17 @@
 #!/bin/bash
 
+# Check if container name is passed as argument
+if [ -z "$1" ]; then
+  echo "Container name not provided"
+  exit 1
+fi
+
 # Kafka container name from docker-compose
-KAFKA_CONTAINER="talkverse-kafka"
+KAFKA_CONTAINER=$1
 BROKER="localhost:9092"
 
 # Function to check if the container is running
 is_container_running() {
-    local container_name=$1
     # Get the container's status using inspect and check if it's running
     local status=$(docker inspect -f '{{.State.Status}}' "$KAFKA_CONTAINER" 2>/dev/null)
     
