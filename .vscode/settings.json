@@ -1,6 +1,3 @@
 {
-    "conventionalCommits.scopes": [
-        "development",
-        "docker"
-    ]
+  "conventionalCommits.scopes": ["development", "docker", "system design"]
 }
