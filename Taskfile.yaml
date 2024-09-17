@@ -46,8 +46,7 @@ tasks:
   dev:
     desc: start all development servers concurrently (backend and frontend)
     cmds:
-      - task: kafka-development
-      - task: create-topics-development
+      - task: dev-kafka
       - npm run conc
 
   dev-kafka:
