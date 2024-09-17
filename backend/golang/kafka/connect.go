@@ -105,39 +105,46 @@ func consumeWithRetry(ctx context.Context, group, topic, workerName string) erro
 	return errors.New("retries exhausted for consuming message")
 }
 
-// consumeMessages connects and consumes messages from Kafka for a given topic
+// consumeMessages connects to Kafka and starts consuming messages for a specific topic with groupId.
+//
+// NOTE: This function initialize a worker to handle message consumption.
 func consumeMessages(ctx context.Context, group, topic, workerName string) error {
+	// Create a new Kafka reader (consumer) with specified configuration, including brokers, group ID, and topic.
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: []string{config.Envs.KAFKA_BROKERS},
-		GroupID: group,
-		Topic:   topic,
+		Brokers: []string{config.Envs.KAFKA_BROKERS}, // Kafka brokers are retrieved from the environment config.
+		GroupID: group,                               // Consumer group ID for message sharing across workers.
+		Topic:   topic,                               // Topic from which messages will be consumed.
 		Dialer: &kafka.Dialer{
-			Timeout:   10 * time.Second,
-			KeepAlive: 5 * time.Minute,
+			Timeout:   10 * time.Second, // Dial timeout for connecting to Kafka.
+			KeepAlive: 5 * time.Minute,  // Keep connection alive for 5 minutes.
 		},
-		HeartbeatInterval: 3 * time.Second,
-		MaxAttempts:       retryAttempts,
+		HeartbeatInterval: 3 * time.Second, // Interval for sending heartbeats to maintain the consumer group.
+		MaxAttempts:       retryAttempts,   // Maximum number of retry attempts on failures.
 	})
 
+	// Ensure the Kafka reader is closed properly when the function exits.
 	defer r.Close()
 
+	// Start an infinite loop to continuously fetch and process messages.
 	for {
 		select {
 		case <-ctx.Done():
+			// If the context is canceled (e.g., due to shutdown), log and exit the loop.
 			log.Info().Msgf("Context cancelled, shutting down %s", workerName)
 			return nil
 		default:
+			// Fetch a new message from the Kafka topic.
 			msg, err := r.FetchMessage(ctx)
 			if err != nil {
-				return err
+				return err // Return the error if fetching the message fails.
 			}
 
-			// Process the message
+			// Process the fetched message.
 			ProcessMessage(msg, workerName)
 
-			// Commit message offset after processing
+			// After processing, commit the message offset to Kafka to mark it as consumed.
 			if err := r.CommitMessages(ctx, msg); err != nil {
-				log.Error().Err(err).Msgf("Failed to commit message in %s", workerName)
+				log.Error().Err(err).Msgf("Failed to commit message in %s", workerName) // Log the error if commit fails.
 			}
 		}
 	}
