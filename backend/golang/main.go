@@ -95,6 +95,9 @@ func main() {
 		Handler: router,
 	}
 
+	// sync.Once to ensure shutdown happens only once
+	var shutdownOnce sync.Once
+
 	// Shutdown handling using signal and worker tracking
 	go func() {
 		sigChan := make(chan os.Signal, 1)
@@ -112,26 +115,30 @@ func main() {
 				log.Info().Msg("All Kafka workers stopped")
 
 				// Now gracefully shut down the HTTP server
-				shutdownServer(srv)
+				shutdownOnce.Do(func() {
+					shutdownServer(srv)
+				})
 				return
 
-			case workerErr := <-errChan:
+			case workerErr, ok := <-errChan:
+				if !ok {
+					// If the channel is closed, all workers are done, so shut down
+					log.Info().Msg("Error channel close, All Kafka workers finished. Initiating server shutdown...")
+					shutdownOnce.Do(func() {
+						shutdownServer(srv)
+					})
+					return
+				}
+
 				log.Error().Err(workerErr.Err).Msgf("Kafka worker error for topic: %s, workerName: %s", workerErr.Topic, workerErr.WorkerName)
 
 				// Reduce worker count for the topic
 				remainingWorkers := workerTracker.DecrementWorker(workerErr.Topic)
 
 				if remainingWorkers == 1 {
-					log.Warn().Msgf("Only one worker remaining for topic: %s. Shutting down...", workerErr.Topic)
-					cancel() // Cancel the context to shut down all workers
-
-					log.Info().Msg("Waiting for Kafka workers to complete...")
-					wg.Wait() // Wait for all worker goroutines to complete
-					log.Info().Msg("All Kafka workers stopped")
-
-					// Shut down the HTTP server after workers finish
-					shutdownServer(srv)
-					return
+					log.Warn().Msgf("Only one worker remaining for topic: %s", workerErr.Topic)
+				} else if remainingWorkers == 0 {
+					log.Error().Msgf("No workers remaining for topic: %s", workerErr.Topic)
 				}
 			}
 		}
@@ -149,11 +156,13 @@ func main() {
 
 // shutdownServer gracefully shuts down the HTTP server
 func shutdownServer(srv *http.Server) {
-	// Give server some time to finish ongoing requests
+	log.Info().Msg("Shutting down the server...")
+	// Gracefully shut down the HTTP server
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer shutdownCancel()
 
 	if err := srv.Shutdown(shutdownCtx); err != nil {
 		log.Error().Err(err).Msg("HTTP server shutdown error")
 	}
+	log.Info().Msg("Server shut down complete.")
 }

@@ -14,175 +14,199 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
-// processMessage processes individual Kafka messages
-func ProcessMessage(msg kafka.Message, workerName string) {
-	// Process message based on topic
-	switch msg.Topic {
-	case "message":
-		handleMessageTopic(msg.Value, workerName)
-	case "gpMessage":
-		handleGpMessageTopic(msg.Value, workerName)
-	case "unseenCount":
-		handleUnseenCountTopic(msg.Value, workerName)
-	default:
-		log.Warn().Msgf("Unknown topic: %s, value: %s", msg.Topic, string(msg.Value))
-	}
-}
-
-// KafkaMessage struct represents the structure of the message from Kafka
-type KafkaMessage struct {
-	UUID      string    `json:"uuId" validate:"required"`
-	ChatID    string    `json:"chatId" validate:"required"`
-	From      string    `json:"from" validate:"required"`
-	To        string    `json:"to" validate:"required"`
-	FromText  string    `json:"fromText" validate:"required"`
-	ToText    string    `json:"toText" validate:"required"`
-	CreatedAt time.Time `json:"createdAt" validate:"required"`
-	IsFile    *bool     `json:"isFile"` // Optional field, pointer to allow nil values
-}
-
-func handleMessageTopic(message []byte, workerName string) {
-	var msg KafkaMessage
-
-	// Unmarshal the Kafka message into the struct
-	err := json.Unmarshal(message, &msg)
-	if err != nil {
-		log.Error().Err(err).Msgf("Failed to unmarshal message. Worker: %s, Message: %s", workerName, string(message))
-		return
-	}
-
-	// Validate the Kafka message struct
-	if err := helper.ValidateStruct(msg); err != nil {
-		log.Error().Err(err).Msgf("Validation failed for Kafka message. Worker: %s, Message: %s", workerName, string(message))
-		return
-	}
-
-	// Default value for IsFile if not present
-	if msg.IsFile == nil {
-		defaultIsFile := false
-		msg.IsFile = &defaultIsFile
-	}
-
-	// Create the Message struct for MongoDB
-	newMessage := models.Message{
-		UUID:      msg.UUID,
-		ChatID:    msg.ChatID, // Stored as string
-		From:      msg.From,   // Stored as string
-		To:        msg.To,     // Stored as string
-		FromText:  msg.FromText,
-		ToText:    msg.ToText,
-		CreatedAt: msg.CreatedAt,
-		UpdatedAt: time.Now(),
-		IsFile:    *msg.IsFile, // Dereference to get the value
-	}
-
-	// Insert the message into the MongoDB collection
-	collection := db.GetCollection("messages")
-	_, err = collection.InsertOne(context.Background(), newMessage)
-	if err != nil {
-		log.Error().Err(err).Msgf("Failed to insert message into MongoDB. Worker: %s, Message: %s", workerName, string(message))
-		return
-	}
-}
-
-// KafkaGpMessage represents the structure of the Kafka message for group messages
-type KafkaGpMessage struct {
+// CommonBase defines the shared fields between different message types
+type CommonBase struct {
 	UUID      string    `json:"uuId" validate:"required"`
 	IsFile    *bool     `json:"isFile"`
 	From      string    `json:"from" validate:"required"`
-	To        string    `json:"to" validate:"required"`
-	Text      string    `json:"text" validate:"required"`
 	CreatedAt time.Time `json:"createdAt" validate:"required"`
 }
 
-func handleGpMessageTopic(message []byte, workerName string) {
-	var msg KafkaGpMessage
+// KafkaMessage struct represents the structure of the message from Kafka
+type KafkaMessageData struct {
+	CommonBase
+	ChatID   string `json:"chatId" validate:"required"`
+	FromText string `json:"fromText" validate:"required"`
+	ToText   string `json:"toText" validate:"required"`
+	To       string `json:"to" validate:"required"`
+}
 
-	// Unmarshal the Kafka message into the KafkaGpMessage struct
-	err := json.Unmarshal(message, &msg)
-	if err != nil {
-		log.Error().Err(err).Msgf("Failed to unmarshal group message. Worker: %s, Message: %s", workerName, string(message))
-		return
-	}
-
-	// Validate the Kafka group message struct
-	if err := helper.ValidateStruct(msg); err != nil {
-		log.Error().Err(err).Msgf("Validation failed for Kafka group message. Worker: %s, Message: %s", workerName, string(message))
-		return
-	}
-
-	// Default value for IsFile if not present
-	if msg.IsFile == nil {
-		defaultIsFile := false
-		msg.IsFile = &defaultIsFile
-	}
-
-	// Create the GpMessage struct for MongoDB
-	newGpMessage := models.GpMessage{
-		UUID:      msg.UUID,
-		IsFile:    *msg.IsFile, // Dereference the pointer to use the value
-		From:      msg.From,    // Stored as string
-		To:        msg.To,      // Stored as string
-		Text:      msg.Text,
-		CreatedAt: msg.CreatedAt,
-		UpdatedAt: time.Now(),
-	}
-
-	// Insert the group message into the MongoDB "gpmessages" collection
-	collection := db.GetCollection("gpmessages")
-	_, err = collection.InsertOne(context.Background(), newGpMessage)
-	if err != nil {
-		log.Error().Err(err).Msgf("Failed to insert group message into MongoDB. Worker: %s, Message: %s", workerName, string(message))
-		return
-	}
+// KafkaGpMessage represents the structure of the Kafka message for group messages
+type KafkaGpMessageData struct {
+	CommonBase
+	To   string `json:"to" validate:"required"`
+	Text string `json:"text" validate:"required"`
 }
 
 // UnseenCountData represents the structure of the unseen count Kafka message
-type UnseenCountData struct {
+type KafkaUnseenCountData struct {
 	UserIDs []string `json:"userIds" validate:"required"`
 	MainID  string   `json:"mainId" validate:"required"`
 	Count   *int     `json:"count,omitempty"`
 }
 
-// handleUnseenCountTopic processes the "unseenCount" topic
-func handleUnseenCountTopic(message []byte, workerName string) {
-	var data UnseenCountData
+// ProcessMessage processes individual Kafka messages based on the topic
+func ProcessMessage(msg kafka.Message, workerName string) {
+	var err error
+	var customErrMsg string
 
-	// Unmarshal the message
+	// Process message based on the topic
+	switch msg.Topic {
+	case "message":
+		// Handle "message" topic
+		customErrMsg, err = handleMessageTopic(msg.Value)
+	case "gpMessage":
+		// Handle "gpMessage" topic
+		customErrMsg, err = handleGpMessageTopic(msg.Value)
+	case "unseenCount":
+		// Handle "unseenCount" topic
+		customErrMsg, err = handleUnseenCountTopic(msg.Value)
+	default:
+		// Log a warning for unknown topics
+		log.Warn().Msgf("Unknown topic: %s, value: %s", msg.Topic, string(msg.Value))
+		return
+	}
+
+	// If an error occurred, log the error along with context details
+	if err != nil {
+		log.Error().
+			Err(err).
+			Str("topic", msg.Topic).
+			Int("partition", msg.Partition).
+			Str("worker", workerName).
+			Str("kafka_message", string(msg.Value)).
+			Msg(customErrMsg)
+	}
+}
+
+// handleMessageTopic processes messages from the "message" topic
+func handleMessageTopic(message []byte) (string, error) {
+	var msg KafkaMessageData
+
+	// Unmarshal the incoming message into KafkaMessageData struct
+	err := json.Unmarshal(message, &msg)
+	if err != nil {
+		return "Failed to unmarshal message", err
+	}
+
+	// Validate the unmarshaled message data
+	if err := helper.ValidateStruct(msg); err != nil {
+		return "Validation failed for KafkaMessageData", err
+	}
+
+	// Set default value for IsFile if it's not present in the message
+	if msg.IsFile == nil {
+		defaultIsFile := false
+		msg.IsFile = &defaultIsFile
+	}
+
+	// Create a new Message object to be inserted into MongoDB
+	newMessage := models.Message{
+		UUID:      msg.UUID,
+		ChatID:    msg.ChatID,   // Stored as a string in MongoDB
+		From:      msg.From,     // Stored as a string in MongoDB
+		To:        msg.To,       // Stored as a string in MongoDB
+		FromText:  msg.FromText,
+		ToText:    msg.ToText,
+		CreatedAt: msg.CreatedAt,
+		UpdatedAt: time.Now(),
+		IsFile:    *msg.IsFile,  // Dereference IsFile pointer
+	}
+
+	// Insert the new message into the "messages" collection in MongoDB
+	collection := db.GetCollection("messages")
+	_, err = collection.InsertOne(context.Background(), newMessage)
+	if err != nil {
+		return "Failed to insert Message into MongoDB", err
+	}
+
+	return "", nil // No error occurred
+}
+
+// handleGpMessageTopic processes messages from the "gpMessage" topic
+func handleGpMessageTopic(message []byte) (string, error) {
+	var msg KafkaGpMessageData
+
+	// Unmarshal the incoming message into KafkaGpMessageData struct
+	err := json.Unmarshal(message, &msg)
+	if err != nil {
+		return "Failed to unmarshal message", err
+	}
+
+	// Validate the unmarshaled group message data
+	if err := helper.ValidateStruct(msg); err != nil {
+		return "Validation failed for KafkaGpMessageData", err
+	}
+
+	// Set default value for IsFile if it's not present in the message
+	if msg.IsFile == nil {
+		defaultIsFile := false
+		msg.IsFile = &defaultIsFile
+	}
+
+	// Create a new GpMessage object to be inserted into MongoDB
+	newGpMessage := models.GpMessage{
+		UUID:      msg.UUID,
+		IsFile:    *msg.IsFile,  // Dereference IsFile pointer
+		From:      msg.From,     // Stored as a string in MongoDB
+		To:        msg.To,       // Stored as a string in MongoDB
+		Text:      msg.Text,
+		CreatedAt: msg.CreatedAt,
+		UpdatedAt: time.Now(),
+	}
+
+	// Insert the new group message into the "gpmessages" collection in MongoDB
+	collection := db.GetCollection("gpmessages")
+	_, err = collection.InsertOne(context.Background(), newGpMessage)
+	if err != nil {
+		return "Failed to insert GpMessage into MongoDB", err
+	}
+
+	return "", nil // No error occurred
+}
+
+// handleUnseenCountTopic processes messages from the "unseenCount" topic
+func handleUnseenCountTopic(message []byte) (string, error) {
+	var data KafkaUnseenCountData
+
+	// Unmarshal the incoming message into KafkaUnseenCountData struct
 	if err := json.Unmarshal(message, &data); err != nil {
-		log.Error().Err(err).Msgf("Failed to unmarshal unseenCount message. Worker: %s, Message: %s", workerName, string(message))
-		return
+		return "Failed to unmarshal message", err
 	}
 
-	// Validate the data struct
+	// Validate the unmarshaled unseen count data
 	if err := helper.ValidateStruct(data); err != nil {
-		log.Error().Err(err).Msgf("Validation failed for unseenCount message. Worker: %s, Message: %s", workerName, string(message))
-		return
+		return "Validation failed for KafkaUnseenCountData", err
 	}
 
+	// Define MongoDB collection and filter
 	collection := db.GetCollection("unseencounts")
-
-	// Define the filter and update operation
 	filter := bson.M{"mainId": data.MainID}
+
+	// Prepare update operation for unseen counts
 	update := bson.M{"$set": bson.M{"updatedAt": time.Now()}}
 	if data.Count != nil {
 		update["$set"].(bson.M)["count"] = *data.Count
 	} else {
-		update["$inc"] = bson.M{"count": 1}
+		update["$inc"] = bson.M{"count": 1} // Increment count if not provided
 	}
 
-	// Update one document if there's only one user ID, otherwise update many
+	// Update unseen count for a single user or multiple users
 	if len(data.UserIDs) == 1 {
+		// Update for a single user
 		filter["userId"] = data.UserIDs[0]
 		_, err := collection.UpdateOne(context.Background(), filter, update, options.Update().SetUpsert(true))
 		if err != nil {
-			log.Error().Err(err).Msgf("Failed to update unseen count for a single user. Worker: %s, Message: %s", workerName, string(message))
+			return "Failed to update UnseenCount for a single user", err
 		}
 	} else {
+		// Update for multiple users
 		filter["userId"] = bson.M{"$in": data.UserIDs}
 		_, err := collection.UpdateMany(context.Background(), filter, update, options.Update().SetUpsert(true))
 		if err != nil {
-			log.Error().Err(err).Msgf("Failed to update unseen counts for multiple users. Worker: %s, Message: %s", workerName, string(message))
+			return "Failed to update UnseenCount for multiple users", err
 		}
 	}
+
+	return "", nil // No error occurred
 }

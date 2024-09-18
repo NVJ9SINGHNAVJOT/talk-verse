@@ -19,17 +19,17 @@ var topics = []string{"message", "gpMessage", "unseenCount"}
 const retryAttempts = 5
 const backoff = 2 * time.Second
 
-// WorkerTracker keeps track of workers per topic
-type WorkerTracker struct {
-	workerCount map[string]int
-	mu          sync.Mutex
-}
-
 // WorkerError to pass the topic and error
 type WorkerError struct {
 	Topic      string
 	Err        error
 	WorkerName string
+}
+
+// WorkerTracker keeps track of workers per topic and total workers
+type WorkerTracker struct {
+	workerCount map[string]int
+	mu          sync.Mutex
 }
 
 // NewWorkerTracker initializes the worker tracker with the total worker count per topic
@@ -46,15 +46,18 @@ func NewWorkerTracker(workersPerGroup int) *WorkerTracker {
 	}
 }
 
-// DecrementWorker reduces the worker count for a topic and returns the remaining workers for that topic
+// DecrementWorker reduces the worker count for a topic and the total worker count,
+// returning the remaining workers for that topic and a flag indicating if all workers are stopped.
 func (w *WorkerTracker) DecrementWorker(topic string) int {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 
+	// Decrease the worker count for the specific topic
 	if count, exists := w.workerCount[topic]; exists && count > 0 {
 		w.workerCount[topic]--
 	}
 
+	// Check if all workers are stopped by looking at the global count
 	return w.workerCount[topic]
 }
 
