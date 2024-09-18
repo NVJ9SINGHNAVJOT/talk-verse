@@ -123,7 +123,7 @@ func main() {
 			case workerErr, ok := <-errChan:
 				if !ok {
 					// If the channel is closed, all workers are done, so shut down
-					log.Info().Msg("Error channel close, All Kafka workers finished. Initiating server shutdown...")
+					log.Info().Msg("Worker Error channel closed, All Kafka workers finished. Initiating server shutdown...")
 					shutdownOnce.Do(func() {
 						shutdownServer(srv)
 					})
