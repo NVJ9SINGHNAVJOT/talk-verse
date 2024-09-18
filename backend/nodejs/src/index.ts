@@ -43,7 +43,7 @@ async function main() {
   cloudinaryConnect();
 
   // get port number
-  const PORT = parseInt(`${process.env["PORT"]}`) || 5000;
+  const PORT = parseInt(`${process.env["PORT"]}`);
 
   // setup server
   const httpServer = setupWebSocket(app);
