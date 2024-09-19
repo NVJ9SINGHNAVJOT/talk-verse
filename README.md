@@ -55,7 +55,13 @@ TalkVerse is a social media web application.
   git clone https://github.com/NVJ9SINGHNAVJOT/talk-verse.git
   ```
 - Set up environment variables.
-  In the root directory in /backend/nodejs, /backend/golang and /frontend **.env.example** file is present. Replace it with **.env** file and set the required variables running application _(.env.example contains all variables examples)_.
+  In the root directory inside
+     - /backend/databases
+     - /backend/nodejs
+     - /backend/golang
+     - /frontend
+  
+  **.env.example** file is present. Replace it with **.env** file and set the required variables running application _(.env.example contains all variables examples)_.
 - Project can be run on local machine by Docker or by installing dependencies locally.
 - **Using Docker**  ***Recommended***
 
