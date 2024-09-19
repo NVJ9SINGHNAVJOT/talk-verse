@@ -15,6 +15,3 @@ services:
         - talkverse-backend-proxy
     ports: [9000:9000]
     env_file: .env
-    depends_on:
-      - talkverse-mongo
-      - talkverse-kafka
