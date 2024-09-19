@@ -20,6 +20,7 @@
 /frontend/.env
 /backend/nodejs/.env
 /backend/golang/.env
+/backend/databases/.env
 
 # development
 /backend/nodejs/tmp

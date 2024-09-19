@@ -1,0 +1,20 @@
+---
+version: '3.8'
+
+networks:
+  talkverse-backend-proxy:
+    external: true
+
+services:
+  talkverse-server-kafka:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: talkverse-server-kafka
+    networks:
+        - talkverse-backend-proxy
+    ports: [9000:9000]
+    env_file: .env
+    depends_on:
+      - talkverse-mongo
+      - talkverse-kafka

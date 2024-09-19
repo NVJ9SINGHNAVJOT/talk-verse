@@ -1,0 +1,38 @@
+version: '3.8'
+
+volumes:
+  talkverse-postgres-db:
+  talkverse-mongo-db:
+
+networks:
+  talkverse-backend-proxy:
+    external: true
+
+services:
+  talkverse-postgres:
+    container_name: talkverse-postgres
+    image: postgres:16-alpine
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - talkverse-postgres-db:/var/lib/postgresql/data
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - talkverse-backend-proxy
+    # ports: [5432:5432]
+
+  talkverse-mongo:
+    container_name: talkverse-mongo
+    image: mongo:7.0
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - talkverse-mongo-db:/data/db
+    env_file: .env
+    networks:
+      - talkverse-backend-proxy
+    # ports: [27017:27017]

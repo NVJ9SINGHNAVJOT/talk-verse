@@ -1,0 +1,26 @@
+---
+version: '3.8'
+
+networks:
+  proxy:
+    external: true
+  talkverse-backend-proxy:
+    external: true
+
+services:
+  talkverse-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: talkverse-backend
+    networks:
+      - talkverse-backend-proxy
+      - proxy
+    ports: [5000:5000] # disable in production
+    env_file: .env
+    depends_on:
+      - talkverse-postgres
+      - talkverse-mongo
+      - talkverse-kafka
+    entrypoint: ['/app/wait-for.sh', 'postgres:5432', '--', '/app/start.sh']
+    command: [ 'node', 'dist/index.js']
