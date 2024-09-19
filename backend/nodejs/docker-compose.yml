@@ -18,9 +18,5 @@ services:
       - proxy
     ports: [5000:5000] # disable in production
     env_file: .env
-    depends_on:
-      - talkverse-postgres
-      - talkverse-mongo
-      - talkverse-kafka
-    entrypoint: ['/app/wait-for.sh', 'postgres:5432', '--', '/app/start.sh']
+    entrypoint: ['/app/wait-for.sh', 'talkverse-postgres:5432', '--', '/app/start.sh']
     command: [ 'node', 'dist/index.js']
