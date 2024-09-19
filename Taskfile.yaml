@@ -15,7 +15,7 @@ tasks:
       - cd frontend && npm run install
 
   build:
-    desc: builds the project
+    desc: builds the project locally
     cmds:
       - cd backend/nodejs && npm run build
       - cd backend/golang && task build
@@ -23,15 +23,9 @@ tasks:
 
   create-networks:
     desc: create proxy (external) and talkverse-backend-proxy (internal) networks
-      cmd:
-      # Windows (Git Bash)
-      bash ./task_scripts/create_docker_networks.sh
-
-  kafka-development:
-    desc: start the Kafka container for development
     cmd:
       # Windows (Git Bash)
-      bash ./task_scripts/talkverse_kafka_development.sh
+      bash ./task_scripts/create_docker_networks.sh
 
   create-topics-development:
     desc: create topics for kafka from ./task_scripts/create_kafka_topics_development.sh
@@ -49,17 +43,18 @@ tasks:
       # Windows (Git Bash)
       bash ./task_scripts/create_kafka_topics.sh "{{.KAFKA_CONTAINER}}"
 
+  dev-kafka:
+    desc: start the Kafka container for development
+    cmd:
+      # Windows (Git Bash)
+      bash ./task_scripts/talkverse_kafka_development.sh
+
   dev:
     desc: start all development servers concurrently (backend and frontend)
     cmds:
       - task: dev-kafka
-      - npm run conc
-
-  dev-kafka:
-    desc: start kafka-development and golang server for consuming kafka messages
-    cmds:
-      - task: kafka-development
       - task: create-topics-development
+      - npm run conc
 
   golang:
     desc: start golang server from backend services (kafka should be running)
