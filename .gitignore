@@ -16,11 +16,7 @@
 
 # environment
 *.env
-!example.env
-/frontend/.env
-/backend/nodejs/.env
-/backend/golang/.env
-/backend/databases/.env
+!.env.example
 
 # development
 /backend/nodejs/tmp
