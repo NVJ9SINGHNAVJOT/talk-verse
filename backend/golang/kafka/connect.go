@@ -61,6 +61,25 @@ func (w *WorkerTracker) DecrementWorker(topic string) int {
 	return w.workerCount[topic]
 }
 
+// CheckKafkaConnection checks kafka running or not config.Envs.KAFKA_BROKERS
+func CheckKafkaConnection() error {
+	// Create a new dialer
+	dialer := &kafka.Dialer{
+		Timeout:   10 * time.Second, // Timeout for dialing the broker
+		KeepAlive: 5 * time.Minute,  // Keep connection alive duration
+	}
+
+	// Dial the broker to check the connection
+	conn, err := dialer.DialContext(context.Background(), "tcp", config.Envs.KAFKA_BROKERS)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	// If connection is successful
+	return nil
+}
+
 // KafkaConsumeSetup creates a single consumer group per topic and assigns workers within that group
 func KafkaConsumeSetup(ctx context.Context, errChan chan<- WorkerError, workersPerTopic int, wg *sync.WaitGroup) {
 	// Iterate over each topic to create one group per topic and spawn workers

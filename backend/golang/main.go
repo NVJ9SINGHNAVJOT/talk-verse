@@ -39,6 +39,13 @@ func main() {
 		panic(err)
 	}
 
+	// check kafka connection
+	err = kafka.CheckKafkaConnection()
+	if err != nil {
+		log.Fatal().Err(err).Msg("Error checking connection with kafka")
+		panic(err)
+	}
+
 	// Connect to MongoDB
 	err = db.ConnectMongoDB()
 	if err != nil {
