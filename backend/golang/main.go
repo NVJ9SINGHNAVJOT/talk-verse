@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strconv"
 	"sync"
 	"syscall"
 	"time"
@@ -31,13 +30,6 @@ func main() {
 
 	// Setup logger
 	config.SetUpLogger(config.Envs.ENVIRONMENT)
-
-	// Get groupsCount from environment
-	groupWorkersCount, err := strconv.Atoi(config.Envs.KAFKA_GROUP_WORKERS)
-	if err != nil {
-		log.Fatal().Err(err).Msg("Error getting groupWorkersCount")
-		panic(err)
-	}
 
 	// check kafka connection
 	err = kafka.CheckKafkaConnection()
@@ -66,11 +58,11 @@ func main() {
 	errChan := make(chan kafka.WorkerError)
 
 	// Initialize WorkerTracker to track remaining workers per topic
-	workerTracker := kafka.NewWorkerTracker(groupWorkersCount)
+	workerTracker := kafka.NewWorkerTracker(config.Envs.KAFKA_GROUP_WORKERS)
 
 	// Kafka consumers setup
 	go func() {
-		kafka.KafkaConsumeSetup(ctx, errChan, groupWorkersCount, &wg)
+		kafka.KafkaConsumeSetup(ctx, errChan, config.Envs.KAFKA_GROUP_WORKERS, &wg)
 	}()
 
 	// HTTP server setup

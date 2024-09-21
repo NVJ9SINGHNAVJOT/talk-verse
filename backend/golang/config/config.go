@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"strconv"
 )
 
 type EnvironmentConfig struct {
@@ -10,7 +11,7 @@ type EnvironmentConfig struct {
 	PORT                string
 	SERVER_KEY          string
 	MONGODB_URL         string
-	KAFKA_GROUP_WORKERS string
+	KAFKA_GROUP_WORKERS int
 	KAFKA_GROUP_ID      string
 	KAFKA_BROKERS       string
 }
@@ -39,9 +40,18 @@ func ValidateEnvs() error {
 		return fmt.Errorf("mongo db url is not provided")
 	}
 
-	kafkaGroupWorkers, exist := os.LookupEnv("KAFKA_GROUP_WORKERS")
+	kafkaGroupWorkersStr, exist := os.LookupEnv("KAFKA_GROUP_WORKERS")
 	if !exist {
 		return fmt.Errorf("kafka group workers is not provided")
+	}
+
+	kafkaGroupWorkers, err := strconv.Atoi(kafkaGroupWorkersStr)
+	if err != nil {
+		return fmt.Errorf("invalid kafka group workers size: %v", err)
+	}
+
+	if kafkaGroupWorkers < 1 {
+		return fmt.Errorf("minimum size required for kafkaGroupWorkers is 1")
 	}
 
 	kafkaGroupId, exist := os.LookupEnv("KAFKA_GROUP_ID")
