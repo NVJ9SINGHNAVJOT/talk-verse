@@ -66,7 +66,7 @@ func CheckKafkaConnection() error {
 	// Create a new dialer
 	dialer := &kafka.Dialer{
 		Timeout:   10 * time.Second, // Timeout for dialing the broker
-		KeepAlive: 5 * time.Minute,  // Keep connection alive duration
+		KeepAlive: 20 * time.Second, // Keep connection alive duration
 	}
 
 	// Dial the broker to check the connection
@@ -145,7 +145,11 @@ func consumeKafkaTopic(ctx context.Context, group, topic, workerName string) err
 	})
 
 	// Ensure the Kafka reader is closed properly when the function exits.
-	defer r.Close()
+	defer func() {
+		if err := r.Close(); err != nil {
+			log.Error().Err(err).Msgf("Failed to close Kafka reader for %s", workerName)
+		}
+	}()
 
 	// Start an infinite loop to continuously fetch and process messages.
 	for {
