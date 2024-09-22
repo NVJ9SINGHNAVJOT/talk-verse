@@ -55,9 +55,7 @@ func main() {
 	workerTracker := kafka.NewWorkerTracker(config.Envs.KAFKA_GROUP_WORKERS)
 
 	// Kafka consumers setup
-	go func() {
-		kafka.KafkaConsumeSetup(ctx, errChan, config.Envs.KAFKA_GROUP_WORKERS, &wg)
-	}()
+	go kafka.KafkaConsumeSetup(ctx, errChan, config.Envs.KAFKA_GROUP_WORKERS, &wg)
 
 	// sync.Once to ensure shutdown happens only once
 	var shutdownOnce sync.Once
@@ -73,7 +71,11 @@ func main() {
 
 			// Wait for all Kafka workers to finish before shutting down the service
 			log.Info().Msg("Waiting for Kafka workers to complete...")
-			cancel()  // Cancel context to signal Kafka workers to shut down
+			cancel() // Cancel context to signal Kafka workers to shut down
+
+			// Simulate a graceful shutdown delay
+			time.Sleep(5 * time.Second)
+
 			wg.Wait() // Wait for all worker goroutines to complete
 			log.Info().Msg("All Kafka workers stopped")
 
@@ -116,9 +118,5 @@ func shutdownConsumer() {
 		log.Error().Err(err).Msg("failed to disconnect mongodb client")
 	}
 	log.Info().Msg("MongoDB disconnected")
-
-	// Simulate a graceful shutdown delay
-	time.Sleep(2 * time.Second)
-
 	log.Info().Msg("Kafka consumer service shutdown complete.")
 }
