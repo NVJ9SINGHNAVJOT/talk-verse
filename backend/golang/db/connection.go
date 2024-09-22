@@ -5,8 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nvj9singhnavjot/talkverse-server-kafka/config"
-	"github.com/rs/zerolog/log"
+	"github.com/nvj9singhnavjot/talkverse-kafka-consumer/config"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"go.mongodb.org/mongo-driver/v2/mongo/readpref"
@@ -39,15 +38,11 @@ func ConnectMongoDB() error {
 	database := strings.Split(config.Envs.MONGODB_URL, "/")
 	MongoDatabase = client.Database(database[len(database)-1])
 
-	log.Info().Msg("mongoDB connected")
-
 	return nil
 }
 
-func DisconnectMongoDB() {
-	if err := MongoClient.Disconnect(context.Background()); err != nil {
-		log.Error().Err(err).Msg("failed to disconnect mongodb client")
-	}
+func DisconnectMongoDB() error {
+	return MongoClient.Disconnect(context.Background())
 }
 
 // GetCollection is a helper function to retrieve a collection from the global MongoDatabase

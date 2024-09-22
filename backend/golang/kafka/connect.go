@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nvj9singhnavjot/talkverse-server-kafka/config"
+	"github.com/nvj9singhnavjot/talkverse-kafka-consumer/config"
 	"github.com/rs/zerolog/log"
 	"github.com/segmentio/kafka-go"
 )
@@ -115,7 +115,7 @@ func KafkaConsumeSetup(ctx context.Context, errChan chan<- WorkerError, workersP
 // consumeWithRetry consumes messages and retries on failure
 func consumeWithRetry(ctx context.Context, group, topic, workerName string) error {
 	for attempt := 1; attempt <= retryAttempts; attempt++ {
-		err := consumeMessages(ctx, group, topic, workerName)
+		err := consumeKafkaTopic(ctx, group, topic, workerName)
 
 		if err != nil && !errors.Is(err, context.Canceled) {
 			log.Error().Err(err).Msgf("Error in %s, retrying (%d/%d)", workerName, attempt, retryAttempts)
@@ -124,13 +124,13 @@ func consumeWithRetry(ctx context.Context, group, topic, workerName string) erro
 			return nil // Successfully consumed
 		}
 	}
-	return errors.New("retries exhausted for consuming message")
+	return errors.New("retries exhausted for consuming")
 }
 
-// consumeMessages connects to Kafka and starts consuming messages for a specific topic with groupId.
+// consumeKafkaTopic connects to Kafka and starts consuming messages for a specific topic with groupId.
 //
-// NOTE: This function initialize a worker to handle message consumption.
-func consumeMessages(ctx context.Context, group, topic, workerName string) error {
+// NOTE: This function initialize a worker to handle Kafka message consumption for a topic.
+func consumeKafkaTopic(ctx context.Context, group, topic, workerName string) error {
 	// Create a new Kafka reader (consumer) with specified configuration, including brokers, group ID, and topic.
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{config.Envs.KAFKA_BROKERS}, // Kafka brokers are retrieved from the environment config.

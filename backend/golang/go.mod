@@ -1,11 +1,10 @@
-module github.com/nvj9singhnavjot/talkverse-server-kafka
+module github.com/nvj9singhnavjot/talkverse-kafka-consumer
 
 go 1.22.0
 
 require (
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-chi/cors v1.2.1
-	github.com/go-chi/httprate v0.14.1
 	github.com/rs/zerolog v1.33.0
 	go.mongodb.org/mongo-driver v1.16.1
 	go.mongodb.org/mongo-driver/v2 v2.0.0-beta1
@@ -19,7 +18,6 @@ require (
 )
 
 require (
-	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/go-playground/validator/v10 v10.22.1
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/klauspost/compress v1.17.9 // indirect

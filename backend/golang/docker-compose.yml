@@ -6,11 +6,11 @@ networks:
     external: true
 
 services:
-  talkverse-server-kafka:
+  talkverse-kafka-consumer:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: talkverse-server-kafka
+    container_name: talkverse-kafka-consumer
     networks:
         - talkverse-backend-proxy
     ports: [9000:9000]

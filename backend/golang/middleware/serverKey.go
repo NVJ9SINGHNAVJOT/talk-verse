@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/nvj9singhnavjot/talkverse-server-kafka/helper"
+	"github.com/nvj9singhnavjot/talkverse-kafka-consumer/helper"
 )
 
 // ServerKey is a middleware function that checks if the request contains

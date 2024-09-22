@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/nvj9singhnavjot/talkverse-server-kafka/db"
-	"github.com/nvj9singhnavjot/talkverse-server-kafka/helper"
-	"github.com/nvj9singhnavjot/talkverse-server-kafka/models"
+	"github.com/nvj9singhnavjot/talkverse-kafka-consumer/db"
+	"github.com/nvj9singhnavjot/talkverse-kafka-consumer/helper"
+	"github.com/nvj9singhnavjot/talkverse-kafka-consumer/models"
 	"github.com/rs/zerolog/log"
 	"github.com/segmentio/kafka-go"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -103,14 +103,14 @@ func handleMessageTopic(message []byte) (string, error) {
 	// Create a new Message object to be inserted into MongoDB
 	newMessage := models.Message{
 		UUID:      msg.UUID,
-		ChatID:    msg.ChatID,   // Stored as a string in MongoDB
-		From:      msg.From,     // Stored as a string in MongoDB
-		To:        msg.To,       // Stored as a string in MongoDB
+		ChatID:    msg.ChatID, // Stored as a string in MongoDB
+		From:      msg.From,   // Stored as a string in MongoDB
+		To:        msg.To,     // Stored as a string in MongoDB
 		FromText:  msg.FromText,
 		ToText:    msg.ToText,
 		CreatedAt: msg.CreatedAt,
 		UpdatedAt: time.Now(),
-		IsFile:    *msg.IsFile,  // Dereference IsFile pointer
+		IsFile:    *msg.IsFile, // Dereference IsFile pointer
 	}
 
 	// Insert the new message into the "messages" collection in MongoDB
@@ -147,9 +147,9 @@ func handleGpMessageTopic(message []byte) (string, error) {
 	// Create a new GpMessage object to be inserted into MongoDB
 	newGpMessage := models.GpMessage{
 		UUID:      msg.UUID,
-		IsFile:    *msg.IsFile,  // Dereference IsFile pointer
-		From:      msg.From,     // Stored as a string in MongoDB
-		To:        msg.To,       // Stored as a string in MongoDB
+		IsFile:    *msg.IsFile, // Dereference IsFile pointer
+		From:      msg.From,    // Stored as a string in MongoDB
+		To:        msg.To,      // Stored as a string in MongoDB
 		Text:      msg.Text,
 		CreatedAt: msg.CreatedAt,
 		UpdatedAt: time.Now(),
