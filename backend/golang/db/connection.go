@@ -13,8 +13,8 @@ import (
 
 // Global MongoDB client and database
 var (
-	MongoClient   *mongo.Client
-	MongoDatabase *mongo.Database
+	mongoClient   *mongo.Client
+	mongoDatabase *mongo.Database
 )
 
 func ConnectMongoDB() error {
@@ -32,20 +32,20 @@ func ConnectMongoDB() error {
 		return err
 	}
 	// Assign the client to the global MongoClient variable
-	MongoClient = client
+	mongoClient = client
 
 	// Set the global MongoDatabase using your preferred database name
 	database := strings.Split(config.Envs.MONGODB_URL, "/")
-	MongoDatabase = client.Database(database[len(database)-1])
+	mongoDatabase = client.Database(database[len(database)-1])
 
 	return nil
 }
 
 func DisconnectMongoDB() error {
-	return MongoClient.Disconnect(context.Background())
+	return mongoClient.Disconnect(context.Background())
 }
 
 // GetCollection is a helper function to retrieve a collection from the global MongoDatabase
 func GetCollection(collectionName string) *mongo.Collection {
-	return MongoDatabase.Collection(collectionName)
+	return mongoDatabase.Collection(collectionName)
 }

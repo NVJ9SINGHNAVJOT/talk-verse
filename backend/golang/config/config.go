@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-type EnvironmentConfig struct {
+type environmentConfig struct {
 	ENVIRONMENT         string
 	MONGODB_URL         string
 	KAFKA_GROUP_WORKERS int
@@ -14,7 +14,7 @@ type EnvironmentConfig struct {
 	KAFKA_BROKERS       string
 }
 
-var Envs = EnvironmentConfig{}
+var Envs = environmentConfig{}
 
 func ValidateEnvs() error {
 

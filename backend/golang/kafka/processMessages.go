@@ -15,7 +15,7 @@ import (
 )
 
 // CommonBase defines the shared fields between different message types
-type CommonBase struct {
+type commonBase struct {
 	UUID      string    `json:"uuId" validate:"required"`
 	IsFile    *bool     `json:"isFile"`
 	From      string    `json:"from" validate:"required"`
@@ -23,8 +23,8 @@ type CommonBase struct {
 }
 
 // KafkaMessage struct represents the structure of the message from Kafka
-type KafkaMessageData struct {
-	CommonBase
+type kafkaMessageData struct {
+	commonBase
 	ChatID   string `json:"chatId" validate:"required"`
 	FromText string `json:"fromText" validate:"required"`
 	ToText   string `json:"toText" validate:"required"`
@@ -32,14 +32,14 @@ type KafkaMessageData struct {
 }
 
 // KafkaGpMessage represents the structure of the Kafka message for group messages
-type KafkaGpMessageData struct {
-	CommonBase
+type kafkaGpMessageData struct {
+	commonBase
 	To   string `json:"to" validate:"required"`
 	Text string `json:"text" validate:"required"`
 }
 
 // UnseenCountData represents the structure of the unseen count Kafka message
-type KafkaUnseenCountData struct {
+type kafkaUnseenCountData struct {
 	UserIDs []string `json:"userIds" validate:"required"`
 	MainID  string   `json:"mainId" validate:"required"`
 	Count   *int     `json:"count,omitempty"`
@@ -81,7 +81,7 @@ func ProcessMessage(msg kafka.Message, workerName string) {
 
 // handleMessageTopic processes messages from the "message" topic
 func handleMessageTopic(message []byte) (string, error) {
-	var msg KafkaMessageData
+	var msg kafkaMessageData
 
 	// Unmarshal the incoming message into KafkaMessageData struct
 	err := json.Unmarshal(message, &msg)
@@ -125,7 +125,7 @@ func handleMessageTopic(message []byte) (string, error) {
 
 // handleGpMessageTopic processes messages from the "gpMessage" topic
 func handleGpMessageTopic(message []byte) (string, error) {
-	var msg KafkaGpMessageData
+	var msg kafkaGpMessageData
 
 	// Unmarshal the incoming message into KafkaGpMessageData struct
 	err := json.Unmarshal(message, &msg)
@@ -167,7 +167,7 @@ func handleGpMessageTopic(message []byte) (string, error) {
 
 // handleUnseenCountTopic processes messages from the "unseenCount" topic
 func handleUnseenCountTopic(message []byte) (string, error) {
-	var data KafkaUnseenCountData
+	var data kafkaUnseenCountData
 
 	// Unmarshal the incoming message into KafkaUnseenCountData struct
 	if err := json.Unmarshal(message, &data); err != nil {

@@ -27,13 +27,13 @@ type WorkerError struct {
 }
 
 // WorkerTracker keeps track of workers per topic and total workers
-type WorkerTracker struct {
+type workerTracker struct {
 	workerCount map[string]int
 	mu          sync.Mutex
 }
 
 // NewWorkerTracker initializes the worker tracker with the total worker count per topic
-func NewWorkerTracker(workersPerGroup int) *WorkerTracker {
+func NewWorkerTracker(workersPerGroup int) *workerTracker {
 	workerCount := make(map[string]int)
 
 	// Initialize worker count per topic (workersPerGroup is workers per topic)
@@ -41,14 +41,14 @@ func NewWorkerTracker(workersPerGroup int) *WorkerTracker {
 		workerCount[topic] = workersPerGroup
 	}
 
-	return &WorkerTracker{
+	return &workerTracker{
 		workerCount: workerCount,
 	}
 }
 
 // DecrementWorker reduces the worker count for a topic and the total worker count,
 // returning the remaining workers for that topic and a flag indicating if all workers are stopped.
-func (w *WorkerTracker) DecrementWorker(topic string) int {
+func (w *workerTracker) DecrementWorker(topic string) int {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 
