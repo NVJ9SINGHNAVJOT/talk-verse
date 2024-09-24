@@ -26,10 +26,10 @@ func main() {
 	config.SetUpLogger(config.Envs.ENVIRONMENT)
 
 	// Check Kafka connection
-	err = kafka.CheckKafkaConnection()
-	if err != nil {
-		log.Fatal().Err(err).Msg("Error checking connection with Kafka")
-	}
+	// err = kafka.CheckKafkaConnection()
+	// if err != nil {
+	// 	log.Fatal().Err(err).Msg("Error checking connection with Kafka")
+	// }
 
 	// Connect to MongoDB
 	err = db.ConnectMongoDB()
@@ -78,6 +78,24 @@ func main() {
 
 			wg.Wait() // Wait for all worker goroutines to complete
 			log.Info().Msg("All Kafka workers stopped")
+
+			// Consume all remaining error messages from errChan before shutting down
+		ConsumeErrors:
+			for {
+				select {
+				case workerErr, ok := <-errChan:
+					if ok {
+						log.Error().Err(workerErr.Err).Msgf("Kafka worker error for topic: %s, workerName: %s", workerErr.Topic, workerErr.WorkerName)
+					} else {
+						log.Info().Msg("All remaining Kafka worker errors consumed. Proceeding with shutdown.")
+						break ConsumeErrors // Break out of the labeled loop
+					}
+				default:
+					// No more error messages to consume
+					log.Info().Msg("No more worker errors to process.")
+					break ConsumeErrors // Break out of the labeled loop
+				}
+			}
 
 			// Gracefully shut down the Kafka consumer service
 			shutdownOnce.Do(func() {
