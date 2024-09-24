@@ -84,7 +84,9 @@ func CheckKafkaConnection() error {
 func KafkaConsumeSetup(ctx context.Context, errChan chan<- WorkerError, workersPerTopic int, wg *sync.WaitGroup) {
 	// Iterate over each topic to create one group per topic and spawn workers
 	for _, topic := range topics {
+
 		// Create a single consumer group for each topic
+		// INFO: example -> groupName = talkverse-consume-message-group
 		groupName := fmt.Sprintf(config.Envs.KAFKA_GROUP_PREFIX_ID+"-%s-group", topic)
 		log.Info().Msgf("Starting consumer group: %s for topic: %s", groupName, topic)
 
@@ -93,8 +95,9 @@ func KafkaConsumeSetup(ctx context.Context, errChan chan<- WorkerError, workersP
 			wg.Add(1)
 			go func(group string, topic string, workerID int) {
 				defer wg.Done()
-				// INFO: workerName = tk-message-g-worker-1
+				// INFO: example -> workerName = talkverse-consume-message-group-worker-1
 				workerName := fmt.Sprintf("%s-worker-%d", group, workerID)
+
 				log.Info().Msgf("Starting worker: %s", workerName)
 				if err := consumeWithRetry(ctx, group, topic, workerName); err != nil {
 					errChan <- WorkerError{Topic: topic, Err: err, WorkerName: workerName}
