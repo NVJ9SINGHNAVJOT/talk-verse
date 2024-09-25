@@ -13,5 +13,4 @@ services:
     container_name: talkverse-kafka-consumer
     networks:
         - talkverse-backend-proxy
-    ports: [9000:9000]
     env_file: .env

@@ -13,6 +13,4 @@ WORKDIR /app
 
 COPY --from=builder /app/dist .
 
-EXPOSE 9000
-
 ENTRYPOINT [ "/app/main" ]
