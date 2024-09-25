@@ -6,7 +6,6 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
-	"time"
 
 	"github.com/nvj9singhnavjot/talkverse-kafka-consumer/config"
 	"github.com/nvj9singhnavjot/talkverse-kafka-consumer/db"
