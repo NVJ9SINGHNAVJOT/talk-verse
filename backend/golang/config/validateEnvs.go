@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 type environmentConfig struct {
@@ -11,7 +12,7 @@ type environmentConfig struct {
 	MONGODB_URL           string
 	KAFKA_GROUP_WORKERS   int
 	KAFKA_GROUP_PREFIX_ID string
-	KAFKA_BROKERS         string
+	KAFKA_BROKERS         []string
 }
 
 var Envs = environmentConfig{}
@@ -56,7 +57,7 @@ func ValidateEnvs() error {
 	Envs.MONGODB_URL = mongoDBUrl
 	Envs.KAFKA_GROUP_WORKERS = kafkaGroupWorkers
 	Envs.KAFKA_GROUP_PREFIX_ID = kafkaGroupId
-	Envs.KAFKA_BROKERS = kafkaBrokers
+	Envs.KAFKA_BROKERS = strings.Split(kafkaBrokers, ",")
 
 	return nil
 }

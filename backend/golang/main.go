@@ -26,7 +26,7 @@ func main() {
 	config.SetUpLogger(config.Envs.ENVIRONMENT)
 
 	// Check Kafka connection
-	err = kafka.CheckKafkaConnection()
+	err = kafka.CheckAllKafkaConnections()
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error checking connection with Kafka")
 	}

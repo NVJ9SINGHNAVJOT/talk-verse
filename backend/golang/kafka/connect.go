@@ -61,23 +61,28 @@ func (w *workerTracker) DecrementWorker(topic string) int {
 	return w.workerCount[topic]
 }
 
-// CheckKafkaConnection checks kafka running or not config.Envs.KAFKA_BROKERS
-func CheckKafkaConnection() error {
-	// Create a new dialer
+// CheckAllKafkaConnections checks if all Kafka brokers are reachable.
+func CheckAllKafkaConnections() error {
+	// Create a new dialer for checking the connections
 	dialer := &kafka.Dialer{
 		Timeout:   10 * time.Second, // Timeout for dialing the broker
 		KeepAlive: 20 * time.Second, // Keep connection alive duration
 	}
 
-	// Dial the broker to check the connection
-	conn, err := dialer.DialContext(context.Background(), "tcp", config.Envs.KAFKA_BROKERS)
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
+	// Iterate over each broker and attempt to connect
+	for _, broker := range config.Envs.KAFKA_BROKERS {
+		conn, err := dialer.DialContext(context.Background(), "tcp", broker)
+		if err != nil {
+			return fmt.Errorf("failed to connect to broker %s: %v", broker, err) // Return error for failed connection
+		}
 
-	// If connection is successful
-	return nil
+		// Close the connection and check for errors
+		if closeErr := conn.Close(); closeErr != nil {
+			return fmt.Errorf("failed to close connection to broker %s: %v", broker, closeErr)
+		}
+	}
+
+	return nil // Return nil if all connections are successful
 }
 
 // KafkaConsumeSetup creates a single consumer group per topic and assigns workers within that group
@@ -133,9 +138,9 @@ func consumeWithRetry(ctx context.Context, group, topic, workerName string) erro
 func consumeKafkaTopic(ctx context.Context, group, topic, workerName string) error {
 	// Create a new Kafka reader (consumer) with specified configuration, including brokers, group ID, and topic.
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: []string{config.Envs.KAFKA_BROKERS}, // Kafka brokers are retrieved from the environment config.
-		GroupID: group,                               // Consumer group ID for message sharing across workers.
-		Topic:   topic,                               // Topic from which messages will be consumed.
+		Brokers: config.Envs.KAFKA_BROKERS, // Kafka brokers are retrieved from the environment config.
+		GroupID: group,                     // Consumer group ID for message sharing across workers.
+		Topic:   topic,                     // Topic from which messages will be consumed.
 		Dialer: &kafka.Dialer{
 			Timeout:   10 * time.Second, // Dial timeout for connecting to Kafka.
 			KeepAlive: 5 * time.Minute,  // Keep connection alive for 5 minutes.
