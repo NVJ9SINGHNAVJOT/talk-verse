@@ -73,9 +73,6 @@ func main() {
 			log.Info().Msg("Waiting for Kafka workers to complete...")
 			cancel() // Cancel context to signal Kafka workers to shut down
 
-			// Simulate a graceful shutdown delay
-			time.Sleep(5 * time.Second)
-
 			wg.Wait() // Wait for all worker goroutines to complete
 			log.Info().Msg("All Kafka workers stopped")
 
