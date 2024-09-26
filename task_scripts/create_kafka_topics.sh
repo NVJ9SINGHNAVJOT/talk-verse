@@ -1,52 +1,83 @@
 #!/bin/bash
 
-# Check if container name is passed as argument
+# Check if the container name is provided as an argument
 if [ -z "$1" ]; then
-  echo "Container name not provided"
-  exit 1
+	echo "Error: Container name not provided."
+	exit 1
 fi
 
-# Kafka container name from docker-compose
-KAFKA_CONTAINER=$1
+# Assigning Kafka container name from the argument
+KAFKA_CONTAINER="$1"
 BROKER="localhost:9092"
+TIMEOUT=30  # Maximum wait time in seconds
+SLEEP_INTERVAL=2  # Sleep interval in seconds
 
 # Function to check if the container is running
 is_container_running() {
-    # Get the container's status using inspect and check if it's running
-    local status=$(docker inspect -f '{{.State.Status}}' "$KAFKA_CONTAINER" 2>/dev/null)
-    
-    if [ "$status" == "running" ]; then
-        return 0 # True (running)
-    else
-        return 1 # False (not running)
-    fi
+	local status
+	status=$(docker inspect -f '{{.State.Status}}' "$KAFKA_CONTAINER" 2>/dev/null)
+
+	if [ "$status" == "running" ]; then
+		return 0  # True (running)
+	else
+		return 1  # False (not running)
+	fi
+}
+
+# Function to check if Kafka is ready by trying to list topics
+is_kafka_ready() {
+	# Try listing topics to check if Kafka is ready
+	if docker exec "$KAFKA_CONTAINER" kafka-topics.sh --bootstrap-server "$BROKER" --list >/dev/null 2>&1; then
+		return 0  # Kafka is ready
+	else
+		return 1  # Kafka is not ready
+	fi
+}
+
+# Function to wait for Kafka to be ready
+wait_for_kafka() {
+	local elapsed=0
+	while [ "$elapsed" -lt "$TIMEOUT" ]; do
+		if is_kafka_ready; then
+			echo "Kafka is ready. Proceeding to create topics..."
+			return 0
+		else
+			echo "Waiting for Kafka to be ready... (elapsed time: $elapsed seconds)"
+			sleep "$SLEEP_INTERVAL"
+			elapsed=$((elapsed + SLEEP_INTERVAL))
+		fi
+	done
+	echo "Error: Timed out waiting for Kafka to be ready."
+	exit 1
 }
 
 # Function to create a topic if it doesn't exist
 create_topic_if_not_exists() {
-  TOPIC_NAME=$1
-  PARTITIONS=$2
-  REPLICATION_FACTOR=$3
+	local topic_name="$1"
+	local partitions="$2"
+	local replication_factor="$3"
 
-  # Check if the topic exists
-  if ! docker exec $KAFKA_CONTAINER kafka-topics.sh --bootstrap-server $BROKER --list | grep -w $TOPIC_NAME; then
-    echo "Creating topic: $TOPIC_NAME"
-    docker exec $KAFKA_CONTAINER kafka-topics.sh --bootstrap-server $BROKER --create --topic $TOPIC_NAME --partitions $PARTITIONS --replication-factor $REPLICATION_FACTOR
-    echo "Topic '$TOPIC_NAME' created with $PARTITIONS partitions and replication factor of $REPLICATION_FACTOR"
-  else
-    echo "Topic '$TOPIC_NAME' already exists"
-  fi
+	# Check if the topic exists
+	if ! docker exec "$KAFKA_CONTAINER" kafka-topics.sh --bootstrap-server "$BROKER" --list | grep -w "$topic_name"; then
+		echo "Creating topic: $topic_name"
+		docker exec "$KAFKA_CONTAINER" kafka-topics.sh --bootstrap-server "$BROKER" --create \
+			--topic "$topic_name" --partitions "$partitions" --replication-factor "$replication_factor"
+		echo "Topic '$topic_name' created with $partitions partitions and replication factor of $replication_factor."
+	else
+		echo "Topic '$topic_name' already exists."
+	fi
 }
 
-# Check if the Kafka container is running
+# Main execution flow
 if is_container_running; then
-  echo "Kafka container '$KAFKA_CONTAINER' is running. Proceeding to create topics..."
+	echo "Kafka container '$KAFKA_CONTAINER' is running. Waiting for Kafka to be ready..."
+	wait_for_kafka
 
-  # Create topics with 10 partitions and replication factor of 1
-  create_topic_if_not_exists "message" 10 1
-  create_topic_if_not_exists "gpMessage" 10 1
-  create_topic_if_not_exists "unseenCount" 10 1
+	# Create topics with 10 partitions and replication factor of 1
+	create_topic_if_not_exists "message" 10 1
+	create_topic_if_not_exists "gpMessage" 10 1
+	create_topic_if_not_exists "unseenCount" 10 1
 else
-  echo "Kafka container '$KAFKA_CONTAINER' is not running. Exiting..."
-  exit 1
+	echo "Error: Kafka container '$KAFKA_CONTAINER' is not running. Exiting..."
+	exit 1
 fi
