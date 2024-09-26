@@ -60,9 +60,13 @@ create_topic_if_not_exists() {
 	# Check if the topic exists
 	if ! docker exec "$KAFKA_CONTAINER" kafka-topics.sh --bootstrap-server "$BROKER" --list | grep -w "$topic_name"; then
 		echo "Creating topic: $topic_name"
-		docker exec "$KAFKA_CONTAINER" kafka-topics.sh --bootstrap-server "$BROKER" --create \
-			--topic "$topic_name" --partitions "$partitions" --replication-factor "$replication_factor"
-		echo "Topic '$topic_name' created with $partitions partitions and replication factor of $replication_factor."
+		if docker exec "$KAFKA_CONTAINER" kafka-topics.sh --bootstrap-server "$BROKER" --create \
+			--topic "$topic_name" --partitions "$partitions" --replication-factor "$replication_factor"; then
+			echo "Topic '$topic_name' created with $partitions partitions and replication factor of $replication_factor."
+		else
+			echo "Error: Failed to create topic '$topic_name'. Exiting..."
+			exit 1  # Exit the script on failure
+		fi
 	else
 		echo "Topic '$topic_name' already exists."
 	fi
