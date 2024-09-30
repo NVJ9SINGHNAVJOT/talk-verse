@@ -23,7 +23,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
       - talkverse-backend-proxy
-    # ports: [5432:5432]
+    # ports: [5432:5432] # NOTE: can enable for development
 
   talkverse-mongo:
     container_name: talkverse-mongo
@@ -35,4 +35,4 @@ services:
     env_file: .env
     networks:
       - talkverse-backend-proxy
-    # ports: [27017:27017]
+    # ports: [27017:27017] # NOTE: can enable for development

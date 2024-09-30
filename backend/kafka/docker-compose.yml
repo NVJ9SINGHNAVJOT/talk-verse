@@ -12,8 +12,7 @@ services:
   talkverse-kafka:
     image: docker.io/bitnami/kafka:3.3.2
     container_name: talkverse-kafka
-    ports:
-      - "9092:9092"
+    ports: ["9092:9092"] # NOTE: can enable for development
     volumes:
       - talkverse-kafka_data:/bitnami/kafka
     networks: 

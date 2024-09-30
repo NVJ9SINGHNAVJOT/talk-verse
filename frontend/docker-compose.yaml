@@ -13,5 +13,5 @@ services:
     container_name: talkverse-frontend
     networks:
       - proxy
-    ports: [4173:4173] # disable in production
+    ports: [4173:4173] # NOTE: disable in production
     env_file: .env

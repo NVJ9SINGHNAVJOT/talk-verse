@@ -16,7 +16,7 @@ services:
     networks:
       - talkverse-backend-proxy
       - proxy
-    ports: [5000:5000] # disable in production
+    ports: [5000:5000] # NOTE: disable in production
     env_file: .env
     entrypoint: ['/app/wait-for.sh', 'talkverse-postgres:5432', '--', '/app/start.sh']
     command: [ 'node', 'dist/index.js']
