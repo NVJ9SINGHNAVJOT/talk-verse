@@ -73,8 +73,8 @@ func KafkaConsumeSetup(ctx context.Context, errChan chan<- WorkerError, workersP
 		// Generate the Kafka consumer group name dynamically based on the topic.
 		groupName := fmt.Sprintf(config.Envs.KAFKA_GROUP_PREFIX_ID+"-%s-group", topic)
 		log.Info().
-			Str("group", groupName).
 			Str("topic", topic).
+			Str("group", groupName).
 			Int("workersCount", workersPerTopic).
 			Msg("Starting consumer group")
 
@@ -87,8 +87,8 @@ func KafkaConsumeSetup(ctx context.Context, errChan chan<- WorkerError, workersP
 				workerName := fmt.Sprintf("%s-worker-%d", group, workerID)
 
 				log.Info().
-					Str("worker", workerName).
 					Str("topic", topic).
+					Str("worker", workerName).
 					Msg("Starting worker")
 
 				// Attempt to consume messages with retries in case of errors.
@@ -96,8 +96,8 @@ func KafkaConsumeSetup(ctx context.Context, errChan chan<- WorkerError, workersP
 					errChan <- WorkerError{Topic: topic, Err: err, WorkerName: workerName}
 				}
 				log.Warn().
-					Str("worker", workerName).
 					Str("topic", topic).
+					Str("worker", workerName).
 					Msg("Shutting down worker")
 			}(groupName, topic, workerID)
 		}
@@ -122,16 +122,16 @@ func consumeWithRetry(ctx context.Context, group, topic, workerName string) erro
 		if err != nil && !errors.Is(err, context.Canceled) {
 			log.Error().
 				Err(err).
-				Str("worker", workerName).
 				Str("topic", topic).
+				Str("worker", workerName).
 				Str("attempt", fmt.Sprintf("%d/%d", attempt, retryAttempts)).
 				Msg("Error during message consumption, retrying")
 			time.Sleep(backoff)
 		} else {
 			// Log successful message consumption and return.
 			log.Info().
-				Str("worker", workerName).
 				Str("topic", topic).
+				Str("worker", workerName).
 				Msg("Successfully consumed messages")
 			return nil // Exit loop on success.
 		}
@@ -185,8 +185,8 @@ func consumeKafkaTopic(ctx context.Context, group, topic, workerName string) err
 				log.Error().
 					Err(err).
 					Str("topic", msg.Topic).
-					Int("partition", msg.Partition).
 					Str("worker", workerName).
+					Int("partition", msg.Partition).
 					Str("kafka_message", string(msg.Value))
 			}
 		}

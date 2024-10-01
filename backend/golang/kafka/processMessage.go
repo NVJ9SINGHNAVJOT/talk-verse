@@ -72,8 +72,8 @@ func ProcessMessage(msg kafka.Message, workerName string) {
 		log.Error().
 			Err(err).
 			Str("topic", msg.Topic).
-			Int("partition", msg.Partition).
 			Str("worker", workerName).
+			Int("partition", msg.Partition).
 			Str("kafka_message", string(msg.Value)).
 			Msg(customErrMsg)
 	}
