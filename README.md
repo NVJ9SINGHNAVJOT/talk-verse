@@ -96,8 +96,7 @@ TalkVerse is a social media web application.
 ## System Design
 
    ### Hosting
-   ![diagram-export-17-9-2024-1_05_18-am](https://github.com/user-attachments/assets/8b981d16-dad1-486a-a9b1-e8474f88add7)
-
+   ![diagram-export-1-10-2024-2_26_08-pm](https://github.com/user-attachments/assets/257fc31e-5fb8-4cc3-a21f-1413123464b0)
 
    ### Working
    - [`Open`](https://raw.githubusercontent.com/NVJ9SINGHNAVJOT/talk-verse/b0c607137da0d512506581e2691901cd2937ff91/Talk-Verse-System-Design.svg)
