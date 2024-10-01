@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+	"time"
 
 	"github.com/nvj9singhnavjot/talkverse-kafka-consumer/config"
 	"github.com/nvj9singhnavjot/talkverse-kafka-consumer/db"
@@ -68,12 +69,16 @@ func main() {
 		case sig := <-sigChan:
 			log.Info().Msgf("Received signal: %s. Shutting down...", sig)
 
+			cancel() // Cancel context to signal Kafka workers to shut down
+			log.Info().Msg("Context cancelled")
+
 			// Wait for all Kafka workers to finish before shutting down the service
 			log.Info().Msg("Waiting for Kafka workers to complete...")
-			cancel() // Cancel context to signal Kafka workers to shut down
-
 			wg.Wait() // Wait for all worker goroutines to complete
 			log.Info().Msg("All Kafka workers stopped")
+
+			// Delay for Closing Worker error channel to get closed
+			time.Sleep(2 * time.Second)
 
 			// Consume all remaining error messages from errChan before shutting down
 		ConsumeErrors:
