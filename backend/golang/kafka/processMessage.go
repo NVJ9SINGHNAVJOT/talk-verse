@@ -2,7 +2,6 @@ package kafka
 
 import (
 	"context"
-	"encoding/json"
 	"time"
 
 	"github.com/nvj9singhnavjot/talkverse-kafka-consumer/db"
@@ -81,36 +80,31 @@ func ProcessMessage(msg kafka.Message, workerName string) {
 
 // handleMessageTopic processes messages from the "message" topic
 func handleMessageTopic(message []byte) (string, error) {
-	var msg kafkaMessageData
+	var data kafkaMessageData
 
-	// Unmarshal the incoming message into KafkaMessageData struct
-	err := json.Unmarshal(message, &msg)
+	// Unmarshal and Validate the incoming message into KafkaMessageData struct
+	msg, err := helper.UnmarshalAndValidate(message, &data)
 	if err != nil {
-		return "Failed to unmarshal message", err
-	}
-
-	// Validate the unmarshaled message data
-	if err := helper.ValidateStruct(msg); err != nil {
-		return "Validation failed for KafkaMessageData", err
+		return msg + " KafkaMessageData", err
 	}
 
 	// Set default value for IsFile if it's not present in the message
-	if msg.IsFile == nil {
+	if data.IsFile == nil {
 		defaultIsFile := false
-		msg.IsFile = &defaultIsFile
+		data.IsFile = &defaultIsFile
 	}
 
 	// Create a new Message object to be inserted into MongoDB
 	newMessage := models.Message{
-		UUID:      msg.UUID,
-		ChatID:    msg.ChatID, // Stored as a string in MongoDB
-		From:      msg.From,   // Stored as a string in MongoDB
-		To:        msg.To,     // Stored as a string in MongoDB
-		FromText:  msg.FromText,
-		ToText:    msg.ToText,
-		CreatedAt: msg.CreatedAt,
+		UUID:      data.UUID,
+		ChatID:    data.ChatID, // Stored as a string in MongoDB
+		From:      data.From,   // Stored as a string in MongoDB
+		To:        data.To,     // Stored as a string in MongoDB
+		FromText:  data.FromText,
+		ToText:    data.ToText,
+		CreatedAt: data.CreatedAt,
 		UpdatedAt: time.Now(),
-		IsFile:    *msg.IsFile, // Dereference IsFile pointer
+		IsFile:    *data.IsFile, // Dereference IsFile pointer
 	}
 
 	// Insert the new message into the "messages" collection in MongoDB
@@ -125,33 +119,28 @@ func handleMessageTopic(message []byte) (string, error) {
 
 // handleGpMessageTopic processes messages from the "gpMessage" topic
 func handleGpMessageTopic(message []byte) (string, error) {
-	var msg kafkaGpMessageData
+	var data kafkaGpMessageData
 
-	// Unmarshal the incoming message into KafkaGpMessageData struct
-	err := json.Unmarshal(message, &msg)
+	// Unmarshal and Validate the incoming message into KafkaGpMessageData struct
+	msg, err := helper.UnmarshalAndValidate(message, &data)
 	if err != nil {
-		return "Failed to unmarshal message", err
-	}
-
-	// Validate the unmarshaled group message data
-	if err := helper.ValidateStruct(msg); err != nil {
-		return "Validation failed for KafkaGpMessageData", err
+		return msg + " KafkaGpMessageData", err
 	}
 
 	// Set default value for IsFile if it's not present in the message
-	if msg.IsFile == nil {
+	if data.IsFile == nil {
 		defaultIsFile := false
-		msg.IsFile = &defaultIsFile
+		data.IsFile = &defaultIsFile
 	}
 
 	// Create a new GpMessage object to be inserted into MongoDB
 	newGpMessage := models.GpMessage{
-		UUID:      msg.UUID,
-		IsFile:    *msg.IsFile, // Dereference IsFile pointer
-		From:      msg.From,    // Stored as a string in MongoDB
-		To:        msg.To,      // Stored as a string in MongoDB
-		Text:      msg.Text,
-		CreatedAt: msg.CreatedAt,
+		UUID:      data.UUID,
+		IsFile:    *data.IsFile, // Dereference IsFile pointer
+		From:      data.From,    // Stored as a string in MongoDB
+		To:        data.To,      // Stored as a string in MongoDB
+		Text:      data.Text,
+		CreatedAt: data.CreatedAt,
 		UpdatedAt: time.Now(),
 	}
 
@@ -169,14 +158,9 @@ func handleGpMessageTopic(message []byte) (string, error) {
 func handleUnseenCountTopic(message []byte) (string, error) {
 	var data kafkaUnseenCountData
 
-	// Unmarshal the incoming message into KafkaUnseenCountData struct
-	if err := json.Unmarshal(message, &data); err != nil {
-		return "Failed to unmarshal message", err
-	}
-
-	// Validate the unmarshaled unseen count data
-	if err := helper.ValidateStruct(data); err != nil {
-		return "Validation failed for KafkaUnseenCountData", err
+	// Unmarshal and Validate the incoming message into KafkaUnseenCountData struct
+	if msg, err := helper.UnmarshalAndValidate(message, &data); err != nil {
+		return msg + " KafkaUnseenCountData", err
 	}
 
 	// Define MongoDB collection and filter
