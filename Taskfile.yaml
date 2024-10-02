@@ -25,35 +25,37 @@ tasks:
     desc: create proxy (external) and talkverse-backend-proxy (internal) networks
     cmd:
       # Windows (Git Bash)
-      bash ./task_scripts/create_docker_networks.sh
-
-  create-topics-development:
-    desc: create topics for kafka from ./task_scripts/create_kafka_topics_development.sh
-    vars:
-      KAFKA_CONTAINER: "talkverse-kafka-development" # Dynamically defined container name
-    cmd:
-      # Windows (Git Bash)
-      bash ./task_scripts/create_kafka_topics.sh "{{.KAFKA_CONTAINER}}"
+      bash ./task_scripts/this_create_docker_networks.sh
 
   create-topics:
-    desc: create topics for kafka from ./task_scripts/create_kafka_topics.sh
-    vars:
-      KAFKA_CONTAINER: "talkverse-kafka" # Dynamically defined container name
+    desc: create topics for kafka from ./task_scripts/this_create_kafka_topics.sh
     cmd:
       # Windows (Git Bash)
-      bash ./task_scripts/create_kafka_topics.sh "{{.KAFKA_CONTAINER}}"
+      bash ./task_scripts/this_create_kafka_topics.sh "talkverse-kafka" "1"
+
+  create-dev-kafka-topics:
+    desc: create topics for kafka development container from ./task_scripts/this_create_kafka_topics.sh
+    cmd:
+      # Windows (Git Bash)
+      bash ./task_scripts/this_create_kafka_topics.sh "talkverse-kafka-development" "1"
 
   dev-kafka:
     desc: start the Kafka container for development
     cmd:
       # Windows (Git Bash)
-      bash ./task_scripts/talkverse_kafka_development.sh
+      bash ./task_scripts/create_kafka_development_container.sh "talkverse-kafka-development" "proxy"
+
+  scripts:
+    desc: clone scripts from -> https://github.com/NVJ9SINGHNAVJOT/stacks
+    cmd:
+      # Windows (Git Bash)
+      bash ./clone_files.sh
 
   dev:
     desc: start all development servers concurrently (backend and frontend)
     cmds:
       - task: dev-kafka
-      - task: create-topics-development
+      - task: create-dev-kafka-topics
       - npm run conc
 
   golang:
