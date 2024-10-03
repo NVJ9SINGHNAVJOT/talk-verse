@@ -2,6 +2,7 @@
 version: "3.8"
 
 networks:
+  # NOTE: In production use nginx-proxy internal network
   proxy:
     external: true
 

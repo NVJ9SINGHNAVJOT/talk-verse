@@ -1,8 +1,11 @@
 version: '3.8'
 
 volumes:
+  # NOTE: Do not rename or change the volume names, this will cause breaking changes.
   talkverse-postgres-db:
+    name: talkverse-postgres-db
   talkverse-mongo-db:
+    name: talkverse-mongo-db
 
 networks:
   talkverse-backend-proxy:

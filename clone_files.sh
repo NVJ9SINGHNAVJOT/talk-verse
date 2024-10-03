@@ -10,9 +10,10 @@
 REPO_URL="https://github.com/NVJ9SINGHNAVJOT/stacks" # Specify your repository URL here
 DEST_DIR="task_scripts"                              # Specify your destination directory here
 declare -a FILES_TO_COPY=(                           # Array of file paths to copy from the repository
-    "scripts/create_kafka_development_container.sh"
-    "scripts/docker_container_status.sh"
-    "scripts/manage_kafka_topics.sh"
+    "task_scripts/create_kafka_development_container.sh"
+    "task_scripts/docker_container_status.sh"
+    "task_scripts/manage_kafka_topics.sh"
+    "task_scripts/docker_proxy_network.sh"
 )
 
 # Check if the destination directory exists

@@ -21,19 +21,20 @@ tasks:
       - cd backend/golang && task build
       - cd frontend && npm run build
 
+  proxy:
+    desc: create proxy external network for docker
+    cmd:
+      # Windows (Git Bash)
+      bash ./task_scripts/docker_proxy_network.sh
+
   create-networks:
     desc: create proxy (external) and talkverse-backend-proxy (internal) networks
-    cmd:
+    cmds:
+      - task: proxy
       # Windows (Git Bash)
-      bash ./task_scripts/this_create_docker_networks.sh
+      - bash ./task_scripts/this_create_docker_networks.sh
 
-  create-topics:
-    desc: create topics for kafka from ./task_scripts/this_create_kafka_topics.sh
-    cmd:
-      # Windows (Git Bash)
-      bash ./task_scripts/this_create_kafka_topics.sh "talkverse-kafka" "1"
-
-  create-dev-kafka-topics:
+  dev-kafka-topics:
     desc: create topics for kafka development container from ./task_scripts/this_create_kafka_topics.sh
     cmd:
       # Windows (Git Bash)
@@ -41,9 +42,10 @@ tasks:
 
   dev-kafka:
     desc: start the Kafka container for development
-    cmd:
+    cmds:
+      - task: proxy
       # Windows (Git Bash)
-      bash ./task_scripts/create_kafka_development_container.sh "talkverse-kafka-development" "proxy"
+      - bash ./task_scripts/create_kafka_development_container.sh "talkverse-kafka-development" "proxy"
 
   scripts:
     desc: clone scripts from -> https://github.com/NVJ9SINGHNAVJOT/stacks
@@ -55,7 +57,7 @@ tasks:
     desc: start all development servers concurrently (backend and frontend)
     cmds:
       - task: dev-kafka
-      - task: create-dev-kafka-topics
+      - task: dev-kafka-topics
       - npm run conc
 
   golang:
@@ -73,23 +75,42 @@ tasks:
     cmds:
       - cd frontend && npm run dev
 
+  k-cluster:
+    desc: check info for cluster of kafka brokers
+    cmds:
+      - cd backend/kafka && docker-compose exec talkverse-kafka-0 kafka-metadata-quorum.sh --bootstrap-server talkverse-kafka-0:9092 describe --status
+      - cd backend/kafka && docker-compose exec talkverse-kafka-0 kafka-metadata-quorum.sh --bootstrap-server talkverse-kafka-0:9092 describe --replication
+
+  kafka-topics:
+    desc: Create topics for Kafka Cluster (production) from ./task_scripts/this_create_kafka_topics.sh
+    # NOTE: Topic partitions can be changed as per requirement.
+    # Default settings for a Kafka cluster with 3 brokers and replication factor of 3.
+    env:
+      MESSAGE_PARTITIONS: 100
+      GPMESSAGE_PARTITIONS: 100
+      UNSEENCOUNT_PARTITIONS: 100
+    cmds:
+      # Windows (Git Bash)
+      - bash ./task_scripts/this_create_kafka_topics.sh "talkverse-kafka-0" "3"
+
   compose-up-backend:
     desc: start backend services using Docker Compose - databases, kafka, servers
     cmds:
       - task: create-networks
-      - docker-compose -f ./backend/databases/docker-compose up -d
-      - docker-compose -f ./backend/kafka/docker-compose up -d
-      - task: create-topics
-      - docker-compose -f ./backend/golang/docker-compose up -d
-      - docker-compose -f ./backend/nodejs/docker-compose up -d
+      - docker-compose -f ./backend/databases/docker-compose.yml up -d
+      - docker-compose -f ./backend/kafka/docker-compose.yml up -d
+      - sleep 10 # Wait for 10 seconds after starting the brokers
+      - task: kafka-topics
+      - docker-compose -f ./backend/golang/docker-compose.yml up -d
+      - docker-compose -f ./backend/nodejs/docker-compose.yml up -d
 
   compose-down-backend:
     desc: stop backend services using Docker Compose - databases, kafka, servers
     cmds:
-      - docker-compose -f ./backend/nodejs/docker-compose down
-      - docker-compose -f ./backend/golang/docker-compose down
-      - docker-compose -f ./backend/kafka/docker-compose down
-      - docker-compose -f ./backend/databases/docker-compose down
+      - docker-compose -f ./backend/nodejs/docker-compose.yml down
+      - docker-compose -f ./backend/golang/docker-compose.yml down
+      - docker-compose -f ./backend/kafka/docker-compose.yml down
+      - docker-compose -f ./backend/databases/docker-compose.yml down
 
   compose-up-frontend:
     desc: start frontend services using Docker Compose

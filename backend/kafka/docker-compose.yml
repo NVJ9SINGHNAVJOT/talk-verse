@@ -2,118 +2,101 @@
 version: '3.8'
 
 volumes:
-  talkverse-kafka_data:
-  # NOTE: Uncomment the volumes below to enable the Kafka cluster.
-  # talkverse-kafka-0_data:
-  # talkverse-kafka-1_data:
-  # talkverse-kafka-2_data:
+  # NOTE: Do not rename or change the volume names, this will cause breaking changes.
+  talkverse-kafka-0_data:
+    name: talkverse-kafka-0_data
+  talkverse-kafka-1_data:
+    name: talkverse-kafka-1_data
+  talkverse-kafka-2_data:
+    name: talkverse-kafka-2_data
 
 networks:
   talkverse-backend-proxy:
     external: true
 
 services:
-  talkverse-kafka:
+  # NOTE: To enable a cluster of brokers, uncomment the Kafka broker configurations below.
+  talkverse-kafka-0:
     image: docker.io/bitnami/kafka:3.8.0
-    container_name: talkverse-kafka
+    container_name: talkverse-kafka-0
     volumes:
-      - talkverse-kafka_data:/bitnami/kafka
-    networks: 
+      - talkverse-kafka-0_data:/bitnami/kafka
+    networks:
       - talkverse-backend-proxy
     restart: unless-stopped
     environment:
-      # KRaft settings
+      # KRaft settings for node 0
       - KAFKA_KRAFT_CLUSTER_ID=MkU3OEVBNTcwNTJENDM2Qk
       - KAFKA_ENABLE_KRAFT=yes
       - KAFKA_CFG_PROCESS_ROLES=broker,controller
       - KAFKA_CFG_NODE_ID=0
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@talkverse-kafka:9093
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@talkverse-kafka-0:9093,1@talkverse-kafka-1:9093,2@talkverse-kafka-2:9093
       # Listeners
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://talkverse-kafka:9092
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://talkverse-kafka-0:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
       - ALLOW_PLAINTEXT_LISTENER=yes
+      # Clustering settings
+      - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
+    depends_on:
+      - talkverse-kafka-1
 
-  # NOTE: To enable a cluster of brokers, uncomment the Kafka broker configurations below.
-  # talkverse-kafka-0:
-  #   image: docker.io/bitnami/kafka:3.8.0
-  #   container_name: talkverse-kafka-0
-  #   volumes:
-  #     - talkverse-kafka-0_data:/bitnami/kafka
-  #   networks:
-  #     - talkverse-backend-proxy
-  #   restart: unless-stopped
-  #   environment:
-  #     # KRaft settings
-  #     - KAFKA_KRAFT_CLUSTER_ID=MkU3OEVBNTcwNTJENDM2Qk
-  #     - KAFKA_ENABLE_KRAFT=yes
-  #     - KAFKA_CFG_PROCESS_ROLES=broker,controller
-  #     - KAFKA_CFG_NODE_ID=0  # Unique Node ID
-  #     - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@talkverse-kafka-0:9093,1@talkverse-kafka-1:9093,2@talkverse-kafka-2:9093
-  #     # Listeners
-  #     - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
-  #     - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://talkverse-kafka-0:9092
-  #     - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
-  #     - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-  #     - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
-  #     - ALLOW_PLAINTEXT_LISTENER=yes
-  #     # Clustering
-  #     - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
-  #     - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
-  #     - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
+  talkverse-kafka-1:
+    image: docker.io/bitnami/kafka:3.8.0
+    container_name: talkverse-kafka-1
+    volumes:
+      - talkverse-kafka-1_data:/bitnami/kafka
+    networks:
+      - talkverse-backend-proxy
+    restart: unless-stopped
+    environment:
+      # KRaft settings for node 1
+      - KAFKA_KRAFT_CLUSTER_ID=MkU3OEVBNTcwNTJENDM2Qk
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@talkverse-kafka-0:9093,1@talkverse-kafka-1:9093,2@talkverse-kafka-2:9093
+      # Listeners
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://talkverse-kafka-1:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      # Clustering settings
+      - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
+    depends_on:
+      - talkverse-kafka-2
 
-  # talkverse-kafka-1:
-  #   image: docker.io/bitnami/kafka:3.8.0
-  #   container_name: talkverse-kafka-1
-  #   volumes:
-  #     - talkverse-kafka-1_data:/bitnami/kafka
-  #   networks:
-  #     - talkverse-backend-proxy
-  #   restart: unless-stopped
-  #   environment:
-  #     # KRaft settings
-  #     - KAFKA_KRAFT_CLUSTER_ID=MkU3OEVBNTcwNTJENDM2Qk
-  #     - KAFKA_ENABLE_KRAFT=yes
-  #     - KAFKA_CFG_PROCESS_ROLES=broker,controller
-  #     - KAFKA_CFG_NODE_ID=1  # Unique Node ID
-  #     - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@talkverse-kafka-0:9093,1@talkverse-kafka-1:9093,2@talkverse-kafka-2:9093
-  #     # Listeners
-  #     - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
-  #     - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://talkverse-kafka-1:9092
-  #     - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
-  #     - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-  #     - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
-  #     - ALLOW_PLAINTEXT_LISTENER=yes
-  #     # Clustering
-  #     - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
-  #     - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
-  #     - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
-
-  # talkverse-kafka-2:
-  #   image: docker.io/bitnami/kafka:3.8.0
-  #   container_name: talkverse-kafka-2
-  #   volumes:
-  #     - talkverse-kafka-2_data:/bitnami/kafka
-  #   networks:
-  #     - talkverse-backend-proxy
-  #   restart: unless-stopped
-  #   environment:
-  #     # KRaft settings
-  #     - KAFKA_KRAFT_CLUSTER_ID=MkU3OEVBNTcwNTJENDM2Qk
-  #     - KAFKA_ENABLE_KRAFT=yes
-  #     - KAFKA_CFG_PROCESS_ROLES=broker,controller
-  #     - KAFKA_CFG_NODE_ID=2  # Unique Node ID
-  #     - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@talkverse-kafka-0:9093,1@talkverse-kafka-1:9093,2@talkverse-kafka-2:9093
-  #     # Listeners
-  #     - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
-  #     - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://talkverse-kafka-2:9092
-  #     - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
-  #     - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-  #     - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
-  #     - ALLOW_PLAINTEXT_LISTENER=yes
-  #     # Clustering
-  #     - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
-  #     - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
-  #     - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
+  talkverse-kafka-2:
+    image: docker.io/bitnami/kafka:3.8.0
+    container_name: talkverse-kafka-2
+    volumes:
+      - talkverse-kafka-2_data:/bitnami/kafka
+    networks:
+      - talkverse-backend-proxy
+    restart: unless-stopped
+    environment:
+      # KRaft settings for node 2
+      - KAFKA_KRAFT_CLUSTER_ID=MkU3OEVBNTcwNTJENDM2Qk
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_NODE_ID=2
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@talkverse-kafka-0:9093,1@talkverse-kafka-1:9093,2@talkverse-kafka-2:9093
+      # Listeners
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://talkverse-kafka-2:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      # Clustering settings
+      - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
+      - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
