@@ -32,33 +32,33 @@ tasks:
     desc: create proxy external network for docker
     cmd:
       # Windows (Git Bash)
-      bash ./task_scripts/docker_proxy_network.sh
+      cd task_scripts && bash docker_proxy_network.sh
 
   create-networks:
     desc: create proxy (external) and talkverse-backend-proxy (internal) networks
     cmds:
       - task: proxy
       # Windows (Git Bash)
-      - bash ./task_scripts/this_create_docker_networks.sh
+      - cd task_scripts && bash this_create_docker_networks.sh
 
   dev-kafka-topics:
     desc: create topics for kafka development container from ./task_scripts/this_create_kafka_topics.sh
     cmd:
       # Windows (Git Bash)
-      bash ./task_scripts/this_create_kafka_topics.sh "talkverse-kafka-development" "1"
+      cd task_scripts && bash this_create_kafka_topics.sh "talkverse-kafka-development" "1"
 
   dev-kafka:
     desc: start the Kafka container for development
     cmds:
       - task: proxy
       # Windows (Git Bash)
-      - bash ./task_scripts/create_kafka_development_container.sh "talkverse-kafka-development" "proxy"
+      - cd task_scripts && bash create_kafka_development_container.sh "talkverse-kafka-development" "proxy"
 
   scripts:
     desc: clone scripts from -> https://github.com/NVJ9SINGHNAVJOT/stacks
     cmd:
       # Windows (Git Bash)
-      bash ./clone_files.sh
+      bash clone_files.sh
 
   dev:
     desc: start all development servers concurrently (backend and frontend)
@@ -98,7 +98,7 @@ tasks:
       UNSEENCOUNT_PARTITIONS: 100
     cmds:
       # Windows (Git Bash)
-      - bash ./task_scripts/this_create_kafka_topics.sh "talkverse-kafka-0" "3"
+      - cd task_scripts && bash this_create_kafka_topics.sh "talkverse-kafka-0" "3"
 
   compose-up-backend:
     desc: start backend services using Docker Compose - databases, kafka, servers

@@ -1,23 +1,23 @@
 #!/bin/bash
 
-# Function to check if a network exists
-check_network_exists() {
-  network_name=$1
-  if docker network ls --format "{{.Name}}" | grep -w "$network_name" > /dev/null 2>&1; then
-    return 0  # Network exists
-  else
-    return 1  # Network does not exist
-  fi
-}
-
-# Create the proxy network (external)
 create_proxy_network() {
-  if check_network_exists "proxy"; then
-    echo "Network 'proxy' already exists."
+  network_name="proxy"
+  
+  # Check if the network already exists
+  if docker network ls --format "{{.Name}}" | grep -w "$network_name" > /dev/null 2>&1; then
+    # Inspect the network to check if it's an external bridge network
+    network_driver=$(docker network inspect "$network_name" --format "{{.Driver}}")
+    network_scope=$(docker network inspect "$network_name" --format "{{.Scope}}")
+    
+    if [ "$network_driver" = "bridge" ] && [ "$network_scope" = "global" ]; then
+      echo "Network '$network_name' already exists and is an external bridge."
+    else
+      echo "Network '$network_name' exists but is not an external bridge. Please verify or recreate it."
+    fi
   else
-    echo "Creating external network 'proxy'..."
-    docker network create --driver bridge --external "proxy"
-    echo "'proxy' network created."
+    echo "Creating external bridge network '$network_name'..."
+    docker network create --driver bridge --scope global "$network_name"
+    echo "'$network_name' network created."
   fi
 }
 

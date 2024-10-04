@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Source the file containing the container status functions
-source ./task_scripts/docker_container_status.sh
+source ./docker_container_status.sh
 
 # Function to manage Kafka container
 manage_kafka_container() {

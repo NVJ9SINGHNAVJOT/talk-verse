@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Source the file containing the container status and Kafka topic management functions
-source ./task_scripts/docker_container_status.sh
-source ./task_scripts/manage_kafka_topics.sh
+source ./docker_container_status.sh
+source ./manage_kafka_topics.sh
 
 # Check if the container name and replication factor are provided as arguments
 if [ -z "$1" ] || [ -z "$2" ]; then
