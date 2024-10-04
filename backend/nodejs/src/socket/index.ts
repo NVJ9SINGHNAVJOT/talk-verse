@@ -13,94 +13,100 @@ import { origins } from "@/config/corsOptions";
 
 /*
   NOTE: Currently, userSocketIDs, groupOffline, and channels mapping is stored in the server.
-  For scalability, Redis can be used.
+  For scalability, consider using Redis for persistent storage.
 */
 
 /* 
-  store userIds with their current socketIds
-  userId -> socketIds[]
-  a user can join from multiple devices so it can have multiple socketIds for it's userId
+  Store userIds with their current socketIds in a Map.
+  Key: userId -> Value: socketIds[] (a user can join from multiple devices)
 */
 export const userSocketIDs = new Map<string, string[]>();
 
 /*
-  offline members for each group
-  groupId -> offline members only
+  Store offline members for each group in a Map.
+  Key: groupId -> Value: Set of offline members
 */
 export const groupOffline = new Map<string, Set<string>>();
 
 /*
-  create a map to store channels for mainID,
-  chatId/_id  ->   chatId is for two users and _id is of group
+  Create a map to store channels for mainID.
+  Key: chatId/_id  (chatId is for two users, and _id is for groups)
 */
 export const channels: Map<string, Channel> = new Map();
 
-// creating websocket instance for emiting event from api server
+// WebSocket instance for emitting events from the API server
 export let _io: Server;
 
+/*
+  Set up the WebSocket server with Express application and return the HTTP server instance.
+  The server supports CORS configuration for cross-origin requests.
+*/
 export const setupWebSocket = (app: Application): HTTPServer => {
   const httpServer = createServer(app);
   const io = new Server(httpServer, {
     cors: {
-      origin: origins,
-      credentials: true,
-      methods: ["PUT", "PATCH", "POST", "GET", "DELETE"],
+      origin: origins, // Allowed origins for CORS
+      credentials: true, // Allow credentials
+      methods: ["PUT", "PATCH", "POST", "GET", "DELETE"], // Allowed HTTP methods
     },
   });
 
-  _io = io;
+  _io = io; // Store the WebSocket instance
 
-  // socket authorization
+  // Socket authorization middleware
   io.use(async (socket: Socket, next) => {
     if ((await checkUserSocket(socket)) === true) {
-      next();
+      next(); // Proceed if user is authorized
     } else {
       logger.error("socket authorization failed", { socketId: socket.id });
-      next(new Error("authorization invalid, access denied"));
+      next(new Error("authorization invalid, access denied")); // Deny access
     }
   });
 
+  // Handle new connections
   io.on("connection", (socket: Socket) => {
-    const userId = (socket as CustomSocket).userId;
+    const userId = (socket as CustomSocket).userId; // Get userId from the socket
     logger.info(`a user connected id: ${userId} : ${socket.id}`);
 
-    // set userId in userSocketIds and show friends that user in online
+    // Check if the user is already connected
     const checkUserAlreadyConnected = userSocketIDs.get(userId);
-    // user is already connected
     if (checkUserAlreadyConnected === undefined) {
-      // new user is connected
+      // New user is connected
       userSocketIDs.set(userId, [socket.id]);
-      showOnline(io, userId, true, true, socket);
+      showOnline(io, userId, true, true, socket); // Notify online status
     } else {
+      // Existing user is reconnecting
       checkUserAlreadyConnected.push(socket.id);
-      showOnline(io, userId, false, true, socket);
+      showOnline(io, userId, false, true, socket); // Update online status
     }
 
-    /* register socket events */
+    /* Register socket events for notifications and messages */
     registerNotificationEvents(socket, userId);
     registerMessageEvents(io, socket, userId);
 
+    // Handle user disconnection
     socket.on("disconnect", () => {
       logger.info(`a user disconnected id: ${userId} : ${socket.id}`);
 
-      // remove userId in userSocketIds
+      // Remove userId from userSocketIDs
       const checkUserAlreadyConnected = userSocketIDs.get(userId);
       if (!checkUserAlreadyConnected || checkUserAlreadyConnected.length === 0) {
         logger.error("while disconnecting no socketId array is present in userSocketIDs map");
-        showOnline(io, userId, false, false, socket);
+        showOnline(io, userId, false, false, socket); // Notify offline status
         return;
       }
-      // check if this is the only socketId present for userId
+
+      // Check if this is the only socketId present for the userId
       if (checkUserAlreadyConnected.length === 1) {
-        userSocketIDs.delete(userId);
-        showOnline(io, userId, false, false, socket);
+        userSocketIDs.delete(userId); // Remove the user from the map
+        showOnline(io, userId, false, false, socket); // Notify offline status
       } else {
-        // user is still connected with other socketIds
+        // User is still connected with other socketIds
         const afterRemovingSocketId = checkUserAlreadyConnected.filter((sId) => sId !== socket.id);
-        userSocketIDs.set(userId, afterRemovingSocketId);
+        userSocketIDs.set(userId, afterRemovingSocketId); // Update the list of socketIds
       }
     });
   });
 
-  return httpServer;
+  return httpServer; // Return the HTTP server instance
 };

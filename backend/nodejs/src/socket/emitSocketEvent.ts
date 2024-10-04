@@ -15,7 +15,7 @@ const emitSocketEvent = (
   sdata: string | SoUserRequest | SoRequestAccepted | SoAddedInGroup | SoMessageRecieved | SoGroupMessageRecieved
 ) => {
   if (roomIds.length === 0) {
-    throw new Error("no socketIds present in parameter roomIds");
+    logger.error("no socketIds present in parameter roomIds", { event: event, data: sdata });
     return;
   }
   try {
