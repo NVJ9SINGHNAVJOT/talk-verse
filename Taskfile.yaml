@@ -10,15 +10,22 @@ tasks:
   i:
     desc: install all dependencies for project
     cmds:
-      - cd backend/nodejs && npm run install
-      - cd backend/golang && task i
-      - cd frontend && npm run install
+      - cd backend/nodejs && npm install
+      - cd backend/golang && go mod download && go mod verify
+      - cd frontend && npm install
+
+  format:
+    desc: format all code for frontend, backend
+    cmds:
+      - cd backend/nodejs && npm run prettier-write
+      - cd backend/golang && gofmt -s -w .
+      - cd frontend && npm run prettier-write
 
   build:
     desc: builds the project locally
     cmds:
       - cd backend/nodejs && npm run build
-      - cd backend/golang && task build
+      - cd backend/golang && go build -o ./dist/main main.go
       - cd frontend && npm run build
 
   proxy:
@@ -63,7 +70,7 @@ tasks:
   golang:
     desc: start golang server from backend services (kafka should be running)
     cmds:
-      - cd backend/golang && task run
+      - cd backend/golang && go run main.go
 
   nodejs:
     desc: start nodejs server from backend services (kafka should be running)

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/signal"
 	"sync"
@@ -12,14 +13,23 @@ import (
 	"github.com/nvj9singhnavjot/talkverse-kafka-consumer/db"
 	"github.com/nvj9singhnavjot/talkverse-kafka-consumer/helper"
 	"github.com/nvj9singhnavjot/talkverse-kafka-consumer/kafka"
+	"github.com/nvj9singhnavjot/talkverse-kafka-consumer/pkg"
 	"github.com/rs/zerolog/log"
 )
 
 func main() {
-	// Validate environment variables
-	err := config.ValidateEnvs()
+	// Load env file
+	err := pkg.LoadEnv(".env")
 	if err != nil {
-		log.Fatal().Err(err).Msg("Invalid environment variables")
+		fmt.Println("Error loading env file", err)
+
+	}
+
+	// Validate environment variables
+	err = config.ValidateEnvs()
+	if err != nil {
+		fmt.Println("Invalid environment variables", err)
+		panic(err)
 	}
 
 	// Setup logger

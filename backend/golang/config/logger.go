@@ -10,9 +10,9 @@ import (
 
 func SetUpLogger(environment string) {
 	if environment == "development" {
-		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339})
-	} else {
-		zerolog.TimeFieldFormat = time.RFC3339
+		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339}).Level(zerolog.DebugLevel)
+		return
 	}
-	zerolog.New(os.Stderr).With().Timestamp().Logger()
+	zerolog.TimeFieldFormat = time.RFC3339
+	log.Logger = zerolog.New(os.Stderr).With().Timestamp().Logger()
 }
