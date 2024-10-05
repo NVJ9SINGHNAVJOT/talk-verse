@@ -58,10 +58,8 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel() // Ensure context is cancelled on shutdown
 
-	// Error channel to listen to Kafka worker errors, with a buffer size calculated to handle up to
-	// three times the number of workers per Kafka group, plus an additional buffer of 10 for safety.
-	// This ensures that worker errors can be processed without blocking the workers, even under heavy load.
-	errChan := make(chan kafka.WorkerError, (config.Envs.KAFKA_GROUP_WORKERS*3)+10)
+	// Error channel to listen to Kafka worker errors
+	errChan := make(chan kafka.WorkerError)
 
 	// Initialize WorkerTracker to track remaining workers per topic
 	workerTracker := kafka.NewWorkerTracker(config.Envs.KAFKA_GROUP_WORKERS)
