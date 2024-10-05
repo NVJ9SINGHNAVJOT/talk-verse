@@ -144,8 +144,9 @@ func shutdownConsumer() {
 
 	// Close mongodb database connection
 	if err := db.DisconnectMongoDB(); err != nil {
-		log.Error().Err(err).Msg("failed to disconnect mongodb client")
+		log.Error().Err(err).Msg("Failed to disconnect mongodb client")
+	} else {
+		log.Info().Msg("MongoDB disconnected")
 	}
-	log.Info().Msg("MongoDB disconnected")
 	log.Info().Msg("Kafka consumer service shutdown complete.")
 }
