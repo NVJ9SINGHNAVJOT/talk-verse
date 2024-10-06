@@ -52,15 +52,15 @@ func main() {
 
 	// Create a WaitGroup to track worker goroutines
 	var wg sync.WaitGroup
-	// workerDone channel waits for all workers to complete.
-	workerDone := make(chan int, 1)
+	// workDone channel waits for all workers to complete.
+	workDone := make(chan int, 1)
 
 	// Context for managing shutdown
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel() // Ensure context is cancelled on shutdown
 
 	// Kafka consumers setup
-	go kafka.KafkaConsumeSetup(ctx, workerDone, config.Envs.KAFKA_GROUP_WORKERS, &wg)
+	go kafka.KafkaConsumeSetup(ctx, workDone, config.Envs.KAFKA_GROUP_WORKERS, &wg)
 
 	// sync.Once to ensure shutdown happens only once
 	var shutdownOnce sync.Once
@@ -87,10 +87,10 @@ func main() {
 		})
 		return
 
-	case _, ok := <-workerDone:
+	case _, ok := <-workDone:
 		if !ok {
 			// If the channel is closed, all workers are done, so shut down
-			log.Info().Msg("workerDone channel closed, all Kafka workers finished. Initiating service shutdown...")
+			log.Info().Msg("workDone channel closed, all Kafka workers finished. Initiating service shutdown...")
 			shutdownOnce.Do(func() {
 				shutdownConsumer()
 			})

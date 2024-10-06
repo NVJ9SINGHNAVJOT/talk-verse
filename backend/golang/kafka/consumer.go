@@ -85,7 +85,7 @@ func (w *workerTracker) decrementWorker(_ context.Context, group, topic, workerN
 
 // KafkaConsumeSetup initializes Kafka consumers by assigning a specified number of workers per topic.
 // It creates consumer groups and spawns workers to handle message consumption concurrently.
-func KafkaConsumeSetup(ctx context.Context, workerDone chan int, workersPerTopic int, wg *sync.WaitGroup) {
+func KafkaConsumeSetup(ctx context.Context, workDone chan int, workersPerTopic int, wg *sync.WaitGroup) {
 	// Initialize worker counts for each topic by setting up a tracker for each.
 	for _, topic := range topics {
 		workerErrorManager.topics[topic] = &topicTracker{count: workersPerTopic} // Set worker count
@@ -126,9 +126,9 @@ func KafkaConsumeSetup(ctx context.Context, workerDone chan int, workersPerTopic
 	wg.Wait()
 	log.Info().Msg("All workers have completed processing") // Log completion of all workers
 
-	// Close the workerDone channel to signal that worker processing is complete
-	log.Info().Msg("Closing workerDone channel")
-	close(workerDone)
+	// Close the workDone channel to signal that worker processing is complete
+	log.Info().Msg("Closing workDone channel")
+	close(workDone)
 }
 
 // consumeWithRetry attempts to consume messages from a Kafka topic and retries in case of failure.
