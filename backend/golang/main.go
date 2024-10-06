@@ -7,7 +7,6 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
-	"time"
 
 	"github.com/nvj9singhnavjot/talkverse-kafka-consumer/config"
 	"github.com/nvj9singhnavjot/talkverse-kafka-consumer/db"
@@ -53,19 +52,15 @@ func main() {
 
 	// Create a WaitGroup to track worker goroutines
 	var wg sync.WaitGroup
+	// workerDone channel waits for all workers to complete.
+	workerDone := make(chan int, 1)
 
 	// Context for managing shutdown
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel() // Ensure context is cancelled on shutdown
 
-	// Error channel to listen to Kafka worker errors
-	errChan := make(chan kafka.WorkerError)
-
-	// Initialize WorkerTracker to track remaining workers per topic
-	workerTracker := kafka.NewWorkerTracker(config.Envs.KAFKA_GROUP_WORKERS)
-
 	// Kafka consumers setup
-	go kafka.KafkaConsumeSetup(ctx, errChan, config.Envs.KAFKA_GROUP_WORKERS, &wg)
+	go kafka.KafkaConsumeSetup(ctx, workerDone, config.Envs.KAFKA_GROUP_WORKERS, &wg)
 
 	// sync.Once to ensure shutdown happens only once
 	var shutdownOnce sync.Once
@@ -74,66 +69,32 @@ func main() {
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 
-	for {
-		select {
-		case sig := <-sigChan:
-			log.Info().Msgf("Received signal: %s. Shutting down...", sig)
+	select {
+	case sig := <-sigChan:
+		log.Info().Msgf("Received signal: %s. Shutting down...", sig)
 
-			cancel() // Cancel context to signal Kafka workers to shut down
-			log.Info().Msg("Context cancelled")
+		cancel() // Cancel context to signal Kafka workers to shut down
+		log.Info().Msg("Context cancelled")
 
-			// Wait for all Kafka workers to finish before shutting down the service
-			log.Info().Msg("Waiting for Kafka workers to complete...")
-			wg.Wait() // Wait for all worker goroutines to complete
-			log.Info().Msg("All Kafka workers stopped")
+		// Wait for all Kafka workers to finish before shutting down the service
+		log.Info().Msg("Waiting for Kafka workers to complete...")
+		wg.Wait() // Wait for all worker goroutines to complete
+		log.Info().Msg("All Kafka workers stopped")
 
-			// Delay for Closing Worker error channel to get closed
-			time.Sleep(2 * time.Second)
+		// Gracefully shut down the Kafka consumer service
+		shutdownOnce.Do(func() {
+			shutdownConsumer()
+		})
+		return
 
-			// Consume all remaining error messages from errChan before shutting down
-		ConsumeErrors:
-			for {
-				select {
-				case workerErr, ok := <-errChan:
-					if ok {
-						log.Error().Err(workerErr.Err).Msgf("Kafka worker error for topic: %s, workerName: %s", workerErr.Topic, workerErr.WorkerName)
-					} else {
-						log.Info().Msg("All remaining Kafka worker errors consumed. Proceeding with shutdown.")
-						break ConsumeErrors // Break out of the labeled loop
-					}
-				default:
-					// No more error messages to consume
-					log.Info().Msg("No more worker errors to process.")
-					break ConsumeErrors // Break out of the labeled loop
-				}
-			}
-
-			// Gracefully shut down the Kafka consumer service
+	case _, ok := <-workerDone:
+		if !ok {
+			// If the channel is closed, all workers are done, so shut down
+			log.Info().Msg("workerDone channel closed, all Kafka workers finished. Initiating service shutdown...")
 			shutdownOnce.Do(func() {
 				shutdownConsumer()
 			})
 			return
-
-		case workerErr, ok := <-errChan:
-			if !ok {
-				// If the channel is closed, all workers are done, so shut down
-				log.Info().Msg("Worker error channel closed, all Kafka workers finished. Initiating service shutdown...")
-				shutdownOnce.Do(func() {
-					shutdownConsumer()
-				})
-				return
-			}
-
-			log.Error().Err(workerErr.Err).Msgf("Kafka worker error for topic: %s, workerName: %s", workerErr.Topic, workerErr.WorkerName)
-
-			// Reduce worker count for the topic
-			remainingWorkers := workerTracker.DecrementWorker(workerErr.Topic)
-
-			if remainingWorkers == 1 {
-				log.Warn().Msgf("Only one worker remaining for topic: %s", workerErr.Topic)
-			} else if remainingWorkers == 0 {
-				log.Error().Msgf("No workers remaining for topic: %s", workerErr.Topic)
-			}
 		}
 	}
 }

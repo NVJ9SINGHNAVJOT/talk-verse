@@ -62,7 +62,17 @@ func ProcessMessage(msg kafka.Message, workerName string) {
 		customErrMsg, err = handleUnseenCountTopic(msg.Value)
 	default:
 		// Log a warning for unknown topics
-		log.Warn().Msgf("Unknown topic: %s, value: %s", msg.Topic, string(msg.Value))
+		log.Warn().
+			Str("worker", workerName).
+			Interface("message_details", map[string]interface{}{
+				"topic":         msg.Topic,
+				"partition":     msg.Partition,
+				"offset":        msg.Offset,
+				"highWaterMark": msg.HighWaterMark,
+				"value":         string(msg.Value),
+				"time":          msg.Time,
+			}).
+			Msg("Unknown topic")
 		return
 	}
 
@@ -70,10 +80,15 @@ func ProcessMessage(msg kafka.Message, workerName string) {
 	if err != nil {
 		log.Error().
 			Err(err).
-			Str("topic", msg.Topic).
 			Str("worker", workerName).
-			Int("partition", msg.Partition).
-			Str("kafka_message", string(msg.Value)).
+			Interface("message_details", map[string]interface{}{
+				"topic":         msg.Topic,
+				"partition":     msg.Partition,
+				"offset":        msg.Offset,
+				"highWaterMark": msg.HighWaterMark,
+				"value":         string(msg.Value),
+				"time":          msg.Time,
+			}).
 			Msg(customErrMsg)
 	}
 }

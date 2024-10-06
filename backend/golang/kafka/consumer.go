@@ -12,131 +12,167 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-// Topics to consume from Kafka.
+// List of topics to be consumed by the Kafka consumer.
+// These topics are predefined and will be used to spawn consumers.
 var topics = []string{"message", "gpMessage", "unseenCount"}
 
-// Retry settings for consuming Kafka messages.
+// retryAttempts defines how many times a worker will retry to consume a message
+// if there is a failure during message consumption.
 const retryAttempts = 5
-const backoff = 2 * time.Second
 
-// WorkerError struct holds details of the error that occurred while processing a message.
-// It includes the topic, the error itself, and the worker name.
-type WorkerError struct {
-	Topic      string
-	Err        error
-	WorkerName string
+// backoffDurations contains the predefined wait times between each retry attempt.
+// The durations grow exponentially to avoid overloading the system with retries.
+var backoffDurations = []time.Duration{
+	4 * time.Second,  // Wait 4 seconds before 2nd attempt
+	8 * time.Second,  // Wait 8 seconds before 3rd attempt
+	16 * time.Second, // Wait 16 seconds before 4th attempt
+	20 * time.Second, // Wait 20 seconds before 5th (final) attempt
 }
 
-// workerTracker struct is used to track the number of workers per topic.
-// It ensures thread-safe access to the worker counts using a mutex.
+// topicTracker tracks the number of active workers for a specific topic.
+// It uses a mutex to ensure that modifications to the worker count are thread-safe.
+type topicTracker struct {
+	count int        // Number of active workers for the topic
+	lock  sync.Mutex // Mutex to synchronize access to the worker count
+}
+
+// workerTracker manages the worker count for multiple topics using a map.
+// Each topic has its own tracker to maintain and control worker concurrency.
 type workerTracker struct {
-	workerCount map[string]int
-	mu          sync.Mutex
+	topics map[string]*topicTracker // A map of topics with their respective worker trackers
 }
 
-// NewWorkerTracker initializes and returns a new workerTracker instance.
-// It assigns the number of workers per group (per topic) specified by the user.
-func NewWorkerTracker(workersPerGroup int) *workerTracker {
-	workerCount := make(map[string]int)
+// workerErrorManager is a global instance of workerTracker to manage worker counts.
+// It initializes an empty map that will later hold topics and their corresponding worker counts.
+var workerErrorManager = workerTracker{
+	topics: make(map[string]*topicTracker), // Initialize the topics map
+}
 
-	// Loop through each topic and assign the number of workers for that topic.
+// decrementWorker safely decreases the worker count for a given topic in the workerTracker.
+// It locks the topic-specific mutex to ensure that no other goroutines modify the worker count simultaneously.
+// If there are remaining workers for the topic, it logs a warning with the updated worker count.
+// If all workers for the topic are exhausted, it logs an error indicating that no workers remain.
+func (w *workerTracker) decrementWorker(_ context.Context, group, topic, workerName string, _ *sync.WaitGroup) {
+	// Acquire the lock for the given topic to ensure thread-safe access to the worker count
+	t := w.topics[topic]
+	t.lock.Lock()
+	defer t.lock.Unlock() // Ensure the lock is released after the count is updated
+
+	// Decrement the worker count for the specified topic
+	t.count--
+	log.Warn().
+		Str("topic", topic).
+		Str("group", group).
+		Str("workerName", workerName).Msg("worker stopped")
+
+	// HACK: New worker can be added if needed.
+	// Currently, no new worker is started, but all necessary parameters (group name, topic name, worker name)
+	// are available to start a replacement worker if required after this decrement operation.
+	if t.count > 0 {
+		// Log a warning if only one or a few workers remain for the topic
+		log.Warn().
+			Str("topic", topic).
+			Str("group", group).
+			Msgf("Only %d worker(s) remaining", t.count)
+	} else {
+		// Log an error if no workers are left to process the topic
+		log.Error().
+			Str("topic", topic).
+			Str("group", group).
+			Msg("No workers remaining")
+	}
+}
+
+// KafkaConsumeSetup initializes Kafka consumers by assigning a specified number of workers per topic.
+// It creates consumer groups and spawns workers to handle message consumption concurrently.
+func KafkaConsumeSetup(ctx context.Context, workerDone chan int, workersPerTopic int, wg *sync.WaitGroup) {
+	// Initialize worker counts for each topic by setting up a tracker for each.
 	for _, topic := range topics {
-		workerCount[topic] = workersPerGroup
+		workerErrorManager.topics[topic] = &topicTracker{count: workersPerTopic} // Set worker count
 	}
 
-	return &workerTracker{
-		workerCount: workerCount,
-	}
-}
-
-// DecrementWorker decreases the worker count for a given topic and returns the remaining workers for that topic.
-// It ensures thread-safety using a mutex.
-func (w *workerTracker) DecrementWorker(topic string) int {
-	w.mu.Lock()
-	defer w.mu.Unlock()
-
-	// Check if the topic exists and reduce the worker count if greater than 0.
-	if count, exists := w.workerCount[topic]; exists && count > 0 {
-		w.workerCount[topic]--
-	}
-
-	// Return the remaining worker count for the specified topic.
-	return w.workerCount[topic]
-}
-
-// KafkaConsumeSetup sets up Kafka consumers by creating one consumer group per topic and assigning workers to each group.
-// It spawns a set of workers for each topic to handle message consumption concurrently.
-func KafkaConsumeSetup(ctx context.Context, errChan chan<- WorkerError, workersPerTopic int, wg *sync.WaitGroup) {
-	// Iterate over the list of topics to create consumer groups and workers for each.
+	// Loop through each topic to create consumer groups and spawn workers
 	for _, topic := range topics {
+		// Create a Kafka consumer group name using the specified topic.
+		// The group name is derived from a predefined prefix in the configuration
+		// followed by the topic name and a suffix indicating it's a group.
+		groupName := fmt.Sprintf("%s-%s-group", config.Envs.KAFKA_GROUP_PREFIX_ID, topic)
 
-		// Generate the Kafka consumer group name dynamically based on the topic.
-		groupName := fmt.Sprintf(config.Envs.KAFKA_GROUP_PREFIX_ID+"-%s-group", topic)
+		// Log the initiation of the consumer group, providing key details such as
+		// the topic name, the generated group name, and the number of workers.
 		log.Info().
 			Str("topic", topic).
 			Str("group", groupName).
 			Int("workersCount", workersPerTopic).
 			Msg("Starting consumer group")
 
-		// Create a set of workers to consume messages from the current topic.
+		// Launch the specified number of workers to handle message consumption
+		// for the current topic. Each worker will operate concurrently.
 		for workerID := 1; workerID <= workersPerTopic; workerID++ {
-			wg.Add(1)
-			go func(group string, topic string, workerID int) {
-				defer wg.Done()
-				// Generate a unique worker name based on the group and worker ID.
-				workerName := fmt.Sprintf("%s-worker-%d", group, workerID)
+			wg.Add(1) // Increment the WaitGroup counter to track the completion of each worker
 
-				log.Info().
-					Str("topic", topic).
-					Str("worker", workerName).
-					Msg("Starting worker")
+			// Create a unique worker name that incorporates the topic name, group name, and worker ID.
+			// For example, if the KAFKA_GROUP_PREFIX_ID is "talkverse", the topic is "message",
+			// and the worker ID is 1, the resulting workerName will be:
+			// "talkverse-message-group-worker-1"
+			workerName := fmt.Sprintf("%s-worker-%d", groupName, workerID)
 
-				// Attempt to consume messages with retries in case of errors.
-				if err := consumeWithRetry(ctx, group, topic, workerName); err != nil {
-					errChan <- WorkerError{Topic: topic, Err: err, WorkerName: workerName}
-				}
-				log.Warn().
-					Str("topic", topic).
-					Str("worker", workerName).
-					Msg("Shutting down worker")
-			}(groupName, topic, workerID)
+			// Start a goroutine for each worker, which will handle message consumption with retry logic
+			go consumeWithRetry(ctx, groupName, topic, workerName, wg)
 		}
 	}
 
-	// Wait for all workers to finish their tasks before closing the error channel.
+	// Wait for all workers to finish processing
 	wg.Wait()
-	log.Info().Msg("All workers have completed processing")
+	log.Info().Msg("All workers have completed processing") // Log completion of all workers
 
-	log.Info().Msg("Closing Worker error channel")
-	// Close the error channel after all workers are done processing messages.
-	close(errChan)
+	// Close the workerDone channel to signal that worker processing is complete
+	log.Info().Msg("Closing workerDone channel")
+	close(workerDone)
 }
 
-// consumeWithRetry attempts to consume Kafka messages for a specific topic with retry logic.
-// It retries the operation up to the defined number of attempts in case of failure.
-func consumeWithRetry(ctx context.Context, group, topic, workerName string) error {
+// consumeWithRetry attempts to consume messages from a Kafka topic and retries in case of failure.
+// It retries up to the defined number of retryAttempts and applies exponential backoff between attempts.
+func consumeWithRetry(ctx context.Context, group, topic, workerName string, wg *sync.WaitGroup) {
+	defer wg.Done() // Decrement the WaitGroup counter when the worker completes
+
+	// Log the start of the worker
+	log.Info().
+		Str("topic", topic).
+		Str("group", group).
+		Str("worker", workerName).
+		Msg("Starting worker")
+
+	// Loop to retry message consumption
 	for attempt := 1; attempt <= retryAttempts; attempt++ {
+		// Attempt to consume a message from the Kafka topic
 		err := consumeKafkaTopic(ctx, group, topic, workerName)
 
-		// Retry if the error is not due to context cancellation.
+		// Check if an error occurred and retry if it's not a context cancellation error
 		if err != nil && !errors.Is(err, context.Canceled) {
+			// Log the error and the retry attempt
 			log.Error().
 				Err(err).
-				Str("topic", topic).
 				Str("worker", workerName).
 				Str("attempt", fmt.Sprintf("%d/%d", attempt, retryAttempts)).
 				Msg("Error during message consumption, retrying")
-			time.Sleep(backoff)
+
+			// Apply a backoff duration before the next retry attempt
+			if attempt < retryAttempts {
+				time.Sleep(backoffDurations[attempt-1])
+			}
 		} else {
-			// Log successful message consumption and return.
+			// Log successful consumption and exit the loop if no errors occurred
 			log.Info().
-				Str("topic", topic).
 				Str("worker", workerName).
 				Msg("Successfully consumed messages")
-			return nil // Exit loop on success.
+			return
 		}
 	}
-	return errors.New("retries exhausted for consuming") // Return error after retry attempts are exhausted.
+
+	// If retries are exhausted, log a warning and decrement the worker count
+	log.Warn().Str("topic", topic).Str("worker", workerName).Msg("Retries exhausted for worker")
+	workerErrorManager.decrementWorker(ctx, group, topic, workerName, wg)
 }
 
 // consumeKafkaTopic connects to Kafka and consumes messages from the specified topic using the provided group ID.
@@ -158,7 +194,7 @@ func consumeKafkaTopic(ctx context.Context, group, topic, workerName string) err
 	// Ensure the Kafka reader is closed properly when the function exits.
 	defer func() {
 		if err := r.Close(); err != nil {
-			log.Error().Err(err).Msgf("Failed to close Kafka reader for %s", workerName)
+			log.Error().Err(err).Str("worker", workerName).Msg("Failed to close Kafka reader")
 		}
 	}()
 
@@ -167,7 +203,7 @@ func consumeKafkaTopic(ctx context.Context, group, topic, workerName string) err
 		select {
 		case <-ctx.Done():
 			// If the context is canceled, log and stop message consumption.
-			log.Info().Msgf("Context cancelled, shutting down %s", workerName)
+			log.Info().Str("worker", workerName).Msg("Context cancelled, shutting down")
 			return nil
 		default:
 			// Fetch the next message from the Kafka topic.
@@ -184,10 +220,16 @@ func consumeKafkaTopic(ctx context.Context, group, topic, workerName string) err
 				// Log error if commit fails.
 				log.Error().
 					Err(err).
-					Str("topic", msg.Topic).
 					Str("worker", workerName).
-					Int("partition", msg.Partition).
-					Str("kafka_message", string(msg.Value))
+					Interface("message_details", map[string]interface{}{
+						"topic":         msg.Topic,
+						"partition":     msg.Partition,
+						"offset":        msg.Offset,
+						"highWaterMark": msg.HighWaterMark,
+						"value":         string(msg.Value),
+						"time":          msg.Time,
+					}).
+					Msg("Commit failed for message offset")
 			}
 		}
 	}
