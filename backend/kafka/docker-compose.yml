@@ -15,7 +15,6 @@ networks:
     external: true
 
 services:
-  # NOTE: To enable a cluster of brokers, uncomment the Kafka broker configurations below.
   talkverse-kafka-0:
     image: docker.io/bitnami/kafka:3.8.0
     container_name: talkverse-kafka-0

@@ -14,22 +14,22 @@ tasks:
   i:
     desc: Install all necessary dependencies for the project across backend and frontend services.
     cmds:
-      - cd backend/nodejs && npm install
-      - cd backend/golang && go mod download && go mod verify
+      - cd backend/server && npm install
+      - cd backend/consumer && go mod download && go mod verify
       - cd frontend && npm install
 
   format:
-    desc: Format code across backend (Node.js, Go) and frontend using predefined standards.
+    desc: Format code across backend (server, consumer) and frontend (client) using predefined standards.
     cmds:
-      - cd backend/nodejs && npm run prettier-write
-      - cd backend/golang && gofmt -s -w .
+      - cd backend/server && npm run prettier-write
+      - cd backend/consumer && gofmt -s -w .
       - cd frontend && npm run prettier-write
 
   build:
-    desc: Build the backend (Node.js, Go) and frontend for local development and production readiness.
+    desc: Build the backend (server, consumer) and frontend (client) for local development and production readiness.
     cmds:
-      - cd backend/nodejs && npm run build
-      - cd backend/golang && go build -o ./dist/main main.go
+      - cd backend/server && npm run build
+      - cd backend/consumer && go build -o ./dist/main main.go
       - cd frontend && npm run build
 
   proxy:
@@ -65,32 +65,30 @@ tasks:
       bash clone_files.sh
 
   dev:
-    desc: Run backend and frontend servers concurrently for local development.
+    desc: Run backend and frontend services concurrently for local development (ensure talkverse-kafka-development is running).
     cmds:
-      - task: dev-kafka
-      - task: dev-kafka-topics
       - npm run conc
 
-  golang:
-    desc: Start the Go backend service (ensure Kafka is running before this).
+  consumer:
+    desc: Start the consumer from backend (ensure talkverse-kafka-development is running).
     cmds:
-      - cd backend/golang && go run main.go
+      - cd backend/consumer && go run main.go
 
-  nodejs:
-    desc: Start the Node.js backend service (ensure Kafka is running before this).
+  server:
+    desc: Start the server from backend (ensure talkverse-kafka-development is running).
     cmds:
-      - cd backend/nodejs && npm run dev
+      - cd backend/server && npm run dev
 
   client:
-    desc: Start the React.js frontend service, ensuring backend services are up and running.
+    desc: Start the client from frontend, ensuring backend services are up and running.
     cmds:
       - cd frontend && npm run dev
 
   k-cluster:
     desc: Display detailed information about the Kafka broker cluster, including status and replication.
     cmds:
-      - cd backend/kafka && docker-compose exec talkverse-kafka-0 kafka-metadata-quorum.sh --bootstrap-server talkverse-kafka-0:9092 describe --status
-      - cd backend/kafka && docker-compose exec talkverse-kafka-0 kafka-metadata-quorum.sh --bootstrap-server talkverse-kafka-0:9092 describe --replication
+      - cd backend/kafka && docker exec talkverse-kafka-0 kafka-metadata-quorum.sh --bootstrap-server talkverse-kafka-0:9092 describe --status
+      - cd backend/kafka && docker exec talkverse-kafka-0 kafka-metadata-quorum.sh --bootstrap-server talkverse-kafka-0:9092 describe --replication
 
   kafka-topics:
     desc: Create Kafka topics for production, with customizable partition settings as needed.
@@ -110,14 +108,14 @@ tasks:
       - docker-compose -f ./backend/kafka/docker-compose.yml up -d
       - sleep 10 # Wait for 10 seconds to ensure brokers are ready
       - task: kafka-topics
-      - docker-compose -f ./backend/golang/docker-compose.yml up -d
-      - docker-compose -f ./backend/nodejs/docker-compose.yml up -d
+      - docker-compose -f ./backend/consumer/docker-compose.yml up -d
+      - docker-compose -f ./backend/server/docker-compose.yml up -d
 
   compose-down-backend:
     desc: Shut down all backend services using Docker Compose, including databases, Kafka, and app servers.
     cmds:
-      - docker-compose -f ./backend/nodejs/docker-compose.yml down
-      - docker-compose -f ./backend/golang/docker-compose.yml down
+      - docker-compose -f ./backend/server/docker-compose.yml down
+      - docker-compose -f ./backend/consumer/docker-compose.yml down
       - docker-compose -f ./backend/kafka/docker-compose.yml down
       - docker-compose -f ./backend/databases/docker-compose.yml down
 

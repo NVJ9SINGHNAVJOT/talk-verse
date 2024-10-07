@@ -1,35 +1,30 @@
 # dependencies
-/frontend/node_modules
-/backend/nodejs/node_modules
+# Ignore all node_modules folders in the project
+**/node_modules
 
 # production
-/frontend/build
-/frontend/dist
-
-/backend/nodejs/build
-/backend/nodejs/dist
-/backend/golang/build
-/backend/golang/dist
+# Ignore all build and dist folders across the project
+**/build
+**/dist
 
 # database files create by commands
-# /backend/nodejs/src/db/postgresql/migrations
+# /backend/server/src/db/postgresql/migrations
 
 # environment
 *.env
 !.env.example
 
 # development
-/backend/nodejs/tmp
-/backend/golang/tmp
-/backend/golang/temp
+/backend/server/tmp
+/backend/consumer/tmp
+/backend/consumer/temp
 /node_modules
 
 # temporary storage
-/backend/nodejs/uploadStorage
+/backend/server/uploadStorage
 
 # logs
-/backend/nodejs/logs
-/backend/golang/logs
+/backend/server/logs
 
 # design backup
 .$Talk-Verse-System-Design.drawio.bkp
