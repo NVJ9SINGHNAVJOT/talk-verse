@@ -13,40 +13,40 @@ TalkVerse is a social media web application.
 
 #### User Authentication :
 
-   - TalkVerse ensures secure user registration and authentication using **JWT (JSON Web Tokens)**. Users can easily sign up, log in, and manage their profiles with confidence.
-   - **Bcrypt** is used for password hashing, adding an extra layer of security to user data.
+- TalkVerse ensures secure user registration and authentication using **JWT (JSON Web Tokens)**. Users can easily sign up, log in, and manage their profiles with confidence.
+- **Bcrypt** is used for password hashing, adding an extra layer of security to user data.
 
 #### Application Stack :
 
-   - The web application is built using TypeScript, React, Node.js, MongoDB, and PostgreSQL. These technologies form the foundation for its functionality and user interface.
+- The web application is built using TypeScript, React, Node.js, MongoDB, and PostgreSQL. These technologies form the foundation for its functionality and user interface.
 
 #### Secure Chat with Encryption :
 
-   - The chat feature incorporates both **asymmetric and symmetric encryption** methods. This ensures that user messages remain confidential and protected.
+- The chat feature incorporates both **asymmetric and symmetric encryption** methods. This ensures that user messages remain confidential and protected.
 
 #### Real-Time Communication :
 
-   - Websockets are employed to enable live chat functionality. Users can engage in real-time conversations, making the application dynamic and responsive.
+- Websockets are employed to enable live chat functionality. Users can engage in real-time conversations, making the application dynamic and responsive.
 
 #### Kafka as a Message Broker :
 
-   - Efficiently handles real-time data streams.
-   - Ensures reliable message delivery and fault tolerance.
-   - Scales seamlessly to accommodate high-throughput data pipelines.
+- Efficiently handles real-time data streams.
+- Ensures reliable message delivery and fault tolerance.
+- Scales seamlessly to accommodate high-throughput data pipelines.
 
 #### Golang for Concurrently Handling Messages :
 
-   - Utilizes Go’s goroutines for efficient concurrent processing.
-   - Manages Kafka messages and MongoDB operations simultaneously.
-   - Enhances performance and responsiveness of the system.
+- Utilizes Go’s goroutines for efficient concurrent processing.
+- Manages Kafka messages and MongoDB operations simultaneously.
+- Enhances performance and responsiveness of the system.
 
 #### Messaging Channels :
 
-   - Channels organize message operations within the application.
+- Channels organize message operations within the application.
 
 #### Blogging and Post Creation :
 
-   - Users have the ability to create and share blog posts or other content. This feature encourages engagement and content sharing.
+- Users have the ability to create and share blog posts or other content. This feature encourages engagement and content sharing.
 
 ## Installation
 
@@ -56,28 +56,31 @@ TalkVerse is a social media web application.
   ```
 - Set up environment variables.
   In the root directory inside
-     - /backend/databases
-     - /backend/nodejs
-     - /backend/golang
-     - /frontend
-  
+
+  - /backend/databases
+  - /backend/server
+  - /backend/consumer
+  - /frontend
+
   **.env.example** file is present. Replace it with **.env** file and set the required variables running application _(.env.example contains all variables examples)_.
+
 - Project can be run on local machine by Docker or by installing dependencies locally.
-- **Using Docker**  ***Recommended***
+- **Using Docker:** **_Recommended for Production_**
 
   ```
   cd talk-verse
   task compose-up-backend
   task compose-up-frontend
   ```
+
 - Open the project in your browser at [`http://localhost:5173`](http://localhost:5173).
 
-- **Using local machine dependencies**
+- **Using local machine dependencies:** **_Recommended for Development_**
 
 1. Install Node.js (skip if already installed).
 2. Install Golang (skip if already installed).
 3. Install the required packages and start the servers.
-4. If you have Apache Kafka installed locally, skip the *task dev-kafka* and *task dev-kafka-topics* steps, and create the topics as described in the *this_create_kafka_topics.sh* file. Otherwise, start Docker (Apache Kafka is used in this project with Docker) and execute the following task commands:
+4. If you have Apache Kafka installed locally, skip the _task dev-kafka_ and _task dev-kafka-topics_ steps, and create the topics as described in the _this_create_kafka_topics.sh_ file. Otherwise, start Docker (Apache Kafka is used in this project with Docker) and execute the following task commands:
 
    ```
    cd talk-verse
@@ -86,8 +89,9 @@ TalkVerse is a social media web application.
    task dev-kafka-topics
    task dev
    ```
+
 - Open the project in your browser at [`http://localhost:4173`](http://localhost:4173).
-- You can execute the ***task*** command in the terminal to view all the available commands in the task file.
+- You can execute the **_task_** command in the terminal to view all the available commands in the task file.
 
 ## Important
 
@@ -97,19 +101,20 @@ TalkVerse is a social media web application.
 
 ## System Design
 
-   ### Hosting
-   ![diagram-export-5-10-2024-1_26_59-pm](https://github.com/user-attachments/assets/56bd35f2-d89f-44fa-9c48-093c86381197)
+### Hosting
 
-   ### Working
-   - [`Open`](https://raw.githubusercontent.com/NVJ9SINGHNAVJOT/talk-verse/8631369b66399c7d8aa72b89336a7048419fef9a/Talk-Verse-System-Design.svg)
-   ![Talk-Verse-System-Design](https://raw.githubusercontent.com/NVJ9SINGHNAVJOT/talk-verse/8631369b66399c7d8aa72b89336a7048419fef9a/Talk-Verse-System-Design.svg)
+![diagram-export-5-10-2024-1_26_59-pm](https://github.com/user-attachments/assets/56bd35f2-d89f-44fa-9c48-093c86381197)
+
+### Working
+
+- [`Open`](https://raw.githubusercontent.com/NVJ9SINGHNAVJOT/talk-verse/8631369b66399c7d8aa72b89336a7048419fef9a/Talk-Verse-System-Design.svg)
+  ![Talk-Verse-System-Design](https://raw.githubusercontent.com/NVJ9SINGHNAVJOT/talk-verse/8631369b66399c7d8aa72b89336a7048419fef9a/Talk-Verse-System-Design.svg)
 
 ---
 
 ## Screenshots
 
 ![homePage](https://github.com/user-attachments/assets/3c0e46a5-4c70-4a6e-a178-fb14836ccfa4)
-
 
 <details>
   <summary>More screenshots</summary>
@@ -132,6 +137,5 @@ TalkVerse is a social media web application.
 ![loginPage](https://github.com/user-attachments/assets/f69df482-5576-45c6-a70d-4a3ed9b38738)
 ![followers](https://github.com/user-attachments/assets/234d8ab3-94bf-4ac4-b185-80769c6d5d15)
 ![skeleton](https://github.com/user-attachments/assets/9a059f74-fc57-48b3-9c8f-90dafa05fab3)
-
 
 </details>
