@@ -14,6 +14,7 @@ tasks:
   i:
     desc: Install all necessary dependencies for the project across backend and frontend services.
     cmds:
+      - npm install
       - cd backend/server && npm install
       - cd backend/consumer && go mod download && go mod verify
       - cd frontend && npm install
@@ -66,23 +67,19 @@ tasks:
 
   dev:
     desc: Run backend and frontend services concurrently for local development (ensure talkverse-kafka-development is running).
-    cmds:
-      - npm run conc
+    cmd: npm run conc
 
   consumer:
     desc: Start the consumer from backend (ensure talkverse-kafka-development is running).
-    cmds:
-      - cd backend/consumer && go run main.go
+    cmd: cd backend/consumer && go run main.go
 
   server:
     desc: Start the server from backend (ensure talkverse-kafka-development is running).
-    cmds:
-      - cd backend/server && npm run dev
+    cmd: cd backend/server && npm run dev
 
   client:
     desc: Start the client from frontend, ensuring backend services are up and running.
-    cmds:
-      - cd frontend && npm run dev
+    cmd: cd frontend && npm run dev
 
   k-cluster:
     desc: Display detailed information about the Kafka broker cluster, including status and replication.
