@@ -100,6 +100,15 @@ tasks:
       # Windows (Git Bash)
       - cd task_scripts && bash this_create_kafka_topics.sh "talkverse-kafka-0" "3"
 
+  compose-build:
+    desc: Build all Docker Compose services for backend and frontend.
+    cmds:
+      - docker-compose -f ./backend/databases/docker-compose.yml build
+      - docker-compose -f ./backend/kafka/docker-compose.yml build
+      - docker-compose -f ./backend/consumer/docker-compose.yml build
+      - docker-compose -f ./backend/server/docker-compose.yml build
+      - docker-compose -f ./frontend/docker-compose.yml build
+
   compose-up-backend:
     desc: Start all backend services using Docker Compose, including databases, Kafka, and app servers.
     cmds:
