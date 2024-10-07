@@ -51,7 +51,7 @@ TalkVerse is a social media web application.
 ## Installation
 
 - Clone the repository to your local machine.
-  ```
+  ```sh
   git clone https://github.com/NVJ9SINGHNAVJOT/talk-verse.git
   ```
 - Set up environment variables.
@@ -67,7 +67,7 @@ TalkVerse is a social media web application.
 - Project can be run on local machine by Docker or by installing dependencies locally.
 - **Using Docker:** **_Recommended for Production_**
 
-  ```
+  ```sh
   cd talk-verse
   task compose-up-backend
   task compose-up-frontend
@@ -82,11 +82,12 @@ TalkVerse is a social media web application.
 3. Install the required packages and start the servers.
 4. If you have Apache Kafka installed locally, skip the _task dev-kafka_ and _task dev-kafka-topics_ steps, and create the topics as described in the _this_create_kafka_topics.sh_ file. Otherwise, start Docker (Apache Kafka is used in this project with Docker) and execute the following task commands:
 
-   ```
+   ```sh
    cd talk-verse
    task i
    task dev-kafka
    task dev-kafka-topics
+   # task dev runs consumer, server, and client concurrently
    task dev
    ```
 
