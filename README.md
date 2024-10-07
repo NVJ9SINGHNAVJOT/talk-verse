@@ -77,15 +77,17 @@ TalkVerse is a social media web application.
 1. Install Node.js (skip if already installed).
 2. Install Golang (skip if already installed).
 3. Install the required packages and start the servers.
-4. If you have Apache Kafka installed locally, skip this step. Otherwise, start Docker (Apache Kafka is used in this project with Docker).
+4. If you have Apache Kafka installed locally, skip the *task dev-kafka* and *task dev-kafka-topics* steps, and create the topics as described in the *this_create_kafka_topics.sh* file. Otherwise, start Docker (Apache Kafka is used in this project with Docker) and execute the following task commands:
 
    ```
    cd talk-verse
    task i
-   task build
+   task dev-kafka
+   task dev-kafka-topics
    task dev
    ```
 - Open the project in your browser at [`http://localhost:4173`](http://localhost:4173).
+- You can execute the ***task*** command in the terminal to view all the available commands in the task file.
 
 ## Important
 
