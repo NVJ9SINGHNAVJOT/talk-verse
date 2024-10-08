@@ -3,6 +3,12 @@
 # Source the file containing the container status functions
 source ./docker_container_status.sh
 
+# Check if the container name and network name are provided as arguments
+if [ -z "$1" ] || [ -z "$2" ]; then
+    echo "Usage: $0 <container_name> <network_name>"
+    exit 1
+fi
+
 # Function to manage Kafka container
 manage_kafka_container() {
     local container_name="$1"          # Local variable for container name
@@ -41,12 +47,6 @@ manage_kafka_container() {
             docker.io/bitnami/kafka:latest
     fi
 }
-
-# Check if the container name and network name are provided as arguments
-if [ -z "$1" ] || [ -z "$2" ]; then
-    echo "Usage: $0 <container_name> <network_name>"
-    exit 1
-fi
 
 # Call the function with the provided container name and network name
 manage_kafka_container "$1" "$2"

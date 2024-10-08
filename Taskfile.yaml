@@ -47,10 +47,10 @@ tasks:
       - cd task_scripts && bash this_create_docker_networks.sh
 
   dev-kafka-topics:
-    desc: Create Kafka topics for development using a script to define topic configurations.
+    desc: Create Kafka topics for the development container using the `manage_kafka_config_file_topics.sh` script.
     cmd:
       # Windows (Git Bash)
-      cd task_scripts && bash this_create_kafka_topics.sh "talkverse-kafka-development" "1"
+      cd task_scripts && bash manage_kafka_config_file_topics.sh "talkverse-kafka-development" "../kafka_config.sh" "create" "1"
 
   dev-kafka:
     desc: Start a development instance of Kafka with networking configured for development.
@@ -88,14 +88,10 @@ tasks:
       - cd backend/kafka && docker exec talkverse-kafka-0 kafka-metadata-quorum.sh --bootstrap-server talkverse-kafka-0:9092 describe --replication
 
   kafka-topics:
-    desc: Create Kafka topics for production, with customizable partition settings as needed.
-    env:
-      MESSAGE_PARTITIONS: 100
-      GPMESSAGE_PARTITIONS: 100
-      UNSEENCOUNT_PARTITIONS: 100
-    cmds:
+    desc: Create Kafka topics for the production cluster (you can modify partition settings in the kafka_config.sh file).
+    cmd:
       # Windows (Git Bash)
-      - cd task_scripts && bash this_create_kafka_topics.sh "talkverse-kafka-0" "3"
+      cd task_scripts && bash manage_kafka_config_file_topics.sh "talkverse-kafka-0" "../kafka_config.sh" "create" "3"
 
   compose-build:
     desc: Build all Docker Compose services for backend and frontend.
@@ -127,10 +123,8 @@ tasks:
 
   compose-up-frontend:
     desc: Start all frontend services using Docker Compose.
-    cmds:
-      - docker-compose -f ./frontend/docker-compose.yml up -d
+    cmd: docker-compose -f ./frontend/docker-compose.yml up -d
 
   compose-down-frontend:
     desc: Shut down all frontend services using Docker Compose.
-    cmds:
-      - docker-compose -f ./frontend/docker-compose.yml down
+    cmd: docker-compose -f ./frontend/docker-compose.yml down

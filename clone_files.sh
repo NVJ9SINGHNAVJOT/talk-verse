@@ -14,6 +14,7 @@ declare -a FILES_TO_COPY=(                           # Array of file paths to co
     "scripts/docker_container_status.sh"
     "scripts/manage_kafka_topics.sh"
     "scripts/docker_proxy_network.sh"
+    "scripts/manage_kafka_config_file_topics.sh"
 )
 
 # Check if the destination directory exists
