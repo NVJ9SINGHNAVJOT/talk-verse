@@ -108,9 +108,9 @@ TalkVerse is a social media web application.
 
 ### Working
 
-- <a href="https://github.com/NVJ9SINGHNAVJOT/talk-verse/blob/main/Talk-Verse-System-Design.svg" target="_blank">Open</a>
+- [`Open`](https://raw.githubusercontent.com/NVJ9SINGHNAVJOT/talk-verse/f1ed360a588fd8958dc7c56a647aa8e21669ae59/Talk-Verse-System-Design.svg)
 
-  ![Talk-Verse-System-Design](https://github.com/NVJ9SINGHNAVJOT/talk-verse/blob/main/Talk-Verse-System-Design.svg)
+  ![Talk-Verse-System-Design](https://raw.githubusercontent.com/NVJ9SINGHNAVJOT/talk-verse/f1ed360a588fd8958dc7c56a647aa8e21669ae59/Talk-Verse-System-Design.svg)
 
 ---
 
