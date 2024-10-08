@@ -7,11 +7,11 @@ networks:
     external: true
 
 services:
-  talkverse-frontend:
+  talkverse-client:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: talkverse-frontend
+    container_name: talkverse-client
     networks:
       - proxy
     ports: [4173:4173] # NOTE: disable in production

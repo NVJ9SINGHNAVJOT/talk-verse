@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ./logging.sh
+
 # Kafka broker configuration
 BROKER="localhost:9092"
 TIMEOUT=30  # Maximum wait time for Kafka to be ready (in seconds)
@@ -10,28 +12,41 @@ wait_for_kafka_ready() {
     local container_name="$1"
     local elapsed=0
 
-    # Exit if no container name is given
     if [ -z "$container_name" ]; then
-        echo "Error: No container name provided."
+        logerr "No container name provided."
         exit 1
     fi
 
-    # Wait until Kafka is ready or until the timeout is reached
     while [ "$elapsed" -lt "$TIMEOUT" ]; do
-        # Try to list topics to verify if Kafka is responsive
         if docker exec "$container_name" kafka-topics.sh --bootstrap-server "$BROKER" --list >/dev/null 2>&1; then
-            echo "Kafka is ready. Proceeding to actions..."
-            return 0  # Kafka is ready
+            loginf "Kafka is ready. Proceeding to actions..."
+            return 0
         else
-            echo "Waiting for Kafka to be ready... (elapsed time: $elapsed seconds)"
+            loginf "Waiting for Kafka to be ready... (elapsed time: $elapsed seconds)"
             sleep "$SLEEP_INTERVAL"
             elapsed=$((elapsed + SLEEP_INTERVAL))
         fi
     done
 
-    # If Kafka doesn't become ready in time, exit with an error
-    echo "Error: Timed out waiting for Kafka to be ready."
+    logerr "Timed out waiting for Kafka to be ready."
     exit 1
+}
+
+# Function to check if a topic exists
+topic_exists() {
+    local container_name="$1"
+    local topic_name="$2"
+
+    if [ -z "$container_name" ] || [ -z "$topic_name" ]; then
+        logerr "Container name and topic name must be provided."
+        exit 1
+    fi
+
+    if docker exec "$container_name" kafka-topics.sh --bootstrap-server "$BROKER" --list | grep -qw "$topic_name"; then
+        return 0
+    else
+        return 1
+    fi
 }
 
 # Function to delete a topic if it exists
@@ -39,25 +54,22 @@ delete_topic_if_exists() {
     local container_name="$1"
     local topic_name="$2"
 
-    # Exit if no container or topic name is given
     if [ -z "$container_name" ] || [ -z "$topic_name" ]; then
-        echo "Error: Container name and topic name must be provided."
+        logerr "Container name and topic name must be provided."
         exit 1
     fi
 
-    # Check if the topic exists
-    if docker exec "$container_name" kafka-topics.sh --bootstrap-server "$BROKER" --list | grep -qw "$topic_name"; then
-        echo "Deleting topic: $topic_name"
-        # Attempt to delete the topic
+    if topic_exists "$container_name" "$topic_name"; then
+        loginf "Deleting topic: $topic_name"
         if docker exec "$container_name" kafka-topics.sh --bootstrap-server "$BROKER" --delete --topic "$topic_name"; then
-            echo "Topic '$topic_name' deleted."
+            loginf "Topic '$topic_name' deleted."
         else
-            echo "Error: Failed to delete topic '$topic_name'. Exiting..."
-            exit 1  # Exit if the topic deletion fails
+            logerr "Failed to delete topic '$topic_name'."
+            exit 1
         fi
     else
-        echo "Error: Topic '$topic_name' does not exist. Exiting..."
-        exit 1  # Exit if the topic doesn't exist
+        logerr "Topic '$topic_name' does not exist."
+        exit 1
     fi
 }
 
@@ -68,25 +80,22 @@ create_topic_if_not_exists() {
     local partitions="$3"
     local replication_factor="$4"
 
-    # Exit if no container, topic name, partitions, or replication factor is given
     if [ -z "$container_name" ] || [ -z "$topic_name" ] || [ -z "$partitions" ] || [ -z "$replication_factor" ]; then
-        echo "Error: Container name, topic name, partitions, and replication factor must be provided."
+        logerr "Container name, topic name, partitions, and replication factor must be provided."
         exit 1
     fi
 
-    # Check if the topic already exists
-    if ! docker exec "$container_name" kafka-topics.sh --bootstrap-server "$BROKER" --list | grep -qw "$topic_name"; then
-        echo "Creating topic: $topic_name"
-        # Attempt to create the topic with specified partitions and replication factor
+    if ! topic_exists "$container_name" "$topic_name"; then
+        loginf "Creating topic: $topic_name"
         if docker exec "$container_name" kafka-topics.sh --bootstrap-server "$BROKER" --create \
             --topic "$topic_name" --partitions "$partitions" --replication-factor "$replication_factor"; then
-            echo "Topic '$topic_name' created with $partitions partitions and replication factor of $replication_factor."
+            loginf "Topic '$topic_name' created with $partitions partitions and replication factor of $replication_factor."
         else
-            echo "Error: Failed to create topic '$topic_name'. Exiting..."
-            exit 1  # Exit if the topic creation fails
+            logerr "Failed to create topic '$topic_name'."
+            exit 1
         fi
     else
-        echo "Topic '$topic_name' already exists."  # Topic already exists, no need to create
+        loginf "Topic '$topic_name' already exists."
     fi
 }
 
@@ -96,32 +105,29 @@ increase_partitions() {
     local topic_name="$2"
     local new_partitions="$3"
 
-    # Exit if no container, topic name, or new partitions count is given
     if [ -z "$container_name" ] || [ -z "$topic_name" ] || [ -z "$new_partitions" ]; then
-        echo "Error: Container name, topic name, and new partitions count must be provided."
+        logerr "Container name, topic name, and new partitions count must be provided."
         exit 1
     fi
 
-    # Check if the topic exists
-    if ! docker exec "$container_name" kafka-topics.sh --bootstrap-server "$BROKER" --list | grep -qw "$topic_name"; then
-        echo "Error: Topic '$topic_name' does not exist. Exiting..."
-        exit 1  # Exit the script if the topic doesn't exist
+    if ! topic_exists "$container_name" "$topic_name"; then
+        logerr "Topic '$topic_name' does not exist."
+        exit 1
     fi
 
-    # Get the current number of partitions
     local current_partitions
     current_partitions=$(docker exec "$container_name" kafka-topics.sh --bootstrap-server "$BROKER" --describe --topic "$topic_name" | grep "Partitions:" | awk '{print $2}')
 
     if [ "$current_partitions" -lt "$new_partitions" ]; then
-        echo "Increasing partitions for topic '$topic_name' from $current_partitions to $new_partitions."
+        loginf "Increasing partitions for topic '$topic_name' from $current_partitions to $new_partitions."
         if docker exec "$container_name" kafka-topics.sh --bootstrap-server "$BROKER" --alter \
             --topic "$topic_name" --partitions "$new_partitions"; then
-            echo "Successfully increased partitions for topic '$topic_name'."
+            loginf "Successfully increased partitions for topic '$topic_name'."
         else
-            echo "Error: Failed to increase partitions for topic '$topic_name'. Exiting..."
-            exit 1  # Exit the script on failure
+            logerr "Failed to increase partitions for topic '$topic_name'."
+            exit 1
         fi
     else
-        echo "No need to increase partitions for topic '$topic_name'; current partitions: $current_partitions, requested: $new_partitions."
+        loginf "No need to increase partitions for topic '$topic_name'; current partitions: $current_partitions, requested: $new_partitions."
     fi
 }

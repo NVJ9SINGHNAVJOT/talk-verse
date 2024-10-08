@@ -1,15 +1,16 @@
 #!/bin/bash
 
-# Source the file containing the container status and Kafka topic management functions
+source ./logging.sh
 source ./docker_container_status.sh
 source ./manage_kafka_topics.sh
 
 # Function to print usage instructions
 usage() {
-    echo "Usage: $0 <container_name> <config_file> <action> [replication_factor|new_partitions]"
-    echo "Actions: create, increase, delete"
-    echo "For 'create', provide replication_factor (1 or 3)"
-    echo "For 'increase', provide new_partitions count"
+    loginf "Usage: $0 <container_name> <config_file> <action> [replication_factor|new_partitions]"
+    loginf "Actions: create, increase, delete"
+    loginf "For 'create', provide replication_factor (1 or 3)"
+    loginf "For 'increase', provide new_partitions count"
+    logerr "Exiting..."
     exit 1
 }
 
@@ -22,12 +23,12 @@ fi
 KAFKA_CONTAINER="$1"
 CONFIG_FILE="$2"
 ACTION="$3"
-REPLICATION_FACTOR="$4"
-NEW_PARTITIONS="$4"  # Used in case of 'increase'
+REPLICATION_FACTOR="$4"  # Used in case of 'create'
+NEW_PARTITIONS="$4"      # Used in case of 'increase'
 
 # Check if the configuration file exists
 if [ ! -f "$CONFIG_FILE" ]; then
-    echo "Error: Configuration file '$CONFIG_FILE' not found."
+    logerr "Error: Configuration file '$CONFIG_FILE' not found."
     exit 1
 fi
 
@@ -38,31 +39,31 @@ source "$CONFIG_FILE"
 case "$ACTION" in
     "create")
         if [ -z "$REPLICATION_FACTOR" ] || ( [ "$REPLICATION_FACTOR" -ne 1 ] && [ "$REPLICATION_FACTOR" -ne 3 ] ); then
-            echo "Error: For 'create', replication factor must be provided and must be either 1 or 3."
+            logerr "Error: For 'create', replication factor must be provided and must be either 1 or 3."
             exit 1
         fi
         ;;
     "increase")
         if [ -z "$NEW_PARTITIONS" ]; then
-            echo "Error: For 'increase', new partitions count must be provided."
+            logerr "Error: For 'increase', new partitions count must be provided."
             exit 1
         fi
         ;;
     "delete")
         if [ -n "$4" ]; then  # Check if an extra 4th parameter is provided
-            echo "Error: No additional parameters should be provided for 'delete' action."
+            logerr "Error: No additional parameters should be provided for 'delete' action."
             exit 1
         fi
         ;;
     *)
-        echo "Error: Invalid action '$ACTION'. Action must be 'create', 'increase', or 'delete'."
+        logerr "Error: Invalid action '$ACTION'. Action must be 'create', 'increase', or 'delete'."
         usage
         ;;
 esac
 
 # Check if Kafka container is running
 if ! is_container_running "$KAFKA_CONTAINER"; then
-    echo "Error: Kafka container '$KAFKA_CONTAINER' is not running."
+    logerr "Error: Kafka container '$KAFKA_CONTAINER' is not running."
     exit 1
 fi
 
@@ -73,7 +74,7 @@ wait_for_kafka_ready "$KAFKA_CONTAINER"
 validate_topic_config() {
     # Check if the array size is zero
     if [ ${#topics_and_partitions[@]} -eq 0 ]; then
-        echo "Error: No topics found in the configuration file."
+        logerr "Error: No topics found in the configuration file."
         exit 1
     fi
 
@@ -82,18 +83,18 @@ validate_topic_config() {
 
         # Check if topic or partition value is missing
         if [ -z "$topic" ] || [ -z "$partitions" ]; then
-            echo "Error: Topic name or partition count missing in configuration for topic '$topic'."
+            logerr "Error: Topic name or partition count missing in configuration for topic '$topic'."
             exit 1
         fi
 
         # Check if partition is a valid number greater than zero and does not start with leading zeros
         if ! [[ "$partitions" =~ ^[1-9][0-9]*$ ]]; then
-            echo "Error: Partition count for topic '$topic' must be a valid number, greater than zero, and should not start with a leading zero."
+            logerr "Error: Partition count for topic '$topic' must be a valid number, greater than zero, and should not start with a leading zero."
             exit 1
         fi
 
         # Print the topic and partition value
-        echo "Topic: $topic, Partitions: $partitions"
+        loginf "Topic: \e[1;36m$topic\e[0m, Partitions: \e[33m$partitions\e[0m"
     done
 }
 
@@ -108,20 +109,20 @@ case "$ACTION" in
             partitions="${topics_and_partitions[$topic]}"
             create_topic_if_not_exists "$KAFKA_CONTAINER" "$topic" "$partitions" "$REPLICATION_FACTOR"
         done
-        echo "All topics created successfully."
+        logsuccess "All topics created successfully."
         ;;
     "increase")
         # Loop through the topics and increase partitions
         for topic in "${!topics_and_partitions[@]}"; do
             increase_partitions "$KAFKA_CONTAINER" "$topic" "$NEW_PARTITIONS"
         done
-        echo "Partitions increased successfully for all topics."
+        logsuccess "Partitions increased successfully for all topics."
         ;;
     "delete")
         # Loop through the topics and delete them
         for topic in "${!topics_and_partitions[@]}"; do
             delete_topic_if_exists "$KAFKA_CONTAINER" "$topic"
         done
-        echo "All topics deleted successfully."
+        logsuccess "All topics deleted successfully."
         ;;
 esac

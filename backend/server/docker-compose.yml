@@ -9,11 +9,11 @@ networks:
     external: true
 
 services:
-  talkverse-backend:
+  talkverse-server:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: talkverse-backend
+    container_name: talkverse-server
     networks:
       - talkverse-backend-proxy
       - proxy

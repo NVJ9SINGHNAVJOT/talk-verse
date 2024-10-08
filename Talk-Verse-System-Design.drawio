@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.8 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.8">
   <diagram name="Page-1" id="xBdfEz-9WboyrYXsSSGI">
-    <mxGraphModel dx="5286" dy="3374" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="7910" dy="4875" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -19,7 +19,7 @@
         <mxCell id="P_JwN5DNRsCG7_sgpVhp-40" value="" style="rounded=0;whiteSpace=wrap;html=1;strokeWidth=10;" parent="1" vertex="1">
           <mxGeometry x="889" y="-704" width="2167" height="2019" as="geometry" />
         </mxCell>
-        <mxCell id="nuiKF1VjGRspzTlw7c-V-1" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;User_A&lt;/font&gt;&lt;div&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;div&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;_id =&amp;gt; 1&lt;/font&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6a00ff;strokeColor=#3700CC;fontColor=#ffffff;" parent="1" vertex="1">
+        <mxCell id="nuiKF1VjGRspzTlw7c-V-1" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;User_A&lt;/font&gt;&lt;div&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;div&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;_id =&amp;gt; 1&lt;/font&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#76608a;strokeColor=#432D57;fontColor=#ffffff;" parent="1" vertex="1">
           <mxGeometry x="-976" y="-222" width="160" height="120" as="geometry" />
         </mxCell>
         <mxCell id="nuiKF1VjGRspzTlw7c-V-3" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=28;fillColor=#f9f7ed;strokeColor=#FFFFFF;" parent="1" edge="1">
@@ -55,7 +55,7 @@
         <mxCell id="nuiKF1VjGRspzTlw7c-V-11" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0050ef;strokeColor=#001DBC;fontColor=#ffffff;" parent="1" vertex="1">
           <mxGeometry x="1334" y="93" width="479" height="122" as="geometry" />
         </mxCell>
-        <mxCell id="nuiKF1VjGRspzTlw7c-V-15" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;channels map contains channels (queues) for each chat._id and group._id&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+        <mxCell id="nuiKF1VjGRspzTlw7c-V-15" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;channels map contains channels (queues) for each chat._id and group._id&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=#BD7000;fillColor=#f0a30a;fontColor=#000000;" parent="1" vertex="1">
           <mxGeometry x="934" y="-535" width="477" height="29" as="geometry" />
         </mxCell>
         <mxCell id="nuiKF1VjGRspzTlw7c-V-17" value="&lt;span style=&quot;font-size: 18px; text-wrap: wrap;&quot;&gt;channels&lt;/span&gt;" style="shape=table;startSize=30;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;html=1;" parent="1" vertex="1">
@@ -296,7 +296,7 @@
         <mxCell id="cfrhRi3zTsHiO-jlDfqi-19" value="8wet6w4u3gfs876dw8e7" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="cfrhRi3zTsHiO-jlDfqi-18" vertex="1">
           <mxGeometry x="10" y="39" width="150" height="26" as="geometry" />
         </mxCell>
-        <mxCell id="cfrhRi3zTsHiO-jlDfqi-20" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;User_B&lt;/font&gt;&lt;div&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;div&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;_id =&amp;gt; 2&lt;/font&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0050ef;fontColor=#ffffff;strokeColor=#001DBC;" parent="1" vertex="1">
+        <mxCell id="cfrhRi3zTsHiO-jlDfqi-20" value="&lt;font style=&quot;font-size: 18px;&quot;&gt;User_B&lt;/font&gt;&lt;div&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;div&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;_id =&amp;gt; 2&lt;/font&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#76608a;fontColor=#ffffff;strokeColor=#432D57;" parent="1" vertex="1">
           <mxGeometry x="-976" y="875" width="160" height="120" as="geometry" />
         </mxCell>
         <mxCell id="cfrhRi3zTsHiO-jlDfqi-21" value="User_A and User_B&amp;nbsp;&lt;div&gt;are friends so they have a chat._id&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
@@ -376,7 +376,7 @@
             <mxPoint x="-543" y="970" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="Rw7CRna9a3xsddY8eC8c-1" value="&lt;font style=&quot;text-wrap: nowrap; font-size: 16px;&quot;&gt;userSocketIds maps contains socketIds as string array for each connected user._id&amp;nbsp;&lt;/font&gt;&lt;div style=&quot;text-wrap: nowrap; font-size: 16px;&quot;&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;whenever user join web socket server its socket.id is stored in array for it&#39;s user._id in userSocketIds&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6a00ff;fontColor=#ffffff;strokeColor=#3700CC;" parent="1" vertex="1">
+        <mxCell id="Rw7CRna9a3xsddY8eC8c-1" value="&lt;font style=&quot;text-wrap: nowrap; font-size: 16px;&quot;&gt;userSocketIds maps contains socketIds as string array for each connected user._id&amp;nbsp;&lt;/font&gt;&lt;div style=&quot;text-wrap: nowrap; font-size: 16px;&quot;&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;whenever user join web socket server its socket.id is stored in array for it&#39;s user._id in userSocketIds&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0a30a;strokeColor=#BD7000;fontColor=#000000;" parent="1" vertex="1">
           <mxGeometry x="2215.5" y="-583" width="775" height="73" as="geometry" />
         </mxCell>
         <mxCell id="Rw7CRna9a3xsddY8eC8c-4" value="publicKeys map contains public keys of User_A friends" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=#d79b00;fillColor=#ffcd28;gradientColor=#ffa500;fontColor=#000000;" parent="1" vertex="1">
@@ -547,7 +547,7 @@
         <mxCell id="P_JwN5DNRsCG7_sgpVhp-2" value="&lt;font style=&quot;font-size: 22px;&quot;&gt;topic: message&lt;/font&gt;&lt;div&gt;&lt;span style=&quot;font-size: 22px;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;div&gt;&lt;font style=&quot;font-size: 22px;&quot;&gt;groupId: tk-message-group&lt;/font&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6a00ff;strokeColor=#3700CC;fontColor=#ffffff;" parent="1" vertex="1">
           <mxGeometry x="3379" y="751.5" width="330" height="103" as="geometry" />
         </mxCell>
-        <mxCell id="P_JwN5DNRsCG7_sgpVhp-7" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="P_JwN5DNRsCG7_sgpVhp-7" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6a00ff;fontColor=#ffffff;strokeColor=#3700CC;" parent="1" vertex="1">
           <mxGeometry x="3400" y="970" width="288" height="241" as="geometry" />
         </mxCell>
         <mxCell id="P_JwN5DNRsCG7_sgpVhp-3" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;worker-1&lt;/font&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;fillColor=#1ba1e2;strokeColor=#006EAF;fontColor=#ffffff;" parent="1" vertex="1">
@@ -568,7 +568,7 @@
         <mxCell id="P_JwN5DNRsCG7_sgpVhp-9" value="&lt;font style=&quot;font-size: 22px;&quot;&gt;topic: unseenCount&lt;/font&gt;&lt;div&gt;&lt;span style=&quot;font-size: 22px;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;div&gt;&lt;font style=&quot;font-size: 22px;&quot;&gt;groupId: tk-unseenCount-group&lt;/font&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6a00ff;strokeColor=#3700CC;fontColor=#ffffff;" parent="1" vertex="1">
           <mxGeometry x="4453" y="754.25" width="330" height="103" as="geometry" />
         </mxCell>
-        <mxCell id="P_JwN5DNRsCG7_sgpVhp-10" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="P_JwN5DNRsCG7_sgpVhp-10" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6a00ff;fontColor=#ffffff;strokeColor=#3700CC;" parent="1" vertex="1">
           <mxGeometry x="4472.5" y="972.75" width="288" height="241" as="geometry" />
         </mxCell>
         <mxCell id="P_JwN5DNRsCG7_sgpVhp-11" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;worker-1&lt;/font&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;fillColor=#1ba1e2;strokeColor=#006EAF;fontColor=#ffffff;" parent="1" vertex="1">
@@ -589,7 +589,7 @@
         <mxCell id="P_JwN5DNRsCG7_sgpVhp-16" value="&lt;font style=&quot;font-size: 22px;&quot;&gt;topic: gpMessage&lt;/font&gt;&lt;div&gt;&lt;span style=&quot;font-size: 22px;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;div&gt;&lt;font style=&quot;font-size: 22px;&quot;&gt;groupId: tk-gpMessage-group&lt;/font&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6a00ff;strokeColor=#3700CC;fontColor=#ffffff;" parent="1" vertex="1">
           <mxGeometry x="3923" y="754.25" width="330" height="103" as="geometry" />
         </mxCell>
-        <mxCell id="P_JwN5DNRsCG7_sgpVhp-17" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+        <mxCell id="P_JwN5DNRsCG7_sgpVhp-17" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#6a00ff;fontColor=#ffffff;strokeColor=#3700CC;" parent="1" vertex="1">
           <mxGeometry x="3942.5" y="971.75" width="288" height="241" as="geometry" />
         </mxCell>
         <mxCell id="P_JwN5DNRsCG7_sgpVhp-18" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;worker-1&lt;/font&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;fillColor=#1ba1e2;strokeColor=#006EAF;fontColor=#ffffff;" parent="1" vertex="1">
@@ -708,13 +708,13 @@
         <mxCell id="P_JwN5DNRsCG7_sgpVhp-39" value="worker send data to database" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="4397" y="277.5" width="176" height="26" as="geometry" />
         </mxCell>
-        <mxCell id="P_JwN5DNRsCG7_sgpVhp-41" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 19px; white-space: pre;&quot;&gt;&lt;font style=&quot;font-size: 50px;&quot;&gt;talkverse-backend&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0050ef;fontColor=#ffffff;strokeColor=#001DBC;" parent="1" vertex="1">
+        <mxCell id="P_JwN5DNRsCG7_sgpVhp-41" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 19px; white-space: pre;&quot;&gt;&lt;font style=&quot;font-size: 50px;&quot;&gt;talkverse-server&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0050ef;fontColor=#ffffff;strokeColor=#001DBC;" parent="1" vertex="1">
           <mxGeometry x="1550.5" y="1321" width="784" height="124" as="geometry" />
         </mxCell>
         <mxCell id="P_JwN5DNRsCG7_sgpVhp-43" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 19px; white-space: pre;&quot;&gt;&lt;font style=&quot;font-size: 50px;&quot;&gt;talkverse-kafka-cluster&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0050ef;fontColor=#ffffff;strokeColor=#001DBC;" parent="1" vertex="1">
           <mxGeometry x="3391.25" y="-834" width="747.5" height="124" as="geometry" />
         </mxCell>
-        <mxCell id="P_JwN5DNRsCG7_sgpVhp-45" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 19px; white-space: pre;&quot;&gt;&lt;font style=&quot;font-size: 50px;&quot;&gt;talkverse-frontend&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0050ef;fontColor=#ffffff;strokeColor=#001DBC;" parent="1" vertex="1">
+        <mxCell id="P_JwN5DNRsCG7_sgpVhp-45" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 19px; white-space: pre;&quot;&gt;&lt;font style=&quot;font-size: 50px;&quot;&gt;talkverse-client&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0050ef;fontColor=#ffffff;strokeColor=#001DBC;" parent="1" vertex="1">
           <mxGeometry x="-759.5" y="1321" width="784" height="124" as="geometry" />
         </mxCell>
         <mxCell id="P_JwN5DNRsCG7_sgpVhp-47" value="" style="dashed=0;outlineConnect=0;html=1;align=center;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;shape=mxgraph.webicons.mongodb;gradientColor=#DFDEDE" parent="1" vertex="1">
@@ -729,7 +729,7 @@
         <mxCell id="P_JwN5DNRsCG7_sgpVhp-49" value="&lt;div style=&quot;font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; line-height: 19px; white-space: pre;&quot;&gt;&lt;font style=&quot;font-size: 50px;&quot;&gt;talkverse-databases&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0050ef;fontColor=#ffffff;strokeColor=#001DBC;" parent="1" vertex="1">
           <mxGeometry x="4441" y="-834" width="612" height="124" as="geometry" />
         </mxCell>
-        <mxCell id="o8Q1-NqU3i1i7vPGONUi-1" value="one worker from workers pool as per topic and groupId consumes one message" style="rounded=0;html=1;whiteSpace=wrap;spacing=5;" parent="1" vertex="1">
+        <mxCell id="o8Q1-NqU3i1i7vPGONUi-1" value="one worker from workers pool as per topic and groupId consumes one message" style="rounded=0;html=1;whiteSpace=wrap;spacing=5;fillColor=#d80073;fontColor=#ffffff;strokeColor=#A50040;" parent="1" vertex="1">
           <mxGeometry x="3372" y="880.5" width="161" height="72" as="geometry" />
         </mxCell>
         <mxCell id="o8Q1-NqU3i1i7vPGONUi-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="P_JwN5DNRsCG7_sgpVhp-16" target="P_JwN5DNRsCG7_sgpVhp-18" edge="1">
@@ -740,11 +740,11 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="vw7E1S2aqgENELVfg7yt-1" value="&lt;font style=&quot;font-size: 40px;&quot;&gt;Client&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
-          <mxGeometry x="507" y="-920" width="120" height="60" as="geometry" />
+        <mxCell id="vw7E1S2aqgENELVfg7yt-1" value="&lt;font style=&quot;font-size: 40px;&quot;&gt;Frontend&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="478" y="-920" width="178" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="vw7E1S2aqgENELVfg7yt-2" value="&lt;font style=&quot;font-size: 40px;&quot;&gt;Server&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
-          <mxGeometry x="821" y="-920" width="136" height="60" as="geometry" />
+        <mxCell id="vw7E1S2aqgENELVfg7yt-2" value="&lt;font style=&quot;font-size: 40px;&quot;&gt;Backend&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="802" y="-920" width="174" height="60" as="geometry" />
         </mxCell>
         <mxCell id="vw7E1S2aqgENELVfg7yt-3" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;INFO: for explanation message topic workflow is used in&amp;nbsp; this diagram&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;spacing=5;fillColor=#d80073;fontColor=#ffffff;strokeColor=#A50040;" parent="1" vertex="1">
           <mxGeometry x="3263" y="-170" width="285" height="66" as="geometry" />
@@ -773,10 +773,10 @@
         <mxCell id="1gwohO5WsTcTdnwK_V-m-14" value="" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#8C4FFF;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.managed_streaming_for_kafka;" parent="1" vertex="1">
           <mxGeometry x="4087.5" y="-623" width="95" height="95" as="geometry" />
         </mxCell>
-        <mxCell id="_Ubh-fRWjmZ7u_PT9z_Q-1" value="&lt;font size=&quot;1&quot; color=&quot;#000000&quot; style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;&lt;b style=&quot;font-size: 29px;&quot;&gt;II&lt;/b&gt;&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#FFFFFF;" vertex="1" parent="1">
+        <mxCell id="_Ubh-fRWjmZ7u_PT9z_Q-1" value="&lt;font size=&quot;1&quot; color=&quot;#000000&quot; style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;&lt;b style=&quot;font-size: 29px;&quot;&gt;II&lt;/b&gt;&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#FFFFFF;" parent="1" vertex="1">
           <mxGeometry x="4059.5" y="-265" width="57" height="57" as="geometry" />
         </mxCell>
-        <mxCell id="_Ubh-fRWjmZ7u_PT9z_Q-2" value="forwarded to the assigned consumer for&amp;nbsp;&lt;div&gt;the specific partition of the message topic&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+        <mxCell id="_Ubh-fRWjmZ7u_PT9z_Q-2" value="forwarded to the assigned consumer for&amp;nbsp;&lt;div&gt;the specific partition of the message topic&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="3976" y="-306" width="238" height="41" as="geometry" />
         </mxCell>
       </root>
