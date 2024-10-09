@@ -44,36 +44,33 @@ async function message(data: KafkaIMessageType) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     logger.error("error in kafka producer, topic: message", { data: data, error: error.message });
-    throw new Error("kafka producer error");
   }
 }
 
 async function gpMessage(data: KafkaIGpMessageType) {
   try {
     await producer.send({
-      topic: "gpMessage",
+      topic: "gp-message",
       messages: [{ value: JSON.stringify(data) }],
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    logger.error("error in kafka producer, topic: gpMessage", { data: data, error: error.message });
-    throw new Error("kafka producer error");
+    logger.error("error in kafka producer, topic: gp-message", { data: data, error: error.message });
   }
 }
 
 async function unseenCount(userIds: string[], mainId: string, count?: number) {
   try {
     await producer.send({
-      topic: "unseenCount",
+      topic: "unseen-count",
       messages: [{ value: JSON.stringify({ userIds, mainId, count }) }],
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    logger.error("error in kafka producer, topic: unseenCount", {
+    logger.error("error in kafka producer, topic: unseen-count", {
       data: { userIds, mainId, count },
       error: error.message,
     });
-    throw new Error("kafka producer error");
   }
 }
 

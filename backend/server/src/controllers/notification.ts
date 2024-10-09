@@ -689,7 +689,7 @@ export const setUnseenCount = async (req: Request, res: Response): Promise<Respo
     const setUnseenCountReq = SetUnseenCountReqSchema.safeParse(req.body);
 
     if (!setUnseenCountReq.success) {
-      return errRes(res, 400, `invalid data for setunseencount, ${setUnseenCountReq.error.message}`);
+      return errRes(res, 400, `invalid data for setting unseen count, ${setUnseenCountReq.error.message}`);
     }
     const data = setUnseenCountReq.data;
 

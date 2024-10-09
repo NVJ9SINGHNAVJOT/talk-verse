@@ -14,7 +14,7 @@ import (
 
 // List of topics to be consumed by the Kafka consumer.
 // These topics are predefined and will be used to spawn consumers.
-var topics = []string{"message", "gpMessage", "unseenCount"}
+var topics = []string{"message", "gp-message", "unseen-count"}
 
 // retryAttempts defines how many times a worker will retry to consume a message
 // if there is a failure during message consumption.

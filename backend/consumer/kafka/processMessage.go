@@ -54,11 +54,11 @@ func ProcessMessage(msg kafka.Message, workerName string) {
 	case "message":
 		// Handle "message" topic
 		customErrMsg, err = handleMessageTopic(msg.Value)
-	case "gpMessage":
-		// Handle "gpMessage" topic
+	case "gp-message":
+		// Handle "gp-message" topic
 		customErrMsg, err = handleGpMessageTopic(msg.Value)
-	case "unseenCount":
-		// Handle "unseenCount" topic
+	case "unseen-count":
+		// Handle "unseen-count" topic
 		customErrMsg, err = handleUnseenCountTopic(msg.Value)
 	default:
 		// Log a warning for unknown topics
@@ -132,7 +132,7 @@ func handleMessageTopic(message []byte) (string, error) {
 	return "", nil // No error occurred
 }
 
-// handleGpMessageTopic processes messages from the "gpMessage" topic
+// handleGpMessageTopic processes messages from the "gp-message" topic
 func handleGpMessageTopic(message []byte) (string, error) {
 	var data kafkaGpMessageData
 
@@ -169,7 +169,7 @@ func handleGpMessageTopic(message []byte) (string, error) {
 	return "", nil // No error occurred
 }
 
-// handleUnseenCountTopic processes messages from the "unseenCount" topic
+// handleUnseenCountTopic processes messages from the "unseen-count" topic
 func handleUnseenCountTopic(message []byte) (string, error) {
 	var data kafkaUnseenCountData
 
@@ -178,8 +178,10 @@ func handleUnseenCountTopic(message []byte) (string, error) {
 		return msg + " KafkaUnseenCountData", err
 	}
 
-	// Define MongoDB collection and filter
+	// Access the "unseencounts" collection from the MongoDB database
 	collection := db.GetCollection("unseencounts")
+
+	// Define the filter to find documents where the "mainId" matches the provided data.MainID
 	filter := bson.M{"mainId": data.MainID}
 
 	// Prepare update operation for unseen counts
