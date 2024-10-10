@@ -7,24 +7,22 @@
 **/build
 **/dist
 
-# database files create by commands
-# /backend/server/src/db/postgresql/migrations
-
 # environment
 *.env
 !.env.example
 
 # development
-/backend/server/tmp
-/backend/consumer/tmp
-/backend/consumer/temp
-/node_modules
-
-# temporary storage
-/backend/server/uploadStorage
+**/tmp
+**/temp
 
 # logs
-/backend/server/logs
+**/logs
+
+# database files create by commands
+# /backend/server/src/db/postgresql/migrations
+
+# temporary storage for uploaded files
+/backend/server/uploadStorage
 
 # design backup
 .$Talk-Verse-System-Design.drawio.bkp
