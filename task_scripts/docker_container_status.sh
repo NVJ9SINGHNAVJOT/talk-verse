@@ -14,7 +14,6 @@ does_container_exist() {
 
     # Check if the container exists
     if ! docker inspect --type container "$container_name" > /dev/null 2>&1; then
-        logerr "Container '$container_name' does not exist."
         return 1  # Container does not exist
     fi
     return 0  # Container exists
