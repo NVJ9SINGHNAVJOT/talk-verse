@@ -103,6 +103,13 @@ func main() {
 func shutdownConsumer() {
 	log.Info().Msg("Shutting down the Kafka consumer service...")
 
+	// Close Kafka producer
+	if err := kafka.Close(); err != nil {
+		log.Error().Err(err).Msg("Failed to close Kafka producer")
+	} else {
+		log.Info().Msg("Kafka producer closed")
+	}
+
 	// Close mongodb database connection
 	if err := db.DisconnectMongoDB(); err != nil {
 		log.Error().Err(err).Msg("Failed to disconnect mongodb client")

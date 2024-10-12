@@ -13,6 +13,20 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
+// DLQMessage defines the structure of the message sent to the Dead-Letter Queue (DLQ).
+type DLQMessage struct {
+	OriginalTopic  string    `json:"originalTopic" validate:"required"`  // The original topic where the message came from
+	Partition      int       `json:"partition" validate:"required"`      // Kafka partition of the original message
+	Offset         int64     `json:"offset" validate:"required"`         // Offset of the original message
+	HighWaterMark  int64     `json:"highWaterMark" validate:"required"`  // High watermark of the Kafka partition
+	Value          string    `json:"value" validate:"required"`          // The original message value as a string
+	ErrorDetails   string    `json:"errorDetails" validate:"required"`   // Details about the error encountered
+	ProcessingTime time.Time `json:"processingTime" validate:"required"` // The timestamp when the message was processed
+	ErrorTime      time.Time `json:"errorTime" validate:"required"`      // The timestamp when the error occurred
+	Worker         string    `json:"worker" validate:"required"`         // The worker that processed the message
+	CustomMessage  string    `json:"customMessage" validate:"required"`  // Any additional custom message
+}
+
 // CommonBase defines the shared fields between different message types
 type commonBase struct {
 	UUID      string    `json:"uuId" validate:"required"`
@@ -90,6 +104,36 @@ func ProcessMessage(msg kafka.Message, workerName string) {
 				"time":          msg.Time,
 			}).
 			Msg(customErrMsg)
+
+		// NOTE: Failed messages are sent to the topic: "talkverse-failed-letter-queue".
+		// This helps in further processing of failed messages and reduces retry load
+		// in the main consumption service.
+		//
+		// Create a new DLQMessage struct with the error details and original message information.
+		dlqMessage := DLQMessage{
+			OriginalTopic:  msg.Topic,         // The original topic where the message came from
+			Partition:      msg.Partition,     // The partition number of the original message
+			Offset:         msg.Offset,        // The offset of the original message
+			HighWaterMark:  msg.HighWaterMark, // The high watermark of the Kafka partition
+			Value:          string(msg.Value), // The original message value in string format
+			ErrorDetails:   err.Error(),       // Error details encountered during processing
+			ProcessingTime: msg.Time,          // The original timestamp when the message was processed
+			ErrorTime:      time.Now(),        // The current timestamp when the error occurred
+			Worker:         workerName,        // The worker responsible for processing the message
+			CustomMessage:  customErrMsg,      // Any additional custom error message
+		}
+
+		// TODO: Implement specific processing for failed messages in this project.
+		//
+		// Attempt to produce the DLQ message to the "talkverse-failed-letter-queue" topic.
+		err = Produce("talkverse-failed-letter-queue", dlqMessage)
+		if err != nil {
+			log.Error().
+				Err(err).
+				Str("worker", workerName).
+				Interface("dlqMessage", dlqMessage).
+				Msg("Error producing message to talkverse-failed-letter-queue")
+		}
 	}
 }
 

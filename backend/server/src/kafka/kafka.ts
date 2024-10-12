@@ -3,18 +3,41 @@ import { KafkaIMessageType } from "@/db/mongodb/models/Message";
 import { logger } from "@/logger/logger";
 import { Kafka, logLevel, Partitioners } from "kafkajs";
 
+// Create a new Kafka instance with the specified configurations
 const kafka = new Kafka({
+  // Set the client ID for identification in Kafka
   clientId: `${process.env["KAFKA_CLIENT_ID"]}`,
+
+  // Define the brokers to connect to, split by commas for multiple entries
   brokers: `${process.env["KAFKA_BROKERS"]}`.split(","),
-  logLevel: logLevel.INFO, // Logging Kafka events
+
+  // Set the logging level to INFO to log Kafka events
+  logLevel: logLevel.INFO,
+
+  // Configure retry settings for connection attempts
+  retry: {
+    // Number of times to retry connecting before failing
+    retries: 5,
+  },
 });
 
+// Create a new producer instance for sending messages to Kafka topics
 const producer = kafka.producer({
-  createPartitioner: Partitioners.DefaultPartitioner, // Use default partitioner for balanced distribution
+  // Use the default partitioner for distributing messages across partitions evenly
+  createPartitioner: Partitioners.DefaultPartitioner,
+
+  // Configure retry settings for sending messages
   retry: {
+    // Number of times to retry sending messages on failure
     retries: 5, // Retrying 5 times for resiliency
+
+    // Initial backoff time before the first retry (in milliseconds)
     initialRetryTime: 300, // Start with 300ms backoff
+
+    // Maximum backoff time for retries (in milliseconds)
     maxRetryTime: 2000, // Maximum backoff of 2 seconds
+
+    // Backoff factor to apply after each failed attempt
     factor: 0.2, // Backoff factor
   },
 });

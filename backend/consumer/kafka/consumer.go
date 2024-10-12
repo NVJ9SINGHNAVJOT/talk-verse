@@ -188,8 +188,7 @@ func consumeKafkaTopic(ctx context.Context, group, topic, workerName string) err
 		GroupID: group,                     // Assign the consumer group ID for coordinated consumption.
 		Topic:   topic,                     // Specify the topic to consume from.
 		Dialer: &kafka.Dialer{
-			Timeout:   10 * time.Second, // Timeout for Kafka connection attempts.
-			KeepAlive: 5 * time.Minute,  // Keep the connection alive for 5 minutes.
+			KeepAlive: 1 * time.Minute, // Keep the connection alive for 1 minutes.
 		},
 		HeartbeatInterval: 3 * time.Second, // Interval for sending heartbeats to Kafka brokers.
 		MaxAttempts:       retryAttempts,   // Maximum number of attempts to consume a message.
