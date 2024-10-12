@@ -29,7 +29,7 @@ const producer = kafka.producer({
   // Configure retry settings for sending messages
   retry: {
     // Number of times to retry sending messages on failure
-    retries: 5, // Retrying 5 times for resiliency
+    retries: 10, // Retrying 10 times for resiliency
 
     // Initial backoff time before the first retry (in milliseconds)
     initialRetryTime: 300, // Start with 300ms backoff

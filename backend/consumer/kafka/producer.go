@@ -12,7 +12,7 @@ import (
 // It connects to the brokers specified in the environment configuration.
 var writer = kafka.Writer{
 	Addr:        kafka.TCP(config.Envs.KAFKA_BROKERS...), // Set the Kafka brokers using environment variables
-	MaxAttempts: 5,                                       // Configure the writer to retry sending messages up to 5 times in case of failure
+	MaxAttempts: 10,                                      // Configure the writer to retry sending messages up to 10 times in case of failure
 }
 
 // Produce sends a message to the specified Kafka topic.
