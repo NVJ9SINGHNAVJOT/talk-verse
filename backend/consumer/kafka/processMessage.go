@@ -30,7 +30,7 @@ type DLQMessage struct {
 // CommonBase defines the shared fields between different message types
 type commonBase struct {
 	UUID      string    `json:"uuId" validate:"required"`
-	IsFile    *bool     `json:"isFile"`
+	IsFile    *bool     `json:"isFile,omitempty"`
 	From      string    `json:"from" validate:"required"`
 	CreatedAt time.Time `json:"createdAt" validate:"required"`
 }
