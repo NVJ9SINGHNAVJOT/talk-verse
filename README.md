@@ -9,6 +9,32 @@ TalkVerse is a social media web application.
 
 ---
 
+## Project Structure
+
+### Frontend
+
+- **Client**
+  - **React.js:** with Vite in TypeScript is used in this project, along with Tailwind CSS and Redux.
+
+### Backend
+
+- **Databases**
+
+  - **MongoDB:** Used for the chat application to handle high read and write operations.
+  - **PostgreSQL:** Utilized for storing all blogs, comments, likes, and stories.
+
+- **Server**
+
+  - **Node.js:** Serves as the HTTP and WebSocket server.
+
+- **Kafka**
+
+  - **Apache Kafka Cluster:** This project utilizes a Kafka cluster consisting of 3 brokers in KRaft mode to maintain seamless real-time message delivery.
+
+- **Consumer**
+
+  - **Golang:** Used to run the consumer service with workers for consuming messages from Kafka.
+
 ## Features
 
 #### User Authentication :
@@ -28,21 +54,22 @@ TalkVerse is a social media web application.
 
 - Websockets are employed to enable live chat functionality. Users can engage in real-time conversations, making the application dynamic and responsive.
 
-#### Kafka as a Message Broker :
+#### Messaging Channels
 
-- Efficiently handles real-time data streams.
-- Ensures reliable message delivery and fault tolerance.
-- Scales seamlessly to accommodate high-throughput data pipelines.
+- Custom channels organize message operations, maintaining proper order for messages in both personal and group chats.
+- Messages are sent with real-time updates, and Kafka is utilized to prevent database downtime.
 
-#### Golang for Concurrently Handling Messages :
+#### Kafka Cluster (KRaft Mode with 3 Brokers)
 
-- Utilizes Go’s goroutines for efficient concurrent processing.
-- Manages Kafka messages and MongoDB operations simultaneously.
-- Enhances performance and responsiveness of the system.
+- Efficiently handles real-time message delivery, utilizing 3 brokers to reduce downtime and faults.
+- Ensures reliable message processing and fault tolerance with a replication factor of 3.
+- Scales seamlessly to accommodate high-throughput message pipelines without dependency on ZooKeeper.
 
-#### Messaging Channels :
+#### Consumer Workers for Concurrently Processing Kafka Messages
 
-- Channels organize message operations within the application.
+- Consume messages from Kafka and save them to the database.
+- Scale to support high-throughput message pipelines.
+- Leverage Go routines and concurrency benefits in Golang for optimal performance.
 
 #### Blogging and Post Creation :
 
