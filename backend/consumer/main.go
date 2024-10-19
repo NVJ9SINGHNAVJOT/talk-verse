@@ -21,7 +21,6 @@ func main() {
 	err := pkg.LoadEnv(".env")
 	if err != nil {
 		fmt.Println("Error loading env file", err)
-
 	}
 
 	// Validate environment variables

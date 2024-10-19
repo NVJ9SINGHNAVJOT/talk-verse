@@ -218,9 +218,12 @@ func consumeKafkaTopic(ctx context.Context, group, topic, workerName string) err
 			// Process the fetched message using the worker's processing logic.
 			ProcessMessage(msg, workerName)
 
-			// Commit the message offset to Kafka to mark it as successfully processed.
-			if err := r.CommitMessages(ctx, msg); err != nil {
-				// Log error if commit fails.
+			// Create a 1-minute context for committing the message offset.
+			commitCtx, commitCancel := context.WithTimeout(context.Background(), 1*time.Minute)
+
+			// Commit the message offset to Kafka to mark the message as successfully processed.
+			if err = r.CommitMessages(commitCtx, msg); err != nil {
+				// Log an error if committing the message offset fails.
 				log.Error().
 					Err(err).
 					Str("worker", workerName).
@@ -234,6 +237,9 @@ func consumeKafkaTopic(ctx context.Context, group, topic, workerName string) err
 					}).
 					Msg("Commit failed for message offset")
 			}
+
+			// Call the cancel function to release resources after each message commit.
+			commitCancel()
 		}
 	}
 }
