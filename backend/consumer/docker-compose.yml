@@ -14,3 +14,4 @@ services:
     networks:
         - talkverse-backend-proxy
     env_file: .env
+  stop_grace_period: 20s

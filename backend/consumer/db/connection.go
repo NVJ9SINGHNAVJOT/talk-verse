@@ -24,7 +24,7 @@ func ConnectMongoDB() error {
 		return err
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	err = client.Ping(ctx, readpref.Primary())
@@ -42,7 +42,9 @@ func ConnectMongoDB() error {
 }
 
 func DisconnectMongoDB() error {
-	return mongoClient.Disconnect(context.Background())
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	return mongoClient.Disconnect(ctx)
 }
 
 // GetCollection is a helper function to retrieve a collection from the global MongoDatabase
