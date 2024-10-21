@@ -8,11 +8,10 @@ import (
 )
 
 type environmentConfig struct {
-	ENVIRONMENT           string
-	MONGODB_URL           string
-	KAFKA_GROUP_WORKERS   int
-	KAFKA_GROUP_PREFIX_ID string
-	KAFKA_BROKERS         []string
+	ENVIRONMENT         string
+	MONGODB_URL         string
+	KAFKA_GROUP_WORKERS int
+	KAFKA_BROKERS       []string
 }
 
 var Envs = environmentConfig{}
@@ -43,11 +42,6 @@ func ValidateEnvs() error {
 		return fmt.Errorf("minimum size required for kafkaGroupWorkers is 1")
 	}
 
-	kafkaGroupId, exist := os.LookupEnv("KAFKA_GROUP_PREFIX_ID")
-	if !exist {
-		return fmt.Errorf("kafka group id is not provided")
-	}
-
 	kafkaBrokers, exist := os.LookupEnv("KAFKA_BROKERS")
 	if !exist {
 		return fmt.Errorf("kafka brokers is not provided")
@@ -56,7 +50,6 @@ func ValidateEnvs() error {
 	Envs.ENVIRONMENT = environment
 	Envs.MONGODB_URL = mongoDBUrl
 	Envs.KAFKA_GROUP_WORKERS = kafkaGroupWorkers
-	Envs.KAFKA_GROUP_PREFIX_ID = kafkaGroupId
 	Envs.KAFKA_BROKERS = strings.Split(kafkaBrokers, ",")
 
 	return nil

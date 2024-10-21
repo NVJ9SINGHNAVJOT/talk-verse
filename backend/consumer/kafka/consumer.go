@@ -93,12 +93,13 @@ func KafkaConsumeSetup(ctx context.Context, workDone chan int, workersPerTopic i
 
 	// Loop through each topic to create consumer groups and spawn workers
 	for _, topic := range topics {
-		// Create a unique Kafka consumer group name by combining a predefined group prefix (from configuration),
-		// the topic name, and a suffix to indicate it's a consumer group.
-		// For example, if KAFKA_GROUP_PREFIX_ID is "talkverse" and the topic is "message",
+		// Create a Kafka consumer group name by combining the project name "talkverse" with the topic name
+		// and a suffix to indicate it's a consumer group.
+		// For example, if the topic is "message",
 		// the resulting groupName will be: "talkverse-message-group".
 		// This "talkverse-message-group" is the group name used for all workers under this topic.
-		groupName := fmt.Sprintf("%s-%s-group", config.Envs.KAFKA_GROUP_PREFIX_ID, topic)
+
+		groupName := fmt.Sprintf("talkverse-%s-group", topic)
 
 		// Log the creation of the consumer group, showing details such as the topic name, the generated group name,
 		// and the number of workers assigned to handle this topic's messages.
