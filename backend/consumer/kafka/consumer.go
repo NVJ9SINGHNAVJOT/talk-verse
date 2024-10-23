@@ -188,9 +188,6 @@ func consumeKafkaTopic(ctx context.Context, group, topic, workerName string) err
 		Brokers: config.Envs.KAFKA_BROKERS, // Retrieve Kafka brokers from the environment configuration.
 		GroupID: group,                     // Assign the consumer group ID for coordinated consumption.
 		Topic:   topic,                     // Specify the topic to consume from.
-		Dialer: &kafka.Dialer{
-			KeepAlive: 1 * time.Minute, // Keep the connection alive for 1 minutes.
-		},
 		HeartbeatInterval: 3 * time.Second, // Interval for sending heartbeats to Kafka brokers.
 		MaxAttempts:       retryAttempts,   // Maximum number of attempts to consume a message.
 	})
