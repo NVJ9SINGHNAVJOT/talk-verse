@@ -61,9 +61,6 @@ func main() {
 	// Kafka consumers setup
 	go kafka.KafkaConsumeSetup(ctx, workDone, config.Envs.KAFKA_GROUP_WORKERS, &wg)
 
-	// sync.Once to ensure shutdown happens only once
-	var shutdownOnce sync.Once
-
 	// Shutdown handling using signal and worker tracking
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
@@ -81,18 +78,15 @@ func main() {
 		log.Info().Msg("All Kafka workers stopped")
 
 		// Gracefully shut down the Kafka consumer service
-		shutdownOnce.Do(func() {
-			shutdownConsumer()
-		})
+		shutdownConsumer()
 		return
 
 	case _, ok := <-workDone:
 		if !ok {
 			// If the channel is closed, all workers are done, so shut down
 			log.Info().Msg("workDone channel closed, all Kafka workers finished. Initiating service shutdown...")
-			shutdownOnce.Do(func() {
-				shutdownConsumer()
-			})
+
+			shutdownConsumer()
 			return
 		}
 	}
