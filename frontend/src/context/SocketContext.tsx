@@ -152,6 +152,10 @@ export default function SocketProvider({ children }: ContextProviderProps) {
       const socket = socketRef.current;
 
       socketRef.current.on("connect_error", () => {
+        // TODO: When the server is down or closed, the socket.io client automatically falls back to long polling
+        // to repeatedly attempt reconnection. This triggers the following function multiple times.
+        // Connection errors need to be handled until the backend server restarts.
+
         socketRef.current = null;
         toast.error("Error in connection");
         // if error in connection then clear all state for talk page
