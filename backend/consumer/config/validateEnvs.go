@@ -28,6 +28,9 @@ func ValidateEnvs() error {
 		return fmt.Errorf("mongo db url is not provided")
 	}
 
+	// NOTE: Each Kafka topic requires a minimum of one worker.
+	// Assigning multiple workers to a group for a single topic should be evaluated
+	// based on the system's capacity to handle concurrent workers.
 	kafkaGroupWorkersStr, exist := os.LookupEnv("KAFKA_GROUP_WORKERS")
 	if !exist {
 		return fmt.Errorf("kafka group workers is not provided")
