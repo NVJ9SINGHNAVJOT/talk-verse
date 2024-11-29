@@ -2,7 +2,7 @@
 
 #### In the current version of our application:
 
-- Socket IDs and Channels Storage: Currently, userSocketIDs, groupOffline, and channels mapping is stored in the server..
+- Socket IDs and Channels Storage: Currently, userSocketIDs, groupOffline, and channels mapping is stored in the server.
 - Server Configuration: Both the HTTP and WebSocket servers run on the same port.
 
 
