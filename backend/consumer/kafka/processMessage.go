@@ -15,16 +15,16 @@ import (
 
 // DLQMessage defines the structure of the message sent to the Dead-Letter Queue (DLQ).
 type DLQMessage struct {
-	OriginalTopic  string    `json:"originalTopic" validate:"required"`  // The original topic where the message came from
-	Partition      int       `json:"partition" validate:"required"`      // Kafka partition of the original message
-	Offset         int64     `json:"offset" validate:"required"`         // Offset of the original message
-	HighWaterMark  int64     `json:"highWaterMark" validate:"required"`  // High watermark of the Kafka partition
-	Value          string    `json:"value" validate:"required"`          // The original message value as a string
-	ErrorDetails   string    `json:"errorDetails" validate:"required"`   // Details about the error encountered
-	ProcessingTime time.Time `json:"processingTime" validate:"required"` // The timestamp when the message was processed
-	ErrorTime      time.Time `json:"errorTime" validate:"required"`      // The timestamp when the error occurred
-	Worker         string    `json:"worker" validate:"required"`         // The worker that processed the message
-	CustomMessage  string    `json:"customMessage" validate:"required"`  // Any additional custom message
+	OriginalTopic  string    `json:"originalTopic" validate:"required"`             // The original topic where the message came from
+	Partition      int       `json:"partition" validate:"customNonNegativeInt"`     // Kafka partition of the original message
+	Offset         int64     `json:"offset" validate:"customNonNegativeInt"`        // Offset of the original message
+	HighWaterMark  int64     `json:"highWaterMark" validate:"customNonNegativeInt"` // High watermark of the Kafka partition
+	Value          string    `json:"value" validate:"required"`                     // The original message value as a string
+	ErrorDetails   string    `json:"errorDetails" validate:"required"`              // Details about the error encountered
+	ProcessingTime time.Time `json:"processingTime" validate:"required"`            // The timestamp when the message was processed
+	ErrorTime      time.Time `json:"errorTime" validate:"required"`                 // The timestamp when the error occurred
+	Worker         string    `json:"worker" validate:"required"`                    // The worker that processed the message
+	CustomMessage  string    `json:"customMessage" validate:"required"`             // Any additional custom message
 }
 
 // CommonBase defines the shared fields between different message types
