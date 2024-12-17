@@ -14,7 +14,7 @@ export const useOnClickOutside = <T extends HTMLElement>(
         return;
       }
       // Check if the click target is inside the excluded div (if provided)
-      if (excludeDivRef?.current && excludeDivRef.current.contains(event.target as Node)) {
+      if (excludeDivRef && excludeDivRef.current && excludeDivRef.current.contains(event.target as Node)) {
         return;
       }
       handler(event);
@@ -43,7 +43,7 @@ export const useOnClickOutsideBlog = <T extends HTMLElement>(
         return;
       }
       // Check if the click target is inside the excluded div (if provided)
-      if (excludeDivRef?.current && excludeDivRef.current.contains(event.target as Node)) {
+      if (excludeDivRef && excludeDivRef.current && excludeDivRef.current.contains(event.target as Node)) {
         return;
       }
       handler(event);
