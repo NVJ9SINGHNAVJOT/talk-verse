@@ -1,4 +1,4 @@
-# TalkVerse
+# TalkVerse - Version 2
 
 TalkVerse is a social media web application.
 
