@@ -113,6 +113,12 @@ const messagesSlice = createSlice({
         const key = action.payload.chatId;
         if (key in state.unseenMessages) {
           state.unseenMessages[key] += 1;
+          /*
+            BUG: In multi tab opened below function will call
+            api for updating unseen count.
+            Depending upon which chat is open in talk page, value will be sent
+            for updating.
+          */
           setUnseenCount(key, state.unseenMessages[key] + 1);
         }
         /*
@@ -173,6 +179,12 @@ const messagesSlice = createSlice({
         const key = action.payload.to;
         if (key in state.unseenMessages) {
           state.unseenMessages[key] += 1;
+          /*
+            BUG: In multi tab opened below function will call
+            api for updating unseen count.
+            Depending upon which chat is open in talk page, value will be sent
+            for updating.
+          */
           setUnseenCount(key, state.unseenMessages[key] + 1);
         }
         /*
