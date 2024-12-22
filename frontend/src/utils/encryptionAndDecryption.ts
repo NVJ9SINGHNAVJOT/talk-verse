@@ -6,7 +6,7 @@ const iv = process.env.GROUP_IV as string;
 const key = forge.md.sha256.create().update(customKey).digest().getBytes();
 
 // Encrypt a message using the recipient's public key
-export function encryptPMessage(message: string, recipientPublicKey: string): string | null {
+export async function encryptPMessage(message: string, recipientPublicKey: string): Promise<string | null> {
   try {
     const publicKey = forge.pki.publicKeyFromPem(recipientPublicKey);
     const encrypted = publicKey.encrypt(message, "RSA-OAEP", {
@@ -19,7 +19,7 @@ export function encryptPMessage(message: string, recipientPublicKey: string): st
 }
 
 // Decrypt the encrypted message using the recipient's private key
-export function decryptPMessage(encryptedMessage: string, recipientPrivateKey: string): string | null {
+export async function decryptPMessage(encryptedMessage: string, recipientPrivateKey: string): Promise<string | null> {
   try {
     const privateKey = forge.pki.privateKeyFromPem(recipientPrivateKey);
     const encryptedBytes = forge.util.decode64(encryptedMessage);
@@ -32,7 +32,7 @@ export function decryptPMessage(encryptedMessage: string, recipientPrivateKey: s
   }
 }
 
-export function encryptGMessage(text: string): string | null {
+export async function encryptGMessage(text: string): Promise<string | null> {
   try {
     const cipher = forge.cipher.createCipher("AES-CBC", key);
     cipher.start({ iv });
@@ -45,7 +45,7 @@ export function encryptGMessage(text: string): string | null {
   }
 }
 
-export function decryptGMessage(text: string): string | null {
+export async function decryptGMessage(text: string): Promise<string | null> {
   try {
     const decipher = forge.cipher.createDecipher("AES-CBC", key);
     decipher.start({ iv });

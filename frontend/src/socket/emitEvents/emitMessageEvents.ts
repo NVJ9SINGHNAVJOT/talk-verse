@@ -4,7 +4,7 @@ import { SoSendGroupMessage, SoSendMessage } from "@/types/socket/eventTypes";
 import { encryptGMessage, encryptPMessage } from "@/utils/encryptionAndDecryption";
 import { toast } from "react-toastify";
 
-export const sendMessageEvent = (
+export const sendMessageEvent = async (
   socket: Socket,
   chatId: string,
   to: string,
@@ -12,8 +12,8 @@ export const sendMessageEvent = (
   myPublicKey: string,
   friendPublicKey: string
 ) => {
-  const newFromText = encryptPMessage(text, myPublicKey);
-  const newToText = encryptPMessage(text, friendPublicKey);
+  const newFromText = await encryptPMessage(text, myPublicKey);
+  const newToText = await encryptPMessage(text, friendPublicKey);
 
   if (!newFromText || !newToText) {
     toast.error("Error while sending message, encryption failed");
@@ -26,10 +26,14 @@ export const sendMessageEvent = (
     fromText: newFromText,
     toText: newToText,
   };
-  socket.emit(serverE.SEND_MESSAGE, newMessage);
+  try {
+    socket.emit(serverE.SEND_MESSAGE, newMessage);
+  } catch (error) {
+    toast.error("Error while sending message");
+  }
 };
 
-export const sendGroupMessageEvent = (
+export const sendGroupMessageEvent = async (
   socket: Socket,
   groupId: string,
   text: string,
@@ -37,7 +41,7 @@ export const sendGroupMessageEvent = (
   lastName: string,
   imageUrl?: string
 ) => {
-  const newText = encryptGMessage(text);
+  const newText = await encryptGMessage(text);
   if (!newText) {
     toast.error("Error while sending group message, encryption failed");
     return;
@@ -49,5 +53,9 @@ export const sendGroupMessageEvent = (
     text: newText,
     imageUrl: imageUrl,
   };
-  socket.emit(serverE.SEND_GROUP_MESSAGE, newGpMessage);
+  try {
+    socket.emit(serverE.SEND_GROUP_MESSAGE, newGpMessage);
+  } catch (error) {
+    toast.error("Error while sending group message");
+  }
 };
