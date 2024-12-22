@@ -26,6 +26,8 @@ const producer = kafka.producer({
   // Use the default partitioner for distributing messages across partitions evenly
   createPartitioner: Partitioners.DefaultPartitioner,
 
+  allowAutoTopicCreation: false,
+
   // Configure retry settings for sending messages
   retry: {
     // Number of times to retry sending messages on failure
