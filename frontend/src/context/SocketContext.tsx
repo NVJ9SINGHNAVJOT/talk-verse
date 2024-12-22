@@ -16,8 +16,8 @@ import {
   UserRequest,
 } from "@/redux/slices/chatSlice";
 import {
-  addLiveGpMessage,
-  addLivePMessage,
+  addLiveGpMessageAsync,
+  addLivePMessageAsync,
   addNewUnseen,
   GroupMessage,
   messagesSliceObject,
@@ -29,7 +29,6 @@ import { loadingSliceObject, setTalkPageLoading } from "@/redux/slices/loadingSl
 import { chatBarDataApi } from "@/services/operations/chatApi";
 import { checkOnlineFriendsApi, getAllNotificationsApi } from "@/services/operations/notificationApi";
 import { createContext, ReactNode, useContext, useRef } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { io, Socket } from "socket.io-client";
@@ -41,15 +40,16 @@ import {
   SoMessageRecieved,
   SoGroupMessageRecieved,
 } from "@/types/socket/eventTypes";
+import { useAppDispatch } from "@/redux/store";
 
 interface SocketContextInterface {
-  socketRef: React.MutableRefObject<Socket | null>;
+  socketRef: React.MutableRefObject<Socket>;
   setupSocketConnection: () => Promise<void>;
   disconnectSocket: () => void;
 }
 
 type ContextProviderProps = {
-  children?: ReactNode;
+  children: ReactNode;
 };
 
 const SocketContext = createContext<SocketContextInterface | null>(null);
@@ -64,9 +64,21 @@ export const useSocketContext = (): SocketContextInterface => {
 };
 
 export default function SocketProvider({ children }: ContextProviderProps) {
-  const socketRef = useRef<Socket | null>(null);
+  // connectionInitiated is a flag for when connection is initiated
+  // by talk page after private key validation
+  let connectionInitiated = true;
+
+  const socketInstance = io(process.env.REACT_APP_BASE_URL_SOCKET_IO_SERVER as string, {
+    withCredentials: true,
+    autoConnect: false,
+    extraHeaders: {
+      // serverKey for access
+      Authorization: process.env.SERVER_KEY as string,
+    },
+  });
+  const socketRef = useRef<Socket>(socketInstance);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const talkPageCleanUp = () => {
     loadingSliceObject.apiCalls["talk"] = false;
@@ -95,15 +107,6 @@ export default function SocketProvider({ children }: ContextProviderProps) {
 
   const setupSocketConnection = async () => {
     try {
-      const socketInstance = io(process.env.REACT_APP_BASE_URL_SOCKET_IO_SERVER as string, {
-        withCredentials: true,
-        autoConnect: false,
-        extraHeaders: {
-          // serverKey for access
-          Authorization: process.env.SERVER_KEY as string,
-        },
-      });
-
       const [res1, res2, res3] = await Promise.all([
         getAllNotificationsApi(), // res1
         chatBarDataApi(), // res2
@@ -144,33 +147,34 @@ export default function SocketProvider({ children }: ContextProviderProps) {
       }
 
       /* all response are valid for talk page, now connect to web socket server */
-      socketRef.current = socketInstance.connect();
+      if (socketRef.current.connected === false) {
+        socketRef.current.connect();
+      }
+
       /* 
         user is connected with web socket server then register socket events
         all event listeners are registered here 
       */
-      const socket = socketRef.current;
 
       socketRef.current.on("connect_error", () => {
-        // TODO: When the server is down or closed, the socket.io client automatically falls back to long polling
-        // to repeatedly attempt reconnection. This triggers the following function multiple times.
-        // Connection errors need to be handled until the backend server restarts.
-
-        socketRef.current = null;
-        toast.error("Error in connection");
-        // if error in connection then clear all state for talk page
-        talkPageCleanUp();
-        navigate("/");
+        if (connectionInitiated === true) {
+          toast.error("Error in connection");
+          // if error in connection then clear all state for talk page
+          talkPageCleanUp();
+          navigate("/");
+          connectionInitiated = false;
+        }
       });
 
-      socket.on("connect", () => {
+      socketRef.current.on("connect", () => {
+        connectionInitiated = true;
         setTimeout(() => {
           dispatch(setTalkPageLoading(false));
         }, 500);
       });
 
       /* ===== socket events start ===== */
-      socket.on(clientE.USER_REQUEST, (data: SoUserRequest) => {
+      socketRef.current.on(clientE.USER_REQUEST, (data: SoUserRequest) => {
         dispatch(
           addUserRequest({
             _id: data._id,
@@ -181,7 +185,7 @@ export default function SocketProvider({ children }: ContextProviderProps) {
         toast.info("New friend request");
       });
 
-      socket.on(clientE.REQUEST_ACCEPTED, (data: SoRequestAccepted) => {
+      socketRef.current.on(clientE.REQUEST_ACCEPTED, (data: SoRequestAccepted) => {
         messagesSliceObject.publicKeys[data._id] = data.publicKey;
         const newFriend: Friend = {
           _id: data._id,
@@ -196,17 +200,17 @@ export default function SocketProvider({ children }: ContextProviderProps) {
         toast.success("New friend added");
       });
 
-      socket.on(clientE.ADDED_IN_GROUP, (data: SoAddedInGroup) => {
+      socketRef.current.on(clientE.ADDED_IN_GROUP, (data: SoAddedInGroup) => {
         dispatch(addNewUnseen(data._id));
         dispatch(addChatBarData(data));
         toast.success("Added in new Group");
       });
 
-      socket.on(clientE.MESSAGE_RECIEVED, (data: SoMessageRecieved) => {
-        dispatch(addLivePMessage(data));
+      socketRef.current.on(clientE.MESSAGE_RECIEVED, (data: SoMessageRecieved) => {
+        dispatch(addLivePMessageAsync(data));
       });
 
-      socket.on(clientE.GROUP_MESSAGE_RECIEVED, (data: SoGroupMessageRecieved) => {
+      socketRef.current.on(clientE.GROUP_MESSAGE_RECIEVED, (data: SoGroupMessageRecieved) => {
         const newGpMessage: GroupMessage = {
           uuId: data.uuId,
           isFile: data.isFile,
@@ -220,22 +224,22 @@ export default function SocketProvider({ children }: ContextProviderProps) {
           text: data.text,
           createdAt: data.createdAt,
         };
-        dispatch(addLiveGpMessage(newGpMessage));
+        dispatch(addLiveGpMessageAsync(newGpMessage));
       });
 
-      socket.on(clientE.OTHER_START_TYPING, (friendId: string) => {
+      socketRef.current.on(clientE.OTHER_START_TYPING, (friendId: string) => {
         dispatch(addUserTyping(friendId));
       });
 
-      socket.on(clientE.OTHER_STOP_TYPING, (friendId: string) => {
+      socketRef.current.on(clientE.OTHER_STOP_TYPING, (friendId: string) => {
         dispatch(removeUserTyping(friendId));
       });
 
-      socket.on(clientE.SET_USER_ONLINE, (friendId: string) => {
+      socketRef.current.on(clientE.SET_USER_ONLINE, (friendId: string) => {
         dispatch(addOnlineFriend(friendId));
       });
 
-      socket.on(clientE.SET_USER_OFFLINE, (friendId: string) => {
+      socketRef.current.on(clientE.SET_USER_OFFLINE, (friendId: string) => {
         dispatch(removeOnlineFriend(friendId));
       });
       /* ===== socket events end ===== */
@@ -249,18 +253,18 @@ export default function SocketProvider({ children }: ContextProviderProps) {
 
   const disconnectSocket = (): void => {
     // disconnect user from web socket server
-    const socket = socketRef.current;
-    if (socket) {
-      socket.off(clientE.USER_REQUEST);
-      socket.off(clientE.REQUEST_ACCEPTED);
-      socket.off(clientE.ADDED_IN_GROUP);
-      socket.off(clientE.GROUP_MESSAGE_RECIEVED);
-      socket.off(clientE.MESSAGE_RECIEVED);
-      socket.off(clientE.OTHER_START_TYPING);
-      socket.off(clientE.OTHER_STOP_TYPING);
-      socket.off(clientE.SET_USER_ONLINE);
-      socket.off(clientE.SET_USER_OFFLINE);
-      socket.disconnect();
+
+    if (socketRef.current) {
+      socketRef.current.off(clientE.USER_REQUEST);
+      socketRef.current.off(clientE.REQUEST_ACCEPTED);
+      socketRef.current.off(clientE.ADDED_IN_GROUP);
+      socketRef.current.off(clientE.GROUP_MESSAGE_RECIEVED);
+      socketRef.current.off(clientE.MESSAGE_RECIEVED);
+      socketRef.current.off(clientE.OTHER_START_TYPING);
+      socketRef.current.off(clientE.OTHER_STOP_TYPING);
+      socketRef.current.off(clientE.SET_USER_ONLINE);
+      socketRef.current.off(clientE.SET_USER_OFFLINE);
+      socketRef.current.disconnect();
     }
     talkPageCleanUp();
   };
