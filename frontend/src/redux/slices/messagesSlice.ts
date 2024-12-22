@@ -2,7 +2,7 @@ import { setUnseenCount } from "@/services/operations/notificationApi";
 import { SoMessageRecieved } from "@/types/socket/eventTypes";
 import { errorMessage } from "@/utils/constants";
 import { decryptGMessage, decryptPMessage } from "@/utils/encryptionAndDecryption";
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 type MessagesSliceObject = {
@@ -60,44 +60,97 @@ const initialState = {
   unseenMessages: {},
 } satisfies messagesState as messagesState;
 
+export const addPMessagesAsync = createAsyncThunk("messages/addPMessages", async (data: SoMessageRecieved[]) => {
+  if (!messagesSliceObject.myPrivateKey) {
+    return [];
+  }
+  const myPrivateKey = messagesSliceObject.myPrivateKey;
+
+  const updatedData = await Promise.all(
+    data.map(async (message) => {
+      if (message.isFile === false) {
+        const newText = await decryptPMessage(message.text, myPrivateKey);
+        if (newText) {
+          message.text = newText;
+        } else {
+          message.text = errorMessage;
+        }
+      }
+      return message;
+    })
+  );
+
+  return updatedData;
+});
+
+export const addLivePMessageAsync = createAsyncThunk("messages/addLivePMessage", async (data: SoMessageRecieved) => {
+  if (!messagesSliceObject.myPrivateKey) {
+    return null;
+  }
+
+  if (data.isFile === false && messagesSliceObject.myPrivateKey) {
+    const newText = await decryptPMessage(data.text, messagesSliceObject.myPrivateKey);
+    if (newText) {
+      data.text = newText;
+    } else {
+      data.text = errorMessage;
+    }
+  }
+
+  return data;
+});
+
+export const addGpMessagesAsync = createAsyncThunk("messages/addGpMessages", async (data: GroupMessage[]) => {
+  const updatedData = await Promise.all(
+    data.map(async (message) => {
+      if (message.isFile === false) {
+        const newText = await decryptGMessage(message.text);
+        if (newText) {
+          message.text = newText;
+        } else {
+          message.text = errorMessage;
+        }
+      }
+      return message;
+    })
+  );
+
+  return updatedData;
+});
+
+export const addLiveGpMessageAsync = createAsyncThunk("messages/addLiveGpMessage", async (data: GroupMessage) => {
+  if (data.isFile === false) {
+    const newText = await decryptGMessage(data.text);
+    if (newText) {
+      data.text = newText;
+    } else {
+      data.text = errorMessage;
+    }
+  }
+
+  return data;
+});
+
 const messagesSlice = createSlice({
   name: "messages",
   initialState,
-  reducers: {
+  extraReducers(builder) {
     // two users chat messages
-    resetPMess(state) {
-      state.pMess = {} as PMessages;
-    },
-    addPMessages(state, action: PayloadAction<SoMessageRecieved[]>) {
-      if (!messagesSliceObject.myPrivateKey) {
+    builder.addCase(addPMessagesAsync.fulfilled, (state, action) => {
+      if (!messagesSliceObject.myPrivateKey || action.payload.length === 0) {
         return;
       }
-      for (let index = 0; index < action.payload.length; index++) {
-        if (action.payload[index].isFile === false) {
-          const newText = decryptPMessage(action.payload[index].text, messagesSliceObject.myPrivateKey);
-          if (newText) {
-            action.payload[index].text = newText;
-          } else {
-            action.payload[index].text = errorMessage;
-          }
-        }
-      }
+
       if (state.pMess[action.payload[0].chatId] === undefined) {
         state.pMess[action.payload[0].chatId] = action.payload;
       } else {
         state.pMess[action.payload[0].chatId] = state.pMess[action.payload[0].chatId].concat(action.payload);
       }
-    },
-    addLivePMessage(state, action: PayloadAction<SoMessageRecieved>) {
-      if (action.payload.isFile === false && messagesSliceObject.myPrivateKey) {
-        const newText = decryptPMessage(action.payload.text, messagesSliceObject.myPrivateKey);
-        if (newText) {
-          action.payload.text = newText;
-        } else {
-          action.payload.text = errorMessage;
-        }
+    });
+    builder.addCase(addLivePMessageAsync.fulfilled, (state, action) => {
+      if (!messagesSliceObject.myPrivateKey || action.payload === null) {
+        return;
       }
-
       // if no messages for chat then, this is first message
       if (state.pMess[action.payload.chatId] === undefined) {
         state.pMess[action.payload.chatId] = [action.payload];
@@ -130,40 +183,17 @@ const messagesSlice = createSlice({
           FIXME: new friend to be added in multiple tabs
         */
       }
-    },
+    });
 
     // group chat messages
-    resetGpMess(state) {
-      state.gpMess = {} as GpMessages;
-    },
-    addGpMessages(state, action: PayloadAction<GroupMessage[]>) {
-      for (let index = 0; index < action.payload.length; index++) {
-        if (action.payload[index].isFile === false) {
-          const newText = decryptGMessage(action.payload[index].text);
-          if (newText) {
-            action.payload[index].text = newText;
-          } else {
-            action.payload[index].text = errorMessage;
-          }
-        }
-      }
-
+    builder.addCase(addGpMessagesAsync.fulfilled, (state, action) => {
       if (state.gpMess[action.payload[0].to] === undefined) {
         state.gpMess[action.payload[0].to] = action.payload;
       } else {
         state.gpMess[action.payload[0].to] = state.gpMess[action.payload[0].to].concat(action.payload);
       }
-    },
-    addLiveGpMessage(state, action: PayloadAction<GroupMessage>) {
-      if (action.payload.isFile === false) {
-        const newText = decryptGMessage(action.payload.text);
-        if (newText) {
-          action.payload.text = newText;
-        } else {
-          action.payload.text = errorMessage;
-        }
-      }
-
+    });
+    builder.addCase(addLiveGpMessageAsync.fulfilled, (state, action) => {
       // if no messages for group then, this is first message
       if (state.gpMess[action.payload.to] === undefined) {
         state.gpMess[action.payload.to] = [action.payload];
@@ -196,13 +226,24 @@ const messagesSlice = createSlice({
           FIXME: new group to be added in multiple tabs
         */
       }
+    });
+  },
+  reducers: {
+    // two users chat messages
+    resetPMess(state) {
+      state.pMess = {} as PMessages;
+    },
+
+    // group chat messages
+    resetGpMess(state) {
+      state.gpMess = {} as GpMessages;
     },
 
     // unseenMessages
     setUnseenMessages(state, action: PayloadAction<Record<string, number>>) {
       state.unseenMessages = action.payload;
     },
-    addNewUnseen: (state, action: PayloadAction<string>) => {
+    addNewUnseen(state, action: PayloadAction<string>) {
       state.unseenMessages[action.payload] = 0;
     },
     resetUnseenMessage(state, action: PayloadAction<string>) {
@@ -215,15 +256,5 @@ const messagesSlice = createSlice({
   },
 });
 
-export const {
-  resetPMess,
-  addPMessages,
-  addLivePMessage,
-  resetGpMess,
-  addGpMessages,
-  addLiveGpMessage,
-  setUnseenMessages,
-  addNewUnseen,
-  resetUnseenMessage,
-} = messagesSlice.actions;
+export const { resetPMess, resetGpMess, setUnseenMessages, addNewUnseen, resetUnseenMessage } = messagesSlice.actions;
 export default messagesSlice.reducer;

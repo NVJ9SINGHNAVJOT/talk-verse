@@ -18,7 +18,7 @@ const ChekKey = () => {
   const navigate = useNavigate();
   const { register, handleSubmit, reset } = useForm<Key>();
 
-  const checkKey = (data: Key) => {
+  const checkKey = async (data: Key) => {
     if (!data.key.trim()) {
       return;
     }
@@ -31,12 +31,12 @@ const ChekKey = () => {
     reset();
 
     const completeKey = "-----BEGIN RSA PRIVATE KEY-----" + data.key + "-----END RSA PRIVATE KEY-----";
-    const encryptMessage = encryptPMessage(checkMessage, myPublicKey as string);
+    const encryptMessage = await encryptPMessage(checkMessage, myPublicKey as string);
 
     if (!encryptMessage) {
       toast.error("Error while checking key");
     } else {
-      const decryptedMessage = decryptPMessage(encryptMessage, completeKey);
+      const decryptedMessage = await decryptPMessage(encryptMessage, completeKey);
 
       if (checkMessage !== decryptedMessage) {
         toast.error("Invalid private key, please enter valid key");

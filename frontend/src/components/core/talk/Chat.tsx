@@ -1,12 +1,12 @@
 import OtherMessageCard from "@/components/core/talk/message/OtherMessageCard";
 import MessageCard from "@/components/core/talk/message/MessageCard";
 import { useEffect, useRef, useState } from "react";
-import { useAppSelector } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { fileMessageApi, getMessagesApi } from "@/services/operations/chatApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { useScrollTriggerVertical } from "@/hooks/useScrollTrigger";
 import { useDispatch } from "react-redux";
-import { addPMessages, messagesSliceObject, resetUnseenMessage } from "@/redux/slices/messagesSlice";
+import { addPMessagesAsync, messagesSliceObject, resetUnseenMessage } from "@/redux/slices/messagesSlice";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { MessageText } from "@/types/common";
@@ -29,7 +29,7 @@ const Chat = () => {
   const [resetTrigger, setResetTrigger] = useState<boolean>(true);
   const [firstMounting, setFirstMounting] = useState(true);
   const scrollableDivRef = useRef<HTMLDivElement>(null);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { socketRef } = useSocketContext();
   const navigate = useNavigate();
   const { chatId } = useParams();
@@ -113,7 +113,7 @@ const Chat = () => {
 
       // if any messages is present then dispatch
       if (response.messages.length > 0) {
-        dispatch(addPMessages(response.messages));
+        dispatch(addPMessagesAsync(response.messages));
       }
       setInitialLoad(false);
     };
@@ -158,7 +158,7 @@ const Chat = () => {
           setStop(true);
         }
         if (response.messages) {
-          dispatch(addPMessages(response.messages));
+          dispatch(addPMessagesAsync(response.messages));
         }
       } else {
         toast.error("Error while getting messages for chat");
@@ -212,7 +212,7 @@ const Chat = () => {
   const { register, handleSubmit, reset } = useForm<MessageText>();
 
   const sendMessage = (data: MessageText) => {
-    if (!socketRef.current || !socketRef.current.connected) {
+    if (!socketRef.current.connected) {
       toast.error("Network connection is not established");
       return;
     }
@@ -239,7 +239,7 @@ const Chat = () => {
   };
 
   const startTyping = () => {
-    if (!socketRef.current || !socketRef.current.connected) {
+    if (!socketRef.current.connected) {
       toast.error("Network connection is not established");
       return;
     }
@@ -251,7 +251,7 @@ const Chat = () => {
   };
 
   const stopTyping = () => {
-    if (!socketRef.current || !socketRef.current.connected) {
+    if (!socketRef.current.connected) {
       toast.error("Network connection is not established");
       return;
     }

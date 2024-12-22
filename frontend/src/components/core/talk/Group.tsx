@@ -2,8 +2,8 @@ import { useSocketContext } from "@/context/SocketContext";
 import { useScrollTriggerVertical } from "@/hooks/useScrollTrigger";
 import GpMessageCard from "@/components/core/talk/message/GpMessageCard";
 import OtherGpMessageCard from "@/components/core/talk/message/OtherGpMessageCard";
-import { addGpMessages, messagesSliceObject, resetUnseenMessage } from "@/redux/slices/messagesSlice";
-import { useAppSelector } from "@/redux/store";
+import { addGpMessagesAsync, messagesSliceObject, resetUnseenMessage } from "@/redux/slices/messagesSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { fileMessageApi, getGroupMessagesApi } from "@/services/operations/chatApi";
 import { sendGroupMessageEvent } from "@/socket/emitEvents/emitMessageEvents";
 import { MessageText } from "@/types/common";
@@ -27,7 +27,7 @@ const Group = () => {
   const [trigger, setTrigger] = useState<boolean>(true);
   const [resetTrigger, setResetTrigger] = useState<boolean>(true);
   const [firstMounting, setFirstMounting] = useState(true);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { socketRef } = useSocketContext();
   const navigate = useNavigate();
   const { groupId } = useParams();
@@ -111,7 +111,7 @@ const Group = () => {
 
       // if any messages is present then dispatch
       if (response.messages && response.messages.length > 0) {
-        dispatch(addGpMessages(response.messages));
+        dispatch(addGpMessagesAsync(response.messages));
       }
       setInitialLoad(false);
     };
@@ -160,7 +160,7 @@ const Group = () => {
           setStop(true);
         }
         if (response.messages) {
-          dispatch(addGpMessages(response.messages));
+          dispatch(addGpMessagesAsync(response.messages));
         }
       } else {
         toast.error("Error while getting messages for group");
@@ -220,7 +220,7 @@ const Group = () => {
   };
 
   const sendGroupMessage = (data: MessageText) => {
-    if (!socketRef.current || !socketRef.current.connected) {
+    if (!socketRef.current.connected) {
       toast.error("Network connection is not established");
       return;
     }
