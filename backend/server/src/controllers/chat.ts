@@ -92,7 +92,7 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
       const tempB = "chatId" in b && b.chatId ? b.chatId : b._id.toString();
       const indexA = userFriends?.chatBarOrder.indexOf(tempA);
       const indexB = userFriends?.chatBarOrder.indexOf(tempB);
-      if (indexA === undefined || indexB === undefined) {
+      if (indexA === undefined || indexB === undefined || indexA === -1 || indexB === -1) {
         return 0;
       }
       return indexA - indexB;
