@@ -5,7 +5,6 @@ import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { fileMessageApi, getMessagesApi } from "@/services/operations/chatApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { useScrollTriggerVertical } from "@/hooks/useScrollTrigger";
-import { useDispatch } from "react-redux";
 import { addPMessagesAsync, messagesSliceObject, resetUnseenMessage } from "@/redux/slices/messagesSlice";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";

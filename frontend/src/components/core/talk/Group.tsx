@@ -9,7 +9,6 @@ import { sendGroupMessageEvent } from "@/socket/emitEvents/emitMessageEvents";
 import { MessageText } from "@/types/common";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import FileInputs from "@/components/core/talk/chatItems/FileInputs";
