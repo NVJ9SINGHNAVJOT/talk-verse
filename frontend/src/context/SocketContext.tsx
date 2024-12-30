@@ -149,6 +149,8 @@ export default function SocketProvider({ children }: ContextProviderProps) {
       /* all response are valid for talk page, now connect to web socket server */
       if (socketRef.current.connected === false) {
         socketRef.current.connect();
+      } else {
+        return;
       }
 
       /* 
