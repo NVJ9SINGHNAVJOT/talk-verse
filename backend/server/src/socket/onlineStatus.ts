@@ -4,7 +4,7 @@ import User from "@/db/mongodb/models/User";
 import { groupOffline } from "@/socket/index";
 import { clientE } from "@/socket/events";
 import { logger } from "@/logger/logger";
-import { getSingleUserSockets } from "@/utils/getSocketIds";
+import { getSingleUserSockets } from "@/socket/getSocketIds";
 import Group from "@/db/mongodb/models/Group";
 
 export const showOnline = async (

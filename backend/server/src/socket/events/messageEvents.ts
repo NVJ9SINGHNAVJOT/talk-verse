@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { clientE, serverE } from "@/socket/events";
-import { getSingleUserSockets } from "@/utils/getSocketIds";
+import { getSingleUserSockets } from "@/socket/getSocketIds";
 import {
   SoGroupMessageRecieved,
   SoMessageRecieved,

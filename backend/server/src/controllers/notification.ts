@@ -16,7 +16,7 @@ import Channel from "@/types/channel";
 import { SoAddedInGroup, SoRequestAccepted, SoUserRequest } from "@/types/socket/eventTypes";
 import emitSocketEvent from "@/socket/emitSocketEvent";
 import { errRes } from "@/utils/error";
-import { getMultiUsersSockets, getSingleUserSockets } from "@/utils/getSocketIds";
+import { getMultiUsersSockets, getSingleUserSockets } from "@/socket/getSocketIds";
 import { Request, Response } from "express";
 import { uploadToCloudinary } from "@/utils/cloudinaryHandler";
 import Group from "@/db/mongodb/models/Group";

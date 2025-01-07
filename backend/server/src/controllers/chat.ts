@@ -16,7 +16,7 @@ import { SoAddedInGroup, SoGroupMessageRecieved, SoMessageRecieved } from "@/typ
 import { uploadToCloudinary } from "@/utils/cloudinaryHandler";
 import emitSocketEvent from "@/socket/emitSocketEvent";
 import { errRes } from "@/utils/error";
-import { getSingleUserSockets } from "@/utils/getSocketIds";
+import { getSingleUserSockets } from "@/socket/getSocketIds";
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { deleteFile } from "@/utils/deleteFile";
