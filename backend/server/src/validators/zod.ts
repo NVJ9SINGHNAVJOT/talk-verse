@@ -47,7 +47,7 @@ export const fancyNameSchema = z
 export const emailSchema = z.string().regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/);
 
 // otp
-export const optSchema = z
+export const otpSchema = z
   .string()
   .length(6)
   .regex(/^[1-9][0-9]{5}$/);

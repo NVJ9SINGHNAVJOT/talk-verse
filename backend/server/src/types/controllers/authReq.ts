@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { emailSchema, nameSchema, optSchema, passwordSchema, fancyNameSchema } from "@/validators/zod";
+import { emailSchema, nameSchema, passwordSchema, fancyNameSchema, otpSchema } from "@/validators/zod";
 
 export const SignUpReqSchema = z
   .object({
@@ -7,7 +7,7 @@ export const SignUpReqSchema = z
     lastName: nameSchema,
     userName: fancyNameSchema,
     email: emailSchema,
-    otp: optSchema,
+    otp: otpSchema,
     password: passwordSchema,
     confirmPassword: passwordSchema,
   })
@@ -46,13 +46,13 @@ export const ChangePasswordReqSchema = z
 
 export const VerifyOtpReqSchema = z.object({
   email: emailSchema,
-  otp: optSchema,
+  otp: otpSchema,
 });
 
 export const ResetPasswordReqSchema = z
   .object({
     email: emailSchema,
-    otp: optSchema,
+    otp: otpSchema,
     password: passwordSchema,
     confirmPassword: passwordSchema,
   })
