@@ -101,6 +101,6 @@ export const showOnline = async (
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    logger.error("Error while setting user status", { error: error.message });
+    logger.error("Error while setting user status", { error: error?.message || "Unknown error" });
   }
 };

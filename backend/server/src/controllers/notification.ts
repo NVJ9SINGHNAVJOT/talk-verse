@@ -137,7 +137,7 @@ export const getFollowUsers = async (req: Request, res: Response): Promise<Respo
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while getting follow users", error.message);
+    return errRes(res, 500, "error while getting follow users", error?.message || "Unknown error");
   }
 };
 
@@ -215,7 +215,7 @@ export const sendRequest = async (req: Request, res: Response): Promise<Response
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while sending request", error.message);
+    return errRes(res, 500, "error while sending request", error?.message || "Unknown error");
   }
 };
 
@@ -361,7 +361,7 @@ export const acceptRequest = async (req: Request, res: Response): Promise<Respon
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while accept request", error.message);
+    return errRes(res, 500, "error while accept request", error?.message || "Unknown error");
   }
 };
 
@@ -413,7 +413,7 @@ export const deleteRequest = async (req: Request, res: Response) => {
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while deleting request", error.message);
+    return errRes(res, 500, "error while deleting request", error?.message || "Unknown error");
   }
 };
 
@@ -450,7 +450,7 @@ export const getAllNotifications = async (req: Request, res: Response): Promise<
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while getting notifications", error.message);
+    return errRes(res, 500, "error while getting notifications", error?.message || "Unknown error");
   }
 };
 
@@ -552,7 +552,7 @@ export const createGroup = async (req: Request, res: Response): Promise<Response
     if (req.file) {
       deleteFile(req.file);
     }
-    return errRes(res, 500, "error while creating group", error.message);
+    return errRes(res, 500, "error while creating group", error?.message || "Unknown error");
   }
 };
 
@@ -638,7 +638,7 @@ export const addUsersInGroup = async (req: Request, res: Response): Promise<Resp
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while adding users in group", error.message);
+    return errRes(res, 500, "error while adding users in group", error?.message || "Unknown error");
   }
 };
 
@@ -678,7 +678,7 @@ export const checkOnlineFriends = async (req: Request, res: Response): Promise<R
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while getting online friends", error.message);
+    return errRes(res, 500, "error while getting online friends", error?.message || "Unknown error");
   }
 };
 
@@ -701,7 +701,7 @@ export const setUnseenCount = async (req: Request, res: Response): Promise<Respo
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 400, "error while setting unseen count", error.message);
+    return errRes(res, 400, "error while setting unseen count", error?.message || "Unknown error");
   }
 };
 
@@ -737,7 +737,7 @@ export const setOrder = async (req: Request, res: Response): Promise<Response> =
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while setting order", error.message);
+    return errRes(res, 500, "error while setting order", error?.message || "Unknown error");
   }
 };
 
@@ -785,7 +785,7 @@ export const sendFollowRequest = async (req: Request, res: Response): Promise<Re
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while sending follow request", error.message);
+    return errRes(res, 500, "error while sending follow request", error?.message || "Unknown error");
   }
 };
 
@@ -815,7 +815,7 @@ export const deleteFollowRequest = async (req: Request, res: Response): Promise<
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while deleting follow request", error.message);
+    return errRes(res, 500, "error while deleting follow request", error?.message || "Unknown error");
   }
 };
 
@@ -874,7 +874,7 @@ export const acceptFollowRequest = async (req: Request, res: Response): Promise<
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while following user", error.message);
+    return errRes(res, 500, "error while following user", error?.message || "Unknown error");
   }
 };
 
@@ -909,7 +909,7 @@ export const followRequests = async (req: Request, res: Response): Promise<Respo
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while getting follow request for user", error.message);
+    return errRes(res, 500, "error while getting follow request for user", error?.message || "Unknown error");
   }
 };
 
@@ -946,6 +946,6 @@ export const followSuggestions = async (req: Request, res: Response): Promise<Re
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while getting follow suggestions", error.message);
+    return errRes(res, 500, "error while getting follow suggestions", error?.message || "Unknown error");
   }
 };

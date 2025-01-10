@@ -12,7 +12,7 @@ export const registerNotificationEvents = (socket: Socket, userId: string): void
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      logger.error("error while emitting socket event for user typing", { error: error.message });
+      logger.error("error while emitting socket event for user typing", { error: error?.message || "Unknown error" });
     }
   });
 
@@ -24,7 +24,9 @@ export const registerNotificationEvents = (socket: Socket, userId: string): void
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      logger.error("error while emitting socket event for user stop typing", { error: error.message });
+      logger.error("error while emitting socket event for user stop typing", {
+        error: error?.message || "Unknown error",
+      });
     }
   });
 };

@@ -56,6 +56,9 @@ export const deleteFromCloudinay = async (cloudinaryUrl: string) => {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    logger.error("error while deleting file from cloudinary", { cloudinaryUrl: cloudinaryUrl, error: error.message });
+    logger.error("error while deleting file from cloudinary", {
+      cloudinaryUrl: cloudinaryUrl,
+      error: error?.message || "Unknown error",
+    });
   }
 };

@@ -39,7 +39,7 @@ export async function setupPostgreSQLTriggers() {
     logger.info("triggers setup complete, exiting...");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    logger.error("triggers failed for postgresql", { error: error.message });
+    logger.error("triggers failed for postgresql", { error: error?.message || "Unknown error" });
     await pool.end();
     process.exit();
   }

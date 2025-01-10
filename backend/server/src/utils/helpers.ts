@@ -9,7 +9,7 @@ export const checkTags = (tags: string): string[] => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     // If JSON.parse fails, return an empty array
-    logger.error("error while parsing tags", { tags: tags, error: error.message });
+    logger.error("error while parsing tags", { tags: tags, error: error?.message || "Unknown error" });
     return [];
   }
 
@@ -38,7 +38,7 @@ export const checkContent = (content: string): string[] => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     // If JSON.parse fails, return an empty array
-    logger.error("error while parsing content", { content: content, error: error.message });
+    logger.error("error while parsing content", { content: content, error: error?.message || "Unknown error" });
     return [];
   }
 
@@ -69,7 +69,10 @@ export const checkGroupMembers = (groupMembers: string): string[] => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     // If JSON.parse fails, return an empty array
-    logger.error("error while parsing content", { groupMembers: groupMembers, error: error.message });
+    logger.error("error while parsing content", {
+      groupMembers: groupMembers,
+      error: error?.message || "Unknown error",
+    });
     return [];
   }
 

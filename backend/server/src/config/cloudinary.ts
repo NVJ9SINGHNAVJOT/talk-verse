@@ -13,7 +13,7 @@ export const cloudinaryConnect = (): void => {
     logger.info("cloudinary connected");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    logger.error("error while connection cloudinary", { error: error.message });
+    logger.error("error while connection cloudinary", { error: error?.message || "Unknown error" });
     process.exit();
   }
 };

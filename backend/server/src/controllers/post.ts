@@ -112,7 +112,7 @@ export const createPost = async (req: Request, res: Response): Promise<Response>
     if (req.files?.length) {
       deleteFiles(req.files);
     }
-    return errRes(res, 500, "error while creating post", error.message);
+    return errRes(res, 500, "error while creating post", error?.message || "Unknown error");
   }
 };
 
@@ -150,7 +150,7 @@ export const deletePost = async (req: Request, res: Response): Promise<Response>
     return errRes(res, 400, "postId is invalid, no post present for postId to delete");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while deleting post", error.message);
+    return errRes(res, 500, "error while deleting post", error?.message || "Unknown error");
   }
 };
 
@@ -210,7 +210,7 @@ export const savePost = async (req: Request, res: Response): Promise<Response> =
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while updating save post for user", error.message);
+    return errRes(res, 500, "error while updating save post for user", error?.message || "Unknown error");
   }
 };
 
@@ -246,7 +246,7 @@ export const createStory = async (req: Request, res: Response): Promise<Response
     if (req.file) {
       deleteFile(req.file);
     }
-    return errRes(res, 500, "error while creating story", error.message);
+    return errRes(res, 500, "error while creating story", error?.message || "Unknown error");
   }
 };
 
@@ -283,7 +283,7 @@ export const deleteStory = async (req: Request, res: Response): Promise<Response
     return errRes(res, 400, "stroyId is invalid for deleting story");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while deleting story", error.message);
+    return errRes(res, 500, "error while deleting story", error?.message || "Unknown error");
   }
 };
 
@@ -312,7 +312,7 @@ export const userStory = async (req: Request, res: Response): Promise<Response> 
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while getting user story", error.message);
+    return errRes(res, 500, "error while getting user story", error?.message || "Unknown error");
   }
 };
 
@@ -408,7 +408,7 @@ export const updateLike = async (req: Request, res: Response): Promise<Response>
     return errRes(res, 400, "no like is present for post by user");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while updating like for post", error.message);
+    return errRes(res, 500, "error while updating like for post", error?.message || "Unknown error");
   }
 };
 
@@ -445,7 +445,7 @@ export const addComment = async (req: Request, res: Response): Promise<Response>
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while adding comment for post", error.message);
+    return errRes(res, 500, "error while adding comment for post", error?.message || "Unknown error");
   }
 };
 
@@ -482,7 +482,7 @@ export const deleteComment = async (req: Request, res: Response): Promise<Respon
     return errRes(res, 400, "invalid id for deleting comment");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while deleting comment for post", error.message);
+    return errRes(res, 500, "error while deleting comment for post", error?.message || "Unknown error");
   }
 };
 
@@ -529,7 +529,7 @@ export const postComments = async (req: Request, res: Response): Promise<Respons
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while getting comments for post", error.message);
+    return errRes(res, 500, "error while getting comments for post", error?.message || "Unknown error");
   }
 };
 export const getStories = async (req: Request, res: Response): Promise<Response> => {
@@ -578,7 +578,7 @@ export const getStories = async (req: Request, res: Response): Promise<Response>
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while getting stories", error.message);
+    return errRes(res, 500, "error while getting stories", error?.message || "Unknown error");
   }
 };
 

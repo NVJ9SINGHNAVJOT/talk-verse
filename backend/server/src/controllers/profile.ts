@@ -38,7 +38,7 @@ export const checkUserName = async (req: Request, res: Response): Promise<Respon
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while checking userName", error.message);
+    return errRes(res, 500, "error while checking userName", error?.message || "Unknown error");
   }
 };
 
@@ -72,7 +72,7 @@ export const getUserDetails = async (req: Request, res: Response): Promise<Respo
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while getting user profile data", error.message);
+    return errRes(res, 500, "error while getting user profile data", error?.message || "Unknown error");
   }
 };
 
@@ -117,7 +117,7 @@ export const updateProfileImage = async (req: Request, res: Response): Promise<R
     if (req.file) {
       deleteFile(req.file);
     }
-    return errRes(res, 500, "error while uploading user profile image", error.message);
+    return errRes(res, 500, "error while uploading user profile image", error?.message || "Unknown error");
   }
 };
 
@@ -192,7 +192,7 @@ export const updateProfile = async (req: Request, res: Response): Promise<Respon
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while updating user details", error.message);
+    return errRes(res, 500, "error while updating user details", error?.message || "Unknown error");
   }
 };
 
@@ -223,7 +223,7 @@ export const userBlogProfile = async (req: Request, res: Response): Promise<Resp
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while getting userBlogProfile data", error.message);
+    return errRes(res, 500, "error while getting userBlogProfile data", error?.message || "Unknown error");
   }
 };
 
@@ -417,7 +417,7 @@ export const removeFollower = async (req: Request, res: Response): Promise<Respo
     return errRes(res, 400, "invalid follower id, no follower exists for other userId");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while removing follower", error.message);
+    return errRes(res, 500, "error while removing follower", error?.message || "Unknown error");
   }
 };
 
@@ -466,7 +466,7 @@ export const unfollowUser = async (req: Request, res: Response): Promise<Respons
     return errRes(res, 400, "invalid following id, no following exists for other userId");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while removing following other user", error.message);
+    return errRes(res, 500, "error while removing following other user", error?.message || "Unknown error");
   }
 };
 

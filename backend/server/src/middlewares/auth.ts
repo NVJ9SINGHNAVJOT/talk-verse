@@ -26,6 +26,6 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     next();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "user authorization failed", error.message);
+    return errRes(res, 500, "user authorization failed", error?.message || "Unknown error");
   }
 };

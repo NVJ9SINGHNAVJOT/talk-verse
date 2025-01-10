@@ -12,7 +12,7 @@ export async function mongodbDatabaseConnect() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     // Ensures that the client will close when error
-    logger.error("mongodb connection failed", { error: error.message });
+    logger.error("mongodb connection failed", { error: error?.message || "Unknown error" });
     await mongoose.disconnect();
     process.exit();
   }

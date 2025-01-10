@@ -50,7 +50,7 @@ export const kafkaProducerSetup = async () => {
     logger.info("Kafka producer connected");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    logger.error("Error connecting Kafka producer", { error: error.message });
+    logger.error("Error connecting Kafka producer", { error: error?.message || "Unknown error" });
     process.exit(1);
   }
 };
@@ -68,7 +68,7 @@ async function message(data: KafkaIMessageType) {
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    logger.error("error in kafka producer, topic: message", { data: data, error: error.message });
+    logger.error("error in kafka producer, topic: message", { data: data, error: error?.message || "Unknown error" });
   }
 }
 
@@ -80,7 +80,10 @@ async function gpMessage(data: KafkaIGpMessageType) {
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    logger.error("error in kafka producer, topic: gp-message", { data: data, error: error.message });
+    logger.error("error in kafka producer, topic: gp-message", {
+      data: data,
+      error: error?.message || "Unknown error",
+    });
   }
 }
 

@@ -40,7 +40,7 @@ const setupChannels = async () => {
     logger.info("channels setup completed");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    logger.error("error while setting up channels", { error: error.message });
+    logger.error("error while setting up channels", { error: error?.message || "Unknown error" });
     process.exit();
   }
 };

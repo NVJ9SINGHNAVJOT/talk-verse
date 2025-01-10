@@ -107,7 +107,7 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while getting chatbar data", error.message);
+    return errRes(res, 500, "error while getting chatbar data", error?.message || "Unknown error");
   }
 };
 
@@ -231,7 +231,7 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-        errRes(res, 500, "error while updating unseen count for chat", error.message);
+        errRes(res, 500, "error while updating unseen count for chat", error?.message || "Unknown error");
       }
     }
 
@@ -244,7 +244,7 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
     if (req.file) {
       deleteFile(req.file);
     }
-    return errRes(res, 500, "error while uploading filemessage", error.message);
+    return errRes(res, 500, "error while uploading filemessage", error?.message || "Unknown error");
   }
 };
 
@@ -307,7 +307,7 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while getting chat messages", error.message);
+    return errRes(res, 500, "error while getting chat messages", error?.message || "Unknown error");
   }
 };
 
@@ -349,7 +349,7 @@ export const groupMessages = async (req: Request, res: Response): Promise<Respon
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while getting group messages", error.message);
+    return errRes(res, 500, "error while getting group messages", error?.message || "Unknown error");
   }
 };
 
@@ -380,6 +380,6 @@ export const groupMembers = async (req: Request, res: Response): Promise<Respons
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return errRes(res, 500, "error while getting groupMembers", error.message);
+    return errRes(res, 500, "error while getting groupMembers", error?.message || "Unknown error");
   }
 };
