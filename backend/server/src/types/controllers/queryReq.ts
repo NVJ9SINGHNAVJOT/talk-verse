@@ -6,7 +6,10 @@ export const SendQueryReqSchema = z.object({
     .string()
     .min(2)
     .max(30)
-    .regex(/^[a-zA-Z\s]{2,}$/),
+    .regex(/^[a-zA-Z\s]{2,}$/)
+    .refine((value) => value === value.trim(), {
+      message: "String contains leading or trailing whitespaces",
+    }),
   email: emailSchema,
   text: z.array(z.string()).refine(
     (arr) => {

@@ -8,10 +8,20 @@ export const UpdateProfileReqSchema = z.object({
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format. Expected YYYY-MM-DD.")
     .optional(),
-  bio: z.string().min(1).max(150).optional(),
+  bio: z
+    .string()
+    .min(1)
+    .max(150)
+    .refine((value) => value === value.trim(), {
+      message: "String contains leading or trailing whitespaces",
+    })
+    .optional(),
   countryCode: z
     .string()
     .regex(/^[a-zA-Z0-9+-]*$/)
+    .refine((value) => value === value.trim(), {
+      message: "String contains leading or trailing whitespaces",
+    })
     .optional(),
   contactNumber: z
     .string()

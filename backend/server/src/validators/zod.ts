@@ -8,6 +8,9 @@ export const passwordSchema = z
   .max(20)
   .refine(
     (value) => {
+      if (value !== value.trim()) {
+        return false;
+      }
       // Check for at least one uppercase letter
       if (!/[A-Z]/.test(value)) {
         return false;
@@ -36,15 +39,26 @@ export const nameSchema = z
   .string()
   .min(1)
   .max(15)
-  .regex(/^[a-zA-Z]{2,}$/);
+  .regex(/^[a-zA-Z]{2,}$/)
+  .refine((value) => value === value.trim(), {
+    message: "String contains leading or trailing whitespaces",
+  });
 export const fancyNameSchema = z
   .string()
   .min(3)
   .max(15)
-  .regex(/^[a-zA-Z][a-zA-Z0-9_-]{2,}$/);
+  .regex(/^[a-zA-Z][a-zA-Z0-9_-]{2,}$/)
+  .refine((value) => value === value.trim(), {
+    message: "String contains leading or trailing whitespaces",
+  });
 
 // email
-export const emailSchema = z.string().regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/);
+export const emailSchema = z
+  .string()
+  .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
+  .refine((value) => value === value.trim(), {
+    message: "String contains leading or trailing whitespaces",
+  });
 
 // otp
 export const otpSchema = z

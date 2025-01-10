@@ -8,7 +8,13 @@ export const FileMessageReqSchema = z
     to: mongooseIdSchema,
     firstName: nameSchema.optional(),
     lastName: nameSchema.optional(),
-    imageUrl: z.string().url().optional(),
+    imageUrl: z
+      .string()
+      .url()
+      .refine((value) => value === value.trim(), {
+        message: "String contains leading or trailing whitespaces",
+      })
+      .optional(),
   })
   .refine(
     (data) => {
