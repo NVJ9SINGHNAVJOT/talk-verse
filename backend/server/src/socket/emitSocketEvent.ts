@@ -1,3 +1,4 @@
+import { getErrorDetails } from "@/logger/error";
 import { logger } from "@/logger/logger";
 import { _io } from "@/socket";
 import {
@@ -20,9 +21,8 @@ const emitSocketEvent = (
   }
   try {
     _io.to(roomIds).emit(event, sdata);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    logger.error("error while emiting event from io", { error: error.message, data: sdata });
+  } catch (error) {
+    logger.error("error while emiting event from io", { error: getErrorDetails(error), data: sdata });
   }
 };
 

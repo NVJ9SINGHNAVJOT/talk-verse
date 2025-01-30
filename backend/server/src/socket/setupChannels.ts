@@ -1,5 +1,6 @@
 import Chat from "@/db/mongodb/models/Chat";
 import Group from "@/db/mongodb/models/Group";
+import { getErrorDetails } from "@/logger/error";
 import { logger } from "@/logger/logger";
 import { channels, groupOffline } from "@/socket/index";
 import Channel from "@/types/channel";
@@ -38,9 +39,8 @@ const setupChannels = async () => {
       });
     }
     logger.info("channels setup completed");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    logger.error("error while setting up channels", { error: error?.message || "Unknown error" });
+  } catch (error) {
+    logger.error("error while setting up channels", { error: getErrorDetails(error) });
     process.exit();
   }
 };

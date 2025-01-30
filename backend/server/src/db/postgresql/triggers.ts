@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm";
 import { NodePgDatabase, drizzle } from "drizzle-orm/node-postgres";
 import { logger } from "@/logger/logger";
 import { pool } from "@/db/postgresql/connection";
+import { getErrorDetails } from "@/logger/error";
 
 const tables = ["user", "story", "save", "post", "likes", "follow", "comment", "request", "query", "review"];
 
@@ -37,9 +38,8 @@ export async function setupPostgreSQLTriggers() {
     }
 
     logger.info("triggers setup complete, exiting...");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    logger.error("triggers failed for postgresql", { error: error?.message || "Unknown error" });
+  } catch (error) {
+    logger.error("triggers failed for postgresql", { error: getErrorDetails(error) });
     await pool.end();
     process.exit();
   }

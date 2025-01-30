@@ -2,6 +2,7 @@ import { configDotenv } from "dotenv";
 import { logger } from "@/logger/logger";
 import nodemailer from "nodemailer";
 import { passwordUpdatedTemplate, privateKeyTemplate, verificationTemplate } from "@/utils/templates";
+import { getErrorDetails } from "@/logger/error";
 configDotenv();
 
 const sendMail = async (email: string, title: string, body: string): Promise<void> => {
@@ -24,9 +25,8 @@ const sendMail = async (email: string, title: string, body: string): Promise<voi
 export const sendVerficationMail = async (email: string, otp: string) => {
   try {
     await sendMail(email, "Verification Email", verificationTemplate(otp));
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    logger.error("error while sending verification mail", { error: error.message, email: email });
+  } catch (error) {
+    logger.error("error while sending verification mail", { error: getErrorDetails(error), email: email });
     throw error;
   }
 };
@@ -34,9 +34,11 @@ export const sendVerficationMail = async (email: string, otp: string) => {
 export const sendForgotPasswordVerificationMail = async (email: string, otp: string) => {
   try {
     await sendMail(email, "Reset Password For TalkVerse", verificationTemplate(otp));
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    logger.error("error while sending forgot password verification mail", { error: error.message, email: email });
+  } catch (error) {
+    logger.error("error while sending forgot password verification mail", {
+      error: getErrorDetails(error),
+      email: email,
+    });
     throw error;
   }
 };
@@ -44,21 +46,19 @@ export const sendForgotPasswordVerificationMail = async (email: string, otp: str
 export const sendPasswordUpdatedMail = async (userName: string, email: string) => {
   try {
     await sendMail(email, "Password Updated", passwordUpdatedTemplate(userName, email));
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch (error) {
     // NOTE: no error is thrown to controller
-    logger.error("error while sending password updated mail", { error: error.message, email: email });
+    logger.error("error while sending password updated mail", { error: getErrorDetails(error), email: email });
   }
 };
 
 export const sendPrivateKeyMail = async (email: string, privateKey: string) => {
   try {
     await sendMail(email, "Private Key - TalkVerse", privateKeyTemplate(email, privateKey));
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch (error) {
     // NOTE: no error is thrown to controller
     logger.error("error while sending private key mail", {
-      error: error.message,
+      error: getErrorDetails(error),
       email: email,
       privateKey: privateKey,
     });

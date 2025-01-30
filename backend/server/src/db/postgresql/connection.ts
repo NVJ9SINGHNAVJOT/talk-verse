@@ -12,6 +12,7 @@ import { save, savesRelations } from "@/db/postgresql/schema/save";
 import { request, requestsRelations } from "@/db/postgresql/schema/request";
 import { query } from "@/db/postgresql/schema/query";
 import { review, reviewsRelations } from "@/db/postgresql/schema/review";
+import { getErrorDetails } from "@/logger/error";
 
 configDotenv();
 
@@ -28,9 +29,8 @@ export async function postgresqlDatabaseConnect() {
   try {
     await pool.connect();
     logger.info("postgresql database connected");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    logger.error("error while connecting postgresql database", { error: error?.message || "Unknown error" });
+  } catch (error) {
+    logger.error("error while connecting postgresql database", { error: getErrorDetails(error) });
     await pool.end();
     process.exit();
   }

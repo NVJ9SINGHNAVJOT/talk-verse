@@ -1,6 +1,7 @@
 import { logger } from "@/logger/logger";
 import { v2 as cloudinary } from "cloudinary";
 import { deleteFile } from "@/utils/deleteFile";
+import { getErrorDetails } from "@/logger/error";
 
 export const uploadToCloudinary = async (file: Express.Multer.File): Promise<string | null> => {
   try {
@@ -13,9 +14,8 @@ export const uploadToCloudinary = async (file: Express.Multer.File): Promise<str
     deleteFile(file);
 
     return secureUrl.secure_url;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    logger.error("error while uploading file to cloudinary", { error: error, path: file.path });
+  } catch (error) {
+    logger.error("error while uploading file to cloudinary", { error: getErrorDetails(error), path: file.path });
     // FIXME: deleteFile is not working after error, reason unknown
     deleteFile(file);
     return null;
@@ -53,12 +53,10 @@ export const deleteFromCloudinay = async (cloudinaryUrl: string) => {
     */
     /* NOTE: commented only for production purpose, remove comment in development */
     // cloudinary.api.delete_resources([publicId]);
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch (error) {
     logger.error("error while deleting file from cloudinary", {
       cloudinaryUrl: cloudinaryUrl,
-      error: error?.message || "Unknown error",
+      error: getErrorDetails(error),
     });
   }
 };

@@ -2,6 +2,7 @@ import { Socket } from "socket.io";
 import { clientE, serverE } from "@/socket/events";
 import { getSingleUserSockets } from "@/socket/getSocketIds";
 import { logger } from "@/logger/logger";
+import { getErrorDetails } from "@/logger/error";
 
 export const registerNotificationEvents = (socket: Socket, userId: string): void => {
   socket.on(serverE.START_TYPING, (friendId: string) => {
@@ -10,9 +11,8 @@ export const registerNotificationEvents = (socket: Socket, userId: string): void
       if (friendSocketIds.length > 0) {
         socket.to(friendSocketIds).emit(clientE.OTHER_START_TYPING, userId);
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      logger.error("error while emitting socket event for user typing", { error: error?.message || "Unknown error" });
+    } catch (error) {
+      logger.error("error while emitting socket event for user typing", { error: getErrorDetails(error) });
     }
   });
 
@@ -22,10 +22,9 @@ export const registerNotificationEvents = (socket: Socket, userId: string): void
       if (friendSocketIds.length > 0) {
         socket.to(friendSocketIds).emit(clientE.OTHER_STOP_TYPING, userId);
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
+    } catch (error) {
       logger.error("error while emitting socket event for user stop typing", {
-        error: error?.message || "Unknown error",
+        error: getErrorDetails(error),
       });
     }
   });

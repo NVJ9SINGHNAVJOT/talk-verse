@@ -24,9 +24,8 @@ export const postReview = async (req: Request, res: Response): Promise<Response>
       success: true,
       message: "review posted",
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return errRes(res, 500, "error while posting review");
+  } catch (error) {
+    return errRes(res, 500, "error while posting review", error);
   }
 };
 
@@ -49,8 +48,7 @@ export const getReviews = async (_req: Request, res: Response): Promise<Response
       message: "review posted",
       reviews: reviews,
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return errRes(res, 500, "error while getting reviews");
+  } catch (error) {
+    return errRes(res, 500, "error while getting reviews", error);
   }
 };

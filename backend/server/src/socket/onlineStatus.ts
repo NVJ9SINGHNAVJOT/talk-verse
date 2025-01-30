@@ -6,6 +6,7 @@ import { clientE } from "@/socket/events";
 import { logger } from "@/logger/logger";
 import { getSingleUserSockets } from "@/socket/getSocketIds";
 import Group from "@/db/mongodb/models/Group";
+import { getErrorDetails } from "@/logger/error";
 
 export const showOnline = async (
   io: Server,
@@ -98,9 +99,7 @@ export const showOnline = async (
         socket.to(allSocketIdsOfFriends).emit(clientE.SET_USER_OFFLINE, userId);
       }
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    logger.error("Error while setting user status", { error: error?.message || "Unknown error" });
+  } catch (error) {
+    logger.error("Error while setting user status", { error: getErrorDetails(error) || "Unknown error" });
   }
 };

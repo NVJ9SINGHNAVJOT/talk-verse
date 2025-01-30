@@ -136,12 +136,11 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
       success: true,
       message: "user registered successfully",
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch (error) {
     if (req.file) {
       deleteFile(req.file);
     }
-    return errRes(res, 500, "error while creating user", error?.message || "Unknown error");
+    return errRes(res, 500, "error while creating user", error);
   }
 };
 
@@ -190,10 +189,8 @@ export const sendOtp = async (req: Request, res: Response): Promise<Response> =>
       success: true,
       message: "otp send successfully",
     });
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return errRes(res, 500, "error while sending otp", error?.message || "Unknown error");
+  } catch (error) {
+    return errRes(res, 500, "error while sending otp", error);
   }
 };
 
@@ -278,10 +275,8 @@ export const logIn = async (req: Request, res: Response): Promise<Response> => {
           publicKey: checkUser.publicKey,
         },
       });
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return errRes(res, 500, "error while user login", error?.message || "Unknown error");
+  } catch (error) {
+    return errRes(res, 500, "error while user login", error);
   }
 };
 
@@ -320,9 +315,8 @@ export const checkUser = async (req: Request, res: Response): Promise<Response> 
       message: "user check successfull",
       user: user,
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return errRes(res, 500, "error while user check", error?.message || "Unknown error");
+  } catch (error) {
+    return errRes(res, 500, "error while user check", error);
   }
 };
 
@@ -358,9 +352,8 @@ export const logOut = async (req: Request, res: Response): Promise<Response> => 
       success: true,
       message: "User logged out successfully",
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return errRes(res, 500, "error while user log out", error?.message || "Unknown error");
+  } catch (error) {
+    return errRes(res, 500, "error while user log out", error);
   }
 };
 
@@ -422,9 +415,8 @@ export const changePassword = async (req: Request, res: Response): Promise<Respo
       success: true,
       message: "user password updated successfully",
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return errRes(res, 500, "error while updating password", error?.message || "Unknown error");
+  } catch (error) {
+    return errRes(res, 500, "error while updating password", error);
   }
 };
 
@@ -448,9 +440,8 @@ export const verifyOtp = async (req: Request, res: Response): Promise<Response> 
       success: false,
       message: "otp validation failed",
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return errRes(res, 500, "error while validating otp", error?.message || "Unknown error");
+  } catch (error) {
+    return errRes(res, 500, "error while validating otp", error);
   }
 };
 
@@ -488,9 +479,7 @@ export const resetPassword = async (req: Request, res: Response): Promise<Respon
       success: true,
       message: "new password set successfully",
     });
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return errRes(res, 500, "error while setting new password", error?.message || "Unknown error");
+  } catch (error) {
+    return errRes(res, 500, "error while setting new password", error);
   }
 };

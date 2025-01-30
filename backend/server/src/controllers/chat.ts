@@ -105,9 +105,8 @@ export const chatBarData = async (req: Request, res: Response): Promise<Response
       chatBarData: sortedBarData,
       friendPublicKeys: friendPublicKeys,
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return errRes(res, 500, "error while getting chatbar data", error?.message || "Unknown error");
+  } catch (error) {
+    return errRes(res, 500, "error while getting chatbar data", error);
   }
 };
 
@@ -181,9 +180,7 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
         if (newOfline.length > 0) {
           await UnseenCount.updateMany({ userId: { $in: newOfline }, mainId: data.mainId }, { $inc: { count: 1 } });
         }
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
+      } catch (error) {
         return errRes(res, 500, "error while updating unseen count for group members", { error, sdata });
       }
     } else {
@@ -229,9 +226,8 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
         if (friendSocketIds.length === 0) {
           await UnseenCount.updateOne({ userId: data.to, mainId: data.mainId }, { $inc: { count: 1 } });
         }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        errRes(res, 500, "error while updating unseen count for chat", error?.message || "Unknown error");
+      } catch (error) {
+        errRes(res, 500, "error while updating unseen count for chat", error);
       }
     }
 
@@ -239,12 +235,11 @@ export const fileMessage = async (req: Request, res: Response): Promise<Response
       success: true,
       message: "filemessage send successfully",
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch (error) {
     if (req.file) {
       deleteFile(req.file);
     }
-    return errRes(res, 500, "error while uploading filemessage", error?.message || "Unknown error");
+    return errRes(res, 500, "error while uploading filemessage", error);
   }
 };
 
@@ -305,9 +300,8 @@ export const chatMessages = async (req: Request, res: Response): Promise<Respons
       message: "messages for chatid successfull",
       messages: newMessages,
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return errRes(res, 500, "error while getting chat messages", error?.message || "Unknown error");
+  } catch (error) {
+    return errRes(res, 500, "error while getting chat messages", error);
   }
 };
 
@@ -347,9 +341,8 @@ export const groupMessages = async (req: Request, res: Response): Promise<Respon
       message: "messages for group successfull",
       messages: gpMessages,
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return errRes(res, 500, "error while getting group messages", error?.message || "Unknown error");
+  } catch (error) {
+    return errRes(res, 500, "error while getting group messages", error);
   }
 };
 
@@ -377,9 +370,7 @@ export const groupMembers = async (req: Request, res: Response): Promise<Respons
     }
 
     return errRes(res, 400, "invalid groupId for group members");
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return errRes(res, 500, "error while getting groupMembers", error?.message || "Unknown error");
+  } catch (error) {
+    return errRes(res, 500, "error while getting groupMembers", error);
   }
 };

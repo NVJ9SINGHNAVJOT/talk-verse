@@ -2,6 +2,7 @@ import { Socket } from "socket.io";
 import { CustomSocket } from "@/types/custom";
 import { jwtVerify } from "@/utils/token";
 import { logger } from "@/logger/logger";
+import { getErrorDetails } from "@/logger/error";
 
 // check authentication for socket
 export const checkUserSocket = async (socket: Socket): Promise<boolean> => {
@@ -53,11 +54,10 @@ export const checkUserSocket = async (socket: Socket): Promise<boolean> => {
     (socket as CustomSocket).userId = userIds.userId;
 
     return true;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch (error) {
     logger.error("error while checking socket authorization", {
       socketId: socket.id,
-      error: error?.message || "Unknown error",
+      error: getErrorDetails(error),
     });
     return false;
   }

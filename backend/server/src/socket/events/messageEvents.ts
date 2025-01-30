@@ -11,6 +11,7 @@ import { channels, groupOffline } from "@/socket/index";
 import { logger } from "@/logger/logger";
 import { v4 as uuidv4 } from "uuid";
 import { kafkaProducer } from "@/kafka/kafka";
+import { getErrorDetails } from "@/logger/error";
 
 export const registerMessageEvents = (io: Server, socket: Socket, userId: string): void => {
   socket.on(serverE.SEND_MESSAGE, async (data) => {
@@ -70,11 +71,9 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
       if (friendSocketIds.length === 0) {
         await kafkaProducer.unseenCount([edata.to], edata.chatId);
       }
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
+    } catch (error) {
       logger.error("error while sending message for chat", {
-        error: error.message,
+        error: getErrorDetails(error),
         data: data,
         uuId: uuId,
         createdAt: createdAt,
@@ -137,11 +136,9 @@ export const registerMessageEvents = (io: Server, socket: Socket, userId: string
         const newOfline = Array.from(offlineMem);
         await kafkaProducer.unseenCount(newOfline, edata._id);
       }
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
+    } catch (error) {
       logger.error("error while sending group message", {
-        error: error.message,
+        error: getErrorDetails(error),
         data: data,
         uuId: uuId,
         createdAt: createdAt,

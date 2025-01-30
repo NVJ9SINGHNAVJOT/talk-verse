@@ -1,3 +1,4 @@
+import { getErrorDetails } from "@/logger/error";
 import { logger } from "@/logger/logger";
 import { isValidMongooseObjectId } from "@/validators/mongooseId";
 
@@ -6,10 +7,9 @@ export const checkTags = (tags: string): string[] => {
 
   try {
     checkTags = JSON.parse(tags);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch (error) {
     // If JSON.parse fails, return an empty array
-    logger.error("error while parsing tags", { tags: tags, error: error?.message || "Unknown error" });
+    logger.error("error while parsing tags", { tags: tags, error: getErrorDetails(error) });
     return [];
   }
 
@@ -35,10 +35,9 @@ export const checkContent = (content: string): string[] => {
 
   try {
     checkContent = JSON.parse(content);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch (error) {
     // If JSON.parse fails, return an empty array
-    logger.error("error while parsing content", { content: content, error: error?.message || "Unknown error" });
+    logger.error("error while parsing content", { content: content, error: getErrorDetails(error) });
     return [];
   }
 
@@ -66,12 +65,11 @@ export const checkGroupMembers = (groupMembers: string): string[] => {
 
   try {
     checkMembers = JSON.parse(groupMembers);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch (error) {
     // If JSON.parse fails, return an empty array
     logger.error("error while parsing content", {
       groupMembers: groupMembers,
-      error: error?.message || "Unknown error",
+      error: getErrorDetails(error),
     });
     return [];
   }

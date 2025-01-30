@@ -20,8 +20,7 @@ export const sendQuery = async (req: Request, res: Response): Promise<Response> 
       success: true,
       message: "query send successfully",
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return errRes(res, 500, "error while save query", error?.message || "Unknown error");
+  } catch (error) {
+    return errRes(res, 500, "error while save query", error);
   }
 };

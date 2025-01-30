@@ -27,9 +27,8 @@ function logging(req: Request, res: Response, next: NextFunction) {
       },
     });
     next();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return errRes(res, 500, "errror while logging req details", error?.message || "Unknown error");
+  } catch (error) {
+    return errRes(res, 500, "errror while logging req details", error);
   }
 }
 

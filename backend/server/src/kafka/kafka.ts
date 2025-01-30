@@ -1,5 +1,6 @@
 import { KafkaIGpMessageType } from "@/db/mongodb/models/GpMessage";
 import { KafkaIMessageType } from "@/db/mongodb/models/Message";
+import { getErrorDetails } from "@/logger/error";
 import { logger } from "@/logger/logger";
 import { Kafka, logLevel, Partitioners } from "kafkajs";
 
@@ -48,9 +49,8 @@ export const kafkaProducerSetup = async () => {
   try {
     await producer.connect();
     logger.info("Kafka producer connected");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    logger.error("Error connecting Kafka producer", { error: error?.message || "Unknown error" });
+  } catch (error) {
+    logger.error("Error connecting Kafka producer", { error: getErrorDetails(error) });
     process.exit(1);
   }
 };
@@ -66,9 +66,8 @@ async function message(data: KafkaIMessageType) {
       topic: "message",
       messages: [{ value: JSON.stringify(data) }],
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    logger.error("error in kafka producer, topic: message", { data: data, error: error?.message || "Unknown error" });
+  } catch (error) {
+    logger.error("error in kafka producer, topic: message", { data: data, error: getErrorDetails(error) });
   }
 }
 
@@ -78,11 +77,10 @@ async function gpMessage(data: KafkaIGpMessageType) {
       topic: "gp-message",
       messages: [{ value: JSON.stringify(data) }],
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch (error) {
     logger.error("error in kafka producer, topic: gp-message", {
       data: data,
-      error: error?.message || "Unknown error",
+      error: getErrorDetails(error),
     });
   }
 }
@@ -93,11 +91,10 @@ async function unseenCount(userIds: string[], mainId: string, count?: number) {
       topic: "unseen-count",
       messages: [{ value: JSON.stringify({ userIds, mainId, count }) }],
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch (error) {
     logger.error("error in kafka producer, topic: unseen-count", {
       data: { userIds, mainId, count },
-      error: error.message,
+      error: getErrorDetails(error),
     });
   }
 }
