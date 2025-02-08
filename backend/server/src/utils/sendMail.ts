@@ -24,6 +24,10 @@ const sendMail = async (email: string, title: string, body: string): Promise<voi
 
 export const sendVerficationMail = async (email: string, otp: string) => {
   try {
+    if (process.env["ENVIRONMENT"] === "development") {
+      logger.debug("otp", { email: email, otp: otp });
+      return;
+    }
     await sendMail(email, "Verification Email", verificationTemplate(otp));
   } catch (error) {
     logger.error("error while sending verification mail", { error: getErrorDetails(error), email: email });
@@ -33,6 +37,10 @@ export const sendVerficationMail = async (email: string, otp: string) => {
 
 export const sendForgotPasswordVerificationMail = async (email: string, otp: string) => {
   try {
+    if (process.env["ENVIRONMENT"] === "development") {
+      logger.debug("otp", { email: email, otp: otp });
+      return;
+    }
     await sendMail(email, "Reset Password For TalkVerse", verificationTemplate(otp));
   } catch (error) {
     logger.error("error while sending forgot password verification mail", {

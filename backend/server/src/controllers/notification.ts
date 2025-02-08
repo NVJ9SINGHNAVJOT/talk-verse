@@ -372,7 +372,7 @@ export const deleteRequest = async (req: Request, res: Response) => {
 
     const data = otherUserIdReq.data;
 
-    const checkOther = await Notification.findOneAndUpdate({
+    const checkOther = await Notification.findOne({
       userId: data.otherUserId,
       sentFriendRequests: { $elemMatch: { $eq: userId } },
     })
@@ -382,7 +382,7 @@ export const deleteRequest = async (req: Request, res: Response) => {
       return errRes(res, 400, "other user does not exist or no sent request exist in other user notification");
     }
 
-    const myDetails = await Notification.findOneAndUpdate({
+    const myDetails = await Notification.findOne({
       userId: userId,
       friendRequests: { $elemMatch: { $eq: data.otherUserId } },
     })
