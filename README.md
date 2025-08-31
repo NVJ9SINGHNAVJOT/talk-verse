@@ -114,8 +114,11 @@ TalkVerse is a social media web application.
    task i
    task dev-kafka
    task dev-kafka-topics
-   # task dev runs consumer, server, and client concurrently
-   task dev
+   
+   # run the following in separate terminals
+   task consumer   # kafka consumer
+   task server     # backend server
+   task client     # frontend client
    ```
 
 - Open the project in your browser at [`http://localhost:4173`](http://localhost:4173).
