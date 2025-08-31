@@ -14,7 +14,6 @@ tasks:
   i:
     desc: Install all necessary dependencies for the project across backend and frontend services.
     cmds:
-      - npm install
       - cd backend/server && npm install
       - cd backend/consumer && go mod download && go mod verify
       - cd frontend && npm install
@@ -64,10 +63,6 @@ tasks:
     cmd:
       # Windows (Git Bash)
       bash clone_files.sh
-
-  dev:
-    desc: Run backend and frontend services concurrently for local development (ensure talkverse-kafka-development is running).
-    cmd: npm run conc
 
   consumer:
     desc: Start the consumer from backend (ensure talkverse-kafka-development is running).
