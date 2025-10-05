@@ -1,10 +1,6 @@
 ---
 version: '3.8'
 
-networks:
-  talkverse-backend-proxy:
-    external: true
-
 services:
   talkverse-kafka-consumer:
     build:
@@ -15,3 +11,7 @@ services:
         - talkverse-backend-proxy
     env_file: .env
   stop_grace_period: 20s
+
+networks:
+  talkverse-backend-proxy:
+    external: true

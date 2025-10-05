@@ -1,19 +1,6 @@
 ---
 version: '3.8'
 
-volumes:
-  # NOTE: Do not rename or change the volume names, this will cause breaking changes.
-  talkverse-kafka-0_data:
-    name: talkverse-kafka-0_data
-  talkverse-kafka-1_data:
-    name: talkverse-kafka-1_data
-  talkverse-kafka-2_data:
-    name: talkverse-kafka-2_data
-
-networks:
-  talkverse-backend-proxy:
-    external: true
-
 services:
   talkverse-kafka-0:
     image: docker.io/bitnami/kafka:3.8.0
@@ -99,3 +86,16 @@ services:
       - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=3
       - KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
       - KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
+
+volumes:
+  # NOTE: Do not rename or change the volume names, this will cause breaking changes.
+  talkverse-kafka-0_data:
+    name: talkverse-kafka-0_data
+  talkverse-kafka-1_data:
+    name: talkverse-kafka-1_data
+  talkverse-kafka-2_data:
+    name: talkverse-kafka-2_data
+
+networks:
+  talkverse-backend-proxy:
+    external: true

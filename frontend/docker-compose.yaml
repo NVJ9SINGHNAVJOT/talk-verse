@@ -1,11 +1,6 @@
 ---
 version: "3.8"
 
-networks:
-  # NOTE: In production use nginx-proxy internal network
-  proxy:
-    external: true
-
 services:
   talkverse-client:
     build:
@@ -16,3 +11,8 @@ services:
       - proxy
     ports: [4173:4173] # NOTE: disable in production
     env_file: .env
+
+networks:
+  # NOTE: In production use nginx-proxy internal network
+  proxy:
+    external: true

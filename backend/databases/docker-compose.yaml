@@ -1,16 +1,5 @@
 version: '3.8'
 
-volumes:
-  # NOTE: Do not rename or change the volume names, this will cause breaking changes.
-  talkverse-postgres-db:
-    name: talkverse-postgres-db
-  talkverse-mongo-db:
-    name: talkverse-mongo-db
-
-networks:
-  talkverse-backend-proxy:
-    external: true
-
 services:
   talkverse-postgres:
     container_name: talkverse-postgres
@@ -39,3 +28,14 @@ services:
     networks:
       - talkverse-backend-proxy
     # ports: [27017:27017] # NOTE: can enable for development
+
+volumes:
+  # NOTE: Do not rename or change the volume names, this will cause breaking changes.
+  talkverse-postgres-db:
+    name: talkverse-postgres-db
+  talkverse-mongo-db:
+    name: talkverse-mongo-db
+
+networks:
+  talkverse-backend-proxy:
+    external: true
