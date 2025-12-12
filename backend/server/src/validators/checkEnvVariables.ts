@@ -24,6 +24,5 @@ export function checkEnvVariables() {
     !process.env["POSTGRES_PASSWORD"]
   ) {
     throw new Error("Invalid evironment variables");
-    process.exit();
   }
 }

@@ -182,11 +182,6 @@ export const updateProfile = async (req: Request, res: Response): Promise<Respon
       message: "user details updated successfully",
       userData: mongoUser,
     });
-
-    return res.status(400).json({
-      success: false,
-      message: "invalid data for user profile update",
-    });
   } catch (error) {
     return errRes(res, 500, "error while updating user details", error);
   }
