@@ -1,10 +1,10 @@
 import { useAppSelector } from "@/redux/store";
-import { SoAddedInGroup } from "@/types/socket/eventTypes";
+import { type SoAddedInGroup } from "@/types/socket/eventTypes";
 import { useRef, useState } from "react";
 import { CiImageOn } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
 import GroupContextMenu from "@/components/core/talk/chatItems/GroupContextMenu";
-import { Coordinates } from "@/types/common";
+import { type Coordinates } from "@/types/common";
 import { messagesSliceObject } from "@/redux/slices/messagesSlice";
 
 export type GroupBarItemsProps = {

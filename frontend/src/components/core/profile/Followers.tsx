@@ -1,6 +1,6 @@
 import { useScrollTriggerVertical } from "@/hooks/useScrollTrigger";
 import { userfollowersApi } from "@/services/operations/profileApi";
-import { UserSuggestion } from "@/types/apis/notificationApiRs";
+import { type UserSuggestion } from "@/types/apis/notificationApiRs";
 import { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
 import OtherUser from "@/components/core/profile/otheruser/OtherUser";

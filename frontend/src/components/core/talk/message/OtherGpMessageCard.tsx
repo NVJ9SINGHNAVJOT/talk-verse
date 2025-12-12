@@ -1,4 +1,4 @@
-import { GroupMessage } from "@/redux/slices/messagesSlice";
+import { type GroupMessage } from "@/redux/slices/messagesSlice";
 import { getDTimeStamp } from "@/utils/getTime";
 import { RxAvatar } from "react-icons/rx";
 import FileItem from "@/components/core/talk/message/FileItem";

@@ -1,5 +1,5 @@
 import { useScrollTriggerVertical } from "@/hooks/useScrollTrigger";
-import { Post } from "@/types/apis/postApiRs";
+import { type Post } from "@/types/apis/postApiRs";
 import { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
 import PostLayout from "@/components/core/blog/post/PostLayout";

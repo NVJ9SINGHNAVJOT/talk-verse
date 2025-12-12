@@ -1,5 +1,5 @@
 import { removeFollowerApi, unfollowUserApi } from "@/services/operations/profileApi";
-import { UserSuggestion } from "@/types/apis/notificationApiRs";
+import { type UserSuggestion } from "@/types/apis/notificationApiRs";
 import { useState } from "react";
 import { RxAvatar } from "react-icons/rx";
 import { toast } from "react-toastify";
@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 type OtherUserProps = {
   otherUser: UserSuggestion & { createdAt: string };
   userType: "followers" | "following";
-  // eslint-disable-next-line no-unused-vars
   removeOtherUser: (otherUserId: number) => void;
 };
 

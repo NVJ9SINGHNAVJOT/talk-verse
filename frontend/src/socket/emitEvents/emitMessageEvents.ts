@@ -1,6 +1,6 @@
 import { Socket } from "socket.io-client";
 import { serverE } from "@/socket/events";
-import { SoSendGroupMessage, SoSendMessage } from "@/types/socket/eventTypes";
+import { type SoSendGroupMessage, type SoSendMessage } from "@/types/socket/eventTypes";
 import { encryptGMessage, encryptPMessage } from "@/utils/encryptionAndDecryption";
 import { toast } from "react-toastify";
 
@@ -28,6 +28,7 @@ export const sendMessageEvent = async (
   };
   try {
     socket.emit(serverE.SEND_MESSAGE, newMessage);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     toast.error("Error while sending message");
   }
@@ -55,6 +56,7 @@ export const sendGroupMessageEvent = async (
   };
   try {
     socket.emit(serverE.SEND_GROUP_MESSAGE, newGpMessage);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     toast.error("Error while sending group message");
   }

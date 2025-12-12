@@ -3,7 +3,7 @@ import SendQueryButton from "@/lib/buttons/sendquerybutton/SendQueryButton";
 import LettersPull from "@/lib/cards/LettersPull";
 import { TextRevealCard, TextRevealCardDescription, TextRevealCardTitle } from "@/lib/cards/TextRevealCard";
 import { BackgroundBeams } from "@/lib/sections/BackgroundBeams";
-import { sendQueryApi, SendQueryData } from "@/services/operations/queryApi";
+import { sendQueryApi, type SendQueryData } from "@/services/operations/queryApi";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaFacebook, FaInstagram, FaXTwitter, FaGithub } from "react-icons/fa6";

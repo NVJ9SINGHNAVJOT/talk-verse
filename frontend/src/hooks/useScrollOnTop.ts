@@ -1,4 +1,4 @@
-import { RefObject, useEffect } from "react";
+import { type RefObject, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 const useScrollOnTop = (ref: RefObject<HTMLDivElement>) => {

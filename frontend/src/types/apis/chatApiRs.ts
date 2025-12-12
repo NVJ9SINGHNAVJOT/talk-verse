@@ -1,7 +1,7 @@
-import { ChatBarData, Friend } from "@/redux/slices/chatSlice";
-import { GroupMessage } from "@/redux/slices/messagesSlice";
-import { SoMessageRecieved } from "@/types/socket/eventTypes";
-import { CommonRs } from "@/types/apis/common";
+import { type ChatBarData, type Friend } from "@/redux/slices/chatSlice";
+import { type GroupMessage } from "@/redux/slices/messagesSlice";
+import { type SoMessageRecieved } from "@/types/socket/eventTypes";
+import { type CommonRs } from "@/types/apis/common";
 
 export type ChatBarDataRs = CommonRs & {
   friends?: Friend[];

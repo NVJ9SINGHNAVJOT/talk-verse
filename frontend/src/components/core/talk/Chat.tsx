@@ -8,7 +8,7 @@ import { useScrollTriggerVertical } from "@/hooks/useScrollTrigger";
 import { addPMessagesAsync, messagesSliceObject, resetUnseenMessage } from "@/redux/slices/messagesSlice";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
-import { MessageText } from "@/types/common";
+import { type MessageText } from "@/types/common";
 import { sendMessageEvent } from "@/socket/emitEvents/emitMessageEvents";
 import { useSocketContext } from "@/context/SocketContext";
 import { startTypingEvent, stopTypingEvent } from "@/socket/emitEvents/emitNotificationEvents";
@@ -45,7 +45,6 @@ const Chat = () => {
       messagesSliceObject.currFriendId = undefined;
       messagesSliceObject.mainChatId = undefined;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // work when chatId is changed is url

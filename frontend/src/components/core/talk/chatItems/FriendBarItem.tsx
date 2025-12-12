@@ -1,4 +1,4 @@
-import { Friend } from "@/redux/slices/chatSlice";
+import { type Friend } from "@/redux/slices/chatSlice";
 import { messagesSliceObject } from "@/redux/slices/messagesSlice";
 import { useAppSelector } from "@/redux/store";
 import { RxAvatar } from "react-icons/rx";

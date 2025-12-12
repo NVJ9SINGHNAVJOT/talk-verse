@@ -6,7 +6,7 @@ import { addGpMessagesAsync, messagesSliceObject, resetUnseenMessage } from "@/r
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { fileMessageApi, getGroupMessagesApi } from "@/services/operations/chatApi";
 import { sendGroupMessageEvent } from "@/socket/emitEvents/emitMessageEvents";
-import { MessageText } from "@/types/common";
+import { type MessageText } from "@/types/common";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -43,7 +43,6 @@ const Group = () => {
     return () => {
       messagesSliceObject.mainGroupId = undefined;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { CommonRs } from "@/types/apis/common";
+import { type CommonRs } from "@/types/apis/common";
 
 export type CreatePostRs = CommonRs & {
   post: {

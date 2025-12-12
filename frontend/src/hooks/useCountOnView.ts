@@ -1,4 +1,4 @@
-import React, { useEffect, RefObject } from "react";
+import React, { useEffect, type RefObject } from "react";
 
 type SetCountFunction = React.Dispatch<React.SetStateAction<number>>;
 

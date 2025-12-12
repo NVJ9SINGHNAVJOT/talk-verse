@@ -1,6 +1,6 @@
 import { CanvasReveal } from "@/lib/sections/CanvasReveal";
 import { createStoryApi } from "@/services/operations/postApi";
-import { UserStory } from "@/types/apis/postApiRs";
+import { type UserStory } from "@/types/apis/postApiRs";
 import { maxFileSize, validFiles } from "@/utils/constants";
 import { AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";

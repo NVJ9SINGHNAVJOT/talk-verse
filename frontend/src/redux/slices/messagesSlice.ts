@@ -1,5 +1,5 @@
 import { setUnseenCount } from "@/services/operations/notificationApi";
-import { SoMessageRecieved } from "@/types/socket/eventTypes";
+import { type SoMessageRecieved } from "@/types/socket/eventTypes";
 import { errorMessage } from "@/utils/constants";
 import { decryptGMessage, decryptPMessage } from "@/utils/encryptionAndDecryption";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";

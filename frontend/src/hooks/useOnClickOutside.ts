@@ -1,6 +1,5 @@
-import { RefObject, useEffect } from "react";
+import { type RefObject, useEffect } from "react";
 
-// eslint-disable-next-line no-unused-vars
 type EventHandler = (event: MouseEvent | TouchEvent) => void;
 
 export const useOnClickOutside = <T extends HTMLElement>(

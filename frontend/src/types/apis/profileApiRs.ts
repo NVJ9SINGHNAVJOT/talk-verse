@@ -1,6 +1,6 @@
-import { Profile } from "@/redux/slices/userSlice";
-import { UserSuggestion } from "@/types/apis/notificationApiRs";
-import { CommonRs } from "@/types/apis/common";
+import { type Profile } from "@/redux/slices/userSlice";
+import { type UserSuggestion } from "@/types/apis/notificationApiRs";
+import { type CommonRs } from "@/types/apis/common";
 
 export type ProfileRs = CommonRs & {
   userData: Profile;

@@ -2,7 +2,7 @@ import PostLayout from "@/components/core/blog/post/PostLayout";
 import { useScrollTriggerVertical } from "@/hooks/useScrollTrigger";
 import MultiCubeLoader from "@/lib/loaders/multicubeloader/MultiCubeLoader";
 import { recentPostsApi } from "@/services/operations/postApi";
-import { Post } from "@/types/apis/postApiRs";
+import { type Post } from "@/types/apis/postApiRs";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 

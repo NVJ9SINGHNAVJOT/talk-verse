@@ -1,13 +1,18 @@
+import path from "path";
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react-swc";
-import tsconfigPaths from "vite-tsconfig-paths";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-export default defineConfig(({ command, mode }) => {
+// https://vite.dev/config/
+export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   return {
     // vite config
-    plugins: [react(), tsconfigPaths()],
+    plugins: [react()],
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+      },
+    },
     define: {
       "process.env.REACT_APP_ENVIRONMENT": JSON.stringify(env.REACT_APP_ENVIRONMENT),
       "process.env.GROUP_IV": JSON.stringify(env.GROUP_IV),

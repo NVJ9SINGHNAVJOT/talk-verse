@@ -4,7 +4,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Navigation, Pagination } from "swiper/modules";
 import { cn } from "@/utils/cn";
-import { FileUrl } from "@/components/core/blog/post/CreatePost";
+import { type FileUrl } from "@/components/core/blog/post/CreatePost";
 
 type MediaFilesProps = {
   mediaUrls: FileUrl[] | string[];

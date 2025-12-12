@@ -1,4 +1,4 @@
-import { SoMessageRecieved } from "@/types/socket/eventTypes";
+import { type SoMessageRecieved } from "@/types/socket/eventTypes";
 import { getDTimeStamp } from "@/utils/getTime";
 import FileItem from "@/components/core/talk/message/FileItem";
 

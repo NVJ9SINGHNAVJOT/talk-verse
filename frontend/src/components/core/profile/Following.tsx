@@ -1,7 +1,7 @@
 import { useScrollTriggerVertical } from "@/hooks/useScrollTrigger";
 import OtherUser from "@/components/core/profile/otheruser/OtherUser";
 import { userFollowingApi } from "@/services/operations/profileApi";
-import { UserSuggestion } from "@/types/apis/notificationApiRs";
+import { type UserSuggestion } from "@/types/apis/notificationApiRs";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import CubeLoader from "@/lib/loaders/cubeloader/CubeLoader";

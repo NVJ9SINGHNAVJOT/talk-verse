@@ -5,7 +5,7 @@ import {
   addUserRequest,
   addUserTyping,
   chatSliceObject,
-  Friend,
+  type Friend,
   removeOnlineFriend,
   removeUserTyping,
   resetTyping,
@@ -13,13 +13,13 @@ import {
   setFriends,
   setOnlineFriend,
   setUserRequests,
-  UserRequest,
+  type UserRequest,
 } from "@/redux/slices/chatSlice";
 import {
   addLiveGpMessageAsync,
   addLivePMessageAsync,
   addNewUnseen,
-  GroupMessage,
+  type GroupMessage,
   messagesSliceObject,
   resetGpMess,
   resetPMess,
@@ -28,17 +28,17 @@ import {
 import { loadingSliceObject, setTalkPageLoading } from "@/redux/slices/loadingSlice";
 import { chatBarDataApi } from "@/services/operations/chatApi";
 import { checkOnlineFriendsApi, getAllNotificationsApi } from "@/services/operations/notificationApi";
-import { createContext, ReactNode, useContext, useRef } from "react";
+import { createContext, type ReactNode, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { io, Socket } from "socket.io-client";
 import { clientE } from "@/socket/events";
 import {
-  SoUserRequest,
-  SoRequestAccepted,
-  SoAddedInGroup,
-  SoMessageRecieved,
-  SoGroupMessageRecieved,
+  type SoUserRequest,
+  type SoRequestAccepted,
+  type SoAddedInGroup,
+  type SoMessageRecieved,
+  type SoGroupMessageRecieved,
 } from "@/types/socket/eventTypes";
 import { useAppDispatch } from "@/redux/store";
 
@@ -245,6 +245,7 @@ export default function SocketProvider({ children }: ContextProviderProps) {
         dispatch(removeOnlineFriend(friendId));
       });
       /* ===== socket events end ===== */
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error("Error while connecting");
       // if error in connection then clear all state for talk page

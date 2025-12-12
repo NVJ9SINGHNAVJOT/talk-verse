@@ -13,6 +13,7 @@ export async function encryptPMessage(message: string, recipientPublicKey: strin
       md: forge.md.sha256.create(),
     });
     return forge.util.encode64(encrypted);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return null;
   }
@@ -27,6 +28,7 @@ export async function decryptPMessage(encryptedMessage: string, recipientPrivate
       md: forge.md.sha256.create(),
     });
     return decrypted;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return null;
   }
@@ -40,6 +42,7 @@ export async function encryptGMessage(text: string): Promise<string | null> {
     cipher.finish();
     const encryptedBytes = cipher.output.getBytes();
     return forge.util.encode64(encryptedBytes);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return null;
   }
@@ -53,6 +56,7 @@ export async function decryptGMessage(text: string): Promise<string | null> {
     decipher.finish();
     const decryptedBytes = decipher.output.getBytes();
     return forge.util.encodeUtf8(decryptedBytes);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return null;
   }

@@ -4,14 +4,13 @@ import { getFollowUsersApi, getUsersApi, sendRequestApi } from "@/services/opera
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { RxAvatar } from "react-icons/rx";
-import { UserRequest } from "@/redux/slices/chatSlice";
+import { type UserRequest } from "@/redux/slices/chatSlice";
 import { CiCirclePlus } from "react-icons/ci";
-import { FollowUsers } from "@/types/apis/notificationApiRs";
+import { type FollowUsers } from "@/types/apis/notificationApiRs";
 
 type SearchModalProps = {
   setIsSearchOpen: React.Dispatch<React.SetStateAction<boolean>>;
   requestType: "friend" | "follow";
-  // eslint-disable-next-line no-unused-vars
   sendFollowRequest?: (reqUserId: number) => Promise<boolean>;
 };
 
@@ -56,10 +55,12 @@ const SearchModal = (props: SearchModalProps) => {
             setFollowUsers(response.followUsers);
           } else {
             toast.error("No user exist for such name");
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             props.requestType === "friend" ? setUsers([]) : setFollowUsers([]);
           }
         } else {
           toast.error("error while checking user name");
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
           props.requestType === "friend" ? setUsers([]) : setFollowUsers([]);
         }
       }

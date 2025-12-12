@@ -2,8 +2,8 @@ import { setAuthUser } from "@/redux/slices/authSlice";
 import { loadingSliceObject } from "@/redux/slices/loadingSlice";
 import { messagesSliceObject } from "@/redux/slices/messagesSlice";
 import { setUser, setProfile } from "@/redux/slices/userSlice";
-import { Dispatch } from "@reduxjs/toolkit";
-import { NavigateFunction } from "react-router-dom";
+import { type Dispatch } from "@reduxjs/toolkit";
+import { type NavigateFunction } from "react-router-dom";
 
 const logOutCleanUp = (dispatch: Dispatch, navigate: NavigateFunction) => {
   dispatch(setAuthUser(false));

@@ -1,5 +1,5 @@
 import { useOnClickOutside } from "@/hooks/useOnClickOutside";
-import { deleteUserRequest, Friend, ChatBarData, addFriend, addChatBarData } from "@/redux/slices/chatSlice";
+import { deleteUserRequest, type Friend, type ChatBarData, addFriend, addChatBarData } from "@/redux/slices/chatSlice";
 import { addNewUnseen, messagesSliceObject } from "@/redux/slices/messagesSlice";
 import { useAppSelector } from "@/redux/store";
 import { acceptRequestApi, deleteRequestApi } from "@/services/operations/notificationApi";

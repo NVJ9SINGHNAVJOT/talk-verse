@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import moment from "moment";
 import { MdDeleteForever, MdOutlineCancelPresentation } from "react-icons/md";
 import { toast } from "react-toastify";
-import { Comment } from "@/types/apis/postApiRs";
+import { type Comment } from "@/types/apis/postApiRs";
 import { RxAvatar } from "react-icons/rx";
 import { useScrollTriggerVertical } from "@/hooks/useScrollTrigger";
 import { useAppSelector } from "@/redux/store";

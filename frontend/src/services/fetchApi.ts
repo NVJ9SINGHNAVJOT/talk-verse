@@ -50,6 +50,7 @@ export async function fetchApi(
     }
     const resData = await response.json();
     return resData;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return null;
   }

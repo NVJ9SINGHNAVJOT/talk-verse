@@ -15,6 +15,7 @@ const FileItem = ({ url }: FileItemProps) => {
     and url also got rendered and video or audio get's restarted.
   */
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fileExt = useMemo(() => url.split(".").pop(), []);
 
   if (!fileExt) return <CiFileOn className="size-16 aspect-square" />;

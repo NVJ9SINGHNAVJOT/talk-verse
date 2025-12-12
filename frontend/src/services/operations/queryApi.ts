@@ -1,6 +1,6 @@
 import { fetchApi } from "@/services/fetchApi";
 import { queryEndPoints } from "@/services/apis";
-import { CommonRs } from "@/types/apis/common";
+import { type CommonRs } from "@/types/apis/common";
 
 export type SendQueryData = {
   fullName: string;

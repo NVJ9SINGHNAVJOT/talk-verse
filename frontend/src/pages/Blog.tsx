@@ -16,8 +16,8 @@ import {
 } from "@/services/operations/notificationApi";
 import { deleteStoryApi, userStoryApi } from "@/services/operations/postApi";
 import { userBlogProfileApi } from "@/services/operations/profileApi";
-import { UserSuggestion } from "@/types/apis/notificationApiRs";
-import { UserStory } from "@/types/apis/postApiRs";
+import { type UserSuggestion } from "@/types/apis/notificationApiRs";
+import { type UserStory } from "@/types/apis/postApiRs";
 import { categories } from "@/utils/constants";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";

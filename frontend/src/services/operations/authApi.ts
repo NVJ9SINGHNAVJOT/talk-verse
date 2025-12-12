@@ -1,10 +1,10 @@
-import { LogInData } from "@/components/auth/LogIn";
-import { ChangePassword } from "@/components/core/profile/Settings";
-import { NewPassword } from "@/pages/ResetPassword";
+import { type LogInData } from "@/components/auth/LogIn";
+import { type ChangePassword } from "@/components/core/profile/Settings";
+import { type NewPassword } from "@/pages/ResetPassword";
 import { authEndPoints } from "@/services/apis";
 import { fetchApi } from "@/services/fetchApi";
-import { CheckUserRs } from "@/types/apis/authApiRs";
-import { CommonRs } from "@/types/apis/common";
+import { type CheckUserRs } from "@/types/apis/authApiRs";
+import { type CommonRs } from "@/types/apis/common";
 
 export const signUpApi = async (data: FormData): Promise<CommonRs | null> => {
   const resData: CommonRs = await fetchApi("POST", authEndPoints.SIGNUP, data);

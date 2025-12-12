@@ -1,5 +1,5 @@
 import { deletePostApi, savePostApi, updateLikeApi } from "@/services/operations/postApi";
-import { Post } from "@/types/apis/postApiRs";
+import { type Post } from "@/types/apis/postApiRs";
 import { BsSaveFill } from "react-icons/bs";
 import { MdDeleteForever } from "react-icons/md";
 import moment from "moment";

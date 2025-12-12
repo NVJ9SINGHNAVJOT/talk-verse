@@ -1,7 +1,12 @@
 import { chatEndPoints } from "@/services/apis";
 import { fetchApi } from "@/services/fetchApi";
-import { ChatBarDataRs, GetChatMessagesRs, GetGroupMembersRs, GetGroupMessagesRs } from "@/types/apis/chatApiRs";
-import { CommonRs } from "@/types/apis/common";
+import {
+  type ChatBarDataRs,
+  type GetChatMessagesRs,
+  type GetGroupMembersRs,
+  type GetGroupMessagesRs,
+} from "@/types/apis/chatApiRs";
+import { type CommonRs } from "@/types/apis/common";
 
 export const chatBarDataApi = async (): Promise<ChatBarDataRs | null> => {
   const resData: ChatBarDataRs = await fetchApi("GET", chatEndPoints.CHAT_BAR_DATA);

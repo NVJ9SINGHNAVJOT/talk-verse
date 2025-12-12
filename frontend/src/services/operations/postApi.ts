@@ -1,15 +1,15 @@
 import {
-  AddCommentRs,
-  CreatePostRs,
-  CreateStoryRs,
-  GetStoriesRs,
-  PostCommentsRs,
-  PostsRs,
-  UserStoryRs,
+  type AddCommentRs,
+  type CreatePostRs,
+  type CreateStoryRs,
+  type GetStoriesRs,
+  type PostCommentsRs,
+  type PostsRs,
+  type UserStoryRs,
 } from "@/types/apis/postApiRs";
 import { fetchApi } from "@/services/fetchApi";
 import { postEndPoints } from "@/services/apis";
-import { CommonRs } from "@/types/apis/common";
+import { type CommonRs } from "@/types/apis/common";
 
 export const createPostApi = async (data: FormData): Promise<CreatePostRs | null> => {
   const resData: CreatePostRs = await fetchApi("POST", postEndPoints.CREATE_POST, data);

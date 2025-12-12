@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
 type OtpInputProps = {
-  // eslint-disable-next-line no-unused-vars
   submitOtpHandler: (otp: string) => Promise<void>;
 };
 

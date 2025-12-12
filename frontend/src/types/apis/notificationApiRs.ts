@@ -1,6 +1,6 @@
-import { UserRequest } from "@/redux/slices/chatSlice";
-import { CommonRs } from "@/types/apis/common";
-import { SoAddedInGroup } from "@/types/socket/eventTypes";
+import { type UserRequest } from "@/redux/slices/chatSlice";
+import { type CommonRs } from "@/types/apis/common";
+import { type SoAddedInGroup } from "@/types/socket/eventTypes";
 
 export type GetUsersRs = CommonRs & {
   users?: (UserRequest & { isAlreadyRequested: boolean })[];

@@ -22,6 +22,7 @@ const Talk = () => {
           loadingSliceObject.apiCalls["talk"] = true;
           await setupSocketConnection();
         }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         toast.error("Error while connecting");
       }

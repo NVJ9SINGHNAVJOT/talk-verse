@@ -1,15 +1,15 @@
 import { notificationEndPoints } from "@/services/apis";
 import { fetchApi } from "@/services/fetchApi";
-import { CommonRs } from "@/types/apis/common";
+import { type CommonRs } from "@/types/apis/common";
 import {
-  AcceptRequestRs,
-  CheckOnlineFriendsRs,
-  CreateGroupRs,
-  FollowRequestsRs,
-  FollowSuggestionsRs,
-  GetAllNotificationsRs,
-  GetFollowUsersRs,
-  GetUsersRs,
+  type AcceptRequestRs,
+  type CheckOnlineFriendsRs,
+  type CreateGroupRs,
+  type FollowRequestsRs,
+  type FollowSuggestionsRs,
+  type GetAllNotificationsRs,
+  type GetFollowUsersRs,
+  type GetUsersRs,
 } from "@/types/apis/notificationApiRs";
 
 export const getUsersApi = async (userName: string): Promise<GetUsersRs | null> => {

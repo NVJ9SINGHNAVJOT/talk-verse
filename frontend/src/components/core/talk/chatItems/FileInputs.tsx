@@ -9,7 +9,6 @@ import { toast } from "react-toastify";
 import { maxFileSize, validFiles } from "@/utils/constants";
 
 type FileInputsProps = {
-  // eslint-disable-next-line no-unused-vars
   fileHandler: (file: File) => Promise<void>;
 };
 

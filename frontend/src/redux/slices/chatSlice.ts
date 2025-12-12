@@ -1,5 +1,5 @@
 import { setOrderApi } from "@/services/operations/notificationApi";
-import { SoAddedInGroup } from "@/types/socket/eventTypes";
+import { type SoAddedInGroup } from "@/types/socket/eventTypes";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 

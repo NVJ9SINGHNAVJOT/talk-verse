@@ -2,7 +2,7 @@ import useScrollExists from "@/hooks/useScrollExists";
 import { useScrollTriggerHorizontal } from "@/hooks/useScrollTrigger";
 import { CanvasReveal } from "@/lib/sections/CanvasReveal";
 import { getStoriesApi } from "@/services/operations/postApi";
-import { Story } from "@/types/apis/postApiRs";
+import { type Story } from "@/types/apis/postApiRs";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight, MdOutlineCancelPresentation } from "react-icons/md";

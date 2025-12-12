@@ -1,15 +1,15 @@
 import {
-  ProfileRs,
-  SetProfileImageRs,
-  UserBlogProfileRs,
-  UserFollowersRs,
-  UserFollowingRs,
+  type ProfileRs,
+  type SetProfileImageRs,
+  type UserBlogProfileRs,
+  type UserFollowersRs,
+  type UserFollowingRs,
 } from "@/types/apis/profileApiRs";
 import { profileEndPoints } from "@/services/apis";
 import { fetchApi } from "@/services/fetchApi";
-import { CommonRs } from "@/types/apis/common";
-import { NewProfileData } from "@/components/core/profile/Settings";
-import { PostsRs } from "@/types/apis/postApiRs";
+import { type CommonRs } from "@/types/apis/common";
+import { type NewProfileData } from "@/components/core/profile/Settings";
+import { type PostsRs } from "@/types/apis/postApiRs";
 
 export const checkUserNameApi = async (userName: string): Promise<CommonRs | null> => {
   const resData: CommonRs = await fetchApi("GET", profileEndPoints.CHECK_USERNAME, null, null, {

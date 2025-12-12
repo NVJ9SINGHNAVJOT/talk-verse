@@ -6,10 +6,10 @@ import CreateGroup from "@/components/core/talk/chatItems/CreateGroupModal";
 import { useRef, useState } from "react";
 import { useAppSelector } from "@/redux/store";
 import GroupBarItem from "@/components/core/talk/chatItems/GroupBarItem";
-import { SoAddedInGroup } from "@/types/socket/eventTypes";
+import { type SoAddedInGroup } from "@/types/socket/eventTypes";
 import FriendBarItem from "@/components/core/talk/chatItems/FriendBarItem";
 import FriendRequests from "@/components/core/talk/chatItems/FriendRequests";
-import { Friend } from "@/redux/slices/chatSlice";
+import { type Friend } from "@/redux/slices/chatSlice";
 
 const UserChatBar = () => {
   const [inChat, setInChat] = useState<string>("");
