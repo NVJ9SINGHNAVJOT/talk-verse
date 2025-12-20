@@ -1,17 +1,17 @@
 import { relations } from "drizzle-orm";
 import { pgTable, integer, serial, timestamp, unique } from "drizzle-orm/pg-core";
-import { user } from "@/db/postgresql/schema/user";
+import { users } from "@/db/postgresql/schema/users";
 
-export const request = pgTable(
-  "request",
+export const requests = pgTable(
+  "requests",
   {
     id: serial("id").primaryKey(),
     fromId: integer("from_id")
       .notNull()
-      .references(() => user.id),
+      .references(() => users.id),
     toId: integer("to_id")
       .notNull()
-      .references(() => user.id),
+      .references(() => users.id),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
@@ -20,7 +20,7 @@ export const request = pgTable(
   })
 );
 
-export const requestsRelations = relations(request, ({ one }) => ({
-  from: one(user, { fields: [request.fromId], references: [user.id] }),
-  to: one(user, { fields: [request.toId], references: [user.id] }),
+export const requestsRelations = relations(requests, ({ one }) => ({
+  from: one(users, { fields: [requests.fromId], references: [users.id] }),
+  to: one(users, { fields: [requests.toId], references: [users.id] }),
 }));

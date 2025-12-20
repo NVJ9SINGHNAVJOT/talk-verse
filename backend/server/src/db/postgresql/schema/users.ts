@@ -1,14 +1,14 @@
 import { relations } from "drizzle-orm";
 import { char, pgTable, serial, timestamp, varchar } from "drizzle-orm/pg-core";
 import { integer } from "drizzle-orm/pg-core";
-import { post } from "@/db/postgresql/schema/post";
-import { story } from "@/db/postgresql/schema/story";
-import { comment } from "@/db/postgresql/schema/comment";
-import { follow } from "@/db/postgresql/schema/follow";
+import { posts } from "@/db/postgresql/schema/posts";
+import { stories } from "@/db/postgresql/schema/stories";
+import { comments } from "@/db/postgresql/schema/comments";
+import { follows } from "@/db/postgresql/schema/follows";
 import { likes } from "@/db/postgresql/schema/likes";
-import { save } from "@/db/postgresql/schema/save";
+import { saves } from "@/db/postgresql/schema/saves";
 
-export const user = pgTable("user", {
+export const users = pgTable("users", {
   id: serial("id").primaryKey(),
 
   // reference from mongodb
@@ -24,11 +24,11 @@ export const user = pgTable("user", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
-export const usersRelations = relations(user, ({ many }) => ({
-  post: many(post),
-  story: many(story),
-  comment: many(comment),
-  follow: many(follow),
+export const usersRelations = relations(users, ({ many }) => ({
+  post: many(posts),
+  story: many(stories),
+  comment: many(comments),
+  follow: many(follows),
   likes: many(likes),
-  save: many(save),
+  save: many(saves),
 }));

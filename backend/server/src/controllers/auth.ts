@@ -24,7 +24,7 @@ import {
 } from "@/utils/sendMail";
 import { deleteFile } from "@/utils/deleteFile";
 import { db } from "@/db/postgresql/connection";
-import { user } from "@/db/postgresql/schema/user";
+import { users } from "@/db/postgresql/schema/users";
 import { CustomRequest } from "@/types/custom";
 import generateAsymmetricKeyPair from "@/utils/generateAsymmetricKeyPair";
 
@@ -102,7 +102,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
 
     // create user in postgreSQL database
     const newUser2 = await db
-      .insert(user)
+      .insert(users)
       .values({
         refId: newUser._id.toString(),
         firstName: data.firstName,
@@ -111,7 +111,7 @@ export const signUp = async (req: Request, res: Response): Promise<Response> => 
         imageUrl: secUrl ? secUrl : null,
       })
       .onConflictDoNothing()
-      .returning({ id: user.id });
+      .returning({ id: users.id });
 
     if (newUser2.length === 0) {
       await Notification.deleteOne({ userId: newUser.id });

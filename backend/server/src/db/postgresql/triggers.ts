@@ -4,7 +4,7 @@ import { logger } from "@/logger/logger";
 import { pool } from "@/db/postgresql/connection";
 import { getErrorDetails } from "@/logger/error";
 
-const tables = ["user", "story", "save", "post", "likes", "follow", "comment", "request", "query", "review"];
+const tables = ["users", "stories", "saves", "posts", "likes", "follows", "comments", "requests", "queries", "reviews"];
 
 // Function to create the trigger function
 export async function setupPostgreSQLTriggers() {

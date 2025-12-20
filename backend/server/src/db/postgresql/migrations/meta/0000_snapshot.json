@@ -1,11 +1,11 @@
 {
-  "id": "5388be9a-9561-4d04-8825-175464f5b39c",
+  "id": "dcd55cbf-23a7-4c77-b816-1494509b7865",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
   "tables": {
-    "comment": {
-      "name": "comment",
+    "comments": {
+      "name": "comments",
       "schema": "",
       "columns": {
         "id": {
@@ -49,10 +49,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "comment_user_id_user_id_fk": {
-          "name": "comment_user_id_user_id_fk",
-          "tableFrom": "comment",
-          "tableTo": "user",
+        "comments_user_id_users_id_fk": {
+          "name": "comments_user_id_users_id_fk",
+          "tableFrom": "comments",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
@@ -62,10 +62,10 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "comment_post_id_post_id_fk": {
-          "name": "comment_post_id_post_id_fk",
-          "tableFrom": "comment",
-          "tableTo": "post",
+        "comments_post_id_posts_id_fk": {
+          "name": "comments_post_id_posts_id_fk",
+          "tableFrom": "comments",
+          "tableTo": "posts",
           "columnsFrom": [
             "post_id"
           ],
@@ -79,8 +79,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "follow": {
-      "name": "follow",
+    "follows": {
+      "name": "follows",
       "schema": "",
       "columns": {
         "id": {
@@ -118,10 +118,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "follow_follower_id_user_id_fk": {
-          "name": "follow_follower_id_user_id_fk",
-          "tableFrom": "follow",
-          "tableTo": "user",
+        "follows_follower_id_users_id_fk": {
+          "name": "follows_follower_id_users_id_fk",
+          "tableFrom": "follows",
+          "tableTo": "users",
           "columnsFrom": [
             "follower_id"
           ],
@@ -131,10 +131,10 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "follow_following_id_user_id_fk": {
-          "name": "follow_following_id_user_id_fk",
-          "tableFrom": "follow",
-          "tableTo": "user",
+        "follows_following_id_users_id_fk": {
+          "name": "follows_following_id_users_id_fk",
+          "tableFrom": "follows",
+          "tableTo": "users",
           "columnsFrom": [
             "following_id"
           ],
@@ -196,10 +196,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "likes_user_id_user_id_fk": {
-          "name": "likes_user_id_user_id_fk",
+        "likes_user_id_users_id_fk": {
+          "name": "likes_user_id_users_id_fk",
           "tableFrom": "likes",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
@@ -209,10 +209,10 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "likes_post_id_post_id_fk": {
-          "name": "likes_post_id_post_id_fk",
+        "likes_post_id_posts_id_fk": {
+          "name": "likes_post_id_posts_id_fk",
           "tableFrom": "likes",
-          "tableTo": "post",
+          "tableTo": "posts",
           "columnsFrom": [
             "post_id"
           ],
@@ -235,8 +235,8 @@
         }
       }
     },
-    "post": {
-      "name": "post",
+    "posts": {
+      "name": "posts",
       "schema": "",
       "columns": {
         "id": {
@@ -322,10 +322,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "post_user_id_user_id_fk": {
-          "name": "post_user_id_user_id_fk",
-          "tableFrom": "post",
-          "tableTo": "user",
+        "posts_user_id_users_id_fk": {
+          "name": "posts_user_id_users_id_fk",
+          "tableFrom": "posts",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
@@ -339,8 +339,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "query": {
-      "name": "query",
+    "queries": {
+      "name": "queries",
       "schema": "",
       "columns": {
         "id": {
@@ -387,8 +387,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "request": {
-      "name": "request",
+    "requests": {
+      "name": "requests",
       "schema": "",
       "columns": {
         "id": {
@@ -426,10 +426,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "request_from_id_user_id_fk": {
-          "name": "request_from_id_user_id_fk",
-          "tableFrom": "request",
-          "tableTo": "user",
+        "requests_from_id_users_id_fk": {
+          "name": "requests_from_id_users_id_fk",
+          "tableFrom": "requests",
+          "tableTo": "users",
           "columnsFrom": [
             "from_id"
           ],
@@ -439,10 +439,10 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "request_to_id_user_id_fk": {
-          "name": "request_to_id_user_id_fk",
-          "tableFrom": "request",
-          "tableTo": "user",
+        "requests_to_id_users_id_fk": {
+          "name": "requests_to_id_users_id_fk",
+          "tableFrom": "requests",
+          "tableTo": "users",
           "columnsFrom": [
             "to_id"
           ],
@@ -465,8 +465,8 @@
         }
       }
     },
-    "review": {
-      "name": "review",
+    "reviews": {
+      "name": "reviews",
       "schema": "",
       "columns": {
         "id": {
@@ -511,10 +511,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "review_user_id_user_id_fk": {
-          "name": "review_user_id_user_id_fk",
-          "tableFrom": "review",
-          "tableTo": "user",
+        "reviews_user_id_users_id_fk": {
+          "name": "reviews_user_id_users_id_fk",
+          "tableFrom": "reviews",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
@@ -528,8 +528,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "save": {
-      "name": "save",
+    "saves": {
+      "name": "saves",
       "schema": "",
       "columns": {
         "id": {
@@ -567,10 +567,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "save_user_id_user_id_fk": {
-          "name": "save_user_id_user_id_fk",
-          "tableFrom": "save",
-          "tableTo": "user",
+        "saves_user_id_users_id_fk": {
+          "name": "saves_user_id_users_id_fk",
+          "tableFrom": "saves",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
@@ -580,10 +580,10 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "save_post_id_post_id_fk": {
-          "name": "save_post_id_post_id_fk",
-          "tableFrom": "save",
-          "tableTo": "post",
+        "saves_post_id_posts_id_fk": {
+          "name": "saves_post_id_posts_id_fk",
+          "tableFrom": "saves",
+          "tableTo": "posts",
           "columnsFrom": [
             "post_id"
           ],
@@ -606,8 +606,8 @@
         }
       }
     },
-    "story": {
-      "name": "story",
+    "stories": {
+      "name": "stories",
       "schema": "",
       "columns": {
         "id": {
@@ -645,10 +645,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "story_user_id_user_id_fk": {
-          "name": "story_user_id_user_id_fk",
-          "tableFrom": "story",
-          "tableTo": "user",
+        "stories_user_id_users_id_fk": {
+          "name": "stories_user_id_users_id_fk",
+          "tableFrom": "stories",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
@@ -662,8 +662,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "user": {
-      "name": "user",
+    "users": {
+      "name": "users",
       "schema": "",
       "columns": {
         "id": {
@@ -735,15 +735,15 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "user_ref_id_unique": {
-          "name": "user_ref_id_unique",
+        "users_ref_id_unique": {
+          "name": "users_ref_id_unique",
           "nullsNotDistinct": false,
           "columns": [
             "ref_id"
           ]
         },
-        "user_user_name_unique": {
-          "name": "user_user_name_unique",
+        "users_user_name_unique": {
+          "name": "users_user_name_unique",
           "nullsNotDistinct": false,
           "columns": [
             "user_name"

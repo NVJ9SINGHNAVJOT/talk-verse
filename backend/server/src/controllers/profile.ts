@@ -1,10 +1,10 @@
 import User from "@/db/mongodb/models/User";
 import { db } from "@/db/postgresql/connection";
-import { follow } from "@/db/postgresql/schema/follow";
+import { follows } from "@/db/postgresql/schema/follows";
 import { likes } from "@/db/postgresql/schema/likes";
-import { post } from "@/db/postgresql/schema/post";
-import { save } from "@/db/postgresql/schema/save";
-import { user } from "@/db/postgresql/schema/user";
+import { posts } from "@/db/postgresql/schema/posts";
+import { saves } from "@/db/postgresql/schema/saves";
+import { users } from "@/db/postgresql/schema/users";
 import { GetCreatedAtReqSchema, OtherPostgreSQLUserIdReqSchema } from "@/types/controllers/common";
 import { CheckUserNameReqSchema, UpdateProfileReqSchema } from "@/types/controllers/profileReq";
 import { CustomRequest } from "@/types/custom";
@@ -103,7 +103,7 @@ export const updateProfileImage = async (req: Request, res: Response): Promise<R
 
     getUser.imageUrl = secUrl;
     await getUser.save();
-    await db.update(user).set({ imageUrl: secUrl }).where(eq(user.id, userId2)).execute();
+    await db.update(users).set({ imageUrl: secUrl }).where(eq(users.id, userId2)).execute();
 
     return res.status(200).json({
       success: true,
@@ -173,7 +173,7 @@ export const updateProfile = async (req: Request, res: Response): Promise<Respon
 
     // now save updated data
     if (data.userName) {
-      await db.update(user).set({ userName: data.userName }).where(eq(user.refId, userId)).execute();
+      await db.update(users).set({ userName: data.userName }).where(eq(users.refId, userId)).execute();
     }
     await mongoUser.save();
 
@@ -192,16 +192,16 @@ export const userBlogProfile = async (req: Request, res: Response): Promise<Resp
     const userId2 = (req as CustomRequest).userId2;
 
     const blogProfile = await db
-      .select({ followingCount: user.followingCount, followersCount: user.followersCount })
-      .from(user)
-      .where(eq(user.id, userId2))
+      .select({ followingCount: users.followingCount, followersCount: users.followersCount })
+      .from(users)
+      .where(eq(users.id, userId2))
       .limit(1)
       .execute();
 
     const totalPosts = await db
       .select({ count: count() })
-      .from(post)
-      .where(and(eq(post.userId, userId2), eq(post.isPostDeleted, false)));
+      .from(posts)
+      .where(and(eq(posts.userId, userId2), eq(posts.isPostDeleted, false)));
 
     return res.status(200).json({
       success: true,
@@ -230,29 +230,31 @@ export const userPosts = async (req: Request, res: Response): Promise<Response> 
 
     const currUserPosts = await db
       .select({
-        id: post.id,
-        isCurrentUser: sql<boolean>`CASE WHEN ${post.userId} = ${userId2} THEN TRUE ELSE FALSE END`,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        imageUrl: user.imageUrl,
-        userName: user.userName,
-        isSaved: sql<boolean>`CASE WHEN ${save.userId} = ${userId2} AND ${save.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
-        isLiked: sql<boolean>`CASE WHEN ${likes.userId} = ${userId2} AND ${likes.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
-        commentsCount: post.commentsCount,
-        category: post.category,
-        title: post.title,
-        mediaUrls: post.mediaUrls,
-        tags: post.tags,
-        content: post.content,
-        likesCount: post.likesCount,
-        createdAt: post.createdAt,
+        id: posts.id,
+        isCurrentUser: sql<boolean>`CASE WHEN ${posts.userId} = ${userId2} THEN TRUE ELSE FALSE END`,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        imageUrl: users.imageUrl,
+        userName: users.userName,
+        isSaved: sql<boolean>`CASE WHEN ${saves.userId} = ${userId2} AND ${saves.postId} = ${posts.id} THEN TRUE ELSE FALSE END`,
+        isLiked: sql<boolean>`CASE WHEN ${likes.userId} = ${userId2} AND ${likes.postId} = ${posts.id} THEN TRUE ELSE FALSE END`,
+        commentsCount: posts.commentsCount,
+        category: posts.category,
+        title: posts.title,
+        mediaUrls: posts.mediaUrls,
+        tags: posts.tags,
+        content: posts.content,
+        likesCount: posts.likesCount,
+        createdAt: posts.createdAt,
       })
-      .from(post)
-      .innerJoin(user, and(eq(post.userId, user.id), eq(user.id, userId2)))
-      .leftJoin(save, and(eq(save.postId, post.id), eq(save.userId, userId2)))
-      .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, post.id)))
-      .where(and(eq(post.userId, userId2), lt(post.createdAt, new Date(data.createdAt)), eq(post.isPostDeleted, false)))
-      .orderBy(desc(post.createdAt))
+      .from(posts)
+      .innerJoin(users, and(eq(posts.userId, users.id), eq(users.id, userId2)))
+      .leftJoin(saves, and(eq(saves.postId, posts.id), eq(saves.userId, userId2)))
+      .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, posts.id)))
+      .where(
+        and(eq(posts.userId, userId2), lt(posts.createdAt, new Date(data.createdAt)), eq(posts.isPostDeleted, false))
+      )
+      .orderBy(desc(posts.createdAt))
       .limit(15)
       .execute();
 
@@ -285,18 +287,18 @@ export const userFollowing = async (req: Request, res: Response): Promise<Respon
 
     const following = await db
       .select({
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        imageUrl: user.imageUrl,
-        userName: user.userName,
-        createdAt: follow.createdAt,
+        id: users.id,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        imageUrl: users.imageUrl,
+        userName: users.userName,
+        createdAt: follows.createdAt,
       })
-      .from(follow)
-      .innerJoin(user, eq(follow.followingId, user.id))
-      .where(and(eq(follow.followerId, userId2), lt(follow.createdAt, new Date(data.createdAt))))
+      .from(follows)
+      .innerJoin(users, eq(follows.followingId, users.id))
+      .where(and(eq(follows.followerId, userId2), lt(follows.createdAt, new Date(data.createdAt))))
       .limit(20)
-      .orderBy(desc(follow.createdAt))
+      .orderBy(desc(follows.createdAt))
       .execute();
 
     if (following.length) {
@@ -329,18 +331,18 @@ export const userFollowers = async (req: Request, res: Response): Promise<Respon
 
     const followers = await db
       .select({
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        imageUrl: user.imageUrl,
-        userName: user.userName,
-        createdAt: follow.createdAt,
+        id: users.id,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        imageUrl: users.imageUrl,
+        userName: users.userName,
+        createdAt: follows.createdAt,
       })
-      .from(follow)
-      .innerJoin(user, eq(follow.followerId, user.id))
-      .where(and(eq(follow.followingId, userId2), lt(follow.createdAt, new Date(data.createdAt))))
+      .from(follows)
+      .innerJoin(users, eq(follows.followerId, users.id))
+      .where(and(eq(follows.followingId, userId2), lt(follows.createdAt, new Date(data.createdAt))))
       .limit(20)
-      .orderBy(desc(follow.createdAt))
+      .orderBy(desc(follows.createdAt))
       .execute();
 
     if (followers.length) {
@@ -372,23 +374,23 @@ export const removeFollower = async (req: Request, res: Response): Promise<Respo
     const data = removeFollwerReq.data;
 
     const checkRemoveFollwer = await db
-      .delete(follow)
-      .where(and(eq(follow.followingId, userId2), eq(follow.followerId, data.otherUserId)))
-      .returning({ id: follow.id })
+      .delete(follows)
+      .where(and(eq(follows.followingId, userId2), eq(follows.followerId, data.otherUserId)))
+      .returning({ id: follows.id })
       .execute();
 
     if (checkRemoveFollwer.length !== 0) {
       // decrease current user followersCount by 1
       await db
-        .update(user)
-        .set({ followersCount: sql`${user.followersCount} - 1` })
-        .where(eq(user.id, userId2));
+        .update(users)
+        .set({ followersCount: sql`${users.followersCount} - 1` })
+        .where(eq(users.id, userId2));
 
       // decrease otherUserId user followingCount by 1
       await db
-        .update(user)
-        .set({ followingCount: sql`${user.followingCount} - 1` })
-        .where(eq(user.id, data.otherUserId));
+        .update(users)
+        .set({ followingCount: sql`${users.followingCount} - 1` })
+        .where(eq(users.id, data.otherUserId));
 
       return res.status(200).json({
         success: true,
@@ -419,23 +421,23 @@ export const unfollowUser = async (req: Request, res: Response): Promise<Respons
     const data = unfollowUserReq.data;
 
     const checkUnfollowUser = await db
-      .delete(follow)
-      .where(and(eq(follow.followingId, data.otherUserId), eq(follow.followerId, userId2)))
-      .returning({ id: follow.id })
+      .delete(follows)
+      .where(and(eq(follows.followingId, data.otherUserId), eq(follows.followerId, userId2)))
+      .returning({ id: follows.id })
       .execute();
 
     if (checkUnfollowUser.length !== 0) {
       // decrease current user followingCount by 1
       await db
-        .update(user)
-        .set({ followersCount: sql`${user.followingCount} - 1` })
-        .where(eq(user.id, userId2));
+        .update(users)
+        .set({ followersCount: sql`${users.followingCount} - 1` })
+        .where(eq(users.id, userId2));
 
       // decrease otherUserId user followersCount by 1
       await db
-        .update(user)
-        .set({ followingCount: sql`${user.followersCount} - 1` })
-        .where(eq(user.id, data.otherUserId));
+        .update(users)
+        .set({ followingCount: sql`${users.followersCount} - 1` })
+        .where(eq(users.id, data.otherUserId));
 
       return res.status(200).json({
         success: true,
@@ -468,29 +470,31 @@ export const userSavedPosts = async (req: Request, res: Response): Promise<Respo
 
     const userSavedPosts = await db
       .select({
-        id: post.id,
-        isCurrentUser: sql<boolean>`CASE WHEN ${post.userId} = ${userId2} THEN TRUE ELSE FALSE END`,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        imageUrl: user.imageUrl,
-        userName: user.userName,
-        isSaved: sql<boolean>`CASE WHEN ${save.userId} = ${userId2} AND ${save.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
-        isLiked: sql<boolean>`CASE WHEN ${likes.userId} = ${userId2} AND ${likes.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
-        commentsCount: post.commentsCount,
-        category: post.category,
-        title: post.title,
-        mediaUrls: post.mediaUrls,
-        tags: post.tags,
-        content: post.content,
-        likesCount: post.likesCount,
-        createdAt: post.createdAt,
+        id: posts.id,
+        isCurrentUser: sql<boolean>`CASE WHEN ${posts.userId} = ${userId2} THEN TRUE ELSE FALSE END`,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        imageUrl: users.imageUrl,
+        userName: users.userName,
+        isSaved: sql<boolean>`CASE WHEN ${saves.userId} = ${userId2} AND ${saves.postId} = ${posts.id} THEN TRUE ELSE FALSE END`,
+        isLiked: sql<boolean>`CASE WHEN ${likes.userId} = ${userId2} AND ${likes.postId} = ${posts.id} THEN TRUE ELSE FALSE END`,
+        commentsCount: posts.commentsCount,
+        category: posts.category,
+        title: posts.title,
+        mediaUrls: posts.mediaUrls,
+        tags: posts.tags,
+        content: posts.content,
+        likesCount: posts.likesCount,
+        createdAt: posts.createdAt,
       })
-      .from(save)
-      .innerJoin(post, and(eq(post.id, save.postId), eq(save.userId, userId2)))
-      .innerJoin(user, eq(post.userId, user.id))
-      .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, post.id)))
-      .where(and(eq(save.userId, userId2), lt(post.createdAt, new Date(data.createdAt)), eq(post.isPostDeleted, false)))
-      .orderBy(desc(save.createdAt))
+      .from(saves)
+      .innerJoin(posts, and(eq(posts.id, saves.postId), eq(saves.userId, userId2)))
+      .innerJoin(users, eq(posts.userId, users.id))
+      .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, posts.id)))
+      .where(
+        and(eq(saves.userId, userId2), lt(posts.createdAt, new Date(data.createdAt)), eq(posts.isPostDeleted, false))
+      )
+      .orderBy(desc(saves.createdAt))
       .limit(15)
       .execute();
 

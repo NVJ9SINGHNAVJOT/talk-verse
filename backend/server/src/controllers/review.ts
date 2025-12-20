@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import { db } from "@/db/postgresql/connection";
-import { review } from "@/db/postgresql/schema/review";
+import { reviews } from "@/db/postgresql/schema/reviews";
 import { CustomRequest } from "@/types/custom";
 import { errRes } from "@/utils/error";
 import { PostReviewReqSchema } from "@/types/controllers/reviewReq";
-import { user } from "@/db/postgresql/schema/user";
+import { users } from "@/db/postgresql/schema/users";
 import { eq } from "drizzle-orm";
 
 export const postReview = async (req: Request, res: Response): Promise<Response> => {
@@ -18,7 +18,7 @@ export const postReview = async (req: Request, res: Response): Promise<Response>
 
     const data = postReviewReq.data;
 
-    await db.insert(review).values({ reviewText: data.reviewText, userId: userId2 });
+    await db.insert(reviews).values({ reviewText: data.reviewText, userId: userId2 });
 
     return res.status(200).json({
       success: true,
@@ -31,22 +31,22 @@ export const postReview = async (req: Request, res: Response): Promise<Response>
 
 export const getReviews = async (_req: Request, res: Response): Promise<Response> => {
   try {
-    const reviews = await db
+    const reviewsList = await db
       .select({
-        firstName: user.firstName,
-        lastName: user.lastName,
-        imageUrl: user.imageUrl,
-        reviewText: review.reviewText,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        imageUrl: users.imageUrl,
+        reviewText: reviews.reviewText,
       })
-      .from(review)
-      .innerJoin(user, eq(user.id, review.userId))
-      .where(eq(review.approved, true))
+      .from(reviews)
+      .innerJoin(users, eq(users.id, reviews.userId))
+      .where(eq(reviews.approved, true))
       .limit(25);
 
     return res.status(200).json({
       success: true,
       message: "review posted",
-      reviews: reviews,
+      reviews: reviewsList,
     });
   } catch (error) {
     return errRes(res, 500, "error while getting reviews", error);

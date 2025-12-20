@@ -1,11 +1,11 @@
 import { db } from "@/db/postgresql/connection";
-import { comment } from "@/db/postgresql/schema/comment";
-import { follow } from "@/db/postgresql/schema/follow";
+import { comments } from "@/db/postgresql/schema/comments";
+import { follows } from "@/db/postgresql/schema/follows";
 import { likes } from "@/db/postgresql/schema/likes";
-import { post } from "@/db/postgresql/schema/post";
-import { save } from "@/db/postgresql/schema/save";
-import { story } from "@/db/postgresql/schema/story";
-import { user } from "@/db/postgresql/schema/user";
+import { posts } from "@/db/postgresql/schema/posts";
+import { saves } from "@/db/postgresql/schema/saves";
+import { stories } from "@/db/postgresql/schema/stories";
+import { users } from "@/db/postgresql/schema/users";
 import { GetCreatedAtReqSchema } from "@/types/controllers/common";
 import {
   AddCommentReqSchema,
@@ -80,7 +80,7 @@ export const createPost = async (req: Request, res: Response): Promise<Response>
     }
 
     const newPost = await db
-      .insert(post)
+      .insert(posts)
       .values({
         userId: userId2,
         category: data.category,
@@ -90,15 +90,15 @@ export const createPost = async (req: Request, res: Response): Promise<Response>
         content: content && content,
       })
       .returning({
-        id: post.id,
-        userId: post.userId,
-        category: post.category,
-        title: post.title,
-        mediaUrls: post.mediaUrls,
-        tags: post.tags,
-        content: post.content,
-        likesCount: post.likesCount,
-        createdAt: post.createdAt,
+        id: posts.id,
+        userId: posts.userId,
+        category: posts.category,
+        title: posts.title,
+        mediaUrls: posts.mediaUrls,
+        tags: posts.tags,
+        content: posts.content,
+        likesCount: posts.likesCount,
+        createdAt: posts.createdAt,
       })
       .execute();
 
@@ -128,10 +128,10 @@ export const deletePost = async (req: Request, res: Response): Promise<Response>
 
     // set isPostDeleted to true for post
     const postRes = await db
-      .update(post)
+      .update(posts)
       .set({ isPostDeleted: true })
-      .where(and(eq(post.id, data.postId), eq(post.userId, userId2), eq(post.isPostDeleted, false)))
-      .returning({ id: post.id, mediaUrls: post.mediaUrls })
+      .where(and(eq(posts.id, data.postId), eq(posts.userId, userId2), eq(posts.isPostDeleted, false)))
+      .returning({ id: posts.id, mediaUrls: posts.mediaUrls })
       .execute();
 
     // check query response
@@ -169,19 +169,19 @@ export const savePost = async (req: Request, res: Response): Promise<Response> =
         because user cannot save it's own created post.
       */
       const checkIfUserCreatedPost = await db
-        .select({ id: post.id })
-        .from(post)
-        .where(and(eq(post.id, data.postId), eq(post.userId, userId2)));
+        .select({ id: posts.id })
+        .from(posts)
+        .where(and(eq(posts.id, data.postId), eq(posts.userId, userId2)));
 
       if (checkIfUserCreatedPost.length !== 0) {
         return errRes(res, 400, "user cannot save it's own post");
       }
 
       const checkSavedPost = await db
-        .insert(save)
+        .insert(saves)
         .values({ userId: userId2, postId: data.postId })
-        .onConflictDoNothing({ target: [save.userId, save.postId] })
-        .returning({ id: save.id });
+        .onConflictDoNothing({ target: [saves.userId, saves.postId] })
+        .returning({ id: saves.id });
 
       if (checkSavedPost.length === 0) {
         return errRes(res, 400, "invalid data, post is already saved by user");
@@ -194,9 +194,9 @@ export const savePost = async (req: Request, res: Response): Promise<Response> =
     }
 
     const deleteSavedPost = await db
-      .delete(save)
-      .where(and(eq(save.userId, userId2), eq(save.postId, data.postId)))
-      .returning({ id: save.id });
+      .delete(saves)
+      .where(and(eq(saves.userId, userId2), eq(saves.postId, data.postId)))
+      .returning({ id: saves.id });
 
     if (deleteSavedPost.length === 0) {
       return errRes(res, 400, "invalid data, no post previously saved by user");
@@ -228,9 +228,9 @@ export const createStory = async (req: Request, res: Response): Promise<Response
     }
 
     const newStory = await db
-      .insert(story)
+      .insert(stories)
       .values({ userId: userId2, storyUrl: secUrl })
-      .returning({ id: story.id, storyUrl: story.storyUrl })
+      .returning({ id: stories.id, storyUrl: stories.storyUrl })
       .execute();
 
     return res.status(200).json({
@@ -260,9 +260,9 @@ export const deleteStory = async (req: Request, res: Response): Promise<Response
     const intStoryId = parseInt(data.storyId);
 
     const response = await db
-      .delete(story)
-      .where(and(eq(story.id, intStoryId), eq(story.userId, userId2)))
-      .returning({ id: story.id, storyUrl: story.storyUrl })
+      .delete(stories)
+      .where(and(eq(stories.id, intStoryId), eq(stories.userId, userId2)))
+      .returning({ id: stories.id, storyUrl: stories.storyUrl })
       .execute();
 
     // check query response
@@ -287,9 +287,9 @@ export const userStory = async (req: Request, res: Response): Promise<Response> 
     const userId2 = (req as CustomRequest).userId2;
 
     const userStoryUrl = await db
-      .select({ id: story.id, storyUrl: story.storyUrl })
-      .from(story)
-      .where(and(eq(story.userId, userId2), gt(story.createdAt, sql`now() - interval '1 day'`)))
+      .select({ id: stories.id, storyUrl: stories.storyUrl })
+      .from(stories)
+      .where(and(eq(stories.userId, userId2), gt(stories.createdAt, sql`now() - interval '1 day'`)))
       .limit(1)
       .execute();
 
@@ -340,11 +340,11 @@ export const updateLike = async (req: Request, res: Response): Promise<Response>
           return false;
         }
 
-        // update likes count in the post row where postId is equal to post.id
+        // update likes count in the post row where postId is equal to posts.id
         await tx
-          .update(post)
-          .set({ likesCount: sql`${post.likesCount} + 1` })
-          .where(eq(post.id, intPostId));
+          .update(posts)
+          .set({ likesCount: sql`${posts.likesCount} + 1` })
+          .where(eq(posts.id, intPostId));
 
         return true;
       });
@@ -380,9 +380,9 @@ export const updateLike = async (req: Request, res: Response): Promise<Response>
 
         // update like count
         await tx
-          .update(post)
-          .set({ likesCount: sql`${post.likesCount} - 1` })
-          .where(eq(post.id, intPostId))
+          .update(posts)
+          .set({ likesCount: sql`${posts.likesCount} - 1` })
+          .where(eq(posts.id, intPostId))
           .execute();
 
         return true;
@@ -416,19 +416,19 @@ export const addComment = async (req: Request, res: Response): Promise<Response>
 
     const data = addCommentReq.data;
     const newComment = await db
-      .insert(comment)
+      .insert(comments)
       .values({ userId: userId2, postId: data.postId, commentText: data.commentText })
       .returning({
-        id: comment.id,
-        commentText: comment.commentText,
-        createdAt: comment.createdAt,
+        id: comments.id,
+        commentText: comments.commentText,
+        createdAt: comments.createdAt,
       })
       .execute();
 
     await db
-      .update(post)
-      .set({ commentsCount: sql`${post.commentsCount} + 1` })
-      .where(eq(post.id, data.postId))
+      .update(posts)
+      .set({ commentsCount: sql`${posts.commentsCount} + 1` })
+      .where(eq(posts.id, data.postId))
       .execute();
 
     return res.status(200).json({
@@ -453,16 +453,16 @@ export const deleteComment = async (req: Request, res: Response): Promise<Respon
     const data = deleteCommentReq.data;
 
     const commentRes = await db
-      .delete(comment)
-      .where(and(eq(comment.id, data.commentId), eq(comment.userId, userId2)))
-      .returning({ id: comment.id })
+      .delete(comments)
+      .where(and(eq(comments.id, data.commentId), eq(comments.userId, userId2)))
+      .returning({ id: comments.id })
       .execute();
 
     if (commentRes.length) {
       await db
-        .update(post)
-        .set({ commentsCount: sql`${post.commentsCount} - 1` })
-        .where(eq(post.id, data.postId))
+        .update(posts)
+        .set({ commentsCount: sql`${posts.commentsCount} - 1` })
+        .where(eq(posts.id, data.postId))
         .execute();
 
       return res.status(200).json({
@@ -489,24 +489,24 @@ export const postComments = async (req: Request, res: Response): Promise<Respons
     const data = postCommentsReq.data;
     const beforeAt = new Date(`${data.createdAt}`);
 
-    const comments = await db
+    const commentsList = await db
       .select({
-        id: comment.id,
-        isCurrentUser: sql<boolean>`CASE WHEN ${comment.userId} = ${userId2} THEN TRUE ELSE FALSE END`,
-        userId: comment.userId,
-        imageUrl: user.imageUrl,
-        userName: user.userName,
-        commentText: comment.commentText,
-        createdAt: comment.createdAt,
+        id: comments.id,
+        isCurrentUser: sql<boolean>`CASE WHEN ${comments.userId} = ${userId2} THEN TRUE ELSE FALSE END`,
+        userId: comments.userId,
+        imageUrl: users.imageUrl,
+        userName: users.userName,
+        commentText: comments.commentText,
+        createdAt: comments.createdAt,
       })
-      .from(comment)
-      .innerJoin(user, eq(comment.userId, user.id))
-      .where(and(eq(comment.postId, parseInt(data.postId)), lt(comment.createdAt, beforeAt)))
-      .orderBy(asc(comment.createdAt))
+      .from(comments)
+      .innerJoin(users, eq(comments.userId, users.id))
+      .where(and(eq(comments.postId, parseInt(data.postId)), lt(comments.createdAt, beforeAt)))
+      .orderBy(asc(comments.createdAt))
       .limit(15)
       .execute();
 
-    if (comments.length === 0) {
+    if (commentsList.length === 0) {
       return res.status(200).json({
         success: false,
         message: "no further comments for post",
@@ -516,7 +516,7 @@ export const postComments = async (req: Request, res: Response): Promise<Respons
     return res.status(200).json({
       success: true,
       message: "comments for post",
-      comments: comments,
+      comments: commentsList,
     });
   } catch (error) {
     return errRes(res, 500, "error while getting comments for post", error);
@@ -534,32 +534,32 @@ export const getStories = async (req: Request, res: Response): Promise<Response>
     const data = getStoriesReq.data;
 
     const beforeAt = new Date(`${data.createdAt}`);
-    const stories = await db
+    const storiesList = await db
       .select({
-        userName: user.userName,
-        imageUrl: user.imageUrl,
-        storyUrl: story.storyUrl,
-        createdAt: story.createdAt,
+        userName: users.userName,
+        imageUrl: users.imageUrl,
+        storyUrl: stories.storyUrl,
+        createdAt: stories.createdAt,
       })
-      .from(story)
-      .innerJoin(follow, eq(story.userId, follow.followingId))
-      .innerJoin(user, eq(story.userId, user.id))
+      .from(stories)
+      .innerJoin(follows, eq(stories.userId, follows.followingId))
+      .innerJoin(users, eq(stories.userId, users.id))
       .where(
         and(
-          eq(follow.followerId, userId2),
-          lt(story.createdAt, beforeAt),
-          gt(story.createdAt, sql`now() - interval '1 day'`)
+          eq(follows.followerId, userId2),
+          lt(stories.createdAt, beforeAt),
+          gt(stories.createdAt, sql`now() - interval '1 day'`)
         )
       )
-      .orderBy(desc(story.createdAt))
+      .orderBy(desc(stories.createdAt))
       .limit(15)
       .execute();
 
-    if (stories.length) {
+    if (storiesList.length) {
       return res.status(200).json({
         success: true,
         message: "stories for user",
-        stories: stories,
+        stories: storiesList,
       });
     }
     return res.status(200).json({
@@ -584,29 +584,29 @@ export const recentPosts = async (req: Request, res: Response): Promise<Response
 
     const recentPosts = await db
       .select({
-        id: post.id,
-        isCurrentUser: sql<boolean>`CASE WHEN ${post.userId} = ${userId2} THEN TRUE ELSE FALSE END`,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        imageUrl: user.imageUrl,
-        userName: user.userName,
-        isSaved: sql<boolean>`CASE WHEN ${save.userId} = ${userId2} AND ${save.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
-        isLiked: sql<boolean>`CASE WHEN ${likes.userId} = ${userId2} AND ${likes.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
-        commentsCount: post.commentsCount,
-        category: post.category,
-        title: post.title,
-        mediaUrls: post.mediaUrls,
-        tags: post.tags,
-        content: post.content,
-        likesCount: post.likesCount,
-        createdAt: post.createdAt,
+        id: posts.id,
+        isCurrentUser: sql<boolean>`CASE WHEN ${posts.userId} = ${userId2} THEN TRUE ELSE FALSE END`,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        imageUrl: users.imageUrl,
+        userName: users.userName,
+        isSaved: sql<boolean>`CASE WHEN ${saves.userId} = ${userId2} AND ${saves.postId} = ${posts.id} THEN TRUE ELSE FALSE END`,
+        isLiked: sql<boolean>`CASE WHEN ${likes.userId} = ${userId2} AND ${likes.postId} = ${posts.id} THEN TRUE ELSE FALSE END`,
+        commentsCount: posts.commentsCount,
+        category: posts.category,
+        title: posts.title,
+        mediaUrls: posts.mediaUrls,
+        tags: posts.tags,
+        content: posts.content,
+        likesCount: posts.likesCount,
+        createdAt: posts.createdAt,
       })
-      .from(post)
-      .innerJoin(user, eq(post.userId, user.id))
-      .leftJoin(save, and(eq(save.postId, post.id), eq(save.userId, userId2)))
-      .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, post.id)))
-      .where(and(lt(post.createdAt, new Date(data.createdAt)), eq(post.isPostDeleted, false)))
-      .orderBy(desc(post.createdAt))
+      .from(posts)
+      .innerJoin(users, eq(posts.userId, users.id))
+      .leftJoin(saves, and(eq(saves.postId, posts.id), eq(saves.userId, userId2)))
+      .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, posts.id)))
+      .where(and(lt(posts.createdAt, new Date(data.createdAt)), eq(posts.isPostDeleted, false)))
+      .orderBy(desc(posts.createdAt))
       .limit(15)
       .execute();
 
@@ -639,29 +639,29 @@ export const trendingPosts = async (req: Request, res: Response): Promise<Respon
 
     const trendingPosts = await db
       .select({
-        id: post.id,
-        isCurrentUser: sql<boolean>`CASE WHEN ${post.userId} = ${userId2} THEN TRUE ELSE FALSE END`,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        imageUrl: user.imageUrl,
-        userName: user.userName,
-        isSaved: sql<boolean>`CASE WHEN ${save.userId} = ${userId2} AND ${save.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
-        isLiked: sql<boolean>`CASE WHEN ${likes.userId} = ${userId2} AND ${likes.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
-        commentsCount: post.commentsCount,
-        category: post.category,
-        title: post.title,
-        mediaUrls: post.mediaUrls,
-        tags: post.tags,
-        content: post.content,
-        likesCount: post.likesCount,
-        createdAt: post.createdAt,
+        id: posts.id,
+        isCurrentUser: sql<boolean>`CASE WHEN ${posts.userId} = ${userId2} THEN TRUE ELSE FALSE END`,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        imageUrl: users.imageUrl,
+        userName: users.userName,
+        isSaved: sql<boolean>`CASE WHEN ${saves.userId} = ${userId2} AND ${saves.postId} = ${posts.id} THEN TRUE ELSE FALSE END`,
+        isLiked: sql<boolean>`CASE WHEN ${likes.userId} = ${userId2} AND ${likes.postId} = ${posts.id} THEN TRUE ELSE FALSE END`,
+        commentsCount: posts.commentsCount,
+        category: posts.category,
+        title: posts.title,
+        mediaUrls: posts.mediaUrls,
+        tags: posts.tags,
+        content: posts.content,
+        likesCount: posts.likesCount,
+        createdAt: posts.createdAt,
       })
-      .from(post)
-      .innerJoin(user, eq(post.userId, user.id))
-      .leftJoin(save, and(eq(save.postId, post.id), eq(save.userId, userId2)))
-      .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, post.id)))
-      .where(eq(post.isPostDeleted, false))
-      .orderBy(desc(post.likesCount), desc(post.createdAt))
+      .from(posts)
+      .innerJoin(users, eq(posts.userId, users.id))
+      .leftJoin(saves, and(eq(saves.postId, posts.id), eq(saves.userId, userId2)))
+      .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, posts.id)))
+      .where(eq(posts.isPostDeleted, false))
+      .orderBy(desc(posts.likesCount), desc(posts.createdAt))
       .limit(15)
       .offset(Number(data.skip))
       .execute();
@@ -695,35 +695,35 @@ export const categoryPosts = async (req: Request, res: Response): Promise<Respon
 
     const categoryPosts = await db
       .select({
-        id: post.id,
-        isCurrentUser: sql<boolean>`CASE WHEN ${post.userId} = ${userId2} THEN TRUE ELSE FALSE END`,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        imageUrl: user.imageUrl,
-        userName: user.userName,
-        isSaved: sql<boolean>`CASE WHEN ${save.userId} = ${userId2} AND ${save.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
-        isLiked: sql<boolean>`CASE WHEN ${likes.userId} = ${userId2} AND ${likes.postId} = ${post.id} THEN TRUE ELSE FALSE END`,
-        commentsCount: post.commentsCount,
-        category: post.category,
-        title: post.title,
-        mediaUrls: post.mediaUrls,
-        tags: post.tags,
-        content: post.content,
-        likesCount: post.likesCount,
-        createdAt: post.createdAt,
+        id: posts.id,
+        isCurrentUser: sql<boolean>`CASE WHEN ${posts.userId} = ${userId2} THEN TRUE ELSE FALSE END`,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        imageUrl: users.imageUrl,
+        userName: users.userName,
+        isSaved: sql<boolean>`CASE WHEN ${saves.userId} = ${userId2} AND ${saves.postId} = ${posts.id} THEN TRUE ELSE FALSE END`,
+        isLiked: sql<boolean>`CASE WHEN ${likes.userId} = ${userId2} AND ${likes.postId} = ${posts.id} THEN TRUE ELSE FALSE END`,
+        commentsCount: posts.commentsCount,
+        category: posts.category,
+        title: posts.title,
+        mediaUrls: posts.mediaUrls,
+        tags: posts.tags,
+        content: posts.content,
+        likesCount: posts.likesCount,
+        createdAt: posts.createdAt,
       })
-      .from(post)
-      .innerJoin(user, eq(post.userId, user.id))
-      .leftJoin(save, and(eq(save.postId, post.id), eq(save.userId, userId2)))
-      .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, post.id)))
+      .from(posts)
+      .innerJoin(users, eq(posts.userId, users.id))
+      .leftJoin(saves, and(eq(saves.postId, posts.id), eq(saves.userId, userId2)))
+      .leftJoin(likes, and(eq(likes.userId, userId2), eq(likes.postId, posts.id)))
       .where(
         and(
-          eq(post.category, data.category),
-          lt(post.createdAt, new Date(data.createdAt)),
-          eq(post.isPostDeleted, false)
+          eq(posts.category, data.category),
+          lt(posts.createdAt, new Date(data.createdAt)),
+          eq(posts.isPostDeleted, false)
         )
       )
-      .orderBy(desc(post.createdAt))
+      .orderBy(desc(posts.createdAt))
       .limit(15)
       .execute();
 

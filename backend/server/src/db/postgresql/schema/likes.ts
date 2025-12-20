@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { pgTable, integer, serial, timestamp, unique } from "drizzle-orm/pg-core";
-import { post } from "@/db/postgresql/schema/post";
-import { user } from "@/db/postgresql/schema/user";
+import { posts } from "@/db/postgresql/schema/posts";
+import { users } from "@/db/postgresql/schema/users";
 
 export const likes = pgTable(
   "likes",
@@ -9,10 +9,10 @@ export const likes = pgTable(
     id: serial("id").primaryKey(),
     userId: integer("user_id")
       .notNull()
-      .references(() => user.id),
+      .references(() => users.id),
     postId: integer("post_id")
       .notNull()
-      .references(() => post.id, { onDelete: "cascade" }),
+      .references(() => posts.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
@@ -21,7 +21,7 @@ export const likes = pgTable(
   })
 );
 
-export const likessRelations = relations(likes, ({ one }) => ({
-  user: one(user, { fields: [likes.userId], references: [user.id] }),
-  post: one(post, { fields: [likes.postId], references: [post.id] }),
+export const likesRelations = relations(likes, ({ one }) => ({
+  user: one(users, { fields: [likes.userId], references: [users.id] }),
+  post: one(posts, { fields: [likes.postId], references: [posts.id] }),
 }));

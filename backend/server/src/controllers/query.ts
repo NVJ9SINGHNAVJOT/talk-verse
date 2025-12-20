@@ -1,5 +1,5 @@
 import { db } from "@/db/postgresql/connection";
-import { query } from "@/db/postgresql/schema/query";
+import { queries } from "@/db/postgresql/schema/queries";
 import { SendQueryReqSchema } from "@/types/controllers/queryReq";
 import { errRes } from "@/utils/error";
 import { Request, Response } from "express";
@@ -14,7 +14,7 @@ export const sendQuery = async (req: Request, res: Response): Promise<Response> 
 
     const data = sendQueryReq.data;
 
-    await db.insert(query).values({ fullName: data.fullName, emailId: data.email, queryText: data.text });
+    await db.insert(queries).values({ fullName: data.fullName, emailId: data.email, queryText: data.text });
 
     return res.status(200).json({
       success: true,

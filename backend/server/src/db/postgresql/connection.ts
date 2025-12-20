@@ -2,16 +2,16 @@ import { configDotenv } from "dotenv";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import { logger } from "@/logger/logger";
-import { user, usersRelations } from "@/db/postgresql/schema/user";
-import { post, postsRelations } from "@/db/postgresql/schema/post";
-import { likes, likessRelations } from "@/db/postgresql/schema/likes";
-import { comment, commentsRelations } from "@/db/postgresql/schema/comment";
-import { story, storysRelations } from "@/db/postgresql/schema/story";
-import { follow, followsRelations } from "@/db/postgresql/schema/follow";
-import { save, savesRelations } from "@/db/postgresql/schema/save";
-import { request, requestsRelations } from "@/db/postgresql/schema/request";
-import { query } from "@/db/postgresql/schema/query";
-import { review, reviewsRelations } from "@/db/postgresql/schema/review";
+import { users, usersRelations } from "@/db/postgresql/schema/users";
+import { posts, postsRelations } from "@/db/postgresql/schema/posts";
+import { likes, likesRelations } from "@/db/postgresql/schema/likes";
+import { comments, commentsRelations } from "@/db/postgresql/schema/comments";
+import { stories, storiesRelations } from "@/db/postgresql/schema/stories";
+import { follows, followsRelations } from "@/db/postgresql/schema/follows";
+import { saves, savesRelations } from "@/db/postgresql/schema/saves";
+import { requests, requestsRelations } from "@/db/postgresql/schema/requests";
+import { queries } from "@/db/postgresql/schema/queries";
+import { reviews, reviewsRelations } from "@/db/postgresql/schema/reviews";
 import { getErrorDetails } from "@/logger/error";
 
 configDotenv();
@@ -43,24 +43,24 @@ export async function postgresqlDatabaseDisconnect() {
 
 export const db = drizzle(pool, {
   schema: {
-    user,
+    users,
     usersRelations,
-    post,
+    posts,
     postsRelations,
     likes,
-    likessRelations,
-    story,
-    storysRelations,
-    comment,
+    likesRelations,
+    stories,
+    storiesRelations,
+    comments,
     commentsRelations,
-    follow,
+    follows,
     followsRelations,
-    save,
+    saves,
     savesRelations,
-    request,
+    requests,
     requestsRelations,
-    query,
-    review,
+    queries,
+    reviews,
     reviewsRelations,
   },
 });

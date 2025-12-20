@@ -1,22 +1,22 @@
 import { relations } from "drizzle-orm";
 import { pgTable, integer, serial, timestamp, varchar } from "drizzle-orm/pg-core";
-import { post } from "@/db/postgresql/schema/post";
-import { user } from "@/db/postgresql/schema/user";
+import { posts } from "@/db/postgresql/schema/posts";
+import { users } from "@/db/postgresql/schema/users";
 
-export const comment = pgTable("comment", {
+export const comments = pgTable("comments", {
   id: serial("id").primaryKey(),
   userId: integer("user_id")
     .notNull()
-    .references(() => user.id),
+    .references(() => users.id),
   postId: integer("post_id")
     .notNull()
-    .references(() => post.id, { onDelete: "cascade" }),
+    .references(() => posts.id, { onDelete: "cascade" }),
   commentText: varchar("comment_text", { length: 200 }).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
-export const commentsRelations = relations(comment, ({ one }) => ({
-  user: one(user, { fields: [comment.userId], references: [user.id] }),
-  post: one(post, { fields: [comment.postId], references: [post.id] }),
+export const commentsRelations = relations(comments, ({ one }) => ({
+  user: one(users, { fields: [comments.userId], references: [users.id] }),
+  post: one(posts, { fields: [comments.postId], references: [posts.id] }),
 }));

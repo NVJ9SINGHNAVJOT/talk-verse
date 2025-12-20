@@ -22,10 +22,10 @@ import { uploadToCloudinary } from "@/utils/cloudinaryHandler";
 import Group from "@/db/mongodb/models/Group";
 import { deleteFile } from "@/utils/deleteFile";
 import { db } from "@/db/postgresql/connection";
-import { user } from "@/db/postgresql/schema/user";
-import { follow } from "@/db/postgresql/schema/follow";
+import { users } from "@/db/postgresql/schema/users";
+import { follows } from "@/db/postgresql/schema/follows";
 import { and, eq, ilike, isNull, ne, sql } from "drizzle-orm";
-import { request } from "@/db/postgresql/schema/request";
+import { requests } from "@/db/postgresql/schema/requests";
 import { OtherPostgreSQLUserIdReqSchema } from "@/types/controllers/common";
 import { checkGroupMembers } from "@/utils/helpers";
 import mongoose from "mongoose";
@@ -108,17 +108,17 @@ export const getFollowUsers = async (req: Request, res: Response): Promise<Respo
     }
 
     const followUsers = await db
-      .selectDistinctOn([user.id], {
-        id: user.id,
-        userName: user.userName,
-        imageUrl: user.imageUrl,
-        isFollowed: sql<boolean>`CASE WHEN ${follow.followerId} = ${userId2} THEN true ELSE false END`,
-        isRequested: sql<boolean>`CASE WHEN ${request.fromId} = ${userId2} THEN true ELSE false END`,
+      .selectDistinctOn([users.id], {
+        id: users.id,
+        userName: users.userName,
+        imageUrl: users.imageUrl,
+        isFollowed: sql<boolean>`CASE WHEN ${follows.followerId} = ${userId2} THEN true ELSE false END`,
+        isRequested: sql<boolean>`CASE WHEN ${requests.fromId} = ${userId2} THEN true ELSE false END`,
       })
-      .from(user)
-      .leftJoin(follow, and(eq(follow.followingId, user.id), eq(follow.followerId, userId2)))
-      .leftJoin(request, and(eq(request.toId, user.id), eq(request.fromId, userId2)))
-      .where(and(ilike(user.userName, `%${userName}%`), ne(user.id, userId2)))
+      .from(users)
+      .leftJoin(follows, and(eq(follows.followingId, users.id), eq(follows.followerId, userId2)))
+      .leftJoin(requests, and(eq(requests.toId, users.id), eq(requests.fromId, userId2)))
+      .where(and(ilike(users.userName, `%${userName}%`), ne(users.id, userId2)))
       .limit(25)
       .execute();
 
@@ -746,9 +746,9 @@ export const sendFollowRequest = async (req: Request, res: Response): Promise<Re
 
     // check if otherUserId is already followed by user
     const checkAlreadyFollowed = await db
-      .select({ id: follow.id })
-      .from(follow)
-      .where(and(eq(follow.followerId, userId2), eq(follow.followingId, data.otherUserId)))
+      .select({ id: follows.id })
+      .from(follows)
+      .where(and(eq(follows.followerId, userId2), eq(follows.followingId, data.otherUserId)))
       .limit(1)
       .execute();
 
@@ -757,9 +757,9 @@ export const sendFollowRequest = async (req: Request, res: Response): Promise<Re
     }
 
     const insertNewRequest = await db
-      .insert(request)
+      .insert(requests)
       .values({ fromId: userId2, toId: data.otherUserId })
-      .onConflictDoNothing({ target: [request.fromId, request.toId] })
+      .onConflictDoNothing({ target: [requests.fromId, requests.toId] })
       .returning()
       .execute();
 
@@ -788,9 +788,9 @@ export const deleteFollowRequest = async (req: Request, res: Response): Promise<
     const data = deleteFollowRequestReq.data;
 
     const checkDelete = await db
-      .delete(request)
-      .where(and(eq(request.fromId, data.otherUserId), eq(request.toId, userId2)))
-      .returning({ id: request.id });
+      .delete(requests)
+      .where(and(eq(requests.fromId, data.otherUserId), eq(requests.toId, userId2)))
+      .returning({ id: requests.id });
 
     if (checkDelete.length !== 1) {
       return errRes(res, 400, "invalid otherUserId, no request present for deleting follow request");
@@ -821,9 +821,9 @@ export const acceptFollowRequest = async (req: Request, res: Response): Promise<
     }
 
     const deleteRequest = await db
-      .delete(request)
-      .where(and(eq(request.fromId, data.otherUserId), eq(request.toId, userId2)))
-      .returning({ id: request.id })
+      .delete(requests)
+      .where(and(eq(requests.fromId, data.otherUserId), eq(requests.toId, userId2)))
+      .returning({ id: requests.id })
       .execute();
 
     if (deleteRequest.length !== 1) {
@@ -831,10 +831,10 @@ export const acceptFollowRequest = async (req: Request, res: Response): Promise<
     }
 
     const followRes = await db
-      .insert(follow)
+      .insert(follows)
       .values({ followerId: data.otherUserId, followingId: userId2 })
-      .onConflictDoNothing({ target: [follow.followerId, follow.followingId] })
-      .returning({ id: follow.id })
+      .onConflictDoNothing({ target: [follows.followerId, follows.followingId] })
+      .returning({ id: follows.id })
       .execute();
 
     // check query response
@@ -844,15 +844,15 @@ export const acceptFollowRequest = async (req: Request, res: Response): Promise<
 
     // user is followed by other user, now increase the count of followers for curr user
     await db
-      .update(user)
-      .set({ followersCount: sql`${user.followersCount} + 1` })
-      .where(eq(user.id, userId2));
+      .update(users)
+      .set({ followersCount: sql`${users.followersCount} + 1` })
+      .where(eq(users.id, userId2));
 
     // now increase count of following for other user
     await db
-      .update(user)
-      .set({ followingCount: sql`${user.followingCount} + 1` })
-      .where(eq(user.id, data.otherUserId));
+      .update(users)
+      .set({ followingCount: sql`${users.followingCount} + 1` })
+      .where(eq(users.id, data.otherUserId));
 
     return res.status(200).json({
       success: true,
@@ -869,15 +869,15 @@ export const followRequests = async (req: Request, res: Response): Promise<Respo
 
     const followRequests = await db
       .select({
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        userName: user.userName,
-        imageUrl: user.imageUrl,
+        id: users.id,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        userName: users.userName,
+        imageUrl: users.imageUrl,
       })
-      .from(request)
-      .innerJoin(user, eq(request.fromId, user.id))
-      .where(eq(request.toId, userId2))
+      .from(requests)
+      .innerJoin(users, eq(requests.fromId, users.id))
+      .where(eq(requests.toId, userId2))
       .execute();
 
     if (followRequests.length === 0) {
@@ -903,16 +903,16 @@ export const followSuggestions = async (req: Request, res: Response): Promise<Re
 
     const suggestions = await db
       .select({
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        userName: user.userName,
-        imageUrl: user.imageUrl,
+        id: users.id,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        userName: users.userName,
+        imageUrl: users.imageUrl,
       })
-      .from(user)
-      .leftJoin(follow, and(eq(follow.followingId, user.id), eq(follow.followerId, userId2)))
-      .leftJoin(request, and(eq(user.id, request.toId), eq(request.fromId, userId2)))
-      .where(and(isNull(request.toId), isNull(follow.followerId), ne(user.id, userId2)))
+      .from(users)
+      .leftJoin(follows, and(eq(follows.followingId, users.id), eq(follows.followerId, userId2)))
+      .leftJoin(requests, and(eq(users.id, requests.toId), eq(requests.fromId, userId2)))
+      .where(and(isNull(requests.toId), isNull(follows.followerId), ne(users.id, userId2)))
       .limit(5)
       .execute();
 
