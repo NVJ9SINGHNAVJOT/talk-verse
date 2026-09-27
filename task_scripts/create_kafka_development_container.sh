@@ -37,7 +37,8 @@ manage_kafka_container() {
             --hostname "$container_name" \
             --network "$network_name" \
             -p 9092:9092 \
-            -v "$volume_name:/bitnami/kafka" \
+            -v "$volume_name:/var/lib/kafka/data" \
+            -e KAFKA_LOG_DIRS=/var/lib/kafka/data \
             -e CLUSTER_ID=eWr0VGANOXqQHIvQLPE5ug \
             -e KAFKA_PROCESS_ROLES=broker,controller \
             -e KAFKA_NODE_ID=0 \
